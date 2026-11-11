@@ -1,7 +1,7 @@
 package com.alfgoto.rune.content.jobs;
 
-import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.jobs.Job;
+import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 
 /** Job definitions decided in docs/design-decisions.md. Account Rates: Mining 1.0, Woodcutting 0.8. */
 public final class CoreJobs {
@@ -11,11 +11,9 @@ public final class CoreJobs {
 
     private CoreJobs() {}
 
-    /** A new registry holding every Job. */
-    public static Registry<Job> registry() {
-        Registry<Job> jobs = new Registry<>("jobs");
+    /** Adds every core Job to the shared registry. */
+    public static void registerAll(JobRegistry jobs) {
         jobs.register(MINING);
         jobs.register(WOODCUTTING);
-        return jobs;
     }
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.content.jobs.CoreJobs;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
+import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import com.alfgoto.rune.storage.PdcPlayerStorage;
 import java.util.List;
@@ -32,7 +33,10 @@ class XpCommandsTest {
         RunePlugin plugin = MockBukkit.load(RunePlugin.class);
         player = server.addPlayer();
         progress = new JobProgress(new PdcPlayerStorage(plugin), new LevelCurve(50, 1.3), new LevelCurve(200, 1.3));
-        var jobs = CoreJobs.registry();
+        // Registry first, then content fills it, like the modules do at startup.
+        JobRegistry registry = new JobRegistry();
+        CoreJobs.registerAll(registry);
+        var jobs = registry.registry();
         xp = new XpSubcommand(jobs, progress);
         level = new LevelSubcommand(jobs, progress);
     }
