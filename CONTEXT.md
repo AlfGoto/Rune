@@ -23,7 +23,7 @@ _Avoid_: Foraging, Lumberjack
 
 **Job XP** — Points earned in a single Job. Not to be confused with vanilla XP.
 
-**Job Level** — A Job's level, derived from its Job XP. Uncapped; unlocks get rarer at high levels. Job Levels give recipes, Blueprints and Rune Caches, never passive stats.
+**Job Level** — A Job's level, derived from its Job XP. No design cap (technical cap: 10 000); unlocks get rarer at high levels. Job Levels give recipes, Blueprints and Rune Caches, never passive stats.
 
 **Account XP** — A separate pool fed by every Job XP gain, multiplied by that Job's **Account Rate** (harder Jobs feed it faster).
 
@@ -63,6 +63,8 @@ _Avoid_: enchantment
 **Rune Cache** — A sealed item containing a random reward (usually Runes). Dropped by Job Actions, found in loot where vanilla had enchanted books, and given by Quests; the player opens it whenever they choose. Every Cache rolls the same loot table; the Cache's Rarity only shifts the odds and the quantity of what it gives (a Legendary Cache may give several Epic Runes instead of a Legendary one). A Cache dropped by a Job leans towards that Job's Runes.
 
 **Rune Codex** — The item every player carries that opens the Rune menus (Jobs, Quests, Runes).
+
+**Block Reveal** — A visual that outlines chosen blocks through walls for one player, for a set time. Only that player sees it, and it is removed when the time ends, when the player leaves and when the plugin stops. Used by Ore Sense, Bone, Echo, Warden Pickaxe and Worldheart. Test it with `/rune debug reveal <radius>` (outlines ores for 10 seconds).
 
 ## Places
 

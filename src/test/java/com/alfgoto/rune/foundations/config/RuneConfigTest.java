@@ -50,11 +50,17 @@ class RuneConfigTest {
                   level-curve:
                     base: 40
                     exponent: 1.5
+                account:
+                  level-curve:
+                    base: 100
+                    exponent: 1.1
                 quests:
                   tier-multipliers: [1, 2, 3, 4, 6]
                 """);
         assertEquals(40, c.levelCurveBase());
         assertEquals(1.5, c.levelCurveExponent());
+        assertEquals(100, c.accountCurveBase());
+        assertEquals(1.1, c.accountCurveExponent());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 6.0), c.questTierMultipliers());
         assertTrue(errors.isEmpty());
     }
@@ -78,6 +84,10 @@ class RuneConfigTest {
                   level-curve:
                     base: -5
                     exponent: banana
+                account:
+                  level-curve:
+                    base: 200
+                    exponent: 1.3
                 quests:
                   tier-multipliers: [1, 2]
                 """);
@@ -93,8 +103,10 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(3, errors.size());
+        assertEquals(5, errors.size());
         assertEquals(50, c.levelCurveBase());
+        assertEquals(200, c.accountCurveBase());
+        assertEquals(1.3, c.accountCurveExponent());
     }
 
     @Test
@@ -103,6 +115,10 @@ class RuneConfigTest {
                 jobs:
                   level-curve:
                     base: 50
+                    exponent: 1.3
+                account:
+                  level-curve:
+                    base: 200
                     exponent: 1.3
                 quests:
                   tier-multipliers: [1, 1.5, 0, 3, 5]

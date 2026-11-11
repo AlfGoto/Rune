@@ -15,6 +15,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Text helpers (`com.alfgoto.rune.text`): translation keys are `rune.<category>.<id>`; language files live in `src/main/resources/lang/<language>/<module>.json`, one file per module (ADR 0004), and every language must have the same keys. Rarity colours live only in the `Rarity` enum: Common white, Uncommon green, Rare aqua, Epic light purple, Legendary gold (vanilla named colours, may change in the visual polish pass).
 - Admin commands (2026-11-11): one root `/rune` command, permission `rune.admin` (default op). Each subcommand implements `Subcommand` and is registered by its module with `ctx.subcommand(...)`; debug tools go under `/rune debug <name>` with `ctx.debug(...)` (ADR 0004). Messages are translatable components with English fallback; keys live in the module's lang files. First subcommand: `/rune version`.
 - Resource pack build (2026-11-11): `ResourcePackBuilder` (`visuals.resourcepack`) zips `pack.mcmeta`, the assets listed in `src/main/resources/pack/files.txt` (add every new asset there) and the plugin lang files (merged per language) at startup into `plugins/Rune/rune-pack.zip`. Deterministic zip, SHA-1 logged. Serving and sending it are separate tasks. The pack format is a constant for now (open point in `docs/research/resource-pack.md`).
+- Block Tracking (2026-11-11): tags live in the chunk's PersistentDataContainer (one long array of chunk-local positions per tag), so they survive restarts. First tag: `placed`. A block placed by a player is tagged; breaking it clears the tag; pistons move the tag with the block. `BlockTrackingModule` provides the `BlockTracker` service. Debug: `/rune debug blocks` shows the tags of the block you look at. Not yet cleared: explosions, fire, fluids replacing a block (decide with the Job XP rules).
 - Repo: AlfGoto/Rune, public (GitHub Actions free and unlimited).
 - PR preview: comment `/preview` on a PR → GitHub Action builds the plugin, starts Paper and exposes it through a free playit.gg tunnel with a fixed address. One preview slot: the latest `/preview` replaces the previous one; the bot comments which PR is live. Auto-stops after 10 min with no players, 1 h max.
 - Code: a generic Job framework first; each Job is a definition (actions, tools, Runes, quest pool). Balancing lives in config. A bad config value logs a clear error and falls back to the default (Registry module).
@@ -28,7 +29,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - 12 Jobs: Mining (pickaxe blocks), Excavation (shovel blocks + archaeology), Woodcutting (axe blocks + leaves), Farming (incl. herbs, cooking, pumpkins, melons, cocoa, bamboo), Ranching (husbandry, taming, bees incl. bee nests and beehives), Fishing (incl. ocean loot), Combat (melee, shield, hunting), Archery, Smithing (repairs, Rune Tool and Rune Armor crafting), Alchemy, Adventuring (biomes, structures, Nether/End, trading), Runesmithing.
 - Dropped: Crafting, Building, Engineering (exploitable).
 - Job XP weighted per action. Each Job has an Account Rate feeding Account XP. Mining = 1.0, the reference Job. Woodcutting = 0.8.
-- Job Level uncapped. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config: `jobs.level-curve.base` / `.exponent`).
+- Job Level has no design cap. Technical cap: levels are read up to 10 000 (`LevelCurve.MAX_LEVEL`) so the level loop stays short. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config: `jobs.level-curve.base` / `.exponent`).
 - Job Levels give recipes, Blueprints and Rune Caches, never passive stats. Milestone Cache every 5 levels.
 - Each Job Action feeds exactly one Job. For blocks, the block decides (a pickaxe on wood → Woodcutting XP). For kills, the weapon decides: bow/crossbow kill → Archery; sword/axe kill → Combat. Ranching never gets XP from kills (only breeding, taming, shearing, milking, bees).
 - A Job's block scope starts from a vanilla tool tag (pickaxe, shovel, axe), with explicit carve-outs where another Job owns the block (e.g. axe-tag crops → Farming) and explicit additions (e.g. leaves → Woodcutting).
@@ -60,7 +61,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Rune Tool / Rune Armor base Capacity by Rarity: Common 3, Uncommon 6, Rare 10, Epic 14, Legendary 18. Slots: Common 1 … Legendary 5.
 - Traits can add or remove Capacity (bonus / drawback).
 - Mastery: a Rune Tool gains +1 Capacity every N valuable Job Actions, up to +75% of base Capacity. Pickaxe: 500 ores. Axe: 1,000 logs. Other tools set when their Job is designed. Rune Armor has fixed Capacity.
-- Account Level curve: XP to next level = `200 × L^1.3` (rewards playing several Jobs).
+- Account Level curve: XP to next level = `200 × L^1.3` (rewards playing several Jobs; config: `account.level-curve.base` / `.exponent`). Account XP = Job XP × the Job's Account Rate. The Account Rate lives in the Job definition (Java).
 - Player Capacity = 5 + 1 per Account Level, capped at 40 (Account Level 35, ~120 h at 2,500 Account XP/h).
 
 ## Tools & armor
@@ -92,6 +93,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Enchanted books in loot (chests, fishing, trades) are replaced by Runes / Rune Caches.
 - Smithing no longer covers enchanting.
 - Vanilla XP stays and is spent on: anvil repairs of Rune gear, Rune rank-ups, and (optionally, per piece) Evolution.
+- Vanilla Overrides, first slice (2026-11-11, package `com.alfgoto.rune.overrides`): enchanting table and enchant events are cancelled; the anvil result is removed when an enchanted book is involved or the enchantments change (repairs and renames stay). Locked Gear is matched by material name (stone, iron, gold, diamond, netherite tools and weapons; leather, chainmail, iron, gold, diamond, netherite armor). It can't be crafted (crafting table, smithing table), can't mine, attack or be right-clicked with, and armor is taken off into the inventory (or dropped). No message is shown yet. Salvage and enchanted books in loot come in later tickets. Rune gear built on a vanilla material will need a marker so it is not locked (decided with the `RuneItem` base).
 
 ## Trading
 - Runes, Rune Tools and Rune Armor are freely tradeable; no Job Level requirement to use them. Good gear is meant to be very rare, so trading is fine.
