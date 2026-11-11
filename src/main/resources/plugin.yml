@@ -2,3 +2,12 @@ name: Rune
 version: '${version}'
 main: com.alfgoto.rune.RunePlugin
 api-version: '${minecraftVersion}'
+commands:
+  rune:
+    description: Rune admin and debug commands
+    usage: /<command> <subcommand>
+    permission: rune.admin
+permissions:
+  rune.admin:
+    description: Use the /rune admin commands
+    default: op
