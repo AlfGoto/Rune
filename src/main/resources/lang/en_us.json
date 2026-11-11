@@ -6,5 +6,9 @@
   "rune.rarity.legendary": "Legendary",
   "rune.command.no_permission": "You do not have permission to do this.",
   "rune.command.usage": "Usage: /rune <%s>",
-  "rune.command.version": "Rune version %s"
+  "rune.command.version": "Rune version %s",
+  "rune.command.player_only": "Only a player can do this.",
+  "rune.command.debug.usage": "Usage: /rune debug reveal <radius>",
+  "rune.command.debug.bad_radius": "The radius must be a number from 1 to %s.",
+  "rune.command.debug.revealed": "Outlined %s ore blocks for %s seconds."
 }
