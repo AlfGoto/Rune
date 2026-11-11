@@ -6,5 +6,18 @@
   "rune.rarity.legendary": "Légendaire",
   "rune.command.no_permission": "Vous n'avez pas la permission de faire cela.",
   "rune.command.usage": "Utilisation : /rune <%s>",
-  "rune.command.version": "Rune version %s"
+  "rune.command.version": "Rune version %s",
+  "rune.job.mining": "Minage",
+  "rune.job.woodcutting": "Bûcheronnage",
+  "rune.command.xp.header": "XP de métier de %s",
+  "rune.command.xp.job": "%s : niveau %s (%s / %s XP)",
+  "rune.command.xp.account": "Compte : niveau %s (%s / %s XP)",
+  "rune.command.xp.usage": "Utilisation : /rune xp [joueur] | /rune xp <set|add> <métier> <montant>",
+  "rune.command.xp.changed": "L'XP de %s est maintenant %s (XP du compte : %s)",
+  "rune.command.level.usage": "Utilisation : /rune level set <métier> <niveau>",
+  "rune.command.level.changed": "%s est maintenant niveau %s",
+  "rune.command.unknown_job": "Métier inconnu : %s",
+  "rune.command.invalid_number": "Nombre invalide : %s",
+  "rune.command.player_only": "Seul un joueur peut faire cela.",
+  "rune.command.player_not_found": "Joueur introuvable : %s"
 }

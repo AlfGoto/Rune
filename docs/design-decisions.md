@@ -59,7 +59,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Rune Tool / Rune Armor base Capacity by Rarity: Common 3, Uncommon 6, Rare 10, Epic 14, Legendary 18. Slots: Common 1 … Legendary 5.
 - Traits can add or remove Capacity (bonus / drawback).
 - Mastery: a Rune Tool gains +1 Capacity every N valuable Job Actions, up to +75% of base Capacity. Pickaxe: 500 ores. Axe: 1,000 logs. Other tools set when their Job is designed. Rune Armor has fixed Capacity.
-- Account Level curve: XP to next level = `200 × L^1.3` (rewards playing several Jobs).
+- Account Level curve: XP to next level = `200 × L^1.3` (rewards playing several Jobs; config: `account.level-curve.base` / `.exponent`). Account XP = Job XP × the Job's Account Rate. The Account Rate lives in the Job definition (Java).
 - Player Capacity = 5 + 1 per Account Level, capped at 40 (Account Level 35, ~120 h at 2,500 Account XP/h).
 
 ## Tools & armor
