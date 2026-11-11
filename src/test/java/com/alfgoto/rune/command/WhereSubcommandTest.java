@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.alfgoto.rune.content.places.CorePlaces;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.gameplay.places.PlaceRegistry;
 import com.alfgoto.rune.gameplay.places.WorldProbe;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ class WhereSubcommandTest {
     void setUp() {
         server = MockBukkit.mock();
         player = server.addPlayer();
-        where = new WhereSubcommand(new PlaceDetector(CorePlaces.registry(), new WorldProbe() {
+        where = new WhereSubcommand(new PlaceDetector(core(), new WorldProbe() {
             @Override
             public String biomeAt(Location location) {
                 return biome;
@@ -45,6 +46,12 @@ class WhereSubcommandTest {
     @AfterEach
     void tearDown() {
         MockBukkit.unmock();
+    }
+
+    private static PlaceRegistry core() {
+        PlaceRegistry registry = new PlaceRegistry();
+        CorePlaces.registerAll(registry);
+        return registry;
     }
 
     private TranslatableComponent next() {
@@ -66,7 +73,7 @@ class WhereSubcommandTest {
     void saysSoWhenInNoPlace() {
         biome = "minecraft:plains";
         player = server.addPlayer();
-        where = new WhereSubcommand(new PlaceDetector(CorePlaces.registry(), new WorldProbe() {
+        where = new WhereSubcommand(new PlaceDetector(core(), new WorldProbe() {
             @Override
             public String biomeAt(Location location) {
                 return biome;

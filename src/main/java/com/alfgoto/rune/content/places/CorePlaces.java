@@ -1,7 +1,7 @@
 package com.alfgoto.rune.content.places;
 
-import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.places.Place;
+import com.alfgoto.rune.gameplay.places.PlaceRegistry;
 
 /**
  * The Places named in {@code docs/jobs/mining.md} and {@code docs/jobs/woodcutting.md}
@@ -11,11 +11,9 @@ public final class CorePlaces {
 
     private CorePlaces() {}
 
-    public static Registry<Place> registry() {
-        Registry<Place> registry = new Registry<>("places");
+    public static void registerAll(PlaceRegistry registry) {
         registry.register(Place.biome("lush_caves", "minecraft:lush_caves"));
         registry.register(Place.biome("taiga", "minecraft:taiga", "minecraft:snowy_taiga"));
         registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
-        return registry;
     }
 }

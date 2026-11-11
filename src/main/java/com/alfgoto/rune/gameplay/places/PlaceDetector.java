@@ -1,6 +1,5 @@
 package com.alfgoto.rune.gameplay.places;
 
-import com.alfgoto.rune.foundations.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +24,11 @@ public final class PlaceDetector {
         }
     }
 
-    private final Registry<Place> places;
+    private final PlaceRegistry places;
     private final WorldProbe probe;
     private final Map<UUID, Cached> cache = new HashMap<>();
 
-    public PlaceDetector(Registry<Place> places, WorldProbe probe) {
+    public PlaceDetector(PlaceRegistry places, WorldProbe probe) {
         this.places = places;
         this.probe = probe;
     }

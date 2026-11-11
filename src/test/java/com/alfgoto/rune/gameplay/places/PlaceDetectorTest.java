@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.alfgoto.rune.content.places.CorePlaces;
-import com.alfgoto.rune.foundations.registry.Registry;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,12 +23,14 @@ class PlaceDetectorTest {
     private Set<String> structures = Set.of();
     private final AtomicInteger lookups = new AtomicInteger();
     private PlaceDetector detector;
+    private PlaceRegistry registry;
 
     @BeforeEach
     void setUp() {
         server = MockBukkit.mock();
         player = server.addPlayer();
-        Registry<Place> registry = CorePlaces.registry();
+        registry = new PlaceRegistry();
+        CorePlaces.registerAll(registry);
         detector = new PlaceDetector(registry, new WorldProbe() {
             @Override
             public String biomeAt(Location location) {
@@ -69,6 +70,15 @@ class PlaceDetectorTest {
         biome = "minecraft:lush_caves";
         structures = Set.of("minecraft:mineshaft");
         assertEquals(List.of("lush_caves", "mineshaft"), ids());
+    }
+
+    @Test
+    void detectsPlaceRegisteredAfterDetectorIsCreated() {
+        biome = "minecraft:desert";
+        assertTrue(ids().isEmpty());
+        registry.register(Place.biome("desert", "minecraft:desert"));
+        player.teleport(player.getLocation().add(5, 0, 0));
+        assertEquals(List.of("desert"), ids());
     }
 
     @Test
