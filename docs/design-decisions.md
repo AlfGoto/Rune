@@ -91,6 +91,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Enchanted books in loot (chests, fishing, trades) are replaced by Runes / Rune Caches.
 - Smithing no longer covers enchanting.
 - Vanilla XP stays and is spent on: anvil repairs of Rune gear, Rune rank-ups, and (optionally, per piece) Evolution.
+- Vanilla Overrides, first slice (2026-11-11, package `com.alfgoto.rune.overrides`): enchanting table and enchant events are cancelled; the anvil result is removed when an enchanted book is involved or the enchantments change (repairs and renames stay). Locked Gear is matched by material name (stone, iron, gold, diamond, netherite tools and weapons; leather, chainmail, iron, gold, diamond, netherite armor). It can't be crafted (crafting table, smithing table), can't mine, attack or be right-clicked with, and armor is taken off into the inventory (or dropped). No message is shown yet. Salvage and enchanted books in loot come in later tickets. Rune gear built on a vanilla material will need a marker so it is not locked (decided with the `RuneItem` base).
 
 ## Trading
 - Runes, Rune Tools and Rune Armor are freely tradeable; no Job Level requirement to use them. Good gear is meant to be very rare, so trading is fine.
