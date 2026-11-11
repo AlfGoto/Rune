@@ -1,9 +1,12 @@
 package com.alfgoto.rune;
 
+import com.alfgoto.rune.command.DebugSubcommand;
 import com.alfgoto.rune.command.RuneCommand;
 import com.alfgoto.rune.command.Subcommand;
 import com.alfgoto.rune.command.VersionSubcommand;
 import com.alfgoto.rune.foundations.config.RuneConfig;
+import com.alfgoto.rune.foundations.triggers.EventDebug;
+import com.alfgoto.rune.foundations.triggers.Triggers;
 import java.util.List;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,6 +15,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RunePlugin extends JavaPlugin {
 
     private RuneConfig runeConfig;
+    private Triggers triggers;
+    private EventDebug eventDebug;
+
+    public Triggers triggers() {
+        return triggers;
+    }
 
     public RuneConfig runeConfig() {
         return runeConfig;
@@ -21,13 +30,17 @@ public class RunePlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         runeConfig = RuneConfig.load(getConfig(), getLogger());
+        triggers = new Triggers(getServer());
+        eventDebug = new EventDebug(getLogger());
+        getServer().getPluginManager().registerEvents(triggers, this);
+        getServer().getPluginManager().registerEvents(eventDebug, this);
         registerCommands();
         getLogger().info("Rune enabled");
     }
 
     /** The one place where {@code /rune} subcommands are registered. */
     private void registerCommands() {
-        List<Subcommand> subcommands = List.of(new VersionSubcommand(getPluginMeta().getVersion()));
+        List<Subcommand> subcommands = List.of(new VersionSubcommand(getPluginMeta().getVersion()), new DebugSubcommand(eventDebug));
         RuneCommand command = new RuneCommand(subcommands);
         var rune = Objects.requireNonNull(getCommand("rune"), "rune command missing from plugin.yml");
         rune.setExecutor(command);

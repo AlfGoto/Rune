@@ -6,5 +6,8 @@
   "rune.rarity.legendary": "Légendaire",
   "rune.command.no_permission": "Vous n'avez pas la permission de faire cela.",
   "rune.command.usage": "Utilisation : /rune <%s>",
-  "rune.command.version": "Rune version %s"
+  "rune.command.version": "Rune version %s",
+  "rune.command.debug.usage": "Utilisation : /rune debug <events>",
+  "rune.command.debug.events.on": "Journal de debug des événements : activé",
+  "rune.command.debug.events.off": "Journal de debug des événements : désactivé"
 }
