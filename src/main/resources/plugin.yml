@@ -1,0 +1,4 @@
+name: Rune
+version: '${version}'
+main: com.alfgoto.rune.RunePlugin
+api-version: '${minecraftVersion}'
