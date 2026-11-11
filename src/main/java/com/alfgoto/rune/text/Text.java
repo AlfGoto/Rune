@@ -28,9 +28,4 @@ public final class Text {
     public static TranslatableComponent rarityName(Rarity rarity) {
         return translatable(rarity.translationKey(), rarity.englishName()).color(rarity.color());
     }
-
-    /** Any translatable component coloured with a Rarity colour. */
-    public static TranslatableComponent colored(Rarity rarity, TranslatableComponent component) {
-        return component.color(rarity.color());
-    }
 }
