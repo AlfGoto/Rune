@@ -36,33 +36,37 @@ class BlockRevealTest {
         MockBukkit.unmock();
     }
 
+    private BlockReveal reveal() {
+        return plugin.context().get(BlockReveal.class);
+    }
+
     private long displays() {
         return player.getWorld().getEntitiesByClass(BlockDisplay.class).size();
     }
 
     @Test
     void outlinesAreRemovedWhenTimeIsUp() {
-        plugin.blockReveal().reveal(player, List.of(block), 40, Color.AQUA);
-        assertEquals(1, plugin.blockReveal().count(player.getUniqueId()));
+        reveal().reveal(player, List.of(block), 40, Color.AQUA);
+        assertEquals(1, reveal().count(player.getUniqueId()));
         assertEquals(1, displays());
 
         server.getScheduler().performTicks(40);
 
-        assertEquals(0, plugin.blockReveal().count(player.getUniqueId()));
+        assertEquals(0, reveal().count(player.getUniqueId()));
         assertEquals(0, displays());
     }
 
     @Test
     void outlinesAreRemovedWhenPlayerLeaves() {
-        plugin.blockReveal().reveal(player, List.of(block), 400, Color.AQUA);
+        reveal().reveal(player, List.of(block), 400, Color.AQUA);
         player.disconnect();
         assertEquals(0, displays());
     }
 
     @Test
     void outlinesAreRemovedOnDisable() {
-        plugin.blockReveal().reveal(player, List.of(block), 400, Color.AQUA);
-        plugin.blockReveal().clearAll();
+        reveal().reveal(player, List.of(block), 400, Color.AQUA);
+        server.getPluginManager().disablePlugin(plugin);
         assertEquals(0, displays());
     }
 }

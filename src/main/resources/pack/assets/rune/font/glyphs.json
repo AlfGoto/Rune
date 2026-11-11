@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "rune:font/placeholder.png",
+      "height": 8,
+      "ascent": 7,
+      "chars": [""]
+    }
+  ]
+}

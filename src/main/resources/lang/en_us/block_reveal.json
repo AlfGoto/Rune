@@ -1,0 +1,6 @@
+{
+  "rune.reveal.player_only": "Only a player can do this.",
+  "rune.reveal.usage": "Usage: /rune debug reveal <radius>",
+  "rune.reveal.bad_radius": "The radius must be a number from 1 to %s.",
+  "rune.reveal.revealed": "Outlined %s ore blocks for %s seconds."
+}
