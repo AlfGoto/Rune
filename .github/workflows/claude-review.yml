@@ -1,0 +1,145 @@
+name: claude-review
+
+# Automatic Claude review on every non-draft PR.
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+    # Docs-only PRs get no review (they cost 0 Actions minutes).
+    paths-ignore:
+      - 'docs/**'
+      - 'CONTEXT.md'
+      - 'README.md'
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    # Room for long reviews (GitHub's default is 6 h; this just stops a stuck run).
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+      checks: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # Review ↔ fix loop, only for PRs made by the @claude agent (branches "claude/...").
+      # Counted here; the review agent itself posts the "@claude please fix" request,
+      # because the action's App token is revoked once its step ends
+      # (and comments made with GITHUB_TOKEN never trigger other workflows).
+      - id: loop
+        name: Count fix rounds
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          if [[ "$HEAD" != claude/* ]]; then echo "mode=off" >> "$GITHUB_OUTPUT"; exit 0; fi
+          reviews=$(gh api "repos/${{ github.repository }}/pulls/$PR/reviews?per_page=100" --jq '[.[].body]')
+          done=$(jq '[.[] | select(contains("<!-- rune-autofix -->"))] | length' <<< "$reviews")
+          stopped=$(jq '[.[] | select(contains("<!-- rune-autofix-stopped -->"))] | length' <<< "$reviews")
+          echo "round=$((done + 1))" >> "$GITHUB_OUTPUT"
+          # After 3 rounds: post the "loop stopped" message once, then stay quiet on later pushes.
+          if [ "$done" -lt 3 ]; then mode=on; elif [ "$stopped" -eq 0 ]; then mode=capped; else mode=off; fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
+      - id: review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Lets the review run again after the @claude agent pushes a fix.
+          allowed_bots: "claude[bot]"
+          # Lets Claude read the PR's CI checks (gh pr checks).
+          additional_permissions: |
+            actions: read
+            checks: read
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You review a pull request on Rune, a Paper plugin (Java, Gradle) that adds an RPG layer to Minecraft.
+            The PR branch is already checked out in the current directory.
+            First read CONTEXT.md (the glossary), docs/design-decisions.md and docs/adr/,
+            then the docs/ files that matter for this diff (e.g. docs/jobs/ for a Job).
+
+            Check, in this order:
+            0. No unapproved scope: list anything the PR adds that is NOT decided in docs/ or CONTEXT.md
+               and NOT asked for by Alfred in the linked issue (Runes, gear, Quest Types, commands,
+               config keys, menus, dependencies, effects, numbers). Each one = "fix first": remove it or ask Alfred.
+               Your own simplicity ideas are suggestions, never new scope.
+            1. Matches the decisions in docs/ and CONTEXT.md:
+               - Names follow CONTEXT.md, never its "_Avoid_" words (e.g. "Rune" not "enchantment",
+                 "Woodcutting" not "Foraging", "Locked Gear" not "Locked Tool").
+               - Dependency rule (ADR 0003): Content → Gameplay → Foundations. Nothing depends on Visuals.
+               - Content is defined with Java builders; balancing numbers live in the config file, not in code.
+               - Player-facing text uses translation keys (English + French), never hardcoded strings.
+               - Job XP rules: blocks placed by players or made by fluids never give Job XP (obsidian excepted);
+                 the block decides the Job, the weapon decides for kills.
+            2. Bugs (including main-thread blocking, event priority, null items, offline players).
+            3. Exploits: XP or loot farms, item duplication, Capacity bypass, client-side trust.
+            4. Tests: look at the PR's CI checks ONCE (`gh pr checks`, never `--watch`, never wait or poll:
+               this runner is billed while it waits). Pending → just write "CI still running".
+               Important logic (Effects, Stacking, Loadout & Capacity, Job XP, anti-exploit) has a few simple MockBukkit tests.
+               Feature first, tests second: flag test code that is too big, or code changed only to be testable.
+               Missing tests on trivial code is NOT a reason for "fix first".
+            5. docs/ or CONTEXT.md is updated if a decision or a term changed.
+            6. Simplicity: is there a simpler way to do what this PR does?
+               List files or changes not needed for the PR's goal, and code that could be shorter.
+               Suggest the smaller version.
+
+            How to write:
+            - Alfred, who reads your review, has ADHD. Write for that:
+              verdict and the must-fix items first, then the rest.
+              Simple English, short sentences, lists, one idea per line.
+              Bold the key point. No walls of text, no filler.
+            - Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for code issues.
+            - ONE summary comment per PR, ending with a verdict: "✅ good to merge" or "⚠️ fix first".
+              Always write it with `gh pr comment --edit-last --create-if-none` (updates your old summary).
+
+            Don't repeat yourself (this runs on every push):
+            - First read what you already said: `gh pr view --comments` and
+              `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments`.
+            - Never post an inline comment on an issue you already raised.
+            - In the summary: mark old issues as fixed ✅ or still open, add only new ones.
+            - Nothing new and nothing open? Keep the summary short.
+            - Only post GitHub comments. Never approve, never merge.
+
+            Verdict (also your structured output):
+            - "fix" only if something really must change before merge (⚠️ fix first).
+            - "good" if it is fine or only small nits remain (✅ good to merge).
+
+          claude_args: |
+            --model claude-haiku-5-5
+            --max-turns 60
+            --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["good","fix"]}},"required":["verdict"]}'
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments:*),Bash(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews:*),Bash(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments:*)"
+
+      # Fix loop, step 2. The WORKFLOW decides from the verdict (not the model).
+      # A second, tiny Claude step posts the request: it gets a fresh App token,
+      # so its review comment triggers claude.yml (GITHUB_TOKEN events don't trigger workflows,
+      # and the first step's App token is already revoked).
+      - name: Ask @claude to fix (loop)
+        if: >-
+          steps.loop.outputs.mode != 'off' &&
+          steps.review.outputs.structured_output != '' &&
+          fromJSON(steps.review.outputs.structured_output).verdict == 'fix'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "claude[bot]"
+          prompt: |
+            Run exactly ONE shell command, copied character for character, then stop. Do nothing else.
+            ${{ steps.loop.outputs.mode == 'on' && format('gh pr review {0} --comment --body "@claude please fix the open review comments (round {1}/3). Fix what you agree with, then push. If you disagree with a comment, reply to it and leave that part. Nothing left to change? Do not push, just say so. <!-- rune-autofix -->"', github.event.pull_request.number, steps.loop.outputs.round) || format('gh pr review {0} --comment --body "🛑 Review/fix loop stopped after 3 rounds. @AlfGoto please take a look. <!-- rune-autofix-stopped -->"', github.event.pull_request.number) }}
+          claude_args: |
+            --model claude-haiku-5-5
+            --max-turns 3
+            --allowedTools "Bash(gh pr review:*)"
