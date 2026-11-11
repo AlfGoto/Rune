@@ -21,14 +21,4 @@ public interface PlayerStorage {
 
     /** Deletes the value under {@code key}. Does nothing if there is none. */
     void remove(UUID player, String key);
-
-    /** Returns the number stored under {@code key}, or {@code defaultValue} if there is none. */
-    default long getLong(UUID player, String key, long defaultValue) {
-        return get(player, key).map(Long::parseLong).orElse(defaultValue);
-    }
-
-    /** Stores a number under {@code key}. */
-    default void setLong(UUID player, String key, long value) {
-        set(player, key, Long.toString(value));
-    }
 }

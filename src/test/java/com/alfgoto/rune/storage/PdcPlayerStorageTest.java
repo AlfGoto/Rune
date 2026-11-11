@@ -43,15 +43,6 @@ class PdcPlayerStorageTest {
     }
 
     @Test
-    void longHelpers() {
-        PlayerMock player = server.addPlayer();
-        UUID id = player.getUniqueId();
-        assertEquals(7, storage.getLong(id, "job/mining/xp", 7));
-        storage.setLong(id, "job/mining/xp", 1234L);
-        assertEquals(1234L, storage.getLong(id, "job/mining/xp", 0));
-    }
-
-    @Test
     void removeDeletesValue() {
         PlayerMock player = server.addPlayer();
         storage.set(player.getUniqueId(), "k", "v");

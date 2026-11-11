@@ -19,7 +19,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Build Mining + Woodcutting first.
 - Stay on Paper (alternative considered: Fabric + Polymer — rejected for harder version updates and fewer compatible servers).
 - Player data stored in the player's PersistentDataContainer (no external database); storage behind one interface so MySQL can be added later for multi-server networks. Leaderboards use a small cache file.
-- `PlayerStorage` (2026-11-11): string values by key (`get`/`set`/`remove` per player UUID); callers serialize their own data. The PDC implementation needs the player online (Paper cannot read an offline player's PDC).
+- `PlayerStorage` (2026-11-11): string values by key (`get`/`set`/`remove` per player UUID); callers serialize their own data. The PDC implementation needs the player online (Paper cannot read an offline player's PDC). PDC calls must run on the main thread.
 
 ## Jobs
 - 12 Jobs: Mining (pickaxe blocks), Excavation (shovel blocks + archaeology), Woodcutting (axe blocks + leaves), Farming (incl. herbs, cooking, pumpkins, melons, cocoa, bamboo), Ranching (husbandry, taming, bees incl. bee nests and beehives), Fishing (incl. ocean loot), Combat (melee, shield, hunting), Archery, Smithing (repairs, Rune Tool and Rune Armor crafting), Alchemy, Adventuring (biomes, structures, Nether/End, trading), Runesmithing.

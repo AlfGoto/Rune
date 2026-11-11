@@ -14,6 +14,8 @@ import org.bukkit.plugin.Plugin;
  * player file, so it survives relog and server restart.
  *
  * <p>Paper cannot read the container of an offline player: every call needs the player online.
+ *
+ * <p>The PDC is not thread-safe: every call must run on the main server thread, never async.
  */
 public final class PdcPlayerStorage implements PlayerStorage {
 
