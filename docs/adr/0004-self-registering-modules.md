@@ -32,6 +32,9 @@ public final class BlockTrackingModule implements RuneModule {
 - Another module reads it with `ctx.get(Type.class)` and lists the provider in `dependsOn()`.
 - `ModuleLoader` enables modules in dependency order (ties sorted by class name, so the order is always the same). A missing dependency or a cycle stops the plugin with a clear message.
 - No getters on `RunePlugin` (no `plugin.blockTracker()`): use services.
+- **Services follow ADR 0003's direction.** A Gameplay module provides the framework (often an empty registry). Content modules `dependsOn` it and fill it. A Gameplay module never imports `content.*`. Example: `JobsModule` provides an empty `JobRegistry`, and `content.jobs.CoreJobsModule` registers Mining and Woodcutting into it.
+- **One service type per thing.** Don't use a generic class like `Registry` as the service key. Wrap it in a named type (`JobRegistry`, `RuneRegistry`…) so two registries never clash.
+- **Read registries when they're used, not at enable time.** Content modules add entries after the framework module is enabled, so a command or listener that copies `all()` in `enable` misses them.
 
 ### 3. Commands
 - `ctx.subcommand(...)` adds `/rune <name>`.
