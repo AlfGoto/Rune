@@ -7,9 +7,5 @@
   "rune.command.no_permission": "You do not have permission to do this.",
   "rune.command.usage": "Usage: /rune <%s>",
   "rune.command.version": "Rune version %s",
-  "rune.command.player_only": "Only a player can do this.",
-  "rune.command.debug.usage": "Usage: /rune debug <%s>",
-  "rune.command.debug.block.none": "You are not looking at a block.",
-  "rune.command.debug.block.untagged": "%s at %s: no tags",
-  "rune.command.debug.block.tags": "%s at %s: %s"
+  "rune.command.debug_usage": "Usage: /rune debug <%s>"
 }

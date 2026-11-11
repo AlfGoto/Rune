@@ -98,14 +98,14 @@ class BlockTrackingTest {
     }
 
     @Test
-    void debugCommandAsksForBlockArgumentAndPlayer() {
-        var debug = new com.alfgoto.rune.command.DebugSubcommand(tracker);
+    void debugToolIsCalledBlocksAndNeedsABlockInView() {
+        var debug = new BlocksDebug(tracker);
+        assertEquals("blocks", debug.name());
         var player = MockBukkit.getMock().addPlayer();
         debug.execute(player, List.of());
         assertEquals(
-                "rune.command.debug.usage",
+                "rune.block_tracking.debug.none",
                 ((net.kyori.adventure.text.TranslatableComponent) player.nextComponentMessage()).key());
-        assertEquals(List.of("block"), debug.complete(player, List.of("b")));
     }
 
     @Test
