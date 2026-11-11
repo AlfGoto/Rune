@@ -1,12 +1,4 @@
 {
-  "rune.rarity.common": "Common",
-  "rune.rarity.uncommon": "Uncommon",
-  "rune.rarity.rare": "Rare",
-  "rune.rarity.epic": "Epic",
-  "rune.rarity.legendary": "Legendary",
-  "rune.command.no_permission": "You do not have permission to do this.",
-  "rune.command.usage": "Usage: /rune <%s>",
-  "rune.command.version": "Rune version %s",
   "rune.job.mining": "Mining",
   "rune.job.woodcutting": "Woodcutting",
   "rune.command.xp.header": "Job XP of %s",

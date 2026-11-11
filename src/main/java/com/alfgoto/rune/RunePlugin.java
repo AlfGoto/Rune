@@ -1,65 +1,69 @@
 package com.alfgoto.rune;
 
+import com.alfgoto.rune.command.DebugCommand;
 import com.alfgoto.rune.command.RuneCommand;
-import com.alfgoto.rune.command.Subcommand;
-import com.alfgoto.rune.command.LevelSubcommand;
-import com.alfgoto.rune.command.VersionSubcommand;
-import com.alfgoto.rune.command.XpSubcommand;
-import com.alfgoto.rune.content.jobs.CoreJobs;
 import com.alfgoto.rune.foundations.config.RuneConfig;
-import com.alfgoto.rune.foundations.registry.Registry;
-import com.alfgoto.rune.gameplay.jobs.Job;
-import com.alfgoto.rune.gameplay.jobs.JobProgress;
-import com.alfgoto.rune.gameplay.jobs.LevelCurve;
+import com.alfgoto.rune.foundations.module.ModuleLoader;
+import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.storage.PdcPlayerStorage;
-import com.alfgoto.rune.visuals.resourcepack.ResourcePackBuilder;
-import java.io.IOException;
+import com.alfgoto.rune.storage.PlayerStorage;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/** Plugin entry point. */
+/**
+ * Plugin entry point. Do not add features here: write a {@link RuneModule} instead (ADR 0004).
+ * This class only sets up the shared Foundations and enables every module.
+ */
 public class RunePlugin extends JavaPlugin {
 
-    private RuneConfig runeConfig;
+    private RuneContext context;
+    private List<RuneModule> modules = List.of();
+
+    public RuneContext context() {
+        return context;
+    }
 
     public RuneConfig runeConfig() {
-        return runeConfig;
+        return context.config();
+    }
+
+    /** Enabled modules, in enable order. */
+    public List<RuneModule> modules() {
+        return modules;
     }
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        runeConfig = RuneConfig.load(getConfig(), getLogger());
-        buildResourcePack();
-        registerCommands();
-        getLogger().info("Rune enabled");
-    }
+        RuneConfig config = RuneConfig.load(getConfig(), getLogger());
+        RuneCommand command = new RuneCommand(List.of());
+        DebugCommand debug = new DebugCommand();
+        command.register(debug);
+        context = new RuneContext(this, config, command, debug);
+        context.provide(PlayerStorage.class, new PdcPlayerStorage(this));
 
-    /** Generates the resource pack zip in the plugin folder at startup. */
-    private void buildResourcePack() {
-        try {
-            var result = ResourcePackBuilder.build(getDataFolder().toPath().resolve("rune-pack.zip"));
-            getLogger().info("Resource pack built: " + result.zip().getFileName() + " (SHA-1 " + result.sha1() + ")");
-        } catch (IOException e) {
-            getLogger().severe("Could not build the resource pack: " + e.getMessage());
+        modules = ModuleLoader.load(getClassLoader());
+        for (RuneModule module : modules) {
+            module.enable(context);
         }
-    }
 
-    /** The one place where {@code /rune} subcommands are registered. */
-    private void registerCommands() {
-        Registry<Job> jobs = CoreJobs.registry();
-        JobProgress progress = new JobProgress(
-                new PdcPlayerStorage(this),
-                new LevelCurve(runeConfig.levelCurveBase(), runeConfig.levelCurveExponent()),
-                new LevelCurve(runeConfig.accountCurveBase(), runeConfig.accountCurveExponent()));
-        List<Subcommand> subcommands = List.of(
-                new VersionSubcommand(getPluginMeta().getVersion()),
-                new XpSubcommand(jobs, progress),
-                new LevelSubcommand(jobs, progress));
-        RuneCommand command = new RuneCommand(subcommands);
         var rune = Objects.requireNonNull(getCommand("rune"), "rune command missing from plugin.yml");
         rune.setExecutor(command);
         rune.setTabCompleter(command);
+        getLogger().info("Rune enabled (" + modules.size() + " modules)");
+    }
+
+    @Override
+    public void onDisable() {
+        for (RuneModule module : modules.reversed()) {
+            try {
+                module.disable();
+            } catch (RuntimeException e) {
+                getLogger().log(Level.SEVERE, "Could not disable " + module.getClass().getSimpleName(), e);
+            }
+        }
     }
 }
