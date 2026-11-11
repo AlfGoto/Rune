@@ -1,7 +1,5 @@
 package com.alfgoto.rune.gameplay.jobs;
 
-import com.alfgoto.rune.command.LevelSubcommand;
-import com.alfgoto.rune.command.XpSubcommand;
 import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;

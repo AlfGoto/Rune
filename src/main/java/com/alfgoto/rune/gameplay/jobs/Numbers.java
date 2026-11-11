@@ -1,6 +1,4 @@
-package com.alfgoto.rune.command;
-
-import com.alfgoto.rune.gameplay.jobs.LevelCurve;
+package com.alfgoto.rune.gameplay.jobs;
 import java.util.Locale;
 
 /** Number parsing and display for admin commands. */

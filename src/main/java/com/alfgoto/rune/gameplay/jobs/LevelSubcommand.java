@@ -1,8 +1,7 @@
-package com.alfgoto.rune.command;
+package com.alfgoto.rune.gameplay.jobs;
 
+import com.alfgoto.rune.command.Subcommand;
 import com.alfgoto.rune.foundations.registry.Registry;
-import com.alfgoto.rune.gameplay.jobs.Job;
-import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;

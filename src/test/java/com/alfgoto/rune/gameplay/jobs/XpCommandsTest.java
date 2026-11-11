@@ -1,13 +1,10 @@
-package com.alfgoto.rune.command;
+package com.alfgoto.rune.gameplay.jobs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.content.jobs.CoreJobs;
-import com.alfgoto.rune.gameplay.jobs.JobProgress;
-import com.alfgoto.rune.gameplay.jobs.JobRegistry;
-import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import com.alfgoto.rune.storage.PdcPlayerStorage;
 import java.util.List;
 import net.kyori.adventure.text.Component;
