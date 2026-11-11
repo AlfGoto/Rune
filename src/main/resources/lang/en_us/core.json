@@ -7,7 +7,5 @@
   "rune.command.no_permission": "You do not have permission to do this.",
   "rune.command.usage": "Usage: /rune <%s>",
   "rune.command.version": "Rune version %s",
-  "rune.command.debug.usage": "Usage: /rune debug <events>",
-  "rune.command.debug.events.on": "Event debug log: on",
-  "rune.command.debug.events.off": "Event debug log: off"
+  "rune.command.debug_usage": "Usage: /rune debug <%s>"
 }

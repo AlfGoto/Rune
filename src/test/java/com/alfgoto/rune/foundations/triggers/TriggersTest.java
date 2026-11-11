@@ -3,7 +3,6 @@ package com.alfgoto.rune.foundations.triggers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.alfgoto.rune.RunePlugin;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
@@ -16,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import org.mockbukkit.mockbukkit.entity.PlayerMock;
 class TriggersTest {
 
     private ServerMock server;
-    private RunePlugin plugin;
+    private Triggers triggers;
     private PlayerMock player;
     private final List<RuneBlockBreakEvent> breaks = new ArrayList<>();
     private final List<RuneClickEvent> clicks = new ArrayList<>();
@@ -34,8 +34,10 @@ class TriggersTest {
     @BeforeEach
     void setUp() {
         server = MockBukkit.mock();
-        plugin = MockBukkit.load(RunePlugin.class);
+        Plugin plugin = MockBukkit.createMockPlugin();
+        triggers = new Triggers(server);
         player = server.addPlayer();
+        server.getPluginManager().registerEvents(triggers, plugin);
         server.getPluginManager().registerEvents(new Collector(), plugin);
     }
 
@@ -67,7 +69,7 @@ class TriggersTest {
     @Test
     void breakInsideEffectIsEffect() {
         player.getInventory().setItemInMainHand(new ItemStack(Material.WOODEN_PICKAXE));
-        plugin.triggers().asEffect(() -> server.getPluginManager().callEvent(new BlockBreakEvent(stone(), player)));
+        triggers.asEffect(() -> server.getPluginManager().callEvent(new BlockBreakEvent(stone(), player)));
         server.getPluginManager().callEvent(new BlockBreakEvent(stone(), player));
         assertEquals(BreakCause.EFFECT, breaks.get(0).cause());
         assertEquals(BreakCause.TOOL, breaks.get(1).cause());

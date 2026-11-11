@@ -1,10 +1,9 @@
-package com.alfgoto.rune.command;
+package com.alfgoto.rune.foundations.triggers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.alfgoto.rune.foundations.triggers.EventDebug;
 import java.util.List;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -15,18 +14,18 @@ import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockbukkit.mockbukkit.entity.PlayerMock;
 
-class DebugSubcommandTest {
+class EventsDebugTest {
 
     private PlayerMock admin;
     private EventDebug debug;
-    private DebugSubcommand command;
+    private EventsDebug command;
 
     @BeforeEach
     void setUp() {
         ServerMock server = MockBukkit.mock();
         admin = server.addPlayer();
         debug = new EventDebug(Logger.getLogger("test"));
-        command = new DebugSubcommand(debug);
+        command = new EventsDebug(debug);
     }
 
     @AfterEach
@@ -35,27 +34,17 @@ class DebugSubcommandTest {
     }
 
     @Test
-    void eventsToggles() {
-        command.execute(admin, List.of("events"));
-        assertTrue(debug.enabled());
-        assertEquals(
-                "rune.command.debug.events.on",
-                ((TranslatableComponent) admin.nextComponentMessage()).key());
-        command.execute(admin, List.of("events"));
-        assertFalse(debug.enabled());
+    void nameIsEvents() {
+        assertEquals("events", command.name());
     }
 
     @Test
-    void badArgsShowUsage() {
+    void toggles() {
+        command.execute(admin, List.of());
+        assertTrue(debug.enabled());
+        assertEquals("rune.debug.events.on", ((TranslatableComponent) admin.nextComponentMessage()).key());
         command.execute(admin, List.of());
         assertFalse(debug.enabled());
-        assertEquals(
-                "rune.command.debug.usage",
-                ((TranslatableComponent) admin.nextComponentMessage()).key());
-    }
-
-    @Test
-    void completesEvents() {
-        assertEquals(List.of("events"), command.complete(admin, List.of("e")));
+        assertEquals("rune.debug.events.off", ((TranslatableComponent) admin.nextComponentMessage()).key());
     }
 }
