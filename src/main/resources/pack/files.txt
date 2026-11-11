@@ -1,0 +1,5 @@
+assets/rune/items/test_rune.json
+assets/rune/models/item/test_rune.json
+assets/rune/textures/item/test_rune.png
+assets/rune/font/glyphs.json
+assets/rune/textures/font/placeholder.png
