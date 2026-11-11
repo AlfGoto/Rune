@@ -1,0 +1,5 @@
+{
+  "rune.command.no_permission": "You do not have permission to do this.",
+  "rune.command.usage": "Usage: /rune <%s>",
+  "rune.command.version": "Rune version %s"
+}
