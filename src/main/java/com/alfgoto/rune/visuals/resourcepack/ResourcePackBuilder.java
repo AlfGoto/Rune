@@ -1,5 +1,8 @@
 package com.alfgoto.rune.visuals.resourcepack;
 
+import com.alfgoto.rune.text.LangFiles;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +20,8 @@ import java.util.zip.ZipOutputStream;
  * Builds the resource pack zip.
  *
  * <p>Content: {@code pack.mcmeta}, every asset listed in {@code /pack/files.txt} (models, textures,
- * font glyphs) and the plugin language files {@code /lang/*.json}, which become
- * {@code assets/rune/lang/*.json}. The zip is deterministic: same input, same bytes, same SHA-1.
+ * font glyphs) and the plugin language files {@code /lang/<language>/*.json}, merged into
+ * {@code assets/rune/lang/<language>.json} (see {@link LangFiles}). The zip is deterministic: same input, same bytes, same SHA-1.
  */
 public final class ResourcePackBuilder {
 
@@ -34,7 +37,8 @@ public final class ResourcePackBuilder {
             """;
 
     static final String ASSET_INDEX = "/pack/files.txt";
-    static final List<String> LANGUAGES = List.of("en_us", "fr_fr");
+
+    private static final Gson PRETTY = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private ResourcePackBuilder() {}
 
@@ -62,8 +66,9 @@ public final class ResourcePackBuilder {
                     add(zip, path, resource("/pack/" + path));
                 }
             }
-            for (String language : LANGUAGES) {
-                add(zip, "assets/rune/lang/" + language + ".json", resource("/lang/" + language + ".json"));
+            for (String language : LangFiles.LANGUAGES) {
+                String json = PRETTY.toJson(LangFiles.merged(language)) + "\n";
+                add(zip, "assets/rune/lang/" + language + ".json", json.getBytes(StandardCharsets.UTF_8));
             }
         }
         return bytes.toByteArray();

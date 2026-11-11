@@ -6,5 +6,6 @@
   "rune.rarity.legendary": "Légendaire",
   "rune.command.no_permission": "Vous n'avez pas la permission de faire cela.",
   "rune.command.usage": "Utilisation : /rune <%s>",
-  "rune.command.version": "Rune version %s"
+  "rune.command.version": "Rune version %s",
+  "rune.command.debug_usage": "Utilisation : /rune debug <%s>"
 }

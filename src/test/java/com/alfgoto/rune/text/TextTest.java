@@ -1,15 +1,10 @@
 package com.alfgoto.rune.text;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
@@ -18,13 +13,8 @@ import org.junit.jupiter.api.Test;
 
 class TextTest {
 
-    private static JsonObject load(String file) throws IOException {
-        try (var in = TextTest.class.getResourceAsStream("/lang/" + file)) {
-            assertNotNull(in, file);
-            try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                return new Gson().fromJson(reader, JsonObject.class);
-            }
-        }
+    private static JsonObject load(String language) throws IOException {
+        return LangFiles.merged(language);
     }
 
     @Test
@@ -70,12 +60,12 @@ class TextTest {
 
     @Test
     void languageFilesHaveTheSameKeys() throws IOException {
-        assertEquals(load("en_us.json").keySet(), load("fr_fr.json").keySet());
+        assertEquals(load("en_us").keySet(), load("fr_fr").keySet());
     }
 
     @Test
     void englishFileMatchesRarityFallbacks() throws IOException {
-        JsonObject en = load("en_us.json");
+        JsonObject en = load("en_us");
         for (Rarity rarity : Rarity.values()) {
             assertEquals(rarity.englishName(), en.get(rarity.translationKey()).getAsString());
         }
