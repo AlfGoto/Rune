@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Minecraft version in gradle.properties (ADR 0001), tracked through Paper API releases",
+      "managerFilePatterns": ["/^gradle\\.properties$/"],
+      "matchStrings": ["minecraftVersion=(?<currentValue>\\S+)"],
+      "depNameTemplate": "io.papermc.paper:paper-api",
+      "datasourceTemplate": "maven",
+      "registryUrlTemplate": "https://repo.papermc.io/repository/maven-public/",
+      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)\\.build\\..+$"
+    }
+  ]
+}
