@@ -39,6 +39,7 @@ public final class BlockTrackingModule implements RuneModule {
 ### 3. Commands
 - `ctx.subcommand(...)` adds `/rune <name>`.
 - `ctx.debug(...)` adds `/rune debug <name>`. Each module brings its own debug tool with its own name (`blocks`, `events`, `reveal`…). Nobody owns a shared `DebugSubcommand`.
+- **Commands live with their feature.** The `command` package is only the `/rune` router (`Subcommand`, `RuneCommand`, `DebugCommand`, `/rune version`). Any module may import it, and it never imports a feature. A feature's subcommands and debug tools go in the feature's own package (`gameplay.jobs.XpSubcommand`, `foundations.blocktracking.BlocksDebug`). Putting them in `command` creates a package cycle.
 
 ### 4. Language files: one per module
 - Translation keys live in `src/main/resources/lang/<language>/<module>.json` (e.g. `lang/en_us/mining.json` and `lang/fr_fr/mining.json`).
