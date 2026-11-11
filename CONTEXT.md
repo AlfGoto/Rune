@@ -23,7 +23,7 @@ _Avoid_: Foraging, Lumberjack
 
 **Job XP** — Points earned in a single Job. Not to be confused with vanilla XP.
 
-**Job Level** — A Job's level, derived from its Job XP. Uncapped; unlocks get rarer at high levels. Job Levels give recipes, Blueprints and Rune Caches, never passive stats.
+**Job Level** — A Job's level, derived from its Job XP. No design cap (technical cap: 10 000); unlocks get rarer at high levels. Job Levels give recipes, Blueprints and Rune Caches, never passive stats.
 
 **Account XP** — A separate pool fed by every Job XP gain, multiplied by that Job's **Account Rate** (harder Jobs feed it faster).
 

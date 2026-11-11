@@ -1,0 +1,15 @@
+{
+  "rune.job.mining": "Mining",
+  "rune.job.woodcutting": "Woodcutting",
+  "rune.command.xp.header": "Job XP of %s",
+  "rune.command.xp.job": "%s: level %s (%s / %s XP)",
+  "rune.command.xp.account": "Account: level %s (%s / %s XP)",
+  "rune.command.xp.usage": "Usage: /rune xp [player] | /rune xp <set|add> <job> <amount>",
+  "rune.command.xp.changed": "%s XP is now %s (Account XP: %s)",
+  "rune.command.level.usage": "Usage: /rune level set <job> <level>",
+  "rune.command.level.changed": "%s is now level %s",
+  "rune.command.unknown_job": "Unknown Job: %s",
+  "rune.command.invalid_number": "Invalid number: %s",
+  "rune.command.player_only": "Only a player can use this.",
+  "rune.command.player_not_found": "Player not found: %s"
+}
