@@ -3,6 +3,7 @@ package com.alfgoto.rune;
 import com.alfgoto.rune.command.RuneCommand;
 import com.alfgoto.rune.command.Subcommand;
 import com.alfgoto.rune.command.VersionSubcommand;
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import java.util.List;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,8 +11,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 /** Plugin entry point. */
 public class RunePlugin extends JavaPlugin {
 
+    private RuneConfig runeConfig;
+
+    public RuneConfig runeConfig() {
+        return runeConfig;
+    }
+
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        runeConfig = RuneConfig.load(getConfig(), getLogger());
         registerCommands();
         getLogger().info("Rune enabled");
     }

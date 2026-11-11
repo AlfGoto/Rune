@@ -16,7 +16,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Admin commands (2026-11-11): one root `/rune` command, permission `rune.admin` (default op). Each subcommand implements `Subcommand` and is registered in one place (`RunePlugin.registerCommands`). Messages are translatable components with English fallback; keys live in `lang/en_us.json` and `lang/fr_fr.json`. First subcommand: `/rune version`.
 - Repo: AlfGoto/Rune, public (GitHub Actions free and unlimited).
 - PR preview: comment `/preview` on a PR → GitHub Action builds the plugin, starts Paper and exposes it through a free playit.gg tunnel with a fixed address. One preview slot: the latest `/preview` replaces the previous one; the bot comments which PR is live. Auto-stops after 10 min with no players, 1 h max.
-- Code: a generic Job framework first; each Job is a definition (actions, tools, Runes, quest pool). Balancing lives in config.
+- Code: a generic Job framework first; each Job is a definition (actions, tools, Runes, quest pool). Balancing lives in config. A bad config value logs a clear error and falls back to the default (Registry module).
 - Content (Jobs, Runes, gear, Quests, loot) is defined with Java builders; only balancing numbers live in the config file (2026-11-11, see ADR 0002).
 - Build Mining + Woodcutting first.
 - Stay on Paper (alternative considered: Fabric + Polymer — rejected for harder version updates and fewer compatible servers).
@@ -27,7 +27,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - 12 Jobs: Mining (pickaxe blocks), Excavation (shovel blocks + archaeology), Woodcutting (axe blocks + leaves), Farming (incl. herbs, cooking, pumpkins, melons, cocoa, bamboo), Ranching (husbandry, taming, bees incl. bee nests and beehives), Fishing (incl. ocean loot), Combat (melee, shield, hunting), Archery, Smithing (repairs, Rune Tool and Rune Armor crafting), Alchemy, Adventuring (biomes, structures, Nether/End, trading), Runesmithing.
 - Dropped: Crafting, Building, Engineering (exploitable).
 - Job XP weighted per action. Each Job has an Account Rate feeding Account XP. Mining = 1.0, the reference Job. Woodcutting = 0.8.
-- Job Level uncapped. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config).
+- Job Level uncapped. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config: `jobs.level-curve.base` / `.exponent`).
 - Job Levels give recipes, Blueprints and Rune Caches, never passive stats. Milestone Cache every 5 levels.
 - Each Job Action feeds exactly one Job. For blocks, the block decides (a pickaxe on wood → Woodcutting XP). For kills, the weapon decides: bow/crossbow kill → Archery; sword/axe kill → Combat. Ranching never gets XP from kills (only breeding, taming, shearing, milking, bees).
 - A Job's block scope starts from a vanilla tool tag (pickaxe, shovel, axe), with explicit carve-outs where another Job owns the block (e.g. axe-tag crops → Farming) and explicit additions (e.g. leaves → Woodcutting).
@@ -113,7 +113,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 ## Quests
 - Exactly 3 active, each from a random eligible Job; completing one draws a new one.
 - A Quest = a Quest Type (per Job: Collect, Place, Depth, Tool, Variety, Reforestation…) × a Quest Tier. Code: one generic abstraction for every Job — Jobs only declare their Quest Types (objective + base size); Tiers, weighting and rewards are shared.
-- Quest Tiers = the 5 Rarities (same colours). The Tier multiplies the objective (×1 / ×1.5 / ×2 / ×3 / ×5, config) and improves the reward odds.
+- Quest Tiers = the 5 Rarities (same colours). The Tier multiplies the objective (×1 / ×1.5 / ×2 / ×3 / ×5, config: `quests.tier-multipliers`) and improves the reward odds.
 - Tier draw is weighted by the player's Job Level: the higher the level, the more the odds lean towards hard Tiers. Hard gates: Epic needs Job Level 15, Legendary needs 25.
 - Eligibility: min Job Level 1 for gathering Jobs, 2 for crafting-type Jobs.
 - No automatic reset. 1 Reroll Token per world day, max 3 held.
