@@ -8,7 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/** {@code /rune where}: debug command, lists the Places the player is in. */
+/** {@code /rune where}: lists the Places the player is in. */
 public final class WhereSubcommand implements Subcommand {
 
     private final PlaceDetector detector;

@@ -3,6 +3,7 @@ package com.alfgoto.rune.gameplay.places;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.generator.structure.GeneratedStructure;
@@ -27,7 +28,10 @@ public final class BukkitWorldProbe implements WorldProbe {
         for (GeneratedStructure structure : world.getStructures(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
             for (StructurePiece piece : structure.getPieces()) {
                 if (piece.getBoundingBox().contains(x, y, z)) {
-                    found.add(Registry.STRUCTURE.getKey(structure.getStructure()).toString());
+                    NamespacedKey key = Registry.STRUCTURE.getKey(structure.getStructure());
+                    if (key != null) {
+                        found.add(key.toString());
+                    }
                     break;
                 }
             }

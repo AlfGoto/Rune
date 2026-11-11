@@ -1,7 +1,8 @@
-package com.alfgoto.rune.gameplay.places;
+package com.alfgoto.rune.content.places;
 
 import com.alfgoto.rune.command.WhereSubcommand;
-import com.alfgoto.rune.content.places.CorePlaces;
+import com.alfgoto.rune.gameplay.places.BukkitWorldProbe;
+import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.google.auto.service.AutoService;
