@@ -16,6 +16,10 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:$minecraftVersion.build.+")
 
+    // Modules register themselves with @AutoService(RuneModule.class) (ADR 0004).
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
+    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
+
     testImplementation("io.papermc.paper:paper-api:$minecraftVersion.build.+")
 
     // MockBukkit artifact name follows the Minecraft version (v26.3 for 26.3).

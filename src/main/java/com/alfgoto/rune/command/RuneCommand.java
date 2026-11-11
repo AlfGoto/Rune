@@ -20,8 +20,13 @@ public final class RuneCommand implements CommandExecutor, TabCompleter {
     private final Map<String, Subcommand> subcommands = new TreeMap<>();
 
     public RuneCommand(List<Subcommand> subcommands) {
-        for (Subcommand subcommand : subcommands) {
-            this.subcommands.put(subcommand.name(), subcommand);
+        subcommands.forEach(this::register);
+    }
+
+    /** Adds {@code /rune <name>}. Modules call this through {@code RuneContext.subcommand(...)}. */
+    public void register(Subcommand subcommand) {
+        if (subcommands.putIfAbsent(subcommand.name(), subcommand) != null) {
+            throw new IllegalArgumentException("/rune " + subcommand.name() + " is registered twice");
         }
     }
 

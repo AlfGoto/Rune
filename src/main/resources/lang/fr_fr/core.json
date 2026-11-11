@@ -7,10 +7,5 @@
   "rune.command.no_permission": "Vous n'avez pas la permission de faire cela.",
   "rune.command.usage": "Utilisation : /rune <%s>",
   "rune.command.version": "Rune version %s",
-  "rune.command.player_only": "Seul un joueur peut faire cela.",
-  "rune.command.where.none": "Vous n'êtes dans aucun Lieu.",
-  "rune.command.where.header": "Vous êtes dans :",
-  "rune.place.lush_caves": "Grottes luxuriantes",
-  "rune.place.taiga": "Taïga",
-  "rune.place.mineshaft": "Mine abandonnée"
+  "rune.command.debug_usage": "Utilisation : /rune debug <%s>"
 }
