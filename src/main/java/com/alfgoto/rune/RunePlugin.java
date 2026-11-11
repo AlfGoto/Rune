@@ -1,45 +1,69 @@
 package com.alfgoto.rune;
 
+import com.alfgoto.rune.command.DebugCommand;
 import com.alfgoto.rune.command.RuneCommand;
-import com.alfgoto.rune.command.Subcommand;
-import com.alfgoto.rune.command.VersionSubcommand;
 import com.alfgoto.rune.foundations.config.RuneConfig;
-import com.alfgoto.rune.overrides.LockedGearListener;
-import com.alfgoto.rune.overrides.NoEnchantingListener;
+import com.alfgoto.rune.foundations.module.ModuleLoader;
+import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.storage.PdcPlayerStorage;
+import com.alfgoto.rune.storage.PlayerStorage;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/** Plugin entry point. */
+/**
+ * Plugin entry point. Do not add features here: write a {@link RuneModule} instead (ADR 0004).
+ * This class only sets up the shared Foundations and enables every module.
+ */
 public class RunePlugin extends JavaPlugin {
 
-    private RuneConfig runeConfig;
+    private RuneContext context;
+    private List<RuneModule> modules = List.of();
+
+    public RuneContext context() {
+        return context;
+    }
 
     public RuneConfig runeConfig() {
-        return runeConfig;
+        return context.config();
+    }
+
+    /** Enabled modules, in enable order. */
+    public List<RuneModule> modules() {
+        return modules;
     }
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        runeConfig = RuneConfig.load(getConfig(), getLogger());
-        registerCommands();
-        registerOverrides();
-        getLogger().info("Rune enabled");
-    }
+        RuneConfig config = RuneConfig.load(getConfig(), getLogger());
+        RuneCommand command = new RuneCommand(List.of());
+        DebugCommand debug = new DebugCommand();
+        command.register(debug);
+        context = new RuneContext(this, config, command, debug);
+        context.provide(PlayerStorage.class, new PdcPlayerStorage(this));
 
-    /** Vanilla Overrides: enchanting removed, Locked Gear. */
-    private void registerOverrides() {
-        getServer().getPluginManager().registerEvents(new NoEnchantingListener(), this);
-        getServer().getPluginManager().registerEvents(new LockedGearListener(), this);
-    }
+        modules = ModuleLoader.load(getClassLoader());
+        for (RuneModule module : modules) {
+            module.enable(context);
+        }
 
-    /** The one place where {@code /rune} subcommands are registered. */
-    private void registerCommands() {
-        List<Subcommand> subcommands = List.of(new VersionSubcommand(getPluginMeta().getVersion()));
-        RuneCommand command = new RuneCommand(subcommands);
         var rune = Objects.requireNonNull(getCommand("rune"), "rune command missing from plugin.yml");
         rune.setExecutor(command);
         rune.setTabCompleter(command);
+        getLogger().info("Rune enabled (" + modules.size() + " modules)");
+    }
+
+    @Override
+    public void onDisable() {
+        for (RuneModule module : modules.reversed()) {
+            try {
+                module.disable();
+            } catch (RuntimeException e) {
+                getLogger().log(Level.SEVERE, "Could not disable " + module.getClass().getSimpleName(), e);
+            }
+        }
     }
 }
