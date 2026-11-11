@@ -28,7 +28,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - 12 Jobs: Mining (pickaxe blocks), Excavation (shovel blocks + archaeology), Woodcutting (axe blocks + leaves), Farming (incl. herbs, cooking, pumpkins, melons, cocoa, bamboo), Ranching (husbandry, taming, bees incl. bee nests and beehives), Fishing (incl. ocean loot), Combat (melee, shield, hunting), Archery, Smithing (repairs, Rune Tool and Rune Armor crafting), Alchemy, Adventuring (biomes, structures, Nether/End, trading), Runesmithing.
 - Dropped: Crafting, Building, Engineering (exploitable).
 - Job XP weighted per action. Each Job has an Account Rate feeding Account XP. Mining = 1.0, the reference Job. Woodcutting = 0.8.
-- Job Level uncapped. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config: `jobs.level-curve.base` / `.exponent`).
+- Job Level has no design cap. Technical cap: levels are read up to 10 000 (`LevelCurve.MAX_LEVEL`) so the level loop stays short. One shared curve for all Jobs: XP to next level = `50 × L^1.3` (config: `jobs.level-curve.base` / `.exponent`).
 - Job Levels give recipes, Blueprints and Rune Caches, never passive stats. Milestone Cache every 5 levels.
 - Each Job Action feeds exactly one Job. For blocks, the block decides (a pickaxe on wood → Woodcutting XP). For kills, the weapon decides: bow/crossbow kill → Archery; sword/axe kill → Combat. Ranching never gets XP from kills (only breeding, taming, shearing, milking, bees).
 - A Job's block scope starts from a vanilla tool tag (pickaxe, shovel, axe), with explicit carve-outs where another Job owns the block (e.g. axe-tag crops → Farming) and explicit additions (e.g. leaves → Woodcutting).

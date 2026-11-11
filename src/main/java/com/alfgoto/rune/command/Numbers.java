@@ -1,12 +1,10 @@
 package com.alfgoto.rune.command;
 
+import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import java.util.Locale;
 
 /** Number parsing and display for admin commands. */
 final class Numbers {
-
-    /** Largest level a command accepts: keeps the level loop short. */
-    static final int MAX_LEVEL = 10_000;
 
     private Numbers() {}
 
@@ -20,11 +18,11 @@ final class Numbers {
         }
     }
 
-    /** A level from 1 to {@link #MAX_LEVEL}, or null if the text is not one. */
+    /** A level from 1 to {@link LevelCurve#MAX_LEVEL}, or null if the text is not one. */
     static Integer parseLevel(String text) {
         try {
             int value = Integer.parseInt(text);
-            return value >= 1 && value <= MAX_LEVEL ? value : null;
+            return value >= 1 && value <= LevelCurve.MAX_LEVEL ? value : null;
         } catch (NumberFormatException e) {
             return null;
         }
