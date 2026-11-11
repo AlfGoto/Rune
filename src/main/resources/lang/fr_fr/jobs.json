@@ -10,6 +10,5 @@
   "rune.command.level.changed": "%s est maintenant niveau %s",
   "rune.command.unknown_job": "Métier inconnu : %s",
   "rune.command.invalid_number": "Nombre invalide : %s",
-  "rune.command.player_only": "Seul un joueur peut faire cela.",
   "rune.command.player_not_found": "Joueur introuvable : %s"
 }

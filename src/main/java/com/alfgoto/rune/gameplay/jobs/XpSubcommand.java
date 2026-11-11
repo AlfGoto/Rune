@@ -45,7 +45,7 @@ public final class XpSubcommand implements Subcommand {
         Player target;
         if (args.isEmpty()) {
             if (!(sender instanceof Player self)) {
-                sender.sendMessage(error("rune.command.player_only", "Only a player can use this."));
+                sender.sendMessage(error("rune.command.player_only", "Only a player can do this."));
                 return;
             }
             target = self;
@@ -86,7 +86,7 @@ public final class XpSubcommand implements Subcommand {
             return;
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(error("rune.command.player_only", "Only a player can use this."));
+            sender.sendMessage(error("rune.command.player_only", "Only a player can do this."));
             return;
         }
         Job job = jobs.find(args.get(1).toLowerCase(Locale.ROOT)).orElse(null);
