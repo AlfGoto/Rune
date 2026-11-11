@@ -1,0 +1,124 @@
+name: claude
+
+# Answers when someone writes "@claude" in an issue, a PR comment or a PR review,
+# or when a human replies to Claude without writing "@claude" (see the `reply` job).
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+  issues:
+    # Only "opened": "assigned" fired a second run for the same issue.
+    types: [opened]
+
+jobs:
+  # Is this comment a human reply to Claude (no "@claude" needed)?
+  # - Issue / PR conversation: the last earlier comment (other bots ignored) is from claude[bot].
+  # - Inline PR thread: the comment replies to a claude[bot] comment.
+  reply:
+    if: >-
+      (github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
+      github.event.comment.user.type != 'Bot' &&
+      !contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      pull-requests: read
+    outputs:
+      is_reply: ${{ steps.check.outputs.is_reply }}
+      phrase: ${{ steps.check.outputs.phrase }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          BODY: ${{ github.event.comment.body }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          ISSUE: ${{ github.event.issue.number }}
+          PARENT_ID: ${{ github.event.comment.in_reply_to_id }}
+        run: |
+          parent=""
+          if [ "$EVENT" = "issue_comment" ]; then
+            # Comments come oldest first, 100 per page. Read only the last page,
+            # plus the page before when the new comment is alone on the last one. Cheap on long threads.
+            url="repos/$REPO/issues/$ISSUE/comments?per_page=100"
+            total=$(gh api "repos/$REPO/issues/$ISSUE" --jq '.comments')
+            last=$(( (total + 99) / 100 ))
+            pages="$last"
+            if [ $(( total % 100 )) -eq 1 ] && [ "$last" -gt 1 ]; then pages="$((last - 1)) $last"; fi
+            parent=$(for p in $pages; do gh api "$url&page=$p"; done | jq -rs \
+              "add | [.[] | select(.id != $COMMENT_ID) | select((.user.login | endswith(\"[bot]\") | not) or .user.login == \"claude[bot]\")] | last | .user.login // \"\"")
+          elif [ -n "$PARENT_ID" ]; then
+            parent=$(gh api "repos/$REPO/pulls/comments/$PARENT_ID" --jq '.user.login')
+          fi
+          echo "Previous author: $parent"
+          if [ "$parent" = "claude[bot]" ]; then
+            # The action needs a trigger phrase in the comment: use the comment's first word.
+            first=$(printf '%s' "$BODY" | tr -s '[:space:]' '\n' | sed '/^$/d' | head -n 1)
+            echo "is_reply=true" >> "$GITHUB_OUTPUT"
+            echo "phrase=$first" >> "$GITHUB_OUTPUT"
+          fi
+
+  claude:
+    needs: reply
+    if: |
+      !cancelled() && (
+      needs.reply.outputs.is_reply == 'true' ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude'))))
+    runs-on: ubuntu-latest
+    # One agent run at a time per issue/PR (the review loop can queue several).
+    # Job-level on purpose: GitHub keeps only ONE pending run per group, so a
+    # workflow-level group let a non-@claude comment replace a real pending @claude run.
+    # No cancel-in-progress: agent runs queue, they never cancel each other.
+    concurrency:
+      group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+      cancel-in-progress: false
+    # Stops a stuck run (GitHub's default is 6 h of billed minutes).
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+      checks: read
+    steps:
+      # Full history: `git pull origin main` can't merge into a shallow clone.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Java + Gradle cache, so Claude can build and run tests (./gradlew test).
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The review workflow asks "@claude please fix…" as claude[bot] (review ↔ fix loop).
+          allowed_bots: "claude[bot]"
+          # Normal: "@claude". Human reply to Claude: the comment's first word (see `reply` job).
+          trigger_phrase: ${{ needs.reply.outputs.phrase || '@claude' }}
+          # Lets Claude read CI results on the PR.
+          additional_permissions: |
+            actions: read
+            checks: read
+          # cd: so compound commands are not blocked.
+          # Git: fetch + pull + merge (to update the branch from main) + add/commit (to finish a merge with conflicts) + read-only commands.
+          # No rebase, no reset, no force push. The action pushes itself.
+          # No gh pr merge: Alfred merges.
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 60
+            --allowedTools "Bash(git fetch:*),Bash(git pull:*),Bash(git merge:*),Bash(git add:*),Bash(git commit:*),Bash(./gradlew:*),Bash(gh pr create:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(cd:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*)"
+            --append-system-prompt "You work on Rune, a Paper plugin (Java, Gradle, base package com.alfgoto.rune) that adds an RPG layer to Minecraft. Read CONTEXT.md, docs/design-decisions.md and docs/adr/ before changing anything. Use the terms from CONTEXT.md, never its _Avoid_ words. Follow the dependency rule in ADR 0003 (Content -> Gameplay -> Foundations, nothing depends on Visuals). Balancing numbers go in the config file and player-facing text in language files (English + French), never hardcoded. Follow the decisions in docs/. Build only what docs/ decided or what Alfred asked for: never add a Rune, gear piece, Quest Type, command, config key, menu, dependency or example code on your own, even if an issue lists it without a docs/ decision. If something is not decided, ask in a comment and do not build it. If a change contradicts docs/, say so in a comment instead of doing it. Update docs/ or CONTEXT.md when you change a decision or a term. Push to the PR branch; never to main. When you work from an issue: once your changes are pushed, open the pull request yourself with gh pr create (base main, head = your branch, --assignee AlfGoto). Write the PR body to pr-body.md at the repo root with the Write tool, then run gh pr create --body-file pr-body.md (never a multi-line --body, never a file in /tmp). Never commit pr-body.md. Run ./gradlew test before pushing. Never wait for CI (no gh pr checks --watch, no sleep loops): this runner is billed while it waits. Push once, at the end. The PR body uses the template in .github/pull_request_template.md and has the line Fixes #<issue number>. Then comment the PR link on the issue. Never post a Create PR link instead. Alfred, who reads everything you write, has ADHD. Write for that: answer or result first, then details. Simple English, short sentences, lists, one idea per line. Bold the key point. No walls of text, no filler. If Alfred must do something, end with a clear Next step for you line."

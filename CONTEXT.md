@@ -2,6 +2,10 @@
 
 An RPG layer for Minecraft: players level Jobs by playing, and customise themselves and their gear with Runes.
 
+## Workflow
+
+**Starting work on an issue** — To have Claude start working on a GitHub issue, comment `@claude do this` on the issue. This triggers the Claude Code GitHub Action, which needs the `CLAUDE_CODE_OAUTH_TOKEN` repository secret to be set.
+
 ## Progression
 
 **Job** — A line of activity that earns Job XP from specific in-game actions. There are 12: Mining, Excavation, Woodcutting, Farming, Ranching, Fishing, Combat, Archery, Smithing, Alchemy, Adventuring, Runesmithing.
