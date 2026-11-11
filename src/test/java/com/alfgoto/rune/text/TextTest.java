@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.TextColor;
 import org.junit.jupiter.api.Test;
 
 class TextTest {
@@ -57,7 +58,7 @@ class TextTest {
 
     @Test
     void everyRarityHasADistinctColour() {
-        Set<Object> colours = new HashSet<>();
+        Set<TextColor> colours = new HashSet<>();
         for (Rarity rarity : Rarity.values()) {
             assertTrue(colours.add(rarity.color()), rarity.name());
         }
