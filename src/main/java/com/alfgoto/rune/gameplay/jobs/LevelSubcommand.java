@@ -34,7 +34,7 @@ public final class LevelSubcommand implements Subcommand {
             return;
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(XpSubcommand.error("rune.command.player_only", "Only a player can do this."));
+            sender.sendMessage(XpSubcommand.error("rune.command.player_only", "Only a player can use this."));
             return;
         }
         Job job = jobs.find(args.get(1).toLowerCase(Locale.ROOT)).orElse(null);

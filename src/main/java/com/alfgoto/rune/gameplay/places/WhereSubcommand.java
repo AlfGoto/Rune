@@ -24,7 +24,7 @@ public final class WhereSubcommand implements Subcommand {
     @Override
     public void execute(CommandSender sender, List<String> args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.translatable("rune.command.player_only", "Only a player can do this.")
+            sender.sendMessage(Component.translatable("rune.command.player_only", "Only a player can use this.")
                     .color(NamedTextColor.RED));
             return;
         }
