@@ -64,6 +64,10 @@ _Avoid_: enchantment
 
 **Rune Codex** — The item every player carries that opens the Rune menus (Jobs, Quests, Runes).
 
+## Places
+
+**Place** — A biome or a structure a player can stand in (Lush Caves, Taiga, Mineshaft…). A Place matches one or more Minecraft biome or structure keys. Affinity Runes and Place Quests are built on Places. Structure Places count only inside the structure's pieces, not its whole bounding box. `/rune where` lists the Places the player is in.
+
 ## Gear
 
 **Rune Tool** — A named tool or weapon obtained through Jobs (e.g. Lichen Pickaxe). Has a fixed Rarity, a Trait, a Harvest Tier, Rune slots and Capacity that grow with Rarity.

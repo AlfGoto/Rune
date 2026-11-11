@@ -6,5 +6,11 @@
   "rune.rarity.legendary": "Legendary",
   "rune.command.no_permission": "You do not have permission to do this.",
   "rune.command.usage": "Usage: /rune <%s>",
-  "rune.command.version": "Rune version %s"
+  "rune.command.version": "Rune version %s",
+  "rune.command.player_only": "Only a player can do this.",
+  "rune.command.where.none": "You are not in any Place.",
+  "rune.command.where.header": "You are in:",
+  "rune.place.lush_caves": "Lush Caves",
+  "rune.place.taiga": "Taiga",
+  "rune.place.mineshaft": "Mineshaft"
 }
