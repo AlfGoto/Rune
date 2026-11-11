@@ -67,7 +67,7 @@ public final class XpSubcommand implements Subcommand {
             sender.sendMessage(Component.translatable(
                     "rune.command.xp.job",
                     "%s: level %s (%s / %s XP)",
-                    Component.translatable(job.translationKey(), job.id()),
+                    Component.translatable(job.translationKey(), job.fallbackName()),
                     Component.text(level),
                     Component.text(Numbers.format(progress.jobXp(id, job))),
                     Component.text(Numbers.format(progress.jobCurve().totalXpForLevel(level + 1)))));
@@ -109,7 +109,7 @@ public final class XpSubcommand implements Subcommand {
         sender.sendMessage(Component.translatable(
                 "rune.command.xp.changed",
                 "%s XP is now %s (Account XP: %s)",
-                Component.translatable(job.translationKey(), job.id()),
+                Component.translatable(job.translationKey(), job.fallbackName()),
                 Component.text(Numbers.format(progress.jobXp(id, job))),
                 Component.text(Numbers.format(progress.accountXp(id)))));
     }

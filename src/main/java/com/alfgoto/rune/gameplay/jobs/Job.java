@@ -38,6 +38,11 @@ public final class Job implements Identified {
         return Text.key("job", id);
     }
 
+    /** English name when no language file has the key: the id with a capital, e.g. {@code Mining}. */
+    public String fallbackName() {
+        return Character.toUpperCase(id.charAt(0)) + id.substring(1);
+    }
+
     public static final class Builder {
         private final String id;
         private double accountRate = 1.0;

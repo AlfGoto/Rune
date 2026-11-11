@@ -2,9 +2,12 @@ package com.alfgoto.rune.gameplay.jobs;
 
 /**
  * A level curve: XP from level L to level L+1 = {@code base × L^exponent}. Levels start at 1 and
- * have no cap. Used for Job Levels and for Account Levels, each with its own numbers from config.
+ * are read from XP up to {@link #MAX_LEVEL}. Used for Job Levels and for Account Levels, each with its own numbers from config.
  */
 public record LevelCurve(double base, double exponent) {
+
+    /** Highest level {@link #levelForXp} returns: keeps the loop short whatever the XP. */
+    public static final int MAX_LEVEL = 10_000;
 
     public LevelCurve {
         if (!(base > 0) || !(exponent > 0) || !Double.isFinite(base) || !Double.isFinite(exponent)) {
@@ -32,7 +35,7 @@ public record LevelCurve(double base, double exponent) {
     public int levelForXp(double totalXp) {
         int level = 1;
         double reached = 0;
-        while (reached + xpToNextLevel(level) <= totalXp) {
+        while (level < MAX_LEVEL && reached +xpToNextLevel(level) <= totalXp) {
             reached += xpToNextLevel(level);
             level++;
         }

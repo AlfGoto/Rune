@@ -54,7 +54,7 @@ public final class LevelSubcommand implements Subcommand {
         sender.sendMessage(Component.translatable(
                 "rune.command.level.changed",
                 "%s is now level %s",
-                Component.translatable(job.translationKey(), job.id()),
+                Component.translatable(job.translationKey(), job.fallbackName()),
                 Component.text(level)));
     }
 

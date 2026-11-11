@@ -44,8 +44,13 @@ class LevelCurveTest {
         for (int level = 1; level <= 200; level++) {
             double total = job.totalXpForLevel(level);
             assertEquals(level, job.levelForXp(total));
-            assertEquals(level - 1 < 1 ? 1 : level - 1, job.levelForXp(Math.max(0, total - 0.001)));
+            assertEquals(Math.max(1, level - 1), job.levelForXp(Math.max(0, total - 0.001)));
         }
+    }
+
+    @Test
+    void levelForHugeXpStopsAtMaxLevel() {
+        assertEquals(LevelCurve.MAX_LEVEL, job.levelForXp(1e300));
     }
 
     @Test
