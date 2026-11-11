@@ -66,6 +66,10 @@ _Avoid_: enchantment
 
 **Block Reveal** — A visual that outlines chosen blocks through walls for one player, for a set time. Only that player sees it, and it is removed when the time ends, when the player leaves and when the plugin stops. Used by Ore Sense, Bone, Echo, Warden Pickaxe and Worldheart. Test it with `/rune debug reveal <radius>` (outlines ores for 10 seconds).
 
+## Places
+
+**Place** — A biome or a structure a player can stand in (Lush Caves, Taiga, Mineshaft…). A Place matches one or more Minecraft biome or structure keys. Affinity Runes and Place Quests are built on Places. Structure Places count only inside the structure's pieces, not its whole bounding box. `/rune where` lists the Places the player is in.
+
 ## Gear
 
 **Rune Tool** — A named tool or weapon obtained through Jobs (e.g. Lichen Pickaxe). Has a fixed Rarity, a Trait, a Harvest Tier, Rune slots and Capacity that grow with Rarity.

@@ -7,5 +7,6 @@
   "rune.command.no_permission": "You do not have permission to do this.",
   "rune.command.usage": "Usage: /rune <%s>",
   "rune.command.version": "Rune version %s",
+  "rune.command.player_only": "Only a player can use this.",
   "rune.command.debug_usage": "Usage: /rune debug <%s>"
 }

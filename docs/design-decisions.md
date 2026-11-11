@@ -145,6 +145,9 @@ The first milestone the issues aim at:
 - The full Quest system (3 active, Quest Tiers, rewards, Reroll Tokens) with the Mining and Woodcutting Quest Types.
 - Every visual those need (Rune Codex menus, resource pack with item models, Cache opening, XP feedback…). Visuals can be rough in step 1; a proper polish pass comes later.
 
+## Places
+- Places (2026-11-11): a Place is a biome or structure, matched by Minecraft key (framework and `PlacesModule` in `gameplay.places`, which provides an empty `PlaceRegistry`; `content.places.CorePlacesModule` fills it). `PlaceDetector` caches the result per player and recomputes only when the player changes block. Structures match on their pieces, not the whole box. First Places: Lush Caves, Taiga (taiga + snowy taiga), Mineshaft (incl. badlands). Command: `/rune where`. Other Places named in the Job docs (Dripstone, Deep Dark, Mountains, Jungle) are added with their Runes/Quests.
+
 ## Later (not at launch)
 - Transmuting at a Rune Altar (custom block).
 - Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions, Salvage yields) — one `docs/jobs/<job>.md` each.
