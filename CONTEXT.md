@@ -64,6 +64,8 @@ _Avoid_: enchantment
 
 **Rune Codex** — The item every player carries that opens the Rune menus (Jobs, Quests, Runes).
 
+**Block Reveal** — A visual that outlines chosen blocks through walls for one player, for a set time. Only that player sees it, and it is removed when the time ends, when the player leaves and when the plugin stops. Used by Ore Sense, Bone, Echo, Warden Pickaxe and Worldheart. Test it with `/rune debug reveal <radius>` (outlines ores for 10 seconds).
+
 ## Gear
 
 **Rune Tool** — A named tool or weapon obtained through Jobs (e.g. Lichen Pickaxe). Has a fixed Rarity, a Trait, a Harvest Tier, Rune slots and Capacity that grow with Rarity.

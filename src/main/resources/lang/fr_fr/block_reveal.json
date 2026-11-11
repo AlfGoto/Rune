@@ -1,0 +1,6 @@
+{
+  "rune.reveal.player_only": "Seul un joueur peut faire cela.",
+  "rune.reveal.usage": "Utilisation : /rune debug reveal <rayon>",
+  "rune.reveal.bad_radius": "Le rayon doit être un nombre de 1 à %s.",
+  "rune.reveal.revealed": "%s minerais entourés pendant %s secondes."
+}

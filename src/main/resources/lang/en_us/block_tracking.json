@@ -1,0 +1,6 @@
+{
+  "rune.block_tracking.debug.player_only": "Only a player can do this.",
+  "rune.block_tracking.debug.none": "You are not looking at a block.",
+  "rune.block_tracking.debug.untagged": "%s at %s: no tags",
+  "rune.block_tracking.debug.tags": "%s at %s: %s"
+}
