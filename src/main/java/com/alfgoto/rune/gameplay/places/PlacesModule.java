@@ -1,6 +1,5 @@
 package com.alfgoto.rune.gameplay.places;
 
-import com.alfgoto.rune.command.WhereSubcommand;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.google.auto.service.AutoService;

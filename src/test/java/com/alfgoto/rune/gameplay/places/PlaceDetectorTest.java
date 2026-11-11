@@ -3,7 +3,6 @@ package com.alfgoto.rune.gameplay.places;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.alfgoto.rune.content.places.CorePlaces;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +29,9 @@ class PlaceDetectorTest {
         server = MockBukkit.mock();
         player = server.addPlayer();
         registry = new PlaceRegistry();
-        CorePlaces.registerAll(registry);
+        registry.register(Place.biome("lush_caves", "minecraft:lush_caves"));
+        registry.register(Place.biome("taiga", "minecraft:taiga", "minecraft:snowy_taiga"));
+        registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
         detector = new PlaceDetector(registry, new WorldProbe() {
             @Override
             public String biomeAt(Location location) {

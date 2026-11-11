@@ -1,12 +1,8 @@
-package com.alfgoto.rune.command;
+package com.alfgoto.rune.gameplay.places;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.alfgoto.rune.content.places.CorePlaces;
-import com.alfgoto.rune.gameplay.places.PlaceDetector;
-import com.alfgoto.rune.gameplay.places.PlaceRegistry;
-import com.alfgoto.rune.gameplay.places.WorldProbe;
 import java.util.List;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
@@ -50,7 +46,9 @@ class WhereSubcommandTest {
 
     private static PlaceRegistry core() {
         PlaceRegistry registry = new PlaceRegistry();
-        CorePlaces.registerAll(registry);
+        registry.register(Place.biome("lush_caves", "minecraft:lush_caves"));
+        registry.register(Place.biome("taiga", "minecraft:taiga", "minecraft:snowy_taiga"));
+        registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
         return registry;
     }
 

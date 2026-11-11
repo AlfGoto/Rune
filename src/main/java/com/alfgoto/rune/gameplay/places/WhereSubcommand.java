@@ -1,7 +1,6 @@
-package com.alfgoto.rune.command;
+package com.alfgoto.rune.gameplay.places;
 
-import com.alfgoto.rune.gameplay.places.Place;
-import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.command.Subcommand;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
