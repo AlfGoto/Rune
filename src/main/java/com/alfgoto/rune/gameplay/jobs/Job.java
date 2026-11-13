@@ -14,9 +14,17 @@ public final class Job implements Identified {
     private final String id;
     private final double accountRate;
 
-    private Job(String id, double accountRate) {
+    private final int questMinLevel;
+
+    private Job(String id, double accountRate, int questMinLevel) {
         this.id = id;
         this.accountRate = accountRate;
+        this.questMinLevel = questMinLevel;
+    }
+
+    /** Quest Eligibility: the Job Level needed before this Job supplies Quests (1 gathering, 2 crafting-type). */
+    public int questMinLevel() {
+        return questMinLevel;
     }
 
     public static Builder builder(String id) {
@@ -46,9 +54,15 @@ public final class Job implements Identified {
     public static final class Builder {
         private final String id;
         private double accountRate = 1.0;
+        private int questMinLevel = 1;
 
         private Builder(String id) {
             this.id = Objects.requireNonNull(id, "id");
+        }
+
+        public Builder questMinLevel(int questMinLevel) {
+            this.questMinLevel = questMinLevel;
+            return this;
         }
 
         public Builder accountRate(double accountRate) {
@@ -63,7 +77,10 @@ public final class Job implements Identified {
             if (!Double.isFinite(accountRate) || accountRate <= 0) {
                 throw new IllegalArgumentException("Account Rate must be greater than 0, got " + accountRate);
             }
-            return new Job(id, accountRate);
+            if (questMinLevel < 1) {
+                throw new IllegalArgumentException("Quest min level must be 1 or more, got " + questMinLevel);
+            }
+            return new Job(id, accountRate, questMinLevel);
         }
     }
 }

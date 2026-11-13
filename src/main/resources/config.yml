@@ -12,3 +12,9 @@ account:
 quests:
   # Quest Tier multipliers, lowest Tier first (one per Rarity)
   tier-multipliers: [1, 1.5, 2, 3, 5]
+  # Lowest Job Level at which each Quest Tier can be drawn (Epic 15, Legendary 25)
+  tier-min-levels: [1, 1, 1, 15, 25]
+  # Quest Tier draw weight = max(0, base + per-level * Job Level), lowest Tier first
+  tier-weights:
+    base: [100, 60, 30, 10, 5]
+    per-level: [-2, 0, 1, 1.5, 1.5]

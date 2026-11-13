@@ -120,6 +120,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Tier draw is weighted by the player's Job Level: the higher the level, the more the odds lean towards hard Tiers. Hard gates: Epic needs Job Level 15, Legendary needs 25.
 - Eligibility: min Job Level 1 for gathering Jobs, 2 for crafting-type Jobs.
 - No automatic reset. 1 Reroll Token per world day, max 3 held.
+- Quest core (2026-11-13, package `gameplay.quests`): `QuestsModule` provides an empty `QuestTypeRegistry` and the `QuestBook`; `content.quests.CoreQuestsModule` fills it (for now one `test` Quest Type: Mining, base size 10). Active Quests are stored per player under `quest/slot/1..3` as `<type>:<tier>`; empty slots are filled when read and when the player joins. A random eligible Job is drawn, then one of its Quest Types, then a Tier. Tier weight = `max(0, base + per-level × Job Level)`, 0 below the Tier's min level (config: `quests.tier-min-levels` = 1/1/1/15/25, `quests.tier-weights.base` / `.per-level`; the numbers are a first proposal to tune). A Job's `questMinLevel` is its Quest Eligibility (default 1). Target = base size × Tier multiplier, rounded up. Commands: `/rune quest list`, `/rune quest set <slot> <type> <tier>` (ignores gates). Completion, rewards and Reroll Tokens come in later tickets.
 - Rewards: Job XP + Account XP bonus + a roll on a loot table (Runes, rare ingredients, Reroll Tokens, very rarely Blueprints). Relics of that Job only from Legendary-tier Quests, ultra-rarely. Quest Tier sets the odds.
 
 ## Rune Caches (gacha)
