@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Piston;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.junit.jupiter.api.AfterEach;
@@ -106,6 +107,25 @@ class BlockTrackingTest {
         assertEquals(
                 "rune.block_tracking.debug.none",
                 ((net.kyori.adventure.text.TranslatableComponent) player.nextComponentMessage()).key());
+    }
+
+    @Test
+    void fluidMadeBlocksAreTaggedFluid() {
+        for (Material type : List.of(Material.COBBLESTONE, Material.STONE, Material.BASALT, Material.OBSIDIAN)) {
+            Block block = world.getBlockAt(5, 64, 5);
+            tracker.clear(block);
+            block.setType(type);
+            listener.onForm(new BlockFormEvent(block, block.getState()));
+            assertTrue(tracker.has(block, BlockTag.FLUID), type.name());
+        }
+    }
+
+    @Test
+    void otherFormedBlocksAreNotTagged() {
+        Block block = world.getBlockAt(6, 64, 5);
+        block.setType(Material.SNOW);
+        listener.onForm(new BlockFormEvent(block, block.getState()));
+        assertTrue(tracker.tags(block).isEmpty());
     }
 
     @Test

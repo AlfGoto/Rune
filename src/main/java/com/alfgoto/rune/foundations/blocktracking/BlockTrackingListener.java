@@ -3,6 +3,7 @@ package com.alfgoto.rune.foundations.blocktracking;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -18,6 +20,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 /** Feeds a {@link BlockTracker} from Paper events: tag on place, clear on break, move with pistons. */
 public final class BlockTrackingListener implements Listener {
+
+    private static final Set<Material> FLUID_MADE =
+            Set.of(Material.COBBLESTONE, Material.STONE, Material.BASALT, Material.OBSIDIAN);
 
     private final BlockTracker tracker;
 
@@ -33,6 +38,14 @@ public final class BlockTrackingListener implements Listener {
             }
         }
         tracker.add(event.getBlockPlaced(), BlockTag.PLACED);
+    }
+
+    /** Fluids turning into a block: cobblestone / stone / basalt generators, and obsidian. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onForm(BlockFormEvent event) {
+        if (FLUID_MADE.contains(event.getNewState().getType())) {
+            tracker.add(event.getBlock(), BlockTag.FLUID);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
