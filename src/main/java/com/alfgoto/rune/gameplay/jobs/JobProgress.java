@@ -1,7 +1,9 @@
 package com.alfgoto.rune.gameplay.jobs;
 
 import com.alfgoto.rune.storage.PlayerStorage;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Job XP, Job Levels, Account XP and Account Level of players, stored in {@link PlayerStorage}.
@@ -14,6 +16,7 @@ public final class JobProgress {
     private final PlayerStorage storage;
     private final LevelCurve jobCurve;
     private final LevelCurve accountCurve;
+    private final List<JobXpListener> listeners = new CopyOnWriteArrayList<>();
 
     public JobProgress(PlayerStorage storage, LevelCurve jobCurve, LevelCurve accountCurve) {
         this.storage = storage;
@@ -45,11 +48,29 @@ public final class JobProgress {
         return accountCurve.levelForXp(accountXp(player));
     }
 
+    /** Called after every {@link #addJobXp}. Lets Visuals react without Gameplay depending on them. */
+    public void addListener(JobXpListener listener) {
+        listeners.add(listener);
+    }
+
     /** Adds Job XP and feeds Account XP with {@code amount × Account Rate}. */
     public void addJobXp(UUID player, Job job, double amount) {
         requireAmount(amount);
+        int jobLevelBefore = jobLevel(player, job);
+        int accountLevelBefore = accountLevel(player);
         write(player, jobKey(job), jobXp(player, job) + amount);
         write(player, ACCOUNT_XP_KEY, accountXp(player) + amount * job.accountRate());
+        JobXpGain gain = new JobXpGain(
+                player,
+                job,
+                amount,
+                jobLevelBefore,
+                jobLevel(player, job),
+                accountLevelBefore,
+                accountLevel(player));
+        for (JobXpListener listener : listeners) {
+            listener.onJobXpGain(gain);
+        }
     }
 
     /** Sets the Job XP. Account XP is left alone. */

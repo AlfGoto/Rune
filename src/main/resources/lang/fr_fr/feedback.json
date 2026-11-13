@@ -1,0 +1,6 @@
+{
+  "rune.feedback.xp_gain": "+%s XP de %s",
+  "rune.feedback.level_up.title": "Niveau supérieur !",
+  "rune.feedback.level_up.subtitle": "%s est maintenant niveau %s",
+  "rune.feedback.account_level_up": "Niveau de compte supérieur ! Vous êtes maintenant niveau de compte %s."
+}

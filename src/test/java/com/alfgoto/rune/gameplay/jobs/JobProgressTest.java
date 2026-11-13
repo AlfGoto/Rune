@@ -41,6 +41,19 @@ class JobProgressTest {
     }
 
     @Test
+    void listenersGetTheGainWithLevelsBeforeAndAfter() {
+        java.util.List<JobXpGain> gains = new java.util.ArrayList<>();
+        progress.addListener(gains::add);
+        progress.addJobXp(player, mining, 200);
+        assertEquals(1, gains.size());
+        JobXpGain gain = gains.get(0);
+        assertEquals(200, gain.amount(), 1e-9);
+        assertEquals(1, gain.jobLevelBefore());
+        assertEquals(true, gain.jobLeveledUp());
+        assertEquals(true, gain.accountLeveledUp());
+    }
+
+    @Test
     void setLevelSetsMinimumXpForThatLevel() {
         progress.setJobLevel(player, mining, 10);
         assertEquals(10, progress.jobLevel(player, mining));

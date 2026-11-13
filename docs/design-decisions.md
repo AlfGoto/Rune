@@ -145,6 +145,9 @@ The first milestone the issues aim at:
 - The full Quest system (3 active, Quest Tiers, rewards, Reroll Tokens) with the Mining and Woodcutting Quest Types.
 - Every visual those need (Rune Codex menus, resource pack with item models, Cache opening, XP feedback…). Visuals can be rough in step 1; a proper polish pass comes later.
 
+## Feedback
+- XP feedback (2026-11-13): `visuals.feedback` listens to `JobProgress.addJobXp` through a `JobXpListener` (Gameplay never depends on Visuals). Every gain shows `+12 Mining XP` in the action bar. A Job Level-up shows a title and plays the level-up sound. An Account Level-up sends a chat message. All text is in `lang/*/feedback.json` (English + French). Admin `/rune xp set` and `/rune level set` show nothing.
+
 ## Places
 - Places (2026-11-11): a Place is a biome or structure, matched by Minecraft key (framework and `PlacesModule` in `gameplay.places`, which provides an empty `PlaceRegistry`; `content.places.CorePlacesModule` fills it). `PlaceDetector` caches the result per player and recomputes only when the player changes block. Structures match on their pieces, not the whole box. First Places: Lush Caves, Taiga (taiga + snowy taiga), Mineshaft (incl. badlands). Command: `/rune where`. Other Places named in the Job docs (Dripstone, Deep Dark, Mountains, Jungle) are added with their Runes/Quests.
 
