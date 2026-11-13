@@ -36,6 +36,8 @@ _Avoid_: Foraging, Lumberjack
 **Rune** — A physical item that grants an effect when installed. Has a Rarity, a Rank, a Capacity Cost, and a list of compatible places (player, tool types, armor pieces). Runes that share an effect but differ in a parameter (e.g. Affinity: Lush Caves vs Affinity: Mineshaft) are different Runes.
 _Avoid_: enchantment
 
+**Effect** — "When a Trigger fires, if its Conditions pass, do an action." Registered by id. It holds no numbers: a Rune or a Trait binds it to one value per Rank. Runes and Traits are both built on Effects.
+
 **Player Rune** — A Rune installed on the player. Always passive (e.g. Speed). Kept on death.
 
 **Armor Rune** — A Rune installed in a piece of Rune Armor. Always passive; the same passive Runes that fit on the player can go here, so armor works as extra passive slots. Travels with the armor.
