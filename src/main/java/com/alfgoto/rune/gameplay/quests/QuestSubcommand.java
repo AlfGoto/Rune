@@ -74,7 +74,7 @@ public final class QuestSubcommand implements Subcommand {
                     "rune.command.quest.unknown_type", "Unknown Quest Type: %s", Component.text(args.get(2))));
             return;
         }
-        Rarity tier = tier(args.get(3));
+        Rarity tier = Rarity.fromId(args.get(3));
         if (tier == null) {
             player.sendMessage(error(
                     "rune.command.quest.unknown_tier", "Unknown Quest Tier: %s", Component.text(args.get(3))));
@@ -126,15 +126,6 @@ public final class QuestSubcommand implements Subcommand {
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    private static Rarity tier(String text) {
-        for (Rarity rarity : Rarity.values()) {
-            if (rarity.id().equalsIgnoreCase(text)) {
-                return rarity;
-            }
-        }
-        return null;
     }
 
     private static Component error(String key, String fallback, Component... args) {

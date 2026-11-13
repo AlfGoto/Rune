@@ -108,21 +108,12 @@ public final class QuestBook {
             return null;
         }
         QuestType type = types.find(raw.substring(0, colon)).orElse(null);
-        Rarity tier = tierById(raw.substring(colon + 1));
+        Rarity tier = Rarity.fromId(raw.substring(colon + 1));
         return type == null || tier == null ? null : quest(type, tier);
     }
 
     private void write(UUID player, int slot, Quest quest) {
         storage.set(player, key(slot), quest.type().id() + ":" + quest.tier().id());
-    }
-
-    private static Rarity tierById(String id) {
-        for (Rarity rarity : Rarity.values()) {
-            if (rarity.id().equals(id)) {
-                return rarity;
-            }
-        }
-        return null;
     }
 
     private static String key(int slot) {
