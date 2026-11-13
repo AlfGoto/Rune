@@ -108,6 +108,37 @@ class BlockTrackingTest {
                 ((net.kyori.adventure.text.TranslatableComponent) player.nextComponentMessage()).key());
     }
 
+    private static org.bukkit.block.BlockState state(Block block, Material type) {
+        org.bukkit.block.BlockState state = block.getState();
+        state.setType(type);
+        return state;
+    }
+
+    @Test
+    void naturalTreeGrowthGetsGrownNatural() {
+        Block log = world.getBlockAt(0, 65, 0);
+        tracker.add(log, BlockTag.PLACED); // a sapling the player planted
+        listener.onStructureGrow(new org.bukkit.event.world.StructureGrowEvent(
+                log.getLocation(), org.bukkit.TreeType.TREE, false, null, List.of(state(log, Material.OAK_LOG))));
+        assertEquals(Set.of(BlockTag.GROWN_NATURAL), tracker.tags(log));
+    }
+
+    @Test
+    void boneMealTreeGrowthGetsGrownBonemeal() {
+        Block log = world.getBlockAt(0, 65, 0);
+        listener.onStructureGrow(new org.bukkit.event.world.StructureGrowEvent(
+                log.getLocation(), org.bukkit.TreeType.TREE, true, null, List.of(state(log, Material.OAK_LOG))));
+        assertEquals(Set.of(BlockTag.GROWN_BONEMEAL), tracker.tags(log));
+    }
+
+    @Test
+    void breakingAGrownBlockClearsItsTag() {
+        Block log = world.getBlockAt(0, 65, 0);
+        tracker.add(log, BlockTag.GROWN_NATURAL);
+        listener.onBreak(new org.bukkit.event.block.BlockBreakEvent(log, MockBukkit.getMock().addPlayer()));
+        assertTrue(tracker.tags(log).isEmpty());
+    }
+
     @Test
     void pistonPushingARowKeepsEveryTag() {
         Block piston = piston(Material.PISTON, BlockFace.EAST);
