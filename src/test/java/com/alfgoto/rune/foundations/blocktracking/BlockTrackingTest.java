@@ -140,6 +140,22 @@ class BlockTrackingTest {
     }
 
     @Test
+    void placingOverAStaleGrownTagLeavesOnlyPlaced() {
+        Block block = world.getBlockAt(0, 65, 0);
+        tracker.add(block, BlockTag.GROWN_NATURAL); // a leaf that decayed, tag never cleared
+        var player = MockBukkit.getMock().addPlayer();
+        listener.onPlace(new org.bukkit.event.block.BlockPlaceEvent(
+                block,
+                block.getState(),
+                world.getBlockAt(0, 64, 0),
+                new org.bukkit.inventory.ItemStack(Material.DIRT),
+                player,
+                true,
+                org.bukkit.inventory.EquipmentSlot.HAND));
+        assertEquals(Set.of(BlockTag.PLACED), tracker.tags(block));
+    }
+
+    @Test
     void pistonPushingARowKeepsEveryTag() {
         Block piston = piston(Material.PISTON, BlockFace.EAST);
         Block first = world.getBlockAt(1, 64, 0);

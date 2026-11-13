@@ -46,10 +46,16 @@ public final class BlockTrackingListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         if (event instanceof BlockMultiPlaceEvent multi) {
             for (BlockState state : multi.getReplacedBlockStates()) {
-                tracker.add(state.getBlock(), BlockTag.PLACED);
+                markPlaced(state.getBlock());
             }
         }
-        tracker.add(event.getBlockPlaced(), BlockTag.PLACED);
+        markPlaced(event.getBlockPlaced());
+    }
+
+    /** A placed block is not grown: drop any stale tag left at this spot first. */
+    private void markPlaced(Block block) {
+        tracker.clear(block);
+        tracker.add(block, BlockTag.PLACED);
     }
 
     /** Trees, giant mushrooms, huge fungi, mangrove propagules. */
