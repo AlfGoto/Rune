@@ -1,6 +1,7 @@
 {
   "rune.quest.test": "Test Quest",
-  "rune.command.quest.usage": "Usage: /rune quest list | /rune quest set <slot> <type> <tier>",
+  "rune.command.quest.usage": "Usage: /rune quest list",
+  "rune.debug.quest.usage": "Usage: /rune debug quest set <slot> <type> <tier>",
   "rune.command.quest.header": "Active Quests",
   "rune.command.quest.entry": "%s. %s - %s (%s): %s",
   "rune.command.quest.none": "No Quest is available yet.",

@@ -1,6 +1,7 @@
 {
   "rune.quest.test": "Quête de test",
-  "rune.command.quest.usage": "Utilisation : /rune quest list | /rune quest set <emplacement> <type> <palier>",
+  "rune.command.quest.usage": "Utilisation : /rune quest list",
+  "rune.debug.quest.usage": "Utilisation : /rune debug quest set <emplacement> <type> <palier>",
   "rune.command.quest.header": "Quêtes actives",
   "rune.command.quest.entry": "%s. %s - %s (%s) : %s",
   "rune.command.quest.none": "Aucune quête n'est disponible pour le moment.",

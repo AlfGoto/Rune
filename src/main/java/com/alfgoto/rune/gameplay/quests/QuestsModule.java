@@ -25,7 +25,8 @@ public final class QuestsModule implements RuneModule {
         ctx.provide(QuestTypeRegistry.class, types);
         ctx.provide(QuestBook.class, book);
         ctx.listen(new QuestJoinListener(book));
-        ctx.subcommand(new QuestSubcommand(types.registry(), book));
+        ctx.subcommand(new QuestSubcommand(book));
+        ctx.debug(new QuestDebug(types.registry(), book));
     }
 
     @Override

@@ -32,6 +32,7 @@ class QuestBookTest {
     private QuestTypeRegistry types;
     private QuestBook book;
     private QuestSubcommand command;
+    private QuestDebug debug;
     private final QuestType mineTest = new QuestType("minetest", CoreJobs.MINING, 10);
     private final QuestType woodTest = new QuestType("woodtest", CoreJobs.WOODCUTTING, 7);
 
@@ -44,7 +45,8 @@ class QuestBookTest {
         progress = new JobProgress(storage, new LevelCurve(50, 1.3), new LevelCurve(200, 1.3));
         types = new QuestTypeRegistry();
         book = new QuestBook(storage, progress, types.registry(), RuneConfig.defaults(), new Random(3));
-        command = new QuestSubcommand(types.registry(), book);
+        command = new QuestSubcommand(book);
+        debug = new QuestDebug(types.registry(), book);
     }
 
     @AfterEach
@@ -149,7 +151,7 @@ class QuestBookTest {
     @Test
     void commandSetsAQuest() {
         types.register(mineTest);
-        command.execute(player, List.of("set", "3", "minetest", "epic"));
+        debug.execute(player, List.of("set", "3", "minetest", "epic"));
         assertEquals("rune.command.quest.changed", nextKey());
         Quest quest = book.active(player.getUniqueId()).get(2);
         assertEquals(mineTest, quest.type());
@@ -159,13 +161,15 @@ class QuestBookTest {
     @Test
     void commandBadInputGivesErrors() {
         types.register(mineTest);
-        command.execute(player, List.of("set", "4", "minetest", "epic"));
+        debug.execute(player, List.of("set", "4", "minetest", "epic"));
         assertEquals("rune.command.quest.invalid_slot", nextKey());
-        command.execute(player, List.of("set", "1", "nope", "epic"));
+        debug.execute(player, List.of("set", "1", "nope", "epic"));
         assertEquals("rune.command.quest.unknown_type", nextKey());
-        command.execute(player, List.of("set", "1", "minetest", "mythic"));
+        debug.execute(player, List.of("set", "1", "minetest", "mythic"));
         assertEquals("rune.command.quest.unknown_tier", nextKey());
-        command.execute(player, List.of());
+        debug.execute(player, List.of());
+        assertEquals("rune.debug.quest.usage", nextKey());
+        command.execute(player, List.of("set", "1", "minetest", "epic"));
         assertEquals("rune.command.quest.usage", nextKey());
     }
 
@@ -173,8 +177,8 @@ class QuestBookTest {
     void tabCompletes() {
         types.register(mineTest);
         assertEquals(List.of("list"), command.complete(player, List.of("l")));
-        assertEquals(List.of("minetest"), command.complete(player, List.of("set", "1", "m")));
-        assertEquals(List.of("epic"), command.complete(player, List.of("set", "1", "minetest", "e")));
+        assertEquals(List.of("minetest"), debug.complete(player, List.of("set", "1", "m")));
+        assertEquals(List.of("epic"), debug.complete(player, List.of("set", "1", "minetest", "e")));
     }
 
     private String nextKey() {

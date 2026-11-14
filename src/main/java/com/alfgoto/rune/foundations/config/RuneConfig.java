@@ -27,7 +27,7 @@ public final class RuneConfig {
     static final List<Double> DEFAULT_QUEST_TIER_MULTIPLIERS = List.of(1.0, 1.5, 2.0, 3.0, 5.0);
     static final List<Double> DEFAULT_QUEST_TIER_MIN_LEVELS = List.of(1.0, 1.0, 1.0, 15.0, 25.0);
     static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_BASE = List.of(100.0, 60.0, 30.0, 10.0, 5.0);
-    static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL = List.of(-2.0, 0.0, 1.0, 1.5, 1.5);
+    static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL = List.of(-1.2, 0.0, 0.6, 0.5, 0.2);
     /** One multiplier per Rarity. */
     static final int QUEST_TIER_COUNT = 5;
 

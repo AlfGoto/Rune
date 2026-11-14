@@ -37,7 +37,7 @@ class TierDrawTest {
     @Test
     void higherLevelsLeanTowardsHardTiers() {
         assertTrue(hardShare(60) > hardShare(5), "level 60 should draw more Epic/Legendary than level 5");
-        assertTrue(hardShare(60) > 0.3);
+        assertTrue(hardShare(60) > 0.2);
     }
 
     @Test

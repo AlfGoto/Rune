@@ -17,4 +17,4 @@ quests:
   # Quest Tier draw weight = max(0, base + per-level * Job Level), lowest Tier first
   tier-weights:
     base: [100, 60, 30, 10, 5]
-    per-level: [-2, 0, 1, 1.5, 1.5]
+    per-level: [-1.2, 0, 0.6, 0.5, 0.2]
