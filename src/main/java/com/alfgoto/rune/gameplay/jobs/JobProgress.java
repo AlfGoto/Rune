@@ -57,7 +57,10 @@ public final class JobProgress {
         listeners.add(listener);
     }
 
-    /** Adds Job XP and feeds Account XP with {@code amount × Account Rate}. */
+    /**
+     * Adds Job XP and feeds Account XP with {@code amount × Account Rate}.
+     * Run on the main thread: listeners call Bukkit player methods.
+     */
     public void addJobXp(UUID player, Job job, double amount) {
         requireAmount(amount);
         int jobLevelBefore = jobLevel(player, job);
