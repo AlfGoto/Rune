@@ -1,6 +1,12 @@
 name: claude-review
 
-# Automatic Claude review on every non-draft PR.
+# Automatic Claude review on every non-draft PR,
+# and on @claude agent PRs (branches "claude/...") even while they are drafts.
+#
+# Draft = signal for Alfred, on agent PRs only:
+# - Draft             → the agent is still working (review ↔ fix loop). Don't look yet.
+# - Ready for review  → Alfred should look (review says good, the loop stopped, or the review failed).
+# The `pr-status` job below flips it. The agent opens its PRs as drafts (see claude.yml).
 
 on:
   pull_request:
@@ -17,8 +23,11 @@ concurrency:
 
 jobs:
   review:
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false || startsWith(github.head_ref, 'claude/')
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.loop.outputs.mode }}
+      verdict: ${{ steps.review.outputs.structured_output && fromJSON(steps.review.outputs.structured_output).verdict || '' }}
     # Room for long reviews (GitHub's default is 6 h; this just stops a stuck run).
     timeout-minutes: 30
     permissions:
@@ -143,3 +152,35 @@ jobs:
             --model claude-haiku-5-5
             --max-turns 3
             --allowedTools "Bash(gh pr review:*)"
+
+  # Draft / ready signal for Alfred, on @claude agent PRs only.
+  # The WORKFLOW decides from the verdict (not the model).
+  # Uses GITHUB_TOKEN, so the "ready_for_review" event it causes does NOT start a second review.
+  pr-status:
+    needs: review
+    if: >-
+      always() &&
+      startsWith(github.head_ref, 'claude/') &&
+      needs.review.result != 'cancelled' &&
+      needs.review.result != 'skipped'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          VERDICT: ${{ needs.review.outputs.verdict }}
+          MODE: ${{ needs.review.outputs.mode }}
+        run: |
+          is_draft=$(gh pr view "$PR" -R "$REPO" --json isDraft --jq '.isDraft')
+          echo "verdict=$VERDICT mode=$MODE draft=$is_draft"
+          if [ "$VERDICT" = "fix" ] && [ "$MODE" = "on" ]; then
+            # The agent is about to fix things: not Alfred's turn yet.
+            if [ "$is_draft" = "false" ]; then gh pr ready "$PR" -R "$REPO" --undo; fi
+          else
+            # Good to merge, loop stopped after 3 rounds, or the review failed: Alfred's turn.
+            if [ "$is_draft" = "true" ]; then gh pr ready "$PR" -R "$REPO"; fi
+          fi
