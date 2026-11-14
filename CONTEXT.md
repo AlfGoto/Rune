@@ -70,6 +70,9 @@ _Avoid_: enchantment
 
 **Rune Codex** — The item every player carries that opens the Rune menus (Jobs, Quests, Runes).
 
+**Unlock Tree** — Rune's tab in the vanilla advancement screen (`L` key). One horizontal line per Job, one node per Job Level that unlocks something (recipe, Blueprint, Milestone Cache). Display only: Job Level is the source of truth.
+_Avoid_: skill tree (Job Levels never give passive stats)
+
 **Block Reveal** — A visual that outlines chosen blocks through walls for one player, for a set time. Only that player sees it, and it is removed when the time ends, when the player leaves and when the plugin stops. Used by Ore Sense, Bone, Echo, Warden Pickaxe and Worldheart. Test it with `/rune debug reveal <radius>` (outlines ores for 10 seconds).
 
 ## Places
