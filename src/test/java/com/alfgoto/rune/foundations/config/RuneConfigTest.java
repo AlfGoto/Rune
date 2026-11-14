@@ -56,7 +56,14 @@ class RuneConfigTest {
                     exponent: 1.1
                 quests:
                   tier-multipliers: [1, 2, 3, 4, 6]
+                  tier-min-levels: [1, 2, 3, 4, 5]
+                  tier-weights:
+                    base: [1, 2, 3, 4, 5]
+                    per-level: [-1, 0, 1, 2, 3]
                 """);
+        assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierMinLevels());
+        assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierWeightBase());
+        assertEquals(List.of(-1.0, 0.0, 1.0, 2.0, 3.0), c.questTierWeightPerLevel());
         assertEquals(40, c.levelCurveBase());
         assertEquals(1.5, c.levelCurveExponent());
         assertEquals(100, c.accountCurveBase());
@@ -90,6 +97,10 @@ class RuneConfigTest {
                     exponent: 1.3
                 quests:
                   tier-multipliers: [1, 2]
+                  tier-min-levels: [1, 1, 1, 15, 25]
+                  tier-weights:
+                    base: [100, 60, 30, 10, 5]
+                    per-level: [-2, 0, 1, 1.5, 1.5]
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -103,7 +114,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(5, errors.size());
+        assertEquals(8, errors.size());
         assertEquals(50, c.levelCurveBase());
         assertEquals(200, c.accountCurveBase());
         assertEquals(1.3, c.accountCurveExponent());
@@ -122,6 +133,10 @@ class RuneConfigTest {
                     exponent: 1.3
                 quests:
                   tier-multipliers: [1, 1.5, 0, 3, 5]
+                  tier-min-levels: [1, 1, 1, 15, 25]
+                  tier-weights:
+                    base: [100, 60, 30, 10, 5]
+                    per-level: [-2, 0, 1, 1.5, 1.5]
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());

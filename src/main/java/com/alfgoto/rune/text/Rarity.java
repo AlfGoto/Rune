@@ -36,6 +36,16 @@ public enum Rarity {
         return color;
     }
 
+    /** The Rarity with this id (case-insensitive), or {@code null} when there is none. */
+    public static Rarity fromId(String id) {
+        for (Rarity rarity : values()) {
+            if (rarity.id.equalsIgnoreCase(id)) {
+                return rarity;
+            }
+        }
+        return null;
+    }
+
     /** Translation key of the Rarity name, e.g. {@code rune.rarity.common}. */
     public String translationKey() {
         return Text.key("rarity", id);
