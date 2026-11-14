@@ -10,6 +10,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
@@ -87,5 +91,21 @@ class PackServingTest {
             assertEquals(PackSettings.DEFAULT_PORT, s.port());
             assertNull(s.externalUrl());
         }
+    }
+
+    @Test
+    void missingSectionUsesDefaultsWithoutError() {
+        var logged = new ArrayList<LogRecord>();
+        var logger = Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new Handler() {
+            @Override public void publish(LogRecord record) { logged.add(record); }
+            @Override public void flush() {}
+            @Override public void close() {}
+        });
+        var s = PackSettings.load(new YamlConfiguration(), logger);
+        assertEquals(PackSettings.DEFAULT_PORT, s.port());
+        assertNull(s.externalUrl());
+        assertEquals(List.of(), logged);
     }
 }

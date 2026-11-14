@@ -6,7 +6,8 @@ import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * Resource pack serving options from config.yml.
- * A bad value logs a clear error and falls back to the default.
+ * A missing value uses the default silently (older config.yml files have no
+ * resource-pack section). A bad value logs a clear error and falls back to the default.
  *
  * @param port port of the built-in HTTP server
  * @param externalUrl pack URL to send instead of the built-in server, or {@code null} to use it
@@ -20,7 +21,9 @@ public record PackSettings(int port, String externalUrl) {
     public static PackSettings load(ConfigurationSection config, Logger logger) {
         int port = DEFAULT_PORT;
         Object rawPort = config.get(PORT);
-        if (rawPort instanceof Number n
+        if (rawPort == null) {
+            // Missing key: keep the default, no error.
+        } else if (rawPort instanceof Number n
                 && n.intValue() == n.doubleValue()
                 && n.intValue() >= 1
                 && n.intValue() <= 65535) {
