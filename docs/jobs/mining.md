@@ -5,7 +5,7 @@ Starting values for the Mining Job. Every number lives in config and will be tun
 ## Scope & XP rules
 - Mining = natural pickaxe blocks (stone-family blocks, ores, structure blocks). **The block decides the Job, not the tool** (wood broken with a pickaxe gives Woodcutting XP). Shovel blocks belong to Excavation.
 - A block only counts when the player breaks it themselves: with a tool, a tool's effect (Veinminer, Blast Mine…), or by hand. TNT and creepers give 0 XP.
-- 0 XP: blocks placed by a player, and blocks created by fluids (cobblestone / stone / basalt generators). Exception: obsidian (costs a lava source) always gives its XP.
+- 0 XP: blocks placed by a player, and blocks created by fluids (cobblestone / cobbled deepslate / stone / basalt generators). Exception: obsidian (costs a lava source) always gives its XP.
 - Multi-block effects (Veinminer, Tunneler, Blast Mine, Great Blast, Starbreaker, Worldheart): full XP and a Cache roll for every block. Veinminer is pickaxe-only and works only on ores (the axe equivalent is Treefeller, see `woodcutting.md`).
 - Account Rate: **1.0** — Mining is the reference Job.
 

@@ -101,7 +101,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 
 ## Anti-exploit
 - Player-placed blocks give 0 Job XP in every Job (placed blocks are tracked). This also covers silk-touched ores placed back down.
-- Blocks created by fluids (cobblestone / stone / basalt generators) give 0 XP. Exception: obsidian (costs a lava source).
+- Blocks created by fluids (cobblestone / cobbled deepslate / stone / basalt generators) give 0 XP. Exception: obsidian (costs a lava source).
 - Blocks only count when the player breaks them (tool, tool effect, hand); TNT, creepers and natural decay (leaves) give 0.
 - Grown blocks (trees, giant mushrooms, huge fungi, chorus, spreading plants…) are tagged when they grow. Grown over time: full XP. Grown by bone meal (player or dispenser), or by an instant-regrowth effect: ×0.25 XP and ×0.25 Mastery. One rule for every Job.
 - Blocks that spread on their own (vines, glow lichen) keep tiny base XP so farms are pointless.

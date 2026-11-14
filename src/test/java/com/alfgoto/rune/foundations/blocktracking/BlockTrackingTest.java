@@ -158,7 +158,12 @@ class BlockTrackingTest {
 
     @Test
     void fluidMadeBlocksAreTaggedFluid() {
-        for (Material type : List.of(Material.COBBLESTONE, Material.STONE, Material.BASALT, Material.OBSIDIAN)) {
+        for (Material type : List.of(
+                Material.COBBLESTONE,
+                Material.COBBLED_DEEPSLATE,
+                Material.STONE,
+                Material.BASALT,
+                Material.OBSIDIAN)) {
             Block block = world.getBlockAt(5, 64, 5);
             tracker.clear(block);
             block.setType(type);

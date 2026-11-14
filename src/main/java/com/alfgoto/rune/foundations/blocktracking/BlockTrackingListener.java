@@ -28,8 +28,12 @@ import org.bukkit.event.world.StructureGrowEvent;
  */
 public final class BlockTrackingListener implements Listener {
 
-    private static final Set<Material> FLUID_MADE =
-            Set.of(Material.COBBLESTONE, Material.STONE, Material.BASALT, Material.OBSIDIAN);
+    private static final Set<Material> FLUID_MADE = Set.of(
+            Material.COBBLESTONE,
+            Material.COBBLED_DEEPSLATE,
+            Material.STONE,
+            Material.BASALT,
+            Material.OBSIDIAN);
 
     /** Plants that spread or grow one block at a time (other growths come as a structure). */
     private static final Set<Material> SPREADING = Set.of(
@@ -105,7 +109,7 @@ public final class BlockTrackingListener implements Listener {
         tracker.add(block, tag);
     }
 
-    /** Fluids turning into a block: cobblestone / stone / basalt generators, and obsidian. */
+    /** Fluids turning into a block: cobblestone / cobbled deepslate / stone / basalt generators, and obsidian. */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onForm(BlockFormEvent event) {
         if (FLUID_MADE.contains(event.getNewState().getType())) {
