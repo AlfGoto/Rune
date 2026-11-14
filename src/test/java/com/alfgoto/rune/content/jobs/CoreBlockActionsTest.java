@@ -11,6 +11,7 @@ import com.alfgoto.rune.gameplay.jobs.BlockActions;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -153,7 +154,7 @@ class CoreBlockActionsTest {
     @Test
     void woodcuttingTableFollowsTheDocs() throws Exception {
         BlockActions actions = shippedActions();
-        Map<Material, Double> table = new java.util.LinkedHashMap<>();
+        Map<Material, Double> table = new LinkedHashMap<>();
         table.put(Material.VINE, 0.05);
         table.put(Material.OAK_LEAVES, 0.1);
         table.put(Material.AZALEA_LEAVES, 0.1);
@@ -191,6 +192,55 @@ class CoreBlockActionsTest {
                 Material.BEE_NEST, Material.BEEHIVE)) {
             assertFalse(actions.get(material).isPresent(), material.name());
         }
+    }
+
+    @Test
+    void everyRowOfTheMiningTableGivesItsXpToMining() throws Exception {
+        BlockActions actions = shippedActions();
+        Map<Material, Double> table = Map.ofEntries(
+                Map.entry(Material.NETHERRACK, 0.25),
+                Map.entry(Material.STONE, 1.0),
+                Map.entry(Material.GRANITE, 1.0),
+                Map.entry(Material.DIORITE, 1.0),
+                Map.entry(Material.ANDESITE, 1.0),
+                Map.entry(Material.TUFF, 1.0),
+                Map.entry(Material.DEEPSLATE, 1.5),
+                Map.entry(Material.END_STONE, 2.0),
+                Map.entry(Material.COAL_ORE, 4.0),
+                Map.entry(Material.COPPER_ORE, 4.0),
+                Map.entry(Material.NETHER_GOLD_ORE, 4.0),
+                Map.entry(Material.NETHER_QUARTZ_ORE, 5.0),
+                Map.entry(Material.AMETHYST_CLUSTER, 5.0),
+                Map.entry(Material.COPPER_BLOCK, 6.0),
+                Map.entry(Material.WAXED_OXIDIZED_COPPER_TRAPDOOR, 6.0),
+                Map.entry(Material.OBSIDIAN, 6.0),
+                Map.entry(Material.IRON_ORE, 8.0),
+                Map.entry(Material.REDSTONE_ORE, 8.0),
+                Map.entry(Material.LAPIS_ORE, 8.0),
+                Map.entry(Material.GOLD_ORE, 12.0),
+                Map.entry(Material.GILDED_BLACKSTONE, 15.0),
+                Map.entry(Material.RAW_IRON_BLOCK, 20.0),
+                Map.entry(Material.RAW_COPPER_BLOCK, 20.0),
+                Map.entry(Material.RAW_GOLD_BLOCK, 20.0),
+                Map.entry(Material.DIAMOND_ORE, 30.0),
+                Map.entry(Material.EMERALD_ORE, 40.0),
+                Map.entry(Material.ANCIENT_DEBRIS, 60.0),
+                Map.entry(Material.GOLD_BLOCK, 100.0),
+                // Deepslate ores: x1.25
+                Map.entry(Material.DEEPSLATE_COAL_ORE, 5.0),
+                Map.entry(Material.DEEPSLATE_COPPER_ORE, 5.0),
+                Map.entry(Material.DEEPSLATE_IRON_ORE, 10.0),
+                Map.entry(Material.DEEPSLATE_REDSTONE_ORE, 10.0),
+                Map.entry(Material.DEEPSLATE_LAPIS_ORE, 10.0),
+                Map.entry(Material.DEEPSLATE_GOLD_ORE, 15.0),
+                Map.entry(Material.DEEPSLATE_DIAMOND_ORE, 37.5),
+                Map.entry(Material.DEEPSLATE_EMERALD_ORE, 50.0));
+        table.forEach((material, expected) -> {
+            var action = actions.get(material).orElseThrow(() -> new AssertionError(material + " has no XP"));
+            assertEquals(expected, action.xp(), material.name());
+            assertSame(CoreJobs.MINING, action.job(), material.name());
+        });
+        assertEquals(1.0, CoreJobs.MINING.accountRate());
     }
 
     @Test
