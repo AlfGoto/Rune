@@ -11,6 +11,7 @@ import com.alfgoto.rune.gameplay.jobs.BlockActions;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,6 +149,49 @@ class CoreBlockActionsTest {
         assertEquals(0.1, xp(actions, Material.OAK_LEAVES));
         assertEquals(0.05, xp(actions, Material.VINE));
         assertEquals(20, xp(actions, Material.CREAKING_HEART));
+    }
+
+    @Test
+    void woodcuttingTableFollowsTheDocs() throws Exception {
+        BlockActions actions = shippedActions();
+        Map<Material, Double> table = new LinkedHashMap<>();
+        table.put(Material.VINE, 0.05);
+        table.put(Material.OAK_LEAVES, 0.1);
+        table.put(Material.AZALEA_LEAVES, 0.1);
+        table.put(Material.NETHER_WART_BLOCK, 0.1);
+        table.put(Material.WARPED_WART_BLOCK, 0.1);
+        table.put(Material.GLOW_LICHEN, 0.1);
+        table.put(Material.OAK_PLANKS, 0.5);
+        table.put(Material.BIG_DRIPLEAF, 0.5);
+        table.put(Material.MANGROVE_ROOTS, 0.5);
+        table.put(Material.RED_MUSHROOM_BLOCK, 1.0);
+        table.put(Material.BROWN_MUSHROOM_BLOCK, 1.0);
+        table.put(Material.SHROOMLIGHT, 1.0);
+        table.put(Material.MUSHROOM_STEM, 2.0);
+        table.put(Material.CHORUS_PLANT, 2.0);
+        table.put(Material.MANGROVE_LOG, 3.0);
+        table.put(Material.STRIPPED_DARK_OAK_WOOD, 3.0);
+        table.put(Material.CHERRY_LOG, 4.0);
+        table.put(Material.CRIMSON_STEM, 4.0);
+        table.put(Material.STRIPPED_WARPED_HYPHAE, 4.0);
+        table.put(Material.CHORUS_FLOWER, 4.0);
+        table.put(Material.PALE_OAK_LOG, 5.0);
+        table.put(Material.CREAKING_HEART, 20.0);
+        table.forEach((material, xp) -> {
+            assertSame(CoreJobs.WOODCUTTING, actions.get(material).orElseThrow().job(), material.name());
+            assertEquals(xp, xp(actions, material), material.name());
+        });
+        assertEquals(0.8, CoreJobs.WOODCUTTING.accountRate());
+    }
+
+    @Test
+    void cropsAndBeeBlocksGiveNoWoodcuttingXp() throws Exception {
+        BlockActions actions = shippedActions();
+        for (Material material : List.of(
+                Material.PUMPKIN, Material.CARVED_PUMPKIN, Material.MELON, Material.COCOA, Material.BAMBOO,
+                Material.BEE_NEST, Material.BEEHIVE)) {
+            assertFalse(actions.get(material).isPresent(), material.name());
+        }
     }
 
     @Test
