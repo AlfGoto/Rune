@@ -63,7 +63,9 @@ class RuneConfigTest {
                   tier-weights:
                     base: [1, 2, 3, 4, 5]
                     per-level: [-1, 0, 1, 2, 3]
+                  max-reroll-tokens: 5
                 """);
+        assertEquals(5, c.questMaxRerollTokens());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierMinLevels());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierWeightBase());
         assertEquals(List.of(-1.0, 0.0, 1.0, 2.0, 3.0), c.questTierWeightPerLevel());
@@ -110,6 +112,7 @@ class RuneConfigTest {
                   tier-weights:
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
+                  max-reroll-tokens: 3
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -123,9 +126,10 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(10, errors.size());
+        assertEquals(11, errors.size());
         assertTrue(c.blockXp().isEmpty());
         assertEquals(0.25, c.bonemealXpMultiplier());
+        assertEquals(3, c.questMaxRerollTokens());
         assertEquals(50, c.levelCurveBase());
         assertEquals(200, c.accountCurveBase());
         assertEquals(1.3, c.accountCurveExponent());
@@ -167,6 +171,7 @@ class RuneConfigTest {
                   tier-weights:
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
+                  max-reroll-tokens: 3
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());

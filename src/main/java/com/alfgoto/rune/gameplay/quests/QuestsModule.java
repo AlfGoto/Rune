@@ -8,6 +8,7 @@ import com.alfgoto.rune.storage.PlayerStorage;
 import com.google.auto.service.AutoService;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import org.bukkit.Bukkit;
 
 /** Quests framework: Quest Types × Quest Tiers, 3 active per player, /rune quest. Content adds the Quest Types. */
 @AutoService(RuneModule.class)
@@ -21,12 +22,18 @@ public final class QuestsModule implements RuneModule {
                 ctx.get(JobProgress.class),
                 types.registry(),
                 ctx.config(),
-                ThreadLocalRandom.current());
+                ThreadLocalRandom.current(),
+                QuestsModule::worldDay);
         ctx.provide(QuestTypeRegistry.class, types);
         ctx.provide(QuestBook.class, book);
         ctx.listen(new QuestJoinListener(book));
         ctx.subcommand(new QuestSubcommand(book));
         ctx.debug(new QuestDebug(types.registry(), book));
+    }
+
+    /** The world day: the main world's full time divided by the 24000 ticks of a Minecraft day. */
+    private static long worldDay() {
+        return Bukkit.getWorlds().get(0).getFullTime() / 24000L;
     }
 
     @Override

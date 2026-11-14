@@ -6,7 +6,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Paper plugin + server resource pack, latest Minecraft (see ADR 0001). Minimum 26.3 (Poplar trees, Abandoned Camps are used by Woodcutting).
 - Language: Java. Base package: `com.alfgoto.rune`.
 - License: MIT.
-- Resource pack served by the plugin itself (built-in HTTP server, one extra port). A config option can point to an external URL instead. `/preview` needs a second playit.gg tunnel for the pack port.
+- Resource pack served by the plugin itself (built-in HTTP server, one extra port). A config option can point to an external URL instead. `/preview` has only the game tunnel: the free playit.gg plan has no TCP tunnel for the pack port (see #18), so the pack is not served there.
 - Minecraft version in one build property; Renovate opens version-bump PRs.
 - Local test: `./gradlew runServer`, join `localhost` with a vanilla client.
 - CI: build + MockBukkit tests + Claude PR review, copying the FloconAI repo's setup (same auth method).
@@ -44,6 +44,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Max Rank is set per Rune, by what makes sense for its effect. Some Runes have no Max Rank (e.g. Deepstride); the 3× cost per Rank caps them naturally. Defined in each Rune's definition.
 - Variants (Affinity: <place>, Specialist: <ore>, Specialist: <wood>, Sanctuary: <biome>) are separate Runes: they rank up separately and stack with each other. One effect class with a parameter. Variants can appear in their place's chest loot.
 - Stacking: the same effect from a Trait and/or several Runes adds up. Every effect is a number (on/off effects become chances). Chances above 100% roll again (e.g. Smelt 150% → always one smelt, 50% chance of a second: cobblestone → stone → smooth stone). Exception: Silk Touch (on/off) disables Fortune, Smelt and Ore Bloom.
+- Stacking code (2026-11-14, `gameplay.effects.Stacking`): chance values are in percent (100 = guaranteed), like Rune values. `Stacking.total` sums the values of one effect id over a list of sources (Trait + Runes, each with its Rank). `Stacking.rolls` gives the number of triggers: each full 100% is one, the rest is the chance of one more. Silk Touch (effect id `silk_touch`) among the sources makes the total 0 for `fortune`, `smelt` and `ore_bloom`. These ids are reserved names; the Runes themselves come with their own tickets.
 - Transmuting postponed (future Rune Altar).
 - Obtained from Job Level milestones, rare drops during Job Actions, and Quest rewards.
 - Runesmithing Job earns XP from ranking up.
@@ -122,7 +123,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Tier draw is weighted by the player's Job Level: the higher the level, the more the odds lean towards hard Tiers. Hard gates: Epic needs Job Level 15, Legendary needs 25.
 - Eligibility: min Job Level 1 for gathering Jobs, 2 for crafting-type Jobs.
 - No automatic reset. 1 Reroll Token per world day, max 3 held.
-- Quest core (2026-11-13, package `gameplay.quests`): `QuestsModule` provides an empty `QuestTypeRegistry` and the `QuestBook`; `content.quests.CoreQuestsModule` fills it (for now one `test` Quest Type: Mining, base size 10). Active Quests are stored per player under `quest/slot/1..3` as `<type>:<tier>`; empty slots are filled when read and when the player joins. A random eligible Job is drawn, then one of its Quest Types, then a Tier. Tier weight = `max(0, base + per-level × Job Level)`, 0 below the Tier's min level (config: `quests.tier-min-levels` = 1/1/1/15/25, `quests.tier-weights.base` = 100/60/30/10/5, `quests.tier-weights.per-level` = -1.2/0/0.6/0.5/0.2; decided by Alfred 2026-11-14 as starting values, tuned after playtests). Rough odds, Common/Uncommon/Rare/Epic/Legendary: Job Level 1 = 52/32/16/–/–, 15 = 41/30/20/9/–, 25 = 34/29/22/11/5, 50 = 19/29/29/17/7. A Job's `questMinLevel` is its Quest Eligibility (default 1). Target = base size × Tier multiplier, rounded up. The `test` Quest Type on Mining is approved (easiest way to test). Commands: `/rune quest list`; test tool `/rune debug quest set <slot> <type> <tier>` (ignores gates, ADR 0004). Completion, rewards and Reroll Tokens come in later tickets.
+- Quest core (2026-11-13, package `gameplay.quests`): `QuestsModule` provides an empty `QuestTypeRegistry` and the `QuestBook`; `content.quests.CoreQuestsModule` fills it (for now one `test` Quest Type: Mining, base size 10). Active Quests are stored per player under `quest/slot/1..3` as `<type>:<tier>`; empty slots are filled when read and when the player joins. A random eligible Job is drawn, then one of its Quest Types, then a Tier. Tier weight = `max(0, base + per-level × Job Level)`, 0 below the Tier's min level (config: `quests.tier-min-levels` = 1/1/1/15/25, `quests.tier-weights.base` = 100/60/30/10/5, `quests.tier-weights.per-level` = -1.2/0/0.6/0.5/0.2; decided by Alfred 2026-11-14 as starting values, tuned after playtests). Rough odds, Common/Uncommon/Rare/Epic/Legendary: Job Level 1 = 52/32/16/–/–, 15 = 41/30/20/9/–, 25 = 34/29/22/11/5, 50 = 19/29/29/17/7. A Job's `questMinLevel` is its Quest Eligibility (default 1). Target = base size × Tier multiplier, rounded up. The `test` Quest Type on Mining is approved (easiest way to test). Commands: `/rune quest list`; test tool `/rune debug quest set <slot> <type> <tier>` (ignores gates, ADR 0004). Completion and rewards come in later tickets.
+- Reroll Tokens (2026-11-14, `gameplay.quests.RerollTokens`): one earned per world day (main world full time / 24000), at most `quests.max-reroll-tokens` (default 3) held. Counted lazily from the stored day (`quest/reroll/tokens`, `quest/reroll/day`), so days spent offline count too. A new player starts with 0 (decided by Alfred 2026-11-14). Setting the time back earns nothing. `/rune quest reroll <slot>` spends one and draws a new Quest for the slot with the normal draw (it can give the same Quest Type or Tier again). No token or no eligible Quest: nothing is spent. Reroll Tokens as a Quest reward come with the Quest rewards ticket.
 - Rewards: Job XP + Account XP bonus + a roll on a loot table (Runes, rare ingredients, Reroll Tokens, very rarely Blueprints). Relics of that Job only from Legendary-tier Quests, ultra-rarely. Quest Tier sets the odds.
 
 ## Rune Caches (gacha)
@@ -138,7 +140,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Breaking it into small tasks (from nothing to full product) happens later, in a separate planning step. Intermediate milestones are a by-product of that order, not a reduced scope.
 - Manual setup tasks become the first issues when issues are created:
   - Add the Claude PR review secret (same one as `flocon-ai/flocon-ai`) to the Rune repo.
-  - Create the playit.gg account + two fixed tunnels (game port, resource pack port) and add the secret to the Rune repo.
+  - Create the playit.gg account + one fixed game tunnel and add the secret to the Rune repo.
 
 ### Step 1 (decided 2026-11-11)
 The first milestone the issues aim at:
