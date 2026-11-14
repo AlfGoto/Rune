@@ -18,7 +18,7 @@ Requires Minecraft 26.3+ (Poplar trees, Dappled Forest, Abandoned Camps).
 - Account Rate: **0.8**.
 
 ### Felled Tree
-A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). Uses the same tree scan as Treefeller. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees.
+A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). Uses the same tree scan as Treefeller, except it follows the whole connected trunk (not only at or above the broken log), so logs left below keep the tree alive. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees.
 
 ## Job XP per block
 
