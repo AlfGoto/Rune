@@ -18,3 +18,5 @@ quests:
   tier-weights:
     base: [100, 60, 30, 10, 5]
     per-level: [-1.2, 0, 0.6, 0.5, 0.2]
+  # Most Reroll Tokens a player can hold (one is earned per world day)
+  max-reroll-tokens: 3

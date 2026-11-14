@@ -19,6 +19,7 @@ public final class RuneConfig {
     public static final String QUEST_TIER_MIN_LEVELS = "quests.tier-min-levels";
     public static final String QUEST_TIER_WEIGHT_BASE = "quests.tier-weights.base";
     public static final String QUEST_TIER_WEIGHT_PER_LEVEL = "quests.tier-weights.per-level";
+    public static final String QUEST_MAX_REROLL_TOKENS = "quests.max-reroll-tokens";
 
     static final double DEFAULT_LEVEL_CURVE_BASE = 50;
     static final double DEFAULT_LEVEL_CURVE_EXPONENT = 1.3;
@@ -28,6 +29,7 @@ public final class RuneConfig {
     static final List<Double> DEFAULT_QUEST_TIER_MIN_LEVELS = List.of(1.0, 1.0, 1.0, 15.0, 25.0);
     static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_BASE = List.of(100.0, 60.0, 30.0, 10.0, 5.0);
     static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL = List.of(-1.2, 0.0, 0.6, 0.5, 0.2);
+    static final int DEFAULT_QUEST_MAX_REROLL_TOKENS = 3;
     /** One multiplier per Rarity. */
     static final int QUEST_TIER_COUNT = 5;
 
@@ -39,6 +41,7 @@ public final class RuneConfig {
     private final List<Double> questTierMinLevels;
     private final List<Double> questTierWeightBase;
     private final List<Double> questTierWeightPerLevel;
+    private final int questMaxRerollTokens;
 
     private RuneConfig(
             double base,
@@ -48,7 +51,9 @@ public final class RuneConfig {
             List<Double> tiers,
             List<Double> minLevels,
             List<Double> weightBase,
-            List<Double> weightPerLevel) {
+            List<Double> weightPerLevel,
+            int maxRerollTokens) {
+        this.questMaxRerollTokens = maxRerollTokens;
         this.questTierMinLevels = List.copyOf(minLevels);
         this.questTierWeightBase = List.copyOf(weightBase);
         this.questTierWeightPerLevel = List.copyOf(weightPerLevel);
@@ -69,7 +74,8 @@ public final class RuneConfig {
                 DEFAULT_QUEST_TIER_MULTIPLIERS,
                 DEFAULT_QUEST_TIER_MIN_LEVELS,
                 DEFAULT_QUEST_TIER_WEIGHT_BASE,
-                DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL);
+                DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL,
+                DEFAULT_QUEST_MAX_REROLL_TOKENS);
     }
 
     /** Reads the config. Bad or missing values are logged as errors and replaced by defaults. */
@@ -86,8 +92,19 @@ public final class RuneConfig {
                 readList(section, logger, QUEST_TIER_WEIGHT_BASE, DEFAULT_QUEST_TIER_WEIGHT_BASE, false);
         List<Double> weightPerLevel = readList(
                 section, logger, QUEST_TIER_WEIGHT_PER_LEVEL, DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL, false);
+        int maxTokens = (int) Math.min(
+                1_000_000,
+                readPositive(section, logger, QUEST_MAX_REROLL_TOKENS, DEFAULT_QUEST_MAX_REROLL_TOKENS));
         return new RuneConfig(
-                base, exponent, accountBase, accountExponent, tiers, minLevels, weightBase, weightPerLevel);
+                base,
+                exponent,
+                accountBase,
+                accountExponent,
+                tiers,
+                minLevels,
+                weightBase,
+                weightPerLevel,
+                maxTokens);
     }
 
     /** XP to reach the next level: base x level^exponent. */
@@ -124,6 +141,11 @@ public final class RuneConfig {
     /** Quest Tier draw weight at Job Level 0, lowest Tier first. */
     public List<Double> questTierWeightBase() {
         return questTierWeightBase;
+    }
+
+    /** Most Reroll Tokens a player can hold. */
+    public int questMaxRerollTokens() {
+        return questMaxRerollTokens;
     }
 
     /** Quest Tier draw weight gained per Job Level (can be negative), lowest Tier first. */

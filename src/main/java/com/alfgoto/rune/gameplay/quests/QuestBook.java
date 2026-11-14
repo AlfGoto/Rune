@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.LongSupplier;
 import java.util.random.RandomGenerator;
 
 /**
@@ -29,13 +31,16 @@ public final class QuestBook {
     private final RuneConfig config;
     private final TierDraw tierDraw;
     private final RandomGenerator random;
+    private final RerollTokens rerollTokens;
 
     public QuestBook(
             PlayerStorage storage,
             JobProgress progress,
             Registry<QuestType> types,
             RuneConfig config,
-            RandomGenerator random) {
+            RandomGenerator random,
+            LongSupplier worldDay) {
+        this.rerollTokens = new RerollTokens(storage, config, worldDay);
         this.storage = storage;
         this.progress = progress;
         this.types = types;
@@ -67,6 +72,29 @@ public final class QuestBook {
         Quest quest = quest(type, tier);
         write(player, slot, quest);
         return quest;
+    }
+
+    /** The player's Reroll Tokens. */
+    public RerollTokens rerollTokens() {
+        return rerollTokens;
+    }
+
+    /**
+     * Spends one Reroll Token to replace the Quest in {@code slot} (1..3) with a new draw.
+     * Returns empty, spending nothing, if the player has no Reroll Token or no Quest can be drawn.
+     */
+    public Optional<Quest> reroll(UUID player, int slot) {
+        requireSlot(slot);
+        if (rerollTokens.count(player) <= 0) {
+            return Optional.empty();
+        }
+        Quest quest = draw(player);
+        if (quest == null) {
+            return Optional.empty();
+        }
+        rerollTokens.spend(player);
+        write(player, slot, quest);
+        return Optional.of(quest);
     }
 
     /** Objective size: base size × Tier multiplier, rounded up. */
