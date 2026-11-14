@@ -9,9 +9,11 @@ import com.alfgoto.rune.command.DebugCommand;
 import com.alfgoto.rune.command.RuneCommand;
 import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.gameplay.jobs.BlockActions;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
 import java.util.List;
+import org.bukkit.Material;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ class CoreJobsModuleTest {
         RuneContext ctx =
                 new RuneContext(plugin, RuneConfig.defaults(), new RuneCommand(List.of()), new DebugCommand());
         JobRegistry jobs = ctx.provide(JobRegistry.class, new JobRegistry());
+        BlockActions blockActions = ctx.provide(BlockActions.class, new BlockActions());
 
         CoreJobsModule module = new CoreJobsModule();
         module.enable(ctx);
@@ -42,6 +45,7 @@ class CoreJobsModuleTest {
         assertEquals(2, jobs.registry().size());
         assertSame(CoreJobs.MINING, jobs.registry().get("mining"));
         assertSame(CoreJobs.WOODCUTTING, jobs.registry().get("woodcutting"));
+        assertSame(CoreJobs.MINING, blockActions.get(Material.DIAMOND_ORE).orElseThrow().job());
         assertTrue(module.dependsOn().contains(JobsModule.class));
     }
 }

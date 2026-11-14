@@ -50,6 +50,7 @@ class RuneConfigTest {
                   level-curve:
                     base: 40
                     exponent: 1.5
+                  bonemeal-multiplier: 0.5
                 account:
                   level-curve:
                     base: 100
@@ -66,6 +67,7 @@ class RuneConfigTest {
         assertEquals(List.of(-1.0, 0.0, 1.0, 2.0, 3.0), c.questTierWeightPerLevel());
         assertEquals(40, c.levelCurveBase());
         assertEquals(1.5, c.levelCurveExponent());
+        assertEquals(0.5, c.bonemealXpMultiplier());
         assertEquals(100, c.accountCurveBase());
         assertEquals(1.1, c.accountCurveExponent());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 6.0), c.questTierMultipliers());
@@ -81,6 +83,7 @@ class RuneConfigTest {
             assertTrue(errors.isEmpty(), errors.toString());
             assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
             assertEquals(50 * Math.pow(10, 1.3), c.xpToNextLevel(10), 1e-9);
+            assertEquals(0.25, c.bonemealXpMultiplier());
         }
     }
 
@@ -91,6 +94,7 @@ class RuneConfigTest {
                   level-curve:
                     base: -5
                     exponent: banana
+                  bonemeal-multiplier: 0.25
                 account:
                   level-curve:
                     base: 200
@@ -114,7 +118,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(8, errors.size());
+        assertEquals(9, errors.size());
+        assertEquals(0.25, c.bonemealXpMultiplier());
         assertEquals(50, c.levelCurveBase());
         assertEquals(200, c.accountCurveBase());
         assertEquals(1.3, c.accountCurveExponent());
@@ -127,6 +132,7 @@ class RuneConfigTest {
                   level-curve:
                     base: 50
                     exponent: 1.3
+                  bonemeal-multiplier: 0.25
                 account:
                   level-curve:
                     base: 200

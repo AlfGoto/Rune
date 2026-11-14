@@ -4,6 +4,8 @@ jobs:
     # XP to next level = base * level ^ exponent (one curve for all Jobs)
     base: 50
     exponent: 1.3
+  # Job XP multiplier for blocks grown with bone meal (player or dispenser)
+  bonemeal-multiplier: 0.25
 account:
   level-curve:
     # XP to next Account Level = base * level ^ exponent
