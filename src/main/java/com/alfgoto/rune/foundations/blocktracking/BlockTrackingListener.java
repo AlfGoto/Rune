@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -58,6 +59,22 @@ public final class BlockTrackingListener implements Listener {
             }
         }
         markPlaced(event.getBlockPlaced());
+    }
+
+    /**
+     * A dispenser places a block without a place event. The block in front of it is tagged {@code placed}, so the
+     * dispense - break - refill loop gives no Job XP. Only block items, only into air.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDispense(BlockDispenseEvent event) {
+        if (!event.getItem().getType().isBlock()
+                || !(event.getBlock().getBlockData() instanceof Directional directional)) {
+            return;
+        }
+        Block target = event.getBlock().getRelative(directional.getFacing());
+        if (target.getType().isAir()) {
+            markPlaced(target);
+        }
     }
 
     /** A placed block is not grown: drop any stale tag left at this spot first. */
