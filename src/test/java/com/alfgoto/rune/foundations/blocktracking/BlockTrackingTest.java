@@ -109,6 +109,53 @@ class BlockTrackingTest {
                 ((net.kyori.adventure.text.TranslatableComponent) player.nextComponentMessage()).key());
     }
 
+    private static org.bukkit.block.BlockState state(Block block, Material type) {
+        org.bukkit.block.BlockState state = block.getState();
+        state.setType(type);
+        return state;
+    }
+
+    @Test
+    void naturalTreeGrowthGetsGrownNatural() {
+        Block log = world.getBlockAt(0, 65, 0);
+        tracker.add(log, BlockTag.PLACED); // a sapling the player planted
+        listener.onStructureGrow(new org.bukkit.event.world.StructureGrowEvent(
+                log.getLocation(), org.bukkit.TreeType.TREE, false, null, List.of(state(log, Material.OAK_LOG))));
+        assertEquals(Set.of(BlockTag.GROWN_NATURAL), tracker.tags(log));
+    }
+
+    @Test
+    void boneMealTreeGrowthGetsGrownBonemeal() {
+        Block log = world.getBlockAt(0, 65, 0);
+        listener.onStructureGrow(new org.bukkit.event.world.StructureGrowEvent(
+                log.getLocation(), org.bukkit.TreeType.TREE, true, null, List.of(state(log, Material.OAK_LOG))));
+        assertEquals(Set.of(BlockTag.GROWN_BONEMEAL), tracker.tags(log));
+    }
+
+    @Test
+    void breakingAGrownBlockClearsItsTag() {
+        Block log = world.getBlockAt(0, 65, 0);
+        tracker.add(log, BlockTag.GROWN_NATURAL);
+        listener.onBreak(new org.bukkit.event.block.BlockBreakEvent(log, MockBukkit.getMock().addPlayer()));
+        assertTrue(tracker.tags(log).isEmpty());
+    }
+
+    @Test
+    void placingOverAStaleGrownTagLeavesOnlyPlaced() {
+        Block block = world.getBlockAt(0, 65, 0);
+        tracker.add(block, BlockTag.GROWN_NATURAL); // a leaf that decayed, tag never cleared
+        var player = MockBukkit.getMock().addPlayer();
+        listener.onPlace(new org.bukkit.event.block.BlockPlaceEvent(
+                block,
+                block.getState(),
+                world.getBlockAt(0, 64, 0),
+                new org.bukkit.inventory.ItemStack(Material.DIRT),
+                player,
+                true,
+                org.bukkit.inventory.EquipmentSlot.HAND));
+        assertEquals(Set.of(BlockTag.PLACED), tracker.tags(block));
+    }
+
     @Test
     void fluidMadeBlocksAreTaggedFluid() {
         for (Material type : List.of(Material.COBBLESTONE, Material.STONE, Material.BASALT, Material.OBSIDIAN)) {
