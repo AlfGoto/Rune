@@ -1,0 +1,85 @@
+name: fix-conflicts
+
+# After each push to main: find open PRs (base main) that now have merge conflicts
+# and comment "@claude fix conflicts" on them. The comment starts claude.yml,
+# which merges main into the PR branch and fixes the conflicts.
+#
+# Why a comment and not the agent directly: same path as a human asking,
+# so the agent gets the PR context and the per-PR concurrency queue from claude.yml.
+#
+# The comment is posted by a tiny Claude step (App token, as in claude-review.yml):
+# comments made with GITHUB_TOKEN never trigger other workflows.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: fix-conflicts
+  cancel-in-progress: true
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    outputs:
+      prs: ${{ steps.find.outputs.prs }}
+    steps:
+      - id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          # GitHub computes "mergeable" lazily after a push: UNKNOWN at first.
+          # Asking for it starts the computation, so retry a few times.
+          for i in 1 2 3 4 5 6; do
+            prs=$(gh pr list -R "$REPO" --state open --base main --limit 100 --json number,mergeable)
+            unknown=$(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' <<< "$prs")
+            echo "try $i: $unknown PR(s) still UNKNOWN"
+            [ "$unknown" -eq 0 ] && break
+            sleep 10
+          done
+
+          todo="[]"
+          for n in $(jq -r '.[] | select(.mergeable == "CONFLICTING") | .number' <<< "$prs"); do
+            # Already asked since the PR's last commit? Then don't ask again
+            # (the agent is on it, or is waiting for Alfred).
+            info=$(gh pr view "$n" -R "$REPO" --json commits,comments)
+            last_commit=$(jq -r '.commits | last | .committedDate' <<< "$info")
+            last_ask=$(jq -r '[.comments[] | select(.body | contains("<!-- rune-fix-conflicts -->")) | .createdAt] | max // ""' <<< "$info")
+            if [ -n "$last_ask" ] && [[ "$last_ask" > "$last_commit" ]]; then
+              echo "#$n: conflicts, already asked at $last_ask"
+              continue
+            fi
+            echo "#$n: conflicts, will ask @claude"
+            todo=$(jq -c --argjson n "$n" '. + [$n]' <<< "$todo")
+          done
+          echo "prs=$todo" >> "$GITHUB_OUTPUT"
+
+  ask:
+    needs: find
+    if: needs.find.outputs.prs != '[]' && needs.find.outputs.prs != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: ${{ fromJSON(needs.find.outputs.prs) }}
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Run exactly ONE shell command, copied character for character, then stop. Do nothing else.
+            gh pr comment ${{ matrix.pr }} --body "@claude fix conflicts <!-- rune-fix-conflicts -->"
+          claude_args: |
+            --model claude-haiku-5-5
+            --max-turns 3
+            --allowedTools "Bash(gh pr comment:*)"

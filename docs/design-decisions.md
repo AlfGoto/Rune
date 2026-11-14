@@ -10,6 +10,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Minecraft version in one build property; Renovate opens version-bump PRs.
 - Local test: `./gradlew runServer`, join `localhost` with a vanilla client.
 - CI: build + MockBukkit tests + Claude PR review, copying the FloconAI repo's setup (same auth method).
+- Conflicts (2026-11-14): after each push to main, `fix-conflicts.yml` comments `@claude fix conflicts` on every open PR that now conflicts with main (once per PR commit). The comment starts the normal @claude agent, which merges main in.
 - Player-facing text: English (default) + French, all text (including every item name) in language files with English as fallback, so server owners can add more languages.
 - Translations ship in the resource pack (2026-11-11): items, menus and messages use translatable components, and each client shows them in its own language. Every translatable component carries the English text as fallback, so a missing key never shows a raw key.
 - Text helpers (`com.alfgoto.rune.text`): translation keys are `rune.<category>.<id>`; language files live in `src/main/resources/lang/<language>/<module>.json`, one file per module (ADR 0004), and every language must have the same keys. Rarity colours live only in the `Rarity` enum: Common white, Uncommon green, Rare aqua, Epic light purple, Legendary gold (vanilla named colours, may change in the visual polish pass).
