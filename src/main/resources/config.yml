@@ -20,3 +20,9 @@ quests:
     per-level: [-1.2, 0, 0.6, 0.5, 0.2]
   # Most Reroll Tokens a player can hold (one is earned per world day)
   max-reroll-tokens: 3
+resource-pack:
+  # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
+  port: 8123
+  # Leave empty to use the built-in server. Otherwise players download the pack from this URL,
+  # which must serve the file the plugin builds (plugins/Rune/rune-pack.zip). Nothing is served then.
+  external-url: ""
