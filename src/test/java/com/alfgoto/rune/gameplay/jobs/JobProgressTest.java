@@ -2,9 +2,12 @@ package com.alfgoto.rune.gameplay.jobs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.alfgoto.rune.storage.PlayerStorage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +41,30 @@ class JobProgressTest {
     void accountLevelFollowsAccountCurve() {
         progress.addJobXp(player, mining, 200);
         assertEquals(2, progress.accountLevel(player));
+    }
+
+    @Test
+    void listenersGetTheGainWithLevelsBeforeAndAfter() {
+        List<JobXpGain> gains = new ArrayList<>();
+        progress.addListener(gains::add);
+        progress.addJobXp(player, mining, 200);
+        assertEquals(1, gains.size());
+        JobXpGain gain = gains.get(0);
+        assertEquals(200, gain.amount(), 1e-9);
+        assertEquals(1, gain.jobLevelBefore());
+        assertTrue(gain.jobLeveledUp());
+        assertTrue(gain.accountLeveledUp());
+    }
+
+    @Test
+    void aFailingListenerDoesNotStopTheOthers() {
+        List<JobXpGain> gains = new ArrayList<>();
+        progress.addListener(gain -> {
+            throw new IllegalStateException("boom");
+        });
+        progress.addListener(gains::add);
+        progress.addJobXp(player, mining, 10);
+        assertEquals(1, gains.size());
     }
 
     @Test
