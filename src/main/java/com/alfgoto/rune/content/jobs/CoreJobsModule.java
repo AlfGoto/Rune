@@ -16,7 +16,7 @@ public final class CoreJobsModule implements RuneModule {
     public void enable(RuneContext ctx) {
         JobRegistry jobs = ctx.get(JobRegistry.class);
         CoreJobs.registerAll(jobs);
-        CoreBlockActions.registerAll(ctx.get(BlockActions.class), jobs);
+        CoreBlockActions.registerAll(ctx.get(BlockActions.class), jobs, ctx.config().blockXp());
     }
 
     @Override

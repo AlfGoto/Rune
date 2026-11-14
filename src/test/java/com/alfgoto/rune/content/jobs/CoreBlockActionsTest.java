@@ -2,12 +2,24 @@ package com.alfgoto.rune.content.jobs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.gameplay.jobs.BlockActions;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,29 +86,75 @@ class CoreBlockActionsTest {
         assertEquals("excavation", job(Material.SAND));
     }
 
-    @Test
-    void xpValuesFollowTheDocs() {
-        assertEquals(1, CoreBlockActions.baseXp(Material.STONE).getAsDouble());
-        assertEquals(0.25, CoreBlockActions.baseXp(Material.NETHERRACK).getAsDouble());
-        assertEquals(1.5, CoreBlockActions.baseXp(Material.DEEPSLATE).getAsDouble());
-        assertEquals(2, CoreBlockActions.baseXp(Material.END_STONE).getAsDouble());
-        assertEquals(30, CoreBlockActions.baseXp(Material.DIAMOND_ORE).getAsDouble());
-        assertEquals(37.5, CoreBlockActions.baseXp(Material.DEEPSLATE_DIAMOND_ORE).getAsDouble());
-        assertEquals(6, CoreBlockActions.baseXp(Material.OBSIDIAN).getAsDouble());
-        assertEquals(6, CoreBlockActions.baseXp(Material.WAXED_OXIDIZED_CUT_COPPER).getAsDouble());
-        assertEquals(3, CoreBlockActions.baseXp(Material.OAK_LOG).getAsDouble());
-        assertEquals(3, CoreBlockActions.baseXp(Material.STRIPPED_OAK_WOOD).getAsDouble());
-        assertEquals(4, CoreBlockActions.baseXp(Material.CHERRY_LOG).getAsDouble());
-        assertEquals(5, CoreBlockActions.baseXp(Material.PALE_OAK_LOG).getAsDouble());
-        assertEquals(0.1, CoreBlockActions.baseXp(Material.OAK_LEAVES).getAsDouble());
-        assertEquals(0.05, CoreBlockActions.baseXp(Material.VINE).getAsDouble());
-        assertEquals(20, CoreBlockActions.baseXp(Material.CREAKING_HEART).getAsDouble());
+    /** The shipped config.yml, read with a logger that records errors (a wrong block name is an error). */
+    private static RuneConfig shippedConfig(List<String> errors) throws Exception {
+        Logger logger = Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new Handler() {
+            @Override
+            public void publish(LogRecord r) {
+                if (r.getLevel() == Level.SEVERE) {
+                    errors.add(r.getMessage());
+                }
+            }
+
+            @Override
+            public void flush() {}
+
+            @Override
+            public void close() {}
+        });
+        try (var in = CoreBlockActionsTest.class.getResourceAsStream("/config.yml")) {
+            assertNotNull(in);
+            return RuneConfig.load(YamlConfiguration.loadConfiguration(new InputStreamReader(in)), logger);
+        }
+    }
+
+    private static BlockActions shippedActions() throws Exception {
+        JobRegistry jobs = new JobRegistry();
+        BlockActions actions = new BlockActions();
+        CoreJobs.registerAll(jobs);
+        CoreBlockActions.registerAll(actions, jobs, shippedConfig(new ArrayList<>()).blockXp());
+        return actions;
+    }
+
+    private static double xp(BlockActions actions, Material material) {
+        return actions.get(material).orElseThrow().xp();
     }
 
     @Test
-    void blocksWithoutADocumentedValueGiveNothing() {
-        assertFalse(CoreBlockActions.baseXp(Material.FURNACE).isPresent());
-        assertFalse(CoreBlockActions.baseXp(Material.DIRT).isPresent());
+    void everyShippedBlockNameIsARealBlock() throws Exception {
+        List<String> errors = new ArrayList<>();
+        RuneConfig config = shippedConfig(errors);
+        assertTrue(errors.isEmpty(), errors.toString());
+        assertFalse(config.blockXp().isEmpty());
+    }
+
+    @Test
+    void xpValuesFollowTheDocs() throws Exception {
+        BlockActions actions = shippedActions();
+        assertEquals(1, xp(actions, Material.STONE));
+        assertEquals(0.25, xp(actions, Material.NETHERRACK));
+        assertEquals(1.5, xp(actions, Material.DEEPSLATE));
+        assertEquals(2, xp(actions, Material.END_STONE));
+        assertEquals(30, xp(actions, Material.DIAMOND_ORE));
+        assertEquals(37.5, xp(actions, Material.DEEPSLATE_DIAMOND_ORE));
+        assertEquals(6, xp(actions, Material.OBSIDIAN));
+        assertEquals(6, xp(actions, Material.WAXED_OXIDIZED_CUT_COPPER));
+        assertEquals(3, xp(actions, Material.OAK_LOG));
+        assertEquals(3, xp(actions, Material.STRIPPED_OAK_WOOD));
+        assertEquals(4, xp(actions, Material.CHERRY_LOG));
+        assertEquals(5, xp(actions, Material.PALE_OAK_LOG));
+        assertEquals(0.1, xp(actions, Material.OAK_LEAVES));
+        assertEquals(0.05, xp(actions, Material.VINE));
+        assertEquals(20, xp(actions, Material.CREAKING_HEART));
+    }
+
+    @Test
+    void blocksWithoutAConfiguredValueGiveNothing() throws Exception {
+        BlockActions actions = shippedActions();
+        assertFalse(actions.get(Material.FURNACE).isPresent());
+        assertFalse(actions.get(Material.DIRT).isPresent());
     }
 
     @Test
@@ -104,7 +162,15 @@ class CoreBlockActionsTest {
         JobRegistry jobs = new JobRegistry();
         BlockActions actions = new BlockActions();
         CoreJobs.registerAll(jobs);
-        CoreBlockActions.registerAll(actions, jobs);
+        CoreBlockActions.registerAll(
+                actions,
+                jobs,
+                Map.of(
+                        Material.IRON_ORE, 8.0,
+                        Material.OAK_LEAVES, 0.1,
+                        Material.PUMPKIN, 1.0,
+                        Material.BEEHIVE, 1.0,
+                        Material.DIRT, 1.0));
 
         assertSame(CoreJobs.MINING, actions.get(Material.IRON_ORE).orElseThrow().job());
         assertSame(CoreJobs.WOODCUTTING, actions.get(Material.OAK_LEAVES).orElseThrow().job());

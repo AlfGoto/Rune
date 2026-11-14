@@ -51,6 +51,8 @@ class RuneConfigTest {
                     base: 40
                     exponent: 1.5
                   bonemeal-multiplier: 0.5
+                  block-xp:
+                    STONE: 2
                 account:
                   level-curve:
                     base: 100
@@ -68,6 +70,7 @@ class RuneConfigTest {
         assertEquals(40, c.levelCurveBase());
         assertEquals(1.5, c.levelCurveExponent());
         assertEquals(0.5, c.bonemealXpMultiplier());
+        assertEquals(java.util.Map.of(org.bukkit.Material.STONE, 2.0), c.blockXp());
         assertEquals(100, c.accountCurveBase());
         assertEquals(1.1, c.accountCurveExponent());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 6.0), c.questTierMultipliers());
@@ -95,6 +98,8 @@ class RuneConfigTest {
                     base: -5
                     exponent: banana
                   bonemeal-multiplier: 0.25
+                  block-xp:
+                    STONE: 1
                 account:
                   level-curve:
                     base: 200
@@ -118,11 +123,28 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(9, errors.size());
+        assertEquals(10, errors.size());
+        assertTrue(c.blockXp().isEmpty());
         assertEquals(0.25, c.bonemealXpMultiplier());
         assertEquals(50, c.levelCurveBase());
         assertEquals(200, c.accountCurveBase());
         assertEquals(1.3, c.accountCurveExponent());
+    }
+
+    @Test
+    void badBlockXpEntriesAreSkippedAndLogged() throws Exception {
+        RuneConfig c = load("""
+                jobs:
+                  block-xp:
+                    STONE: 1
+                    NOT_A_BLOCK: 3
+                    DIRT: -1
+                    SAND: banana
+                """);
+        assertEquals(java.util.Map.of(org.bukkit.Material.STONE, 1.0), c.blockXp());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("NOT_A_BLOCK")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("DIRT")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("SAND")));
     }
 
     @Test
@@ -133,6 +155,8 @@ class RuneConfigTest {
                     base: 50
                     exponent: 1.3
                   bonemeal-multiplier: 0.25
+                  block-xp:
+                    STONE: 1
                 account:
                   level-curve:
                     base: 200

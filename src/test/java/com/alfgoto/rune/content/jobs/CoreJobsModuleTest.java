@@ -13,7 +13,9 @@ import com.alfgoto.rune.gameplay.jobs.BlockActions;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +36,13 @@ class CoreJobsModuleTest {
     @Test
     void putsMiningAndWoodcuttingInTheSharedRegistry() {
         RunePlugin plugin = MockBukkit.load(RunePlugin.class);
-        RuneContext ctx =
-                new RuneContext(plugin, RuneConfig.defaults(), new RuneCommand(List.of()), new DebugCommand());
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set(RuneConfig.BLOCK_XP + ".DIAMOND_ORE", 30);
+        RuneContext ctx = new RuneContext(
+                plugin,
+                RuneConfig.load(yaml, Logger.getAnonymousLogger()),
+                new RuneCommand(List.of()),
+                new DebugCommand());
         JobRegistry jobs = ctx.provide(JobRegistry.class, new JobRegistry());
         BlockActions blockActions = ctx.provide(BlockActions.class, new BlockActions());
 
