@@ -156,6 +156,31 @@ class BlockTrackingTest {
         assertEquals(Set.of(BlockTag.PLACED), tracker.tags(block));
     }
 
+    private Block eastFacingDispenser() {
+        Block dispenser = world.getBlockAt(0, 64, 0);
+        dispenser.setType(Material.DISPENSER);
+        var data = (org.bukkit.block.data.type.Dispenser) dispenser.getBlockData();
+        data.setFacing(BlockFace.EAST);
+        dispenser.setBlockData(data);
+        return dispenser;
+    }
+
+    @Test
+    void dispensedBlockItemIsTaggedPlaced() {
+        Block dispenser = eastFacingDispenser();
+        listener.onDispense(new org.bukkit.event.block.BlockDispenseEvent(
+                dispenser, new org.bukkit.inventory.ItemStack(Material.STONE), new org.bukkit.util.Vector(1, 0, 0)));
+        assertEquals(Set.of(BlockTag.PLACED), tracker.tags(world.getBlockAt(1, 64, 0)));
+    }
+
+    @Test
+    void dispensedNonBlockItemIsNotTagged() {
+        Block dispenser = eastFacingDispenser();
+        listener.onDispense(new org.bukkit.event.block.BlockDispenseEvent(
+                dispenser, new org.bukkit.inventory.ItemStack(Material.ARROW), new org.bukkit.util.Vector(1, 0, 0)));
+        assertTrue(tracker.tags(world.getBlockAt(1, 64, 0)).isEmpty());
+    }
+
     @Test
     void fluidMadeBlocksAreTaggedFluid() {
         for (Material type : List.of(
