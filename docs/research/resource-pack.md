@@ -154,7 +154,7 @@ player.sendResourcePacks(request);
 - The plugin builds the ZIP, computes the SHA-1 once, serves the ZIP, then sends `url + hash` on join.
 - Config option for an external URL: the plugin still needs the hash of that ZIP. It can download it and hash it, or the owner sets the hash in config. **Open point.**
 - `server.properties` `resource-pack` / `require-resource-pack` also exist, but they are one pack for the whole server and need a restart. The per-player API is better here.
-- Serving over HTTP from the plugin: the URL given to the client must be reachable by the player. That is why `/preview` needs a second tunnel for the pack port (already decided).
+- Serving over HTTP from the plugin: the URL given to the client must be reachable by the player. A `/preview` server cannot do this for now: the free playit.gg plan has no TCP tunnel for a second port (see #18).
 - Size limit and timeouts of the client download: **(unverified)**. Keep the pack small.
 
 ## Open points for Alfred (nothing built)

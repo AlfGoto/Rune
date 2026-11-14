@@ -6,7 +6,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Paper plugin + server resource pack, latest Minecraft (see ADR 0001). Minimum 26.3 (Poplar trees, Abandoned Camps are used by Woodcutting).
 - Language: Java. Base package: `com.alfgoto.rune`.
 - License: MIT.
-- Resource pack served by the plugin itself (built-in HTTP server, one extra port). A config option can point to an external URL instead. `/preview` needs a second playit.gg tunnel for the pack port.
+- Resource pack served by the plugin itself (built-in HTTP server, one extra port). A config option can point to an external URL instead. `/preview` has only the game tunnel: the free playit.gg plan has no TCP tunnel for the pack port (see #18), so the pack is not served there.
 - Minecraft version in one build property; Renovate opens version-bump PRs.
 - Local test: `./gradlew runServer`, join `localhost` with a vanilla client.
 - CI: build + MockBukkit tests + Claude PR review, copying the FloconAI repo's setup (same auth method).
@@ -139,7 +139,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Breaking it into small tasks (from nothing to full product) happens later, in a separate planning step. Intermediate milestones are a by-product of that order, not a reduced scope.
 - Manual setup tasks become the first issues when issues are created:
   - Add the Claude PR review secret (same one as `flocon-ai/flocon-ai`) to the Rune repo.
-  - Create the playit.gg account + two fixed tunnels (game port, resource pack port) and add the secret to the Rune repo.
+  - Create the playit.gg account + one fixed game tunnel and add the secret to the Rune repo.
 
 ### Step 1 (decided 2026-11-11)
 The first milestone the issues aim at:
