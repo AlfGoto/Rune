@@ -33,6 +33,7 @@ class QuestBookTest {
     private QuestBook book;
     private QuestSubcommand command;
     private QuestDebug debug;
+    private long day = 0;
     private final QuestType mineTest = new QuestType("minetest", CoreJobs.MINING, 10);
     private final QuestType woodTest = new QuestType("woodtest", CoreJobs.WOODCUTTING, 7);
 
@@ -44,7 +45,8 @@ class QuestBookTest {
         storage = new PdcPlayerStorage(plugin);
         progress = new JobProgress(storage, new LevelCurve(50, 1.3), new LevelCurve(200, 1.3));
         types = new QuestTypeRegistry();
-        book = new QuestBook(storage, progress, types.registry(), RuneConfig.defaults(), new Random(3));
+        book = new QuestBook(
+                storage, progress, types.registry(), RuneConfig.defaults(), new Random(3), () -> day);
         command = new QuestSubcommand(book);
         debug = new QuestDebug(types.registry(), book);
     }
@@ -134,7 +136,12 @@ class QuestBookTest {
         book.set(player.getUniqueId(), 1, mineTest, Rarity.COMMON);
         // A second book with an empty registry does not know the type: the slot is drawn again, here to nothing.
         var other = new QuestBook(
-                storage, progress, new QuestTypeRegistry().registry(), RuneConfig.defaults(), new Random(1));
+                storage,
+                progress,
+                new QuestTypeRegistry().registry(),
+                RuneConfig.defaults(),
+                new Random(1),
+                () -> day);
         assertTrue(other.active(player.getUniqueId()).isEmpty());
     }
 
@@ -179,6 +186,68 @@ class QuestBookTest {
         assertEquals(List.of("list"), command.complete(player, List.of("l")));
         assertEquals(List.of("minetest"), debug.complete(player, List.of("set", "1", "m")));
         assertEquals(List.of("epic"), debug.complete(player, List.of("set", "1", "minetest", "e")));
+    }
+
+    @Test
+    void newPlayersStartWithNoRerollToken() {
+        assertEquals(0, book.rerollTokens().count(player.getUniqueId()));
+    }
+
+    @Test
+    void earnsOneRerollTokenPerWorldDay() {
+        var id = player.getUniqueId();
+        book.rerollTokens().count(id);
+        day = 1;
+        assertEquals(1, book.rerollTokens().count(id));
+        assertEquals(1, book.rerollTokens().count(id), "same day earns nothing more");
+        day = 3;
+        assertEquals(3, book.rerollTokens().count(id));
+    }
+
+    @Test
+    void rerollTokensAreCappedAtThree() {
+        var id = player.getUniqueId();
+        book.rerollTokens().count(id);
+        day = 100;
+        assertEquals(3, book.rerollTokens().count(id));
+        day = 200;
+        assertEquals(3, book.rerollTokens().count(id));
+    }
+
+    @Test
+    void spendingATokenKeepsTheCountRight() {
+        var id = player.getUniqueId();
+        book.rerollTokens().count(id);
+        assertEquals(false, book.rerollTokens().spend(id), "none to spend");
+        day = 2;
+        assertTrue(book.rerollTokens().spend(id));
+        assertEquals(1, book.rerollTokens().count(id));
+    }
+
+    @Test
+    void rerollReplacesTheSlotAndSpendsAToken() {
+        types.register(mineTest);
+        var id = player.getUniqueId();
+        book.active(id);
+        assertTrue(book.reroll(id, 1).isEmpty(), "no token yet");
+        day = 1;
+        var quest = book.reroll(id, 2);
+        assertTrue(quest.isPresent());
+        assertEquals(quest.get(), book.active(id).get(1));
+        assertEquals(0, book.rerollTokens().count(id));
+    }
+
+    @Test
+    void rerollCommand() {
+        types.register(mineTest);
+        command.execute(player, List.of("reroll", "1"));
+        assertEquals("rune.command.quest.no_tokens", nextKey());
+        day = 1;
+        command.execute(player, List.of("reroll", "1"));
+        assertEquals("rune.command.quest.rerolled", nextKey());
+        command.execute(player, List.of("reroll", "9"));
+        assertEquals("rune.command.quest.invalid_slot", nextKey());
+        assertEquals(List.of("reroll"), command.complete(player, List.of("r")));
     }
 
     private String nextKey() {
