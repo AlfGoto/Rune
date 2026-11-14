@@ -43,6 +43,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Max Rank is set per Rune, by what makes sense for its effect. Some Runes have no Max Rank (e.g. Deepstride); the 3× cost per Rank caps them naturally. Defined in each Rune's definition.
 - Variants (Affinity: <place>, Specialist: <ore>, Specialist: <wood>, Sanctuary: <biome>) are separate Runes: they rank up separately and stack with each other. One effect class with a parameter. Variants can appear in their place's chest loot.
 - Stacking: the same effect from a Trait and/or several Runes adds up. Every effect is a number (on/off effects become chances). Chances above 100% roll again (e.g. Smelt 150% → always one smelt, 50% chance of a second: cobblestone → stone → smooth stone). Exception: Silk Touch (on/off) disables Fortune, Smelt and Ore Bloom.
+- Stacking code (2026-11-14, `gameplay.effects.Stacking`): chance values are in percent (100 = guaranteed), like Rune values. `Stacking.total` sums the values of one effect id over a list of sources (Trait + Runes, each with its Rank). `Stacking.rolls` gives the number of triggers: each full 100% is one, the rest is the chance of one more. Silk Touch (effect id `silk_touch`) among the sources makes the total 0 for `fortune`, `smelt` and `ore_bloom`. These ids are reserved names; the Runes themselves come with their own tickets.
 - Transmuting postponed (future Rune Altar).
 - Obtained from Job Level milestones, rare drops during Job Actions, and Quest rewards.
 - Runesmithing Job earns XP from ranking up.
