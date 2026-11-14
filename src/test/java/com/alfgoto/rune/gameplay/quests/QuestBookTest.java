@@ -205,6 +205,21 @@ class QuestBookTest {
     }
 
     @Test
+    void settingTimeBackEarnsNothingEvenAfterGoingForwardAgain() {
+        var id = player.getUniqueId();
+        day = 5;
+        book.rerollTokens().count(id);
+        day = 6;
+        assertEquals(1, book.rerollTokens().count(id));
+        day = 3;
+        assertEquals(1, book.rerollTokens().count(id), "time set back earns nothing");
+        day = 6;
+        assertEquals(1, book.rerollTokens().count(id), "the same days are not earned twice");
+        day = 7;
+        assertEquals(2, book.rerollTokens().count(id));
+    }
+
+    @Test
     void rerollTokensAreCappedAtThree() {
         var id = player.getUniqueId();
         book.rerollTokens().count(id);
@@ -244,7 +259,7 @@ class QuestBookTest {
         assertEquals("rune.command.quest.no_tokens", nextKey());
         day = 1;
         command.execute(player, List.of("reroll", "1"));
-        assertEquals("rune.command.quest.rerolled", nextKey());
+        assertEquals("rune.command.quest.changed", nextKey());
         command.execute(player, List.of("reroll", "9"));
         assertEquals("rune.command.quest.invalid_slot", nextKey());
         assertEquals(List.of("reroll"), command.complete(player, List.of("r")));

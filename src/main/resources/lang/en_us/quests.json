@@ -2,7 +2,6 @@
   "rune.quest.test": "Test Quest",
   "rune.command.quest.usage": "Usage: /rune quest list | reroll <slot>",
   "rune.command.quest.no_tokens": "You have no Reroll Token.",
-  "rune.command.quest.rerolled": "Quest %s is now %s - %s (%s): %s",
   "rune.command.quest.tokens_left": "Reroll Tokens left: %s",
   "rune.debug.quest.usage": "Usage: /rune debug quest set <slot> <type> <tier>",
   "rune.command.quest.header": "Active Quests",

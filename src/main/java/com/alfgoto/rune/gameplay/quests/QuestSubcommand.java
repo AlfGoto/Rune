@@ -8,7 +8,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/** {@code /rune quest list} shows your 3 active Quests; {@code reroll <slot>} spends a Reroll Token. The test tool is {@code /rune debug quest set}. */
+/**
+ * {@code /rune quest list} shows your 3 active Quests; {@code reroll <slot>} spends a Reroll Token.
+ * The test tool is {@code /rune debug quest set}.
+ */
 public final class QuestSubcommand implements Subcommand {
 
     private static final String USAGE = "Usage: /rune quest list | reroll <slot>";
@@ -76,7 +79,7 @@ public final class QuestSubcommand implements Subcommand {
             player.sendMessage(error("rune.command.quest.none", "No Quest is available yet."));
             return;
         }
-        player.sendMessage(describe("rune.command.quest.rerolled", "Quest %s is now %s - %s (%s): %s", slot, quest.get())
+        player.sendMessage(describe("rune.command.quest.changed", "Quest %s is now %s - %s (%s): %s", slot, quest.get())
                 .append(Component.text(" ")
                         .append(Component.translatable(
                                 "rune.command.quest.tokens_left",

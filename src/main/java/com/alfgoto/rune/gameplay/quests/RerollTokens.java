@@ -37,12 +37,13 @@ public final class RerollTokens {
         }
         int held = Math.max(0, (int) Math.min(readInt(player, TOKENS_KEY), Integer.MAX_VALUE));
         long earned = today - lastDay;
-        if (earned == 0 && held <= config.questMaxRerollTokens()) {
+        if (earned <= 0 && held <= config.questMaxRerollTokens()) {
             return held;
         }
-        // Time set back (earned < 0) earns nothing but moves the day, so tokens come back after it.
+        // Time set back (earned < 0) earns nothing and never moves the stored day back,
+        // so going forward again does not earn the same days twice.
         long total = Math.min(config.questMaxRerollTokens(), held + Math.max(0, earned));
-        write(player, (int) total, today);
+        write(player, (int) total, Math.max(lastDay, today));
         return (int) total;
     }
 
