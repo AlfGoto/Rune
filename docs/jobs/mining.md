@@ -9,15 +9,15 @@ Starting values for the Mining Job. Every number lives in config and will be tun
 - Multi-block effects (Veinminer, Tunneler, Blast Mine, Great Blast, Starbreaker, Worldheart): full XP and a Cache roll for every block. Veinminer is pickaxe-only and works only on ores (the axe equivalent is Treefeller, see `woodcutting.md`).
 - Account Rate: **1.0** — Mining is the reference Job.
 
-## Job XP per block (baseline: stone = 1)
-Filler blocks follow their hardness:
+## Job XP per block (baseline: stone = 0.2)
+Filler blocks follow their hardness, scaled down ×0.2 so filler stays a trickle next to ores:
 
 | Filler block | XP |
 |---|---|
-| Netherrack | 0.25 |
-| Stone, granite/diorite/andesite, tuff… | 1 |
-| Deepslate | 1.5 |
-| End stone | 2 |
+| Netherrack | 0.05 |
+| Stone, granite/diorite/andesite, tuff… | 0.2 |
+| Deepslate | 0.3 |
+| End stone | 0.4 |
 
 Fixed values:
 
@@ -58,7 +58,7 @@ Job Levels give recipes, Blueprints and milestone Rune Caches — never passive 
 **Milestone Caches** (may be raised later): one every 5 levels — Lvl 5 Common, 10 Uncommon, 15 Rare, 20 Rare, 25 Epic, 30 Epic, then Epic every 5 levels with a Legendary Cache every 25 levels (50, 75, 100…).
 
 ## Rune Caches from mining
-- Drop chance per block = `XP × 0.05%` (stone ≈ 1/2,000, diamond 1.5%, emerald 2%).
+- Drop chance per block = `XP × 0.05%` (stone ≈ 1/10,000, diamond 1.5%, emerald 2%).
 - Contents: 60% Mining Runes, 40% general passive Runes (Player/Armor Runes).
 - Rarity follows the shared rule (same loot table; Rarity shifts odds and quantity).
 

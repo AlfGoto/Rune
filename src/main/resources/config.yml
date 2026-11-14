@@ -10,17 +10,17 @@ jobs:
   # The block decides the Job (in code). A block not listed gives no XP.
   block-xp:
     # Mining: filler
-    NETHERRACK: 0.25
-    STONE: 1
-    GRANITE: 1
-    DIORITE: 1
-    ANDESITE: 1
-    TUFF: 1
-    COBBLESTONE: 1
-    BASALT: 1
-    DEEPSLATE: 1.5
-    COBBLED_DEEPSLATE: 1.5
-    END_STONE: 2
+    NETHERRACK: 0.05
+    STONE: 0.2
+    GRANITE: 0.2
+    DIORITE: 0.2
+    ANDESITE: 0.2
+    TUFF: 0.2
+    COBBLESTONE: 0.2
+    BASALT: 0.2
+    DEEPSLATE: 0.3
+    COBBLED_DEEPSLATE: 0.3
+    END_STONE: 0.4
     # Mining: ores and other fixed values
     COAL_ORE: 4
     COPPER_ORE: 4

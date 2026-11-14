@@ -134,10 +134,10 @@ class CoreBlockActionsTest {
     @Test
     void xpValuesFollowTheDocs() throws Exception {
         BlockActions actions = shippedActions();
-        assertEquals(1, xp(actions, Material.STONE));
-        assertEquals(0.25, xp(actions, Material.NETHERRACK));
-        assertEquals(1.5, xp(actions, Material.DEEPSLATE));
-        assertEquals(2, xp(actions, Material.END_STONE));
+        assertEquals(0.2, xp(actions, Material.STONE));
+        assertEquals(0.05, xp(actions, Material.NETHERRACK));
+        assertEquals(0.3, xp(actions, Material.DEEPSLATE));
+        assertEquals(0.4, xp(actions, Material.END_STONE));
         assertEquals(30, xp(actions, Material.DIAMOND_ORE));
         assertEquals(37.5, xp(actions, Material.DEEPSLATE_DIAMOND_ORE));
         assertEquals(6, xp(actions, Material.OBSIDIAN));
@@ -198,14 +198,14 @@ class CoreBlockActionsTest {
     void everyRowOfTheMiningTableGivesItsXpToMining() throws Exception {
         BlockActions actions = shippedActions();
         Map<Material, Double> table = Map.ofEntries(
-                Map.entry(Material.NETHERRACK, 0.25),
-                Map.entry(Material.STONE, 1.0),
-                Map.entry(Material.GRANITE, 1.0),
-                Map.entry(Material.DIORITE, 1.0),
-                Map.entry(Material.ANDESITE, 1.0),
-                Map.entry(Material.TUFF, 1.0),
-                Map.entry(Material.DEEPSLATE, 1.5),
-                Map.entry(Material.END_STONE, 2.0),
+                Map.entry(Material.NETHERRACK, 0.05),
+                Map.entry(Material.STONE, 0.2),
+                Map.entry(Material.GRANITE, 0.2),
+                Map.entry(Material.DIORITE, 0.2),
+                Map.entry(Material.ANDESITE, 0.2),
+                Map.entry(Material.TUFF, 0.2),
+                Map.entry(Material.DEEPSLATE, 0.3),
+                Map.entry(Material.END_STONE, 0.4),
                 Map.entry(Material.COAL_ORE, 4.0),
                 Map.entry(Material.COPPER_ORE, 4.0),
                 Map.entry(Material.NETHER_GOLD_ORE, 4.0),
