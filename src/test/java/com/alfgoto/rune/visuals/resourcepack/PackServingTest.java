@@ -30,6 +30,10 @@ class PackServingTest {
             var other = URI.create("http://localhost:" + server.port() + "/nope");
             var missing = client.send(HttpRequest.newBuilder(other).build(), HttpResponse.BodyHandlers.ofString());
             assertEquals(404, missing.statusCode());
+            var post = client.send(
+                    HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.noBody()).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(405, post.statusCode());
         } finally {
             server.stop();
         }
@@ -39,15 +43,15 @@ class PackServingTest {
     void builtInUrlUsesTheJoinedHost() {
         var settings = new PackSettings(8123, null);
         assertEquals(
-                "http://play.example.com:8123/rune-pack.zip", PackJoinListener.url(settings, 8123, "play.example.com"));
-        assertEquals("http://localhost:8123/rune-pack.zip", PackJoinListener.url(settings, 8123, null));
-        assertEquals("http://[::1]:8123/rune-pack.zip", PackJoinListener.url(settings, 8123, "::1"));
+                "http://play.example.com:8123/rune-pack.zip", PackJoinListener.url(settings, "play.example.com"));
+        assertEquals("http://localhost:8123/rune-pack.zip", PackJoinListener.url(settings, null));
+        assertEquals("http://[::1]:8123/rune-pack.zip", PackJoinListener.url(settings, "::1"));
     }
 
     @Test
     void externalUrlWins() {
         var settings = new PackSettings(8123, "https://example.com/pack.zip");
-        assertEquals("https://example.com/pack.zip", PackJoinListener.url(settings, 0, "play.example.com"));
+        assertEquals("https://example.com/pack.zip", PackJoinListener.url(settings, "play.example.com"));
     }
 
     @Test

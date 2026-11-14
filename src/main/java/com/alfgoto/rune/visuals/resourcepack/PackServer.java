@@ -27,18 +27,11 @@ public final class PackServer {
 
     private static void handle(HttpExchange exchange, byte[] zip) throws IOException {
         try (exchange) {
-            String method = exchange.getRequestMethod();
-            boolean head = "HEAD".equals(method);
-            if (!head && !"GET".equals(method)) {
+            if (!"GET".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(405, -1);
                 return;
             }
             exchange.getResponseHeaders().set("Content-Type", "application/zip");
-            if (head) {
-                exchange.getResponseHeaders().set("Content-Length", String.valueOf(zip.length));
-                exchange.sendResponseHeaders(200, -1);
-                return;
-            }
             exchange.sendResponseHeaders(200, zip.length);
             try (OutputStream out = exchange.getResponseBody()) {
                 out.write(zip);

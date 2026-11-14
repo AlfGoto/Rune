@@ -19,20 +19,17 @@ public final class PackJoinListener implements Listener {
 
     private final PackSettings settings;
     private final String sha1;
-    private final int servedPort;
 
-    /** @param servedPort port of the built-in server, used when no external URL is set */
-    public PackJoinListener(PackSettings settings, String sha1, int servedPort) {
+    public PackJoinListener(PackSettings settings, String sha1) {
         this.settings = settings;
         this.sha1 = sha1;
-        this.servedPort = servedPort;
     }
 
     /**
      * The URL a player downloads the pack from. The built-in server uses the address the player
      * joined with, so no public address has to be configured.
      */
-    static String url(PackSettings settings, int servedPort, String joinedHost) {
+    static String url(PackSettings settings, String joinedHost) {
         if (settings.usesExternalUrl()) {
             return settings.externalUrl();
         }
@@ -40,7 +37,7 @@ public final class PackJoinListener implements Listener {
         if (host.contains(":")) {
             host = "[" + host + "]"; // IPv6 literal
         }
-        return "http://" + host + ":" + servedPort + PackServer.PATH;
+        return "http://" + host + ":" + settings.port() + PackServer.PATH;
     }
 
     @EventHandler
@@ -48,7 +45,7 @@ public final class PackJoinListener implements Listener {
         Player player = event.getPlayer();
         InetSocketAddress virtualHost = player.getVirtualHost();
         String host = virtualHost == null ? null : virtualHost.getHostString();
-        var info = ResourcePackInfo.resourcePackInfo(PACK_ID, URI.create(url(settings, servedPort, host)), sha1);
+        var info = ResourcePackInfo.resourcePackInfo(PACK_ID, URI.create(url(settings, host)), sha1);
         player.sendResourcePacks(ResourcePackRequest.resourcePackRequest().packs(info).build());
     }
 }
