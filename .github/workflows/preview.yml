@@ -19,14 +19,14 @@ env:
 # Only real `/preview` comments share the slot. Any other comment gets its own
 # throwaway group, so it never cancels a running preview.
 concurrency:
-  group: ${{ (github.event.issue.pull_request && startsWith(github.event.comment.body, '/preview')) && 'preview' || format('preview-noop-{0}', github.run_id) }}
+  group: ${{ (github.event.issue.pull_request && (github.event.comment.body == '/preview' || startsWith(github.event.comment.body, '/preview '))) && 'preview' || format('preview-noop-{0}', github.run_id) }}
   cancel-in-progress: true
 
 jobs:
   preview:
     if: >-
       github.event.issue.pull_request &&
-      startsWith(github.event.comment.body, '/preview') &&
+      (github.event.comment.body == '/preview' || startsWith(github.event.comment.body, '/preview ')) &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     # 1 h of play + build and startup time.
@@ -81,7 +81,8 @@ jobs:
 
       - name: Start Paper
         run: |
-          nohup ./gradlew runServer --no-daemon > server.log 2>&1 &
+          # The server is public: keep the GitHub token and RCON password out of its environment.
+          nohup env -u GH_TOKEN -u RCON_PASSWORD ./gradlew runServer --no-daemon > server.log 2>&1 &
           # Build + Paper download + world generation.
           for i in $(seq 1 120); do
             if grep -q 'Done (' server.log; then echo "Server is up"; exit 0; fi
@@ -93,9 +94,12 @@ jobs:
           exit 1
 
       - name: Start playit tunnel
+        env:
+          SECRET_KEY: ${{ secrets.PLAYIT_SECRET_KEY }}
         run: |
+          # `-e SECRET_KEY` (no value) passes it from the env: not in the script or process list.
           docker run -d --name playit --net=host \
-            -e SECRET_KEY="${{ secrets.PLAYIT_SECRET_KEY }}" \
+            -e SECRET_KEY \
             ghcr.io/playit-cloud/playit-agent:latest
           sleep 10
           docker logs playit 2>&1 | tail -n 20
@@ -108,6 +112,7 @@ jobs:
           - Join with a vanilla client.
           - Stops after **10 min with no players**, or **1 h** max.
           - A new \`/preview\` on any PR replaces this one."
+          echo "LIVE=1" >> "$GITHUB_ENV"
 
       - name: Keep running while players are online
         run: |
@@ -130,7 +135,8 @@ jobs:
           while true; do
             now=$(date +%s)
             # "There are N of a max of M players online"
-            out=$(python3 rcon.py list 2>/dev/null || echo "There are 0 of")
+            # RCON failing is not "0 players": don't count it as idle (the 1 h cap still applies).
+            if ! out=$(python3 rcon.py list 2>/dev/null); then last_player=$now; out=""; fi
             count=$(echo "$out" | grep -oE 'There are [0-9]+' | grep -oE '[0-9]+' || echo 0)
             [ "${count:-0}" -gt 0 ] && last_player=$now
             if [ $((now - last_player)) -ge 600 ]; then reason="10 min with no players"; break; fi
@@ -143,9 +149,13 @@ jobs:
           python3 rcon.py stop || true
           sleep 15
 
+      # Only once the 🟢 comment was posted (a failed start already got its own comment).
       - name: Comment the stop
-        if: always()
+        if: always() && env.LIVE == '1'
         run: |
           reason="${REASON:-the run was cancelled or failed}"
           gh pr comment "$PR" -R "$REPO" --body "**⚪ Preview stopped: PR #$PR** ($reason). Comment \`/preview\` to start it again."
-          docker rm -f playit >/dev/null 2>&1 || true
+
+      - name: Stop playit tunnel
+        if: always()
+        run: docker rm -f playit >/dev/null 2>&1 || true
