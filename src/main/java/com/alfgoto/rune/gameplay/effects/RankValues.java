@@ -1,60 +1,78 @@
 package com.alfgoto.rune.gameplay.effects;
 
-import java.util.Arrays;
+import java.util.OptionalInt;
 
 /**
- * One value per Rank: index 0 is Rank 1. Ranks start at 1.
+ * A value that grows with Rank: {@code base + perRank * (rank - 1)}. Ranks start at 1.
  *
- * <p>Asking for a Rank above the last value is an error, so a Rune can never silently get a value nobody
- * wrote. A single value applies to every Rank.
+ * <p>Example: base 5, perRank 5 gives 5, 10, 15, ... A Rune can have a Max Rank. With no Max Rank the
+ * value keeps growing without limit.
+ *
+ * <p>The Max Rank is checked when the Rune is ranked up, with {@link #allows}. {@link #at} never throws for
+ * a Rank above the Max Rank: it returns the value of the Max Rank, so a Bukkit listener cannot fail on it.
  */
 public final class RankValues {
 
-    private final double[] values;
+    private final double base;
+    private final double perRank;
+    private final int maxRank; // 0 = no Max Rank
 
-    private RankValues(double[] values) {
-        this.values = values;
+    private RankValues(double base, double perRank, int maxRank) {
+        this.base = base;
+        this.perRank = perRank;
+        this.maxRank = maxRank;
     }
 
-    /** One value per Rank, starting at Rank 1. At least one value. */
-    public static RankValues of(double... values) {
-        if (values == null || values.length == 0) {
-            throw new IllegalArgumentException("At least one value is needed");
+    /** Starts at {@code base} on Rank 1 and adds {@code perRank} each Rank. No Max Rank. */
+    public static RankValues of(double base, double perRank) {
+        return create(base, perRank, 0);
+    }
+
+    /** Same as {@link #of(double, double)} with a Max Rank (at least 1). */
+    public static RankValues of(double base, double perRank, int maxRank) {
+        if (maxRank < 1) {
+            throw new IllegalArgumentException("Max Rank must be at least 1, got " + maxRank);
         }
-        for (double value : values) {
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException("Values must be finite numbers");
-            }
+        return create(base, perRank, maxRank);
+    }
+
+    private static RankValues create(double base, double perRank, int maxRank) {
+        if (!Double.isFinite(base) || !Double.isFinite(perRank)) {
+            throw new IllegalArgumentException("Base and growth per Rank must be finite numbers");
         }
-        return new RankValues(values.clone());
+        return new RankValues(base, perRank, maxRank);
     }
 
-    /** The same value at every Rank, for an effect that does not scale. */
-    public static RankValues constant(double value) {
-        return of(value);
+    public double base() {
+        return base;
     }
 
-    /** Number of values given. */
-    public int size() {
-        return values.length;
+    public double perRank() {
+        return perRank;
     }
 
-    /** The value at {@code rank}. A single value (see {@link #constant}) applies to every Rank. */
+    /** The Max Rank, or empty if the Rune has none. */
+    public OptionalInt maxRank() {
+        return maxRank == 0 ? OptionalInt.empty() : OptionalInt.of(maxRank);
+    }
+
+    /** True if {@code rank} is a valid Rank: at least 1 and not above the Max Rank. Use it when ranking up. */
+    public boolean allows(int rank) {
+        return rank >= 1 && (maxRank == 0 || rank <= maxRank);
+    }
+
+    /** The value at {@code rank}. A Rank above the Max Rank gives the value of the Max Rank. */
     public double at(int rank) {
         if (rank < 1) {
             throw new IllegalArgumentException("Rank starts at 1, got " + rank);
         }
-        if (values.length == 1) {
-            return values[0];
-        }
-        if (rank > values.length) {
-            throw new IllegalArgumentException("No value for Rank " + rank + " (defined: " + values.length + ")");
-        }
-        return values[rank - 1];
+        int effective = maxRank == 0 ? rank : Math.min(rank, maxRank);
+        return base + perRank * (effective - 1);
     }
 
     @Override
     public String toString() {
-        return "RankValues" + Arrays.toString(values);
+        return "RankValues[base=" + base + ", perRank=" + perRank
+                + (maxRank == 0 ? "" : ", maxRank=" + maxRank) + "]";
     }
 }

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.alfgoto.rune.foundations.registry.DuplicateIdException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class EffectTest {
@@ -26,7 +27,7 @@ class EffectTest {
 
     @Test
     void runsActionWithEventRankAndValue() {
-        EffectBinding<Ping> binding = recorder("rec").with(8, 16, 32);
+        EffectBinding<Ping> binding = recorder("rec").with(8, 8);
         Ping event = new Ping("a");
 
         assertTrue(binding.run(event, 2));
@@ -39,19 +40,19 @@ class EffectTest {
 
     @Test
     void valueFollowsRank() {
-        EffectBinding<Ping> binding = recorder("rec").with(8, 16, 32);
+        EffectBinding<Ping> binding = recorder("rec").with(8, 8);
         binding.run(new Ping("a"), 1);
         binding.run(new Ping("a"), 3);
         assertEquals(8, seen.get(0).value());
-        assertEquals(32, seen.get(1).value());
-        assertEquals(32, binding.valueAt(3));
+        assertEquals(24, seen.get(1).value());
+        assertEquals(24, binding.valueAt(3));
     }
 
     @Test
     void sameEffectCanHaveDifferentValuesPerBinding() {
         Effect<Ping> effect = recorder("rec");
-        effect.with(1, 2).run(new Ping("a"), 2);
-        effect.with(10, 20).run(new Ping("a"), 2);
+        effect.with(1, 1).run(new Ping("a"), 2);
+        effect.with(10, 10).run(new Ping("a"), 2);
         assertEquals(2, seen.get(0).value());
         assertEquals(20, seen.get(1).value());
     }
@@ -61,7 +62,7 @@ class EffectTest {
         Effect<Ping> effect = Effect.builder("cond", PING)
                 .when(ctx -> ctx.event().tag().equals("yes"))
                 .does(seen::add);
-        EffectBinding<Ping> binding = effect.with(1);
+        EffectBinding<Ping> binding = effect.with(1, 0);
 
         assertFalse(binding.run(new Ping("no"), 1));
         assertTrue(seen.isEmpty());
@@ -83,7 +84,7 @@ class EffectTest {
                 })
                 .does(seen::add);
 
-        assertFalse(effect.with(1).run(new Ping("a"), 1));
+        assertFalse(effect.with(1, 0).run(new Ping("a"), 1));
         assertEquals(List.of("first"), checked);
         assertTrue(seen.isEmpty());
     }
@@ -100,10 +101,10 @@ class EffectTest {
     }
 
     @Test
-    void unknownRankFailsBeforeRunning() {
-        EffectBinding<Ping> binding = recorder("rec").with(1, 2);
-        assertThrows(IllegalArgumentException.class, () -> binding.run(new Ping("a"), 3));
-        assertTrue(seen.isEmpty());
+    void rankAboveMaxRankDoesNotThrowAndUsesTheMaxRankValue() {
+        EffectBinding<Ping> binding = recorder("rec").with(1, 1, 2);
+        assertTrue(binding.run(new Ping("a"), 3));
+        assertEquals(2, seen.get(0).value());
     }
 
     @Test
@@ -117,11 +118,11 @@ class EffectTest {
     @Test
     void exposesIdTriggerAndValues() {
         Effect<Ping> effect = recorder("rec");
-        EffectBinding<Ping> binding = effect.with(RankValues.of(1, 2));
+        EffectBinding<Ping> binding = effect.with(RankValues.of(1, 2, 4));
         assertEquals("rec", effect.id());
         assertSame(PING, effect.trigger());
         assertSame(effect, binding.effect());
-        assertEquals(2, binding.values().size());
+        assertEquals(4, binding.values().maxRank().getAsInt());
     }
 
     @Test
@@ -131,13 +132,13 @@ class EffectTest {
         assertThrows(NullPointerException.class, () -> Effect.builder("x", PING).does(null));
         assertThrows(NullPointerException.class, () -> Effect.builder("x", PING).when(null));
         assertThrows(IllegalArgumentException.class, () -> new Trigger<>("", Ping.class, p -> null));
-        assertThrows(NullPointerException.class, () -> recorder("rec").with(1).run(null, 1));
+        assertThrows(NullPointerException.class, () -> recorder("rec").with(1, 0).run(null, 1));
     }
 
     @Test
     void builtInTriggersHaveUniqueIds() {
-        assertEquals("block_break", EffectTriggers.BLOCK_BREAK.id());
-        assertEquals("click", EffectTriggers.CLICK.id());
+        List<String> ids = List.of(EffectTriggers.BLOCK_BREAK.id(), EffectTriggers.CLICK.id());
+        assertEquals(ids.size(), Set.copyOf(ids).size());
     }
 
     @Test

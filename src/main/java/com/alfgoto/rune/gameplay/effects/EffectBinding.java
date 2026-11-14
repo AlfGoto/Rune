@@ -2,7 +2,7 @@ package com.alfgoto.rune.gameplay.effects;
 
 import java.util.Objects;
 
-/** An Effect together with its values per Rank. What a Rune or a Trait holds. */
+/** An Effect together with its value per Rank (base + growth, optional Max Rank). What a Rune or a Trait holds. */
 public final class EffectBinding<E> {
 
     private final Effect<E> effect;

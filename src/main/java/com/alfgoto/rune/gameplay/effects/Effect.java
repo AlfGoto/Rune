@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * "When X happens, if Y, do Z": a Trigger, Conditions and an action. Runes and Traits are built on it.
  *
- * <p>The Effect holds no numbers. {@link #with} binds it to values per Rank.
+ * <p>The Effect holds no numbers. {@link #with} binds it to a base value and a growth per Rank.
  */
 public final class Effect<E> implements Identified {
 
@@ -37,9 +37,14 @@ public final class Effect<E> implements Identified {
         return trigger;
     }
 
-    /** Binds this Effect to one value per Rank (e.g. {@code effect.with(8, 16, 32)}). */
-    public EffectBinding<E> with(double... valuesPerRank) {
-        return new EffectBinding<>(this, RankValues.of(valuesPerRank));
+    /** Binds this Effect to a base value and a growth per Rank, no Max Rank (e.g. {@code effect.with(5, 5)}). */
+    public EffectBinding<E> with(double base, double perRank) {
+        return new EffectBinding<>(this, RankValues.of(base, perRank));
+    }
+
+    /** Same as {@link #with(double, double)} with a Max Rank. */
+    public EffectBinding<E> with(double base, double perRank, int maxRank) {
+        return new EffectBinding<>(this, RankValues.of(base, perRank, maxRank));
     }
 
     public EffectBinding<E> with(RankValues values) {
