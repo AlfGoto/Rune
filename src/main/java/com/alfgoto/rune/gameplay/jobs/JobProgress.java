@@ -4,12 +4,16 @@ import com.alfgoto.rune.storage.PlayerStorage;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Job XP, Job Levels, Account XP and Account Level of players, stored in {@link PlayerStorage}.
  * Account XP = Job XP gained × the Job's Account Rate.
  */
 public final class JobProgress {
+
+    private static final Logger LOGGER = Logger.getLogger(JobProgress.class.getName());
 
     static final String ACCOUNT_XP_KEY = "account/xp";
 
@@ -69,7 +73,11 @@ public final class JobProgress {
                 accountLevelBefore,
                 accountLevel(player));
         for (JobXpListener listener : listeners) {
-            listener.onJobXpGain(gain);
+            try {
+                listener.onJobXpGain(gain);
+            } catch (RuntimeException e) {
+                LOGGER.log(Level.WARNING, "A Job XP listener failed", e);
+            }
         }
     }
 

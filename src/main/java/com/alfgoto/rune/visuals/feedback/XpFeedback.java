@@ -48,9 +48,10 @@ public final class XpFeedback implements JobXpListener {
         }
     }
 
-    /** One decimal at most, e.g. 12.5 or 40. */
+    /** Two decimals at most, trailing zeros removed, e.g. 0.25, 12.5 or 40. */
     static String format(double value) {
-        String text = String.format(Locale.ROOT, "%.1f", value);
-        return text.endsWith(".0") ? text.substring(0, text.length() - 2) : text;
+        String text = String.format(Locale.ROOT, "%.2f", value);
+        text = text.replaceAll("0+$", "");
+        return text.endsWith(".") ? text.substring(0, text.length() - 1) : text;
     }
 }
