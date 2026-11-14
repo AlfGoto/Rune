@@ -1,9 +1,8 @@
 name: claude-review
 
-# Automatic Claude review on every non-draft PR,
-# and on @claude agent PRs (branches "claude/...") even while they are drafts.
+# Automatic Claude review on every PR (drafts included), whatever the branch.
 #
-# Draft = signal for Alfred, on agent PRs only:
+# Draft = signal for Alfred, on every PR:
 # - Draft             → the agent is still working (review ↔ fix loop). Don't look yet.
 # - Ready for review  → Alfred should look (review says good, the loop stopped, or the review failed).
 # The `pr-status` job below flips it. The agent opens its PRs as drafts (see claude.yml).
@@ -23,7 +22,6 @@ concurrency:
 
 jobs:
   review:
-    if: github.event.pull_request.draft == false || startsWith(github.head_ref, 'claude/')
     runs-on: ubuntu-latest
     outputs:
       mode: ${{ steps.loop.outputs.mode }}
@@ -41,7 +39,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Review ↔ fix loop, only for PRs made by the @claude agent (branches "claude/...").
+      # Review ↔ fix loop, on every PR.
       # Counted here; the review agent itself posts the "@claude please fix" request,
       # because the action's App token is revoked once its step ends
       # (and comments made with GITHUB_TOKEN never trigger other workflows).
@@ -50,9 +48,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.head_ref }}
         run: |
-          if [[ "$HEAD" != claude/* ]]; then echo "mode=off" >> "$GITHUB_OUTPUT"; exit 0; fi
           reviews=$(gh api "repos/${{ github.repository }}/pulls/$PR/reviews?per_page=100" --jq '[.[].body]')
           done=$(jq '[.[] | select(contains("<!-- rune-autofix -->"))] | length' <<< "$reviews")
           stopped=$(jq '[.[] | select(contains("<!-- rune-autofix-stopped -->"))] | length' <<< "$reviews")
@@ -153,14 +149,13 @@ jobs:
             --max-turns 3
             --allowedTools "Bash(gh pr review:*)"
 
-  # Draft / ready signal for Alfred, on @claude agent PRs only.
+  # Draft / ready signal for Alfred, on every PR.
   # The WORKFLOW decides from the verdict (not the model).
   # Uses GITHUB_TOKEN, so the "ready_for_review" event it causes does NOT start a second review.
   pr-status:
     needs: review
     if: >-
       always() &&
-      startsWith(github.head_ref, 'claude/') &&
       needs.review.result != 'cancelled' &&
       needs.review.result != 'skipped'
     runs-on: ubuntu-latest
