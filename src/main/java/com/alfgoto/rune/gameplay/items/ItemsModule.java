@@ -1,0 +1,16 @@
+package com.alfgoto.rune.gameplay.items;
+
+import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.foundations.module.RuneModule;
+import com.google.auto.service.AutoService;
+
+/** Items framework: an empty ItemRegistry and /rune give. Content modules fill the registry. */
+@AutoService(RuneModule.class)
+public final class ItemsModule implements RuneModule {
+
+    @Override
+    public void enable(RuneContext ctx) {
+        ItemRegistry registry = ctx.provide(ItemRegistry.class, new ItemRegistry(ctx.plugin()));
+        ctx.subcommand(new GiveSubcommand(registry));
+    }
+}
