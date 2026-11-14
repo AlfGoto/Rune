@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -86,7 +85,7 @@ class PackServingTest {
             var config = YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(in));
             var s = PackSettings.load(config, Logger.getAnonymousLogger());
             assertEquals(PackSettings.DEFAULT_PORT, s.port());
-            assertTrue(s.externalUrl() == null);
+            assertNull(s.externalUrl());
         }
     }
 }
