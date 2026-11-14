@@ -63,7 +63,8 @@ public final class BlockTrackingListener implements Listener {
 
     /**
      * A dispenser places a block without a place event. The block in front of it is tagged {@code placed}, so the
-     * dispense - break - refill loop gives no Job XP. Only block items, only into air.
+     * dispense - break - refill loop gives no Job XP. Only block items, only into a tile that is not solid
+     * (air, water, replaceable plants), because a solid block cannot be replaced.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDispense(BlockDispenseEvent event) {
@@ -72,7 +73,7 @@ public final class BlockTrackingListener implements Listener {
             return;
         }
         Block target = event.getBlock().getRelative(directional.getFacing());
-        if (target.getType().isAir()) {
+        if (!target.getType().isSolid()) {
             markPlaced(target);
         }
     }

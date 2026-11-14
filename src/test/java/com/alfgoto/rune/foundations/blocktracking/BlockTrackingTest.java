@@ -174,6 +174,15 @@ class BlockTrackingTest {
     }
 
     @Test
+    void dispensedBlockItemIntoWaterIsTaggedPlaced() {
+        Block dispenser = eastFacingDispenser();
+        world.getBlockAt(1, 64, 0).setType(Material.WATER);
+        listener.onDispense(new org.bukkit.event.block.BlockDispenseEvent(
+                dispenser, new org.bukkit.inventory.ItemStack(Material.STONE), new org.bukkit.util.Vector(1, 0, 0)));
+        assertEquals(Set.of(BlockTag.PLACED), tracker.tags(world.getBlockAt(1, 64, 0)));
+    }
+
+    @Test
     void dispensedNonBlockItemIsNotTagged() {
         Block dispenser = eastFacingDispenser();
         listener.onDispense(new org.bukkit.event.block.BlockDispenseEvent(
