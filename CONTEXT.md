@@ -36,6 +36,12 @@ _Avoid_: Foraging, Lumberjack
 **Rune** — A physical item that grants an effect when installed. Has a Rarity, a Rank, a Capacity Cost, and a list of compatible places (player, tool types, armor pieces). Runes that share an effect but differ in a parameter (e.g. Affinity: Lush Caves vs Affinity: Mineshaft) are different Runes.
 _Avoid_: enchantment
 
+**Effect** — "When a Trigger fires, if its Conditions pass, do an action." Registered by id. It holds no numbers: a Rune or a Trait binds it to a base value and a growth per Rank. Runes and Traits are both built on Effects.
+
+**Trigger** — The game event an Effect listens to (block break, click…). It also tells which player the event is about.
+
+**Condition** — A check an Effect makes after its Trigger fires. All Conditions must pass, or the action does not run. A Condition can read the event, the player, the Rank and the value.
+
 **Player Rune** — A Rune installed on the player. Always passive (e.g. Speed). Kept on death.
 
 **Armor Rune** — A Rune installed in a piece of Rune Armor. Always passive; the same passive Runes that fit on the player can go here, so armor works as extra passive slots. Travels with the armor.
@@ -48,7 +54,7 @@ _Avoid_: enchantment
 
 **Rarity** — Tier shared by Runes, Rune Tools, Rune Armor, Rune Caches and Quests (as Quest Tier): Common, Uncommon, Rare, Epic, Legendary. Legendary is reserved for game-changing effects (e.g. Veinminer). On a Rune Cache, Rarity does not guarantee the Rarity of its contents (see Rune Cache).
 
-**Rank** — A Rune's upgrade level. Three identical Runes of rank N combine at a smithing table into one of rank N+1. Each Rune has its own **Max Rank**, set by what makes sense for its effect; a Rune can also have no Max Rank (e.g. Deepstride), since each Rank costs three times more than the last.
+**Rank** — A Rune's upgrade level. Three identical Runes of rank N combine at a smithing table into one of rank N+1. Each Rune has its own **Max Rank**, set by what makes sense for its effect; a Rune can also have no Max Rank (e.g. Deepstride), since each Rank costs three times more than the last. A Rune's value is a **base value** plus a **fixed step per Rank** (e.g. 5%, +5 per Rank: 5, 10, 15…). With no Max Rank the value keeps growing with no limit; going far past what is useful is allowed. The Max Rank is checked when ranking up, never at run time.
 
 **Stacking** — When the same effect comes from several sources (a Trait and Runes, or several Runes), their values add up. Every effect has a value, so everything stacks. Chance effects can go above 100%: each full 100% is a guaranteed trigger and the rest is the chance of one more (e.g. Smelt at 150% always smelts once and has a 50% chance to smelt the result again: cobblestone → stone → smooth stone). Exception: Silk Touch is on/off and turns off drop-changing effects (Fortune, Smelt, Ore Bloom) on its tool.
 

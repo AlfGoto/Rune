@@ -16,7 +16,7 @@ Build four core systems. Content is defined with small Java builders and registe
    - Rune = Effect + Rune item data (Rarity, Rank, Max Rank, compatible places).
    - Trait = Effect built into a Rune Tool or Rune Armor piece.
    - Active Rune = Effect triggered from an Active Slot, with a cooldown.
-   Effect parameters can vary per Rank. There is no separate "skills" system: Runes are the skills.
+   Effect parameters can vary per Rank: a base value plus a fixed step per Rank (amended 2026-11-14, was one value per Rank). Max Rank is optional; with none, the value grows with no limit. Max Rank is checked when ranking up, not at run time. There is no separate "skills" system: Runes are the skills.
 
 4. **Rewards** — One loot/reward system shared by Quest rewards, Rune Caches, Job Level milestones, and the loot that replaces enchanted books. It rolls tables of Runes, ingredients, Reroll Tokens, Blueprints, Job XP and Account XP.
 
@@ -25,7 +25,7 @@ Example: adding a Rune.
 rune("veinminer")
     .rarity(LEGENDARY)
     .fits(PICKAXE)
-    .effect(VEINMINE, maxBlocks(8, 16, 32));   // one value per Rank
+    .effect(VEINMINE, maxBlocks(8, 8, 3));   // base 8, +8 per Rank, Max Rank 3
 ```
 
 ### Content in Java (2026-11-11)
