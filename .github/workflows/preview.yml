@@ -7,7 +7,8 @@ name: preview
 # - Stops after 10 min with no players, or 1 h max.
 # - Only PRs from this repo (not forks), only commenters with write access:
 #   the playit secret is in the job, next to code from the PR.
-# - Resource pack: not served here (free playit plan has no TCP tunnel). See #18.
+# - Resource pack: the free playit plan has no TCP tunnel for a second port, so the pack is
+#   uploaded to the `preview` GitHub Release and the plugin points players there. See #18.
 
 on:
   issue_comment:
@@ -32,7 +33,8 @@ jobs:
     # 1 h of play + build and startup time.
     timeout-minutes: 75
     permissions:
-      contents: read
+      # write: to create/replace the `preview` Release that hosts the resource pack.
+      contents: write
       issues: write
       pull-requests: write
     env:
@@ -79,6 +81,11 @@ jobs:
           rcon.password=$RCON_PASSWORD
           motd=Rune preview - PR #$PR
           EOF
+          # Same config as the plugin default, but the pack comes from the preview Release.
+          mkdir -p run/plugins/Rune
+          cp src/main/resources/config.yml run/plugins/Rune/config.yml
+          sed -i "s|external-url: \"\"|external-url: \"https://github.com/$REPO/releases/download/preview/rune-pack.zip\"|" run/plugins/Rune/config.yml
+          grep -q "releases/download/preview" run/plugins/Rune/config.yml || { echo "external-url not set"; exit 1; }
 
       - name: Start Paper
         run: |
@@ -93,6 +100,13 @@ jobs:
           echo "Server did not start"; tail -n 80 server.log
           gh pr comment "$PR" -R "$REPO" --body "**/preview failed:** the server did not start. See the [run log](${{ github.server_url }}/$REPO/actions/runs/${{ github.run_id }})."
           exit 1
+
+      - name: Upload the pack to the preview Release
+        run: |
+          # The plugin built the pack at startup. Same zip = same SHA-1 the plugin sends.
+          gh release view preview -R "$REPO" >/dev/null 2>&1 || \
+            gh release create preview -R "$REPO" --prerelease --title preview --notes "Resource pack of the current /preview server. Replaced on each /preview."
+          gh release upload preview run/plugins/Rune/rune-pack.zip -R "$REPO" --clobber
 
       - name: Start playit tunnel
         env:

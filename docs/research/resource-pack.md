@@ -152,17 +152,15 @@ player.sendResourcePacks(request);
 
 **What this means for Rune** (fits the built-in HTTP server decision)
 - The plugin builds the ZIP, computes the SHA-1 once, serves the ZIP, then sends `url + hash` on join.
-- Config option for an external URL: the plugin still needs the hash of that ZIP. It can download it and hash it, or the owner sets the hash in config. **Open point.**
+- Config option for an external URL: the plugin still needs the hash of that ZIP. It can download it and hash it, or the owner sets the hash in config. **Decided (#18):** the plugin uses the SHA-1 of its own built zip.
 - `server.properties` `resource-pack` / `require-resource-pack` also exist, but they are one pack for the whole server and need a restart. The per-player API is better here.
-- Serving over HTTP from the plugin: the URL given to the client must be reachable by the player. A `/preview` server cannot do this for now: the free playit.gg plan has no TCP tunnel for a second port (see #18).
+- Serving over HTTP from the plugin: the URL given to the client must be reachable by the player. A `/preview` server uses the external URL mode (GitHub Release), because the free playit.gg plan has no TCP tunnel for a second port (see #18).
 - Size limit and timeouts of the client download: **(unverified)**. Keep the pack small.
 
 ## Open points for Alfred (nothing built)
 1. **Pack format:** do we want the format generated from the Minecraft version build property? (Would avoid a manual edit on every Renovate PR.)
-2. **External URL mode:** who provides the SHA-1: config, or the plugin downloads and hashes?
-3. **Required or optional pack:** `required(true)` or a soft prompt? Not decided in `docs/`.
-4. **Check on the final 26.3 release:** the format `97.1`.
-5. **Prototype to settle the `(unverified)` items:** item model API calls, negative-advance glyph spacing, console rendering, pack UUID handling.
+2. **Check on the final 26.3 release:** the format `97.1`.
+3. **Prototype to settle the `(unverified)` items:** item model API calls, negative-advance glyph spacing, console rendering, pack UUID handling.
 
 ## Sources
 - [Resource pack (Minecraft Wiki)](https://minecraft.wiki/w/Resource_pack)
