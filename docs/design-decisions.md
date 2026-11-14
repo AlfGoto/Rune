@@ -134,6 +134,19 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Job Caches lean towards that Job's Runes (60% that Job's Runes, 40% general passive Runes).
 - Drop chance from Job Actions scales with the action's XP (`XP × 0.05%`, same for every gathering Job so far).
 
+## Unlock Tree (2026-11-14)
+- Job unlocks are shown in the vanilla advancement screen (`L` key), not in a custom menu. Players already know it, and the tree layout, zoom, scrolling and unlock pop-ups come for free.
+- One tab for every Job. Each Job is one horizontal line: the Job's icon on the left, then one node per Job Level that unlocks something (recipe, Blueprint, Milestone Cache), from left to right. The lines are parallel, one under the other, so a player sees all their Jobs side by side.
+- A Job Level that unlocks nothing gets no node. Only registered Jobs get a line (Step 1: Mining and Woodcutting).
+- Node: icon = what it unlocks (the tool's model, the Cache in its Rarity colour), title = Job + level (e.g. "Mining 12"), description = what it unlocks. Frame: task for recipes, goal for Milestone Caches, challenge for Blueprints.
+- Display only (ADR 0003: Visuals never decide). Job Level is the source of truth. The tree is built from the Job definitions and their unlock data. Each player's nodes are re-synced from their Job Levels on join and on every level change, including `/rune level set` going down. Vanilla's saved advancement progress never decides anything.
+- Reaching a level shows the vanilla pop-up in the corner for each new node. No chat announcement (the level-up title already exists, see `docs/feedback.md`).
+- All text uses translation keys (EN + FR, English fallback), like every other text.
+- Vanilla's own advancement tabs stay.
+- The screen can't be clicked to choose things. If Jobs ever offer choices, a chest menu does the choosing and the Unlock Tree stays the map.
+- The Rune Codex Jobs page keeps levels and XP bars; it does not copy the tree.
+- How the tab is registered (Paper's `loadAdvancement`, a generated datapack, or a library such as UltimateAdvancementAPI) is decided by a prototype. Prefer no extra dependency, so Minecraft version updates stay easy. The prototype also checks how vanilla reveals nodes that are not reached yet (whole line visible, or only the next few).
+
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
 - The target is the full product described here, not a cut-down version.
