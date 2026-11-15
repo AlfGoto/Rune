@@ -2,6 +2,8 @@ package com.alfgoto.rune.content.items;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.items.ArmorKind;
+import com.alfgoto.rune.gameplay.items.ArmorSpec;
 import com.alfgoto.rune.gameplay.items.Codex;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
@@ -30,6 +32,9 @@ public final class CoreItemsModule implements RuneModule {
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
         // Shows the Flint Pickaxe texture so the pack can be checked in game.
         items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe", ToolSpec.DEFAULT));
+        // Common helmet: leather protection, 1 slot, Capacity 3. No armor texture exists yet, so it uses the
+        // test model (placeholder).
+        items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
         // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
         items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, "test_rune"));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.

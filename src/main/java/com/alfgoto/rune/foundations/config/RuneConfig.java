@@ -75,6 +75,7 @@ public final class RuneConfig {
     private final List<Integer> rewardsRollsByRarity;
     private final double rewardsJobBias;
     private final ToolConfig tools;
+    private final ArmorConfig armor;
 
     private RuneConfig(
             double base,
@@ -96,7 +97,8 @@ public final class RuneConfig {
             List<Double> rewardsRarityBoost,
             List<Double> rewardsRollsByRarity,
             double rewardsJobBias,
-            ToolConfig tools) {
+            ToolConfig tools,
+            ArmorConfig armor) {
         this.rewardsRarityBoost = List.copyOf(rewardsRarityBoost);
         this.rewardsRollsByRarity = rewardsRollsByRarity.stream()
                 .map(rolls -> (int) Math.min(1000, Math.max(1, Math.round(rolls))))
@@ -108,6 +110,7 @@ public final class RuneConfig {
         this.runeCostBase = List.copyOf(runeCostBase);
         this.runeCostPerRank = runeCostPerRank;
         this.tools = tools;
+        this.armor = armor;
         this.questMaxRerollTokens = maxRerollTokens;
         this.questTierMinLevels = List.copyOf(minLevels);
         this.questTierWeightBase = List.copyOf(weightBase);
@@ -143,7 +146,8 @@ public final class RuneConfig {
                 DEFAULT_REWARDS_RARITY_BOOST,
                 DEFAULT_REWARDS_ROLLS_BY_RARITY,
                 DEFAULT_REWARDS_JOB_BIAS,
-                ToolConfig.defaults());
+                ToolConfig.defaults(),
+                ArmorConfig.defaults());
     }
 
     /** Reads the config. Bad or missing values are logged as errors and replaced by defaults. */
@@ -201,12 +205,18 @@ public final class RuneConfig {
                 rarityBoost,
                 rollsByRarity,
                 jobBias,
-                ToolConfig.load(section, logger));
+                ToolConfig.load(section, logger),
+                ArmorConfig.load(section, logger));
     }
 
     /** Rune Tool balancing: speed, durability, slots and Capacity. */
     public ToolConfig tools() {
         return tools;
+    }
+
+    /** Rune Armor balancing: protection, durability, toughness, knockback resistance. */
+    public ArmorConfig armor() {
+        return armor;
     }
 
     /** XP to reach the next level: base x level^exponent. */
