@@ -1,6 +1,7 @@
 package com.alfgoto.rune.visuals.itemrendering;
 
 import com.alfgoto.rune.gameplay.items.ItemRedrawer;
+import com.alfgoto.rune.gameplay.items.MasteryStatus;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolStats;
 import com.alfgoto.rune.gameplay.runes.Fit;
@@ -26,11 +27,21 @@ public final class ItemRenderer implements ItemRedrawer {
 
     private final RuneRegistry runes;
     private final Function<RuneItem, Optional<ToolStats>> toolStats;
+    private final Function<ItemStack, Optional<MasteryStatus>> mastery;
 
-    /** {@code toolStats} gives the final stats of a Rune Tool (empty for other items). */
+    /** {@code toolStats} gives the final stats of a Rune Tool (empty for other items). No Mastery shown. */
     public ItemRenderer(RuneRegistry runes, Function<RuneItem, Optional<ToolStats>> toolStats) {
+        this(runes, toolStats, stack -> Optional.empty());
+    }
+
+    /** {@code mastery} gives the Mastery of a stack (empty when its tool has none). */
+    public ItemRenderer(
+            RuneRegistry runes,
+            Function<RuneItem, Optional<ToolStats>> toolStats,
+            Function<ItemStack, Optional<MasteryStatus>> mastery) {
         this.runes = runes;
         this.toolStats = toolStats;
+        this.mastery = mastery;
     }
 
     @Override
@@ -41,11 +52,15 @@ public final class ItemRenderer implements ItemRedrawer {
                     .decoration(TextDecoration.ITALIC, false));
             meta.lore(runes.find(item.id())
                     .map(rune -> runeLore(rune, runes.rankOf(stack)))
-                    .orElseGet(() -> lore(item, toolStats.apply(item))));
+                    .orElseGet(() -> lore(item, toolStats.apply(item), mastery.apply(stack))));
         });
     }
 
     static List<Component> lore(RuneItem item, Optional<ToolStats> stats) {
+        return lore(item, stats, Optional.empty());
+    }
+
+    static List<Component> lore(RuneItem item, Optional<ToolStats> stats, Optional<MasteryStatus> mastery) {
         List<Component> lore = new ArrayList<>();
         lore.add(Text.rarityName(item.rarity()).decoration(TextDecoration.ITALIC, false));
         if (stats.isEmpty()) {
@@ -59,7 +74,26 @@ public final class ItemRenderer implements ItemRedrawer {
                 "Harvest Tier: %s",
                 Text.translatable(s.tier().translationKey(), capitalise(s.tier().id()))));
         lore.add(stat("rune.item.lore.slots", "Rune slots: %s", Component.text(s.slots())));
-        lore.add(stat("rune.item.lore.capacity", "Capacity: %s", Component.text(s.capacity())));
+        lore.add(stat(
+                "rune.item.lore.capacity",
+                "Capacity: %s",
+                Component.text(mastery.map(MasteryStatus::capacity).orElse(s.capacity()))));
+        mastery.ifPresent(m -> {
+            if (m.maxed()) {
+                lore.add(stat("rune.item.lore.mastery_max", "Mastery: +%s Capacity (max)", Component.text(m.bonus())));
+                return;
+            }
+            lore.add(stat(
+                    "rune.item.lore.mastery",
+                    "Mastery: +%s / +%s Capacity",
+                    Component.text(m.bonus()),
+                    Component.text(m.maxBonus())));
+            lore.add(stat(
+                    "rune.item.lore.mastery_next",
+                    "Next +1 Capacity: %s / %s",
+                    Component.text(m.towardsNext()),
+                    Component.text(m.perCapacity())));
+        });
         s.trait().ifPresent(trait -> lore.add(stat(
                 "rune.item.lore.trait",
                 "Trait: %s",
@@ -67,8 +101,12 @@ public final class ItemRenderer implements ItemRedrawer {
         return lore;
     }
 
-    private static Component stat(String key, String fallback, Component value) {
-        return line(Text.translatable(key, fallback, value.color(NamedTextColor.WHITE)).color(NamedTextColor.GRAY));
+    private static Component stat(String key, String fallback, Component... values) {
+        Component[] white = new Component[values.length];
+        for (int i = 0; i < values.length; i++) {
+            white[i] = values[i].color(NamedTextColor.WHITE);
+        }
+        return line(Text.translatable(key, fallback, white).color(NamedTextColor.GRAY));
     }
 
     private static Component line(Component component) {

@@ -75,7 +75,14 @@ class RuneConfigTest {
                   epic-durability: 40
                   slots-by-rarity: [2, 3, 4, 5, 6]
                   capacity-by-rarity: [1, 2, 3, 4, 5]
+                  mastery:
+                    pickaxe-actions: 100
+                    axe-actions: 200
+                    max-bonus: 0.5
                 """);
+        assertEquals(100, c.tools().pickaxeMasteryActions());
+        assertEquals(200, c.tools().axeMasteryActions());
+        assertEquals(0.5, c.tools().masteryMaxBonus());
         assertEquals(List.of(1.0, 2.0, 3.5), c.tools().speedByTier());
         assertEquals(9, c.tools().epicSpeed());
         assertEquals(List.of(10, 20, 30), c.tools().durabilityByTier());
@@ -143,6 +150,10 @@ class RuneConfigTest {
                   epic-durability: 2031
                   slots-by-rarity: [1, 2, 3, 4, 5]
                   capacity-by-rarity: [3, 6, 10, 14, 18]
+                  mastery:
+                    pickaxe-actions: 500
+                    axe-actions: 1000
+                    max-bonus: 0.75
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -156,7 +167,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(19, errors.size());
+        assertEquals(22, errors.size());
         assertEquals(RuneConfig.defaults().runeCostBase(), c.runeCostBase());
         assertEquals(1, c.runeCostPerRank());
         assertTrue(c.blockXp().isEmpty());
@@ -215,6 +226,10 @@ class RuneConfigTest {
                   epic-durability: 2031
                   slots-by-rarity: [1, 2, 3, 4, 5]
                   capacity-by-rarity: [3, 6, 10, 14, 18]
+                  mastery:
+                    pickaxe-actions: 500
+                    axe-actions: 1000
+                    max-bonus: 0.75
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
