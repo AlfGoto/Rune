@@ -147,7 +147,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Vanilla's own advancement tabs stay.
 - The screen can't be clicked to choose things. If Jobs ever offer choices, a chest menu does the choosing and the Unlock Tree stays the map.
 - The Rune Codex Jobs page keeps levels and XP bars; it does not copy the tree.
-- How the tab is registered (Paper's `loadAdvancement`, a generated datapack, or a library such as UltimateAdvancementAPI) is decided by a prototype. Prefer no extra dependency, so Minecraft version updates stay easy. The prototype also checks how vanilla reveals nodes that are not reached yet (whole line visible, or only the next few).
+- The tab is registered at runtime with Paper's `Bukkit.getUnsafe().loadAdvancement(key, json)`, and progress is given or taken back per player with `AdvancementProgress`. No extra dependency. Decided 2026-11-15 after an in-game prototype (#138): `loadAdvancement` and a generated datapack looked the same, and `loadAdvancement` is simpler. UltimateAdvancementAPI was not tried (extra dependency, not needed).
+- Locked nodes that are not reached yet are shown the vanilla way. We do not change this.
 
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
