@@ -1,7 +1,6 @@
 package com.alfgoto.rune.visuals.codex;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,9 +85,7 @@ class CodexTest {
 
     @Test
     void droppingTheCodexIsCancelled() {
-        var drop = player.getWorld().dropItem(player.getLocation(), codex.is(player.getInventory().getItem(Codex.SLOT))
-                ? player.getInventory().getItem(Codex.SLOT)
-                : new ItemStack(Material.BOOK));
+        var drop = player.getWorld().dropItem(player.getLocation(), player.getInventory().getItem(Codex.SLOT));
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
         server.getPluginManager().callEvent(event);
         assertTrue(event.isCancelled());
@@ -145,8 +142,12 @@ class CodexTest {
     void barFillsWithTheShareOfTheLevel() {
         LevelCurve curve = new LevelCurve(100, 1);
         // Level 1 needs 100 XP: 50 XP is half of the bar.
-        String half = PlainTextComponentSerializer.plainText().serialize(CodexMenus.bar(50, curve, 1));
-        assertEquals(CodexMenus.BAR_LENGTH, half.length());
-        assertFalse(half.isBlank());
+        Component bar = CodexMenus.bar(50, curve, 1);
+        String whole = PlainTextComponentSerializer.plainText().serialize(bar);
+        assertEquals(CodexMenus.BAR_LENGTH, whole.length());
+        // The root holds the filled (green) squares, its child the empty ones.
+        String filled = assertInstanceOf(net.kyori.adventure.text.TextComponent.class, bar)
+                .content();
+        assertEquals(CodexMenus.BAR_LENGTH / 2, filled.length());
     }
 }
