@@ -46,6 +46,9 @@ public final class SpeedRunesModule implements RuneModule {
     /** Affinity places: the Places that exist today (see CorePlaces). More come with their Places. */
     static final List<String> PLACES = List.of("lush_caves", "taiga", "mineshaft");
 
+    /** Forest Places: only these fit axes (docs/jobs/mining.md). */
+    static final Set<String> FOREST_PLACES = Set.of("taiga");
+
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
         return Set.of(RunesModule.class, EffectsModule.class, SpeedModule.class, PlacesModule.class);
@@ -84,7 +87,7 @@ public final class SpeedRunesModule implements RuneModule {
                     Set.of(Fit.PICKAXE));
         }
 
-        // Affinity: while the player stands in one Place. Pickaxe and axe.
+        // Affinity: while the player stands in one Place. Pickaxe everywhere, axe only in forest Places.
         for (String place : PLACES) {
             String id = "affinity_" + place;
             speed.register(
@@ -98,7 +101,7 @@ public final class SpeedRunesModule implements RuneModule {
                     Rarity.UNCOMMON,
                     config.affinityPerRank(),
                     config.affinityMaxRank(),
-                    Set.of(Fit.PICKAXE, Fit.AXE));
+                    FOREST_PLACES.contains(place) ? Set.of(Fit.PICKAXE, Fit.AXE) : Set.of(Fit.PICKAXE));
         }
     }
 
