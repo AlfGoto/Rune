@@ -39,6 +39,7 @@ class ActiveRunesTest {
     private ToolLoadout loadout;
     private ActiveRunes active;
     private final AtomicLong now = new AtomicLong(1_000_000);
+    private boolean broken;
     private final AtomicInteger ran = new AtomicInteger();
     private final List<String> heard = new ArrayList<>();
 
@@ -77,7 +78,7 @@ class ActiveRunesTest {
         items = new ItemRegistry(plugin, ToolConfig.defaults());
         runes = new RuneRegistry(plugin, items, new CapacityCost(RuneConfig.defaults()));
         loadout = new ToolLoadout(plugin, items, runes);
-        active = new ActiveRunes(loadout, now::get);
+        active = new ActiveRunes(loadout, stack -> broken, now::get);
         active.addListener(new ActiveRuneListener() {
             @Override
             public void onUsed(Player player, Rune rune, double seconds) {
@@ -176,6 +177,21 @@ class ActiveRunesTest {
         assertEquals(0, ran.get());
         assertEquals(0, active.secondsLeft(player.getUniqueId(), rune));
         assertTrue(heard.isEmpty());
+    }
+
+    @Test
+    void aBrokenToolDoesNotTriggerItsActiveRune() {
+        Player player = server.addPlayer();
+        ItemStack tool = pick();
+        loadout.install(tool, activeRune("broken_rune", true), 1);
+
+        broken = true;
+        click(player, ClickType.RIGHT, tool);
+        assertEquals(0, ran.get());
+        assertTrue(heard.isEmpty());
+        broken = false;
+        click(player, ClickType.RIGHT, tool);
+        assertEquals(1, ran.get());
     }
 
     @Test

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.LongSupplier;
+import java.util.function.Predicate;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,17 +32,20 @@ import org.bukkit.inventory.ItemStack;
 public final class ActiveRunes implements Listener {
 
     private final ToolLoadout loadout;
+    private final Predicate<ItemStack> broken;
     private final LongSupplier millis;
     private final Map<UUID, Map<String, Long>> readyAt = new HashMap<>();
     private final List<ActiveRuneListener> listeners = new CopyOnWriteArrayList<>();
 
-    public ActiveRunes(ToolLoadout loadout) {
-        this(loadout, System::currentTimeMillis);
+    /** {@code broken} tells whether a tool is Broken: a Broken tool never triggers its Active Runes. */
+    public ActiveRunes(ToolLoadout loadout, Predicate<ItemStack> broken) {
+        this(loadout, broken, System::currentTimeMillis);
     }
 
     /** {@code millis} is the clock, so tests can move time. */
-    ActiveRunes(ToolLoadout loadout, LongSupplier millis) {
+    ActiveRunes(ToolLoadout loadout, Predicate<ItemStack> broken, LongSupplier millis) {
         this.loadout = loadout;
+        this.broken = broken;
         this.millis = millis;
     }
 
@@ -81,6 +85,9 @@ public final class ActiveRunes implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     @SuppressWarnings("unchecked")
     public void onClick(RuneClickEvent event) {
+        if (broken.test(event.item())) {
+            return;
+        }
         Optional<Installed> found = inActiveSlot(event.item(), event.click());
         if (found.isEmpty()) {
             return;
