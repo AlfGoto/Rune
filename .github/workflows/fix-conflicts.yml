@@ -79,6 +79,14 @@ jobs:
       issues: write
       id-token: write
     steps:
+      # On pull_request events the action sets up git, so it needs a checkout
+      # (without it: "fatal: not in a git directory"). main, because the merged PR's
+      # merge ref may be gone.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
