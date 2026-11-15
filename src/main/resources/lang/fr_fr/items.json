@@ -1,6 +1,7 @@
 {
   "rune.item.test_item": "Objet de test",
   "rune.item.test_rune": "Rune de test",
+  "rune.item.test_pickaxe": "Pioche de test",
   "rune.command.give.usage": "Utilisation : /rune give <id> [quantité]",
   "rune.command.give.unknown": "Objet inconnu : %s",
   "rune.command.give.bad_amount": "La quantité doit être un nombre de 1 à %s.",

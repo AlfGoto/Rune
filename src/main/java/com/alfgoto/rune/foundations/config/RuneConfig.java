@@ -56,6 +56,7 @@ public final class RuneConfig {
     private final int questMaxRerollTokens;
     private final List<Double> runeCostBase;
     private final double runeCostPerRank;
+    private final ToolConfig tools;
 
     private RuneConfig(
             double base,
@@ -70,9 +71,11 @@ public final class RuneConfig {
             List<Double> weightPerLevel,
             int maxRerollTokens,
             List<Double> runeCostBase,
-            double runeCostPerRank) {
+            double runeCostPerRank,
+            ToolConfig tools) {
         this.runeCostBase = List.copyOf(runeCostBase);
         this.runeCostPerRank = runeCostPerRank;
+        this.tools = tools;
         this.questMaxRerollTokens = maxRerollTokens;
         this.questTierMinLevels = List.copyOf(minLevels);
         this.questTierWeightBase = List.copyOf(weightBase);
@@ -101,7 +104,8 @@ public final class RuneConfig {
                 DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL,
                 DEFAULT_QUEST_MAX_REROLL_TOKENS,
                 DEFAULT_RUNE_COST_BASE,
-                DEFAULT_RUNE_COST_PER_RANK);
+                DEFAULT_RUNE_COST_PER_RANK,
+                ToolConfig.defaults());
     }
 
     /** Reads the config. Bad or missing values are logged as errors and replaced by defaults. */
@@ -138,7 +142,13 @@ public final class RuneConfig {
                 weightPerLevel,
                 maxTokens,
                 costBase,
-                costPerRank);
+                costPerRank,
+                ToolConfig.load(section, logger));
+    }
+
+    /** Rune Tool balancing: speed, durability, slots and Capacity. */
+    public ToolConfig tools() {
+        return tools;
     }
 
     /** XP to reach the next level: base x level^exponent. */

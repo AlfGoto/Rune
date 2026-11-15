@@ -17,5 +17,12 @@
   "rune.fit.helmet": "Casque",
   "rune.fit.chestplate": "Plastron",
   "rune.fit.leggings": "Jambières",
-  "rune.fit.boots": "Bottes"
+  "rune.fit.boots": "Bottes",
+  "rune.item.lore.harvest_tier": "Niveau de récolte : %s",
+  "rune.item.lore.slots": "Emplacements de Runes : %s",
+  "rune.item.lore.capacity": "Capacité : %s",
+  "rune.item.lore.trait": "Trait : %s",
+  "rune.harvest_tier.stone": "Pierre",
+  "rune.harvest_tier.iron": "Fer",
+  "rune.harvest_tier.diamond": "Diamant"
 }

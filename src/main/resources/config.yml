@@ -236,6 +236,19 @@ quests:
     per-level: [-1.2, 0, 0.6, 0.5, 0.2]
   # Most Reroll Tokens a player can hold (one is earned per world day)
   max-reroll-tokens: 3
+tools:
+  # Mining speed by Harvest Tier: stone, iron, diamond (vanilla values)
+  speed-by-tier: [4, 6, 8]
+  # Epic and Legendary tools use gold speed whatever their tier
+  epic-speed: 12
+  # Durability by Harvest Tier: stone, iron, diamond (vanilla values)
+  durability-by-tier: [131, 250, 1561]
+  # Epic and Legendary tools use netherite durability whatever their tier
+  epic-durability: 2031
+  # Rune slots by Rarity, lowest first
+  slots-by-rarity: [1, 2, 3, 4, 5]
+  # Capacity by Rarity, lowest first
+  capacity-by-rarity: [3, 6, 10, 14, 18]
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

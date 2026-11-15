@@ -9,6 +9,8 @@ import com.alfgoto.rune.gameplay.effects.Effect;
 import com.alfgoto.rune.gameplay.effects.EffectTriggers;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
+import com.alfgoto.rune.gameplay.items.ToolKind;
+import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.runes.CapacityCost;
 import com.alfgoto.rune.gameplay.runes.Fit;
 import com.alfgoto.rune.gameplay.runes.Rune;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +46,7 @@ class ItemRenderingTest {
                         .does(context -> {})
                         .with(5, 5, 4),
                 Set.of(Fit.PLAYER, Fit.PICKAXE)));
-        registry.addRedrawer(new ItemRenderer(runes));
+        registry.addRedrawer(new ItemRenderer(runes, registry::toolStats));
     }
 
     @AfterEach
@@ -85,6 +88,20 @@ class ItemRenderingTest {
         assertEquals(Component.text(4), cost.arguments().get(0).asComponent()); // Rare 3 + 1 per Rank above 1
         TranslatableComponent fits = (TranslatableComponent) lore.get(3);
         assertEquals("rune.item.lore.fits", fits.key());
+    }
+
+    @Test
+    void toolLoreShowsHarvestTierSlotsAndCapacity() {
+        registry.register(RuneItem.tool("lore_pick", Rarity.RARE, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        ItemStack stack = registry.create(registry.get("lore_pick"), 1);
+        List<Component> lore = stack.getItemMeta().lore();
+        assertEquals("rune.item.lore.harvest_tier", ((TranslatableComponent) lore.get(1)).key());
+        TranslatableComponent slots = (TranslatableComponent) lore.get(2);
+        assertEquals("rune.item.lore.slots", slots.key());
+        assertEquals(Component.text(3).color(NamedTextColor.WHITE), slots.arguments().get(0).asComponent());
+        TranslatableComponent capacity = (TranslatableComponent) lore.get(3);
+        assertEquals("rune.item.lore.capacity", capacity.key());
+        assertEquals(Component.text(10).color(NamedTextColor.WHITE), capacity.arguments().get(0).asComponent());
     }
 
     @Test

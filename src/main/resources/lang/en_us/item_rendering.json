@@ -17,5 +17,12 @@
   "rune.fit.helmet": "Helmet",
   "rune.fit.chestplate": "Chestplate",
   "rune.fit.leggings": "Leggings",
-  "rune.fit.boots": "Boots"
+  "rune.fit.boots": "Boots",
+  "rune.item.lore.harvest_tier": "Harvest Tier: %s",
+  "rune.item.lore.slots": "Rune slots: %s",
+  "rune.item.lore.capacity": "Capacity: %s",
+  "rune.item.lore.trait": "Trait: %s",
+  "rune.harvest_tier.stone": "Stone",
+  "rune.harvest_tier.iron": "Iron",
+  "rune.harvest_tier.diamond": "Diamond"
 }
