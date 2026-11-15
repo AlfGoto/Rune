@@ -6,10 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
+import com.alfgoto.rune.gameplay.items.ToolKind;
+import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.text.Rarity;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
@@ -51,6 +54,21 @@ class ItemRenderingTest {
         assertEquals(2, lore.size());
         assertEquals("rune.rarity.rare", ((TranslatableComponent) lore.get(0)).key());
         assertEquals("rune.item.lore.stats_placeholder", ((TranslatableComponent) lore.get(1)).key());
+    }
+
+    @Test
+    void toolLoreShowsHarvestTierSlotsAndCapacity() {
+        registry.addRedrawer(new ItemRenderer(registry::toolStats));
+        registry.register(RuneItem.tool("lore_pick", Rarity.RARE, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        ItemStack stack = registry.create(registry.get("lore_pick"), 1);
+        List<Component> lore = stack.getItemMeta().lore();
+        assertEquals("rune.item.lore.harvest_tier", ((TranslatableComponent) lore.get(1)).key());
+        TranslatableComponent slots = (TranslatableComponent) lore.get(2);
+        assertEquals("rune.item.lore.slots", slots.key());
+        assertEquals(Component.text(3).color(NamedTextColor.WHITE), slots.arguments().get(0).asComponent());
+        TranslatableComponent capacity = (TranslatableComponent) lore.get(3);
+        assertEquals("rune.item.lore.capacity", capacity.key());
+        assertEquals(Component.text(10).color(NamedTextColor.WHITE), capacity.arguments().get(0).asComponent());
     }
 
     @Test

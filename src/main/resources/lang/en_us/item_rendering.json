@@ -1,3 +1,10 @@
 {
-  "rune.item.lore.stats_placeholder": "No stats yet"
+  "rune.item.lore.stats_placeholder": "No stats yet",
+  "rune.item.lore.harvest_tier": "Harvest Tier: %s",
+  "rune.item.lore.slots": "Rune slots: %s",
+  "rune.item.lore.capacity": "Capacity: %s",
+  "rune.item.lore.trait": "Trait: %s",
+  "rune.harvest_tier.stone": "Stone",
+  "rune.harvest_tier.iron": "Iron",
+  "rune.harvest_tier.diamond": "Diamond"
 }
