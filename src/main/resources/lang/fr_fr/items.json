@@ -7,6 +7,7 @@
   "rune.command.give.done": "Vous avez reçu %s x%s.",
   "rune.command.give_rune.usage": "Utilisation : /rune give rune <id> [rang]",
   "rune.command.give_rune.unknown": "Rune inconnue : %s",
-  "rune.command.give_rune.bad_rank": "Le rang de cette Rune doit être un nombre de %s.",
+  "rune.command.give_rune.bad_rank": "Le rang doit être un nombre de 1 à %s.",
+  "rune.command.give_rune.bad_rank_min": "Le rang doit être 1 ou plus.",
   "rune.command.give_rune.done": "Vous avez reçu %s, rang %s."
 }

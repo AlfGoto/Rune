@@ -43,11 +43,15 @@ final class GiveRuneVariant implements GiveVariant {
             }
         }
         if (!rune.allowsRank(rank)) {
-            String max = rune.maxRank().isPresent() ? "1 to " + rune.maxRank().getAsInt() : "1 or more";
-            player.sendMessage(error(
-                    "rune.command.give_rune.bad_rank",
-                    "The Rank of this Rune must be a number from %s.",
-                    Component.text(max)));
+            if (rune.maxRank().isPresent()) {
+                player.sendMessage(error(
+                        "rune.command.give_rune.bad_rank",
+                        "The Rank must be a number from 1 to %s.",
+                        Component.text(rune.maxRank().getAsInt())));
+            } else {
+                player.sendMessage(error(
+                        "rune.command.give_rune.bad_rank_min", "The Rank must be 1 or more."));
+            }
             return;
         }
         GiveSubcommand.give(player, runes.create(rune, rank));
