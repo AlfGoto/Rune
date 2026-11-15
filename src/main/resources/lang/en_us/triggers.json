@@ -1,4 +1,5 @@
 {
   "rune.debug.events.on": "Event debug log: on",
-  "rune.debug.events.off": "Event debug log: off"
+  "rune.debug.events.off": "Event debug log: off",
+  "rune.debug.events.tree_felled": "Tree felled (last log: %s)"
 }

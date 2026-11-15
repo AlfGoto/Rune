@@ -1,6 +1,7 @@
 package com.alfgoto.rune.foundations.triggers;
 
 import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -33,6 +34,23 @@ public final class EventDebug implements Listener {
                             event.block().getType(),
                             event.cause(),
                             event.item().getType()));
+        }
+    }
+
+    /** Logs to the console and tells the player in chat. */
+    @EventHandler
+    public void onTreeFelled(TreeFelled event) {
+        if (enabled) {
+            logger.info("[events] %s felled a tree (last log %s) with %s"
+                    .formatted(
+                            event.player().getName(),
+                            event.lastLog().getType(),
+                            event.item().getType()));
+            event.player()
+                    .sendMessage(Component.translatable(
+                            "rune.debug.events.tree_felled",
+                            "Tree felled (last log: %s)",
+                            Component.text(event.lastLog().getType().name())));
         }
     }
 
