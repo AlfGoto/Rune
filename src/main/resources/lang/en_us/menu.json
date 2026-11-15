@@ -1,0 +1,15 @@
+{
+  "rune.menu.back": "Back",
+  "rune.menu.previous": "Previous page",
+  "rune.menu.next": "Next page",
+  "rune.menu.player_only": "Only a player can do this.",
+  "rune.menu.debug.title": "Menu test",
+  "rune.menu.debug.pages": "Open the pages",
+  "rune.menu.debug.sub": "Open a sub-menu",
+  "rune.menu.debug.sub_title": "Sub-menu",
+  "rune.menu.debug.click": "Click me",
+  "rune.menu.debug.clicked": "Clicked!",
+  "rune.menu.debug.item": "Item %s",
+  "rune.menu.debug.item_clicked": "You clicked item %s.",
+  "rune.menu.debug.pages_title": "Pages"
+}

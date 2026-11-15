@@ -147,8 +147,12 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Vanilla's own advancement tabs stay.
 - The screen can't be clicked to choose things. If Jobs ever offer choices, a chest menu does the choosing and the Unlock Tree stays the map.
 - The Rune Codex Jobs page keeps levels and XP bars; it does not copy the tree.
-- The tab is registered at runtime with Paper's `Bukkit.getUnsafe().loadAdvancement(key, json)`, and progress is given or taken back per player with `AdvancementProgress`. No extra dependency. Decided 2026-11-15 after an in-game prototype (#138): `loadAdvancement` and a generated datapack looked the same, and `loadAdvancement` is simpler. UltimateAdvancementAPI was not tried (extra dependency, not needed).
-- Locked nodes that are not reached yet are shown the vanilla way. We do not change this.
+- **How the tab is registered:** at runtime with Paper's `loadAdvancement` (in memory, not persisted). It is rebuilt from the Job registries on every plugin enable.
+  - Why: simplest option. Same display as a generated datapack. No files in the world folder, no datapack reload, no extra dependency.
+  - Risk: the API is `@Deprecated` in `UnsafeValues`. Keep the JSON building separate from the loading. Then switching to a generated datapack (tested, works) only changes the loading step.
+  - Not chosen: a library such as UltimateAdvancementAPI (extra dependency, not needed).
+- **Reveal of locked nodes:** keep vanilla behaviour. Only the next few nodes after the last unlocked one are shown.
+- Tested in game (prototype, since deleted): parallel lines per Job, toast without chat line, revoke works.
 
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
@@ -182,6 +186,8 @@ The first milestone the issues aim at:
 
 ## Places
 - Places (2026-11-11): a Place is a biome or structure, matched by Minecraft key (framework and `PlacesModule` in `gameplay.places`, which provides an empty `PlaceRegistry`; `content.places.CorePlacesModule` fills it). `PlaceDetector` caches the result per player and recomputes only when the player changes block. Structures match on their pieces, not the whole box. First Places: Lush Caves, Taiga (taiga + snowy taiga), Mineshaft (incl. badlands). Command: `/rune where`. Other Places named in the Job docs (Dripstone, Deep Dark, Mountains, Jungle) are added with their Runes/Quests.
+
+- Menu framework (2026-11-15, package `visuals.menu`): `Menu` (chest menu, optional parent), `PagedMenu`, `Button` (icon + click action). Every click and drag is cancelled while a menu is open, in the menu and in the player's inventory, so nothing can be taken out. A menu with a parent shows a Back arrow in the middle of the bottom row; paged menus add Previous/Next arrows beside it, only when they lead somewhere. Test: `/rune debug menu`. Menus are built by later tickets (Rune Codex, Jobs, Quests, loadout, Cache reel).
 
 ## Later (not at launch)
 - Transmuting at a Rune Altar (custom block).
