@@ -182,6 +182,8 @@ The first milestone the issues aim at:
 ## Places
 - Places (2026-11-11): a Place is a biome or structure, matched by Minecraft key (framework and `PlacesModule` in `gameplay.places`, which provides an empty `PlaceRegistry`; `content.places.CorePlacesModule` fills it). `PlaceDetector` caches the result per player and recomputes only when the player changes block. Structures match on their pieces, not the whole box. First Places: Lush Caves, Taiga (taiga + snowy taiga), Mineshaft (incl. badlands). Command: `/rune where`. Other Places named in the Job docs (Dripstone, Deep Dark, Mountains, Jungle) are added with their Runes/Quests.
 
+- Menu framework (2026-11-15, package `visuals.menu`): `Menu` (chest menu, optional parent), `PagedMenu`, `Button` (icon + click action). Every click and drag is cancelled while a menu is open, in the menu and in the player's inventory, so nothing can be taken out. A menu with a parent shows a Back arrow in the middle of the bottom row; paged menus add Previous/Next arrows beside it, only when they lead somewhere. Test: `/rune debug menu`. Menus are built by later tickets (Rune Codex, Jobs, Quests, loadout, Cache reel).
+
 ## Later (not at launch)
 - Transmuting at a Rune Altar (custom block).
 - Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions, Salvage yields) — one `docs/jobs/<job>.md` each.
