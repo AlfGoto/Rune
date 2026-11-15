@@ -33,7 +33,7 @@ _Avoid_: Foraging, Lumberjack
 
 ## Runes
 
-**Rune** — A physical item that grants an effect when installed. Has a Rarity, a Rank, a Capacity Cost, and a list of compatible places (player, tool types, armor pieces). Runes that share an effect but differ in a parameter (e.g. Affinity: Lush Caves vs Affinity: Mineshaft) are different Runes.
+**Rune** — A physical item that grants an effect when installed. Has a Rarity, a Rank, a Capacity Cost, and a list of compatible places (player, tool types, armor pieces). In code, each compatible place is a `Fit`. Runes that share an effect but differ in a parameter (e.g. Affinity: Lush Caves vs Affinity: Mineshaft) are different Runes.
 _Avoid_: enchantment
 
 **Effect** — "When a Trigger fires, if its Conditions pass, do an action." Registered by id. It holds no numbers: a Rune or a Trait binds it to a base value and a growth per Rank. Runes and Traits are both built on Effects.

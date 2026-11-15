@@ -14,13 +14,15 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:$minecraftVersion.build.+")
+    // Pinned to build 252: build 253 changed server data that MockBukkit 4.120.0 cannot load
+    // (InternalDataLoadException at MockBukkit.mock()). Unpin when a MockBukkit release supports it.
+    compileOnly("io.papermc.paper:paper-api:$minecraftVersion.build.252-stable")
 
     // Modules register themselves with @AutoService(RuneModule.class) (ADR 0004).
     compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
     annotationProcessor("com.google.auto.service:auto-service:1.1.1")
 
-    testImplementation("io.papermc.paper:paper-api:$minecraftVersion.build.+")
+    testImplementation("io.papermc.paper:paper-api:$minecraftVersion.build.252-stable")
 
     // MockBukkit artifact name follows the Minecraft version (v26.3 for 26.3).
     testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v$minecraftVersion:4.120.0")
