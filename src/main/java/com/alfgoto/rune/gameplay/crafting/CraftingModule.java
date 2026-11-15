@@ -6,6 +6,9 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
+import com.alfgoto.rune.gameplay.runes.RuneRegistry;
+import com.alfgoto.rune.gameplay.runes.RunesModule;
+import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
 import java.util.Set;
 import org.bukkit.entity.Player;
@@ -22,7 +25,8 @@ public final class CraftingModule implements RuneModule {
         ItemRegistry items = ctx.get(ItemRegistry.class);
         RecipeBook recipeBook = ctx.provide(RecipeBook.class, new RecipeBook(ctx.plugin(), items, progress));
         book = recipeBook;
-        ctx.listen(new CraftingListener(recipeBook, items));
+        ctx.listen(new CraftingListener(
+                recipeBook, items, ctx.get(ToolLoadout.class), ctx.get(RuneRegistry.class)));
         // Unlock on level-up, and lock again when a level goes down.
         progress.addLevelListener((uuid, job, before, after) -> {
             Player player = ctx.plugin().getServer().getPlayer(uuid);
@@ -41,6 +45,6 @@ public final class CraftingModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, JobsModule.class);
+        return Set.of(ItemsModule.class, JobsModule.class, RunesModule.class);
     }
 }
