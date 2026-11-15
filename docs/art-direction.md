@@ -28,7 +28,7 @@ Validated on texture batch v2: pickaxes, axes, components, menu icons, first two
 ## Menus (start)
 - Each menu background is a 176×222 PNG (same frame as `generic_54`), shown through a bitmap font glyph in the menu title shifted with negative space. Clickable things stay real chest slots, so `Menu` / `Button` don't change.
 - Rune Codex main menu: player head (Account level) on top, three 3×3 panels (Jobs = wood, Quests = parchment, Runes = amethyst); the gold-framed middle slot holds the icon, the 8 slots around it are invisible buttons doing the same. Back on `Menu.backSlot()`.
-- Rune loadout: tool on display, 5 rune sockets in a deepslate band (first 2 = Active Slots, gold brackets), capacity bar made of pip items (used / free / over) over a groove.
+- Rune loadout: tool on display, 5 Rune slots in a deepslate band (first 2 = Active Slots, gold brackets), capacity bar made of pip items (used / free / over) over a groove.
 
 ## Tooling
 - Generator: `tools/texture-gen/` (Python + Pillow, see its README). A colour change is a one-line edit; `export_all.py` rebuilds every PNG and pack file.
