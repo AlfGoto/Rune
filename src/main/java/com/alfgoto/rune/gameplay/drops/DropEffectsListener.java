@@ -99,7 +99,20 @@ public final class DropEffectsListener implements Listener {
         }
         List<Stack<Material>> result = DropRules.apply(sources, stacks, smelting::smelt, random);
         for (int i = 0; i < dropped.size(); i++) {
-            dropped.get(i).setItemStack(new ItemStack(result.get(i).item(), result.get(i).amount()));
+            ItemStack original = dropped.get(i).getItemStack();
+            Stack<Material> changed = result.get(i);
+            if (original.getType() == changed.item() && original.getAmount() == changed.amount()) {
+                continue; // nothing changed: keep the stack and its data
+            }
+            if (original.getType() == changed.item()) {
+                // Same item, new amount: keep the data (shulker contents, banner patterns...).
+                ItemStack copy = original.clone();
+                copy.setAmount(changed.amount());
+                dropped.get(i).setItemStack(copy);
+            } else {
+                // Smelted into another item: the old item's data does not apply.
+                dropped.get(i).setItemStack(new ItemStack(changed.item(), changed.amount()));
+            }
         }
     }
 }
