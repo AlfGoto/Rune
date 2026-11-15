@@ -9,7 +9,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -27,10 +29,14 @@ public final class BrokenToolListener implements Listener {
     }
 
     private boolean isRuneTool(ItemStack stack) {
-        return items.of(stack).flatMap(RuneItem::toolSpec).isPresent();
+        return items.of(stack).filter(item -> item.toolSpec().isPresent() || item.armorSpec().isPresent()).isPresent();
     }
 
-    /** True when {@code stack} is a Rune Tool with no durability left. */
+    private boolean isRuneArmor(ItemStack stack) {
+        return items.of(stack).flatMap(RuneItem::armorSpec).isPresent();
+    }
+
+    /** True when {@code stack} is a Rune Tool or Rune Armor piece with no durability left. */
     public boolean isBroken(ItemStack stack) {
         if (stack == null || !isRuneTool(stack)) {
             return false;
@@ -54,6 +60,33 @@ public final class BrokenToolListener implements Listener {
         event.setCancelled(true);
         meta.setDamage(meta.getMaxDamage());
         stack.setItemMeta(meta);
+        if (isRuneArmor(stack)) {
+            // A Broken piece gives no protection: drop its attribute modifiers until it is repaired.
+            ArmorComponents.clear(stack);
+        }
+    }
+
+    /** Anvil repair: a repaired armor piece gets its protection back. */
+    @EventHandler
+    public void onAnvil(PrepareAnvilEvent event) {
+        ItemStack result = event.getResult();
+        if (result != null && isRuneArmor(result) && !isBroken(result)) {
+            restoreProtection(result);
+            event.setResult(result);
+        }
+    }
+
+    /** Mending: a repaired armor piece gets its protection back. */
+    @EventHandler(ignoreCancelled = true)
+    public void onMend(PlayerItemMendEvent event) {
+        ItemStack stack = event.getItem();
+        if (isRuneArmor(stack) && event.getRepairAmount() > 0) {
+            restoreProtection(stack);
+        }
+    }
+
+    private void restoreProtection(ItemStack stack) {
+        items.of(stack).flatMap(items::armorStats).ifPresent(stats -> ArmorComponents.apply(stack, stats));
     }
 
     @EventHandler(ignoreCancelled = true)

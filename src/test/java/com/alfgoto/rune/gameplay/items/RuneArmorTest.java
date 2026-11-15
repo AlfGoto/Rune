@@ -155,6 +155,26 @@ class RuneArmorTest {
     }
 
     @Test
+    void brokenArmorStaysWithItsRunesAndGivesNoProtection() {
+        RuneItem helmet = piece("broken_helmet", Rarity.COMMON, ArmorKind.HELMET);
+        ItemStack stack = items.create(helmet, 1);
+        assertTrue(stack.hasData(DataComponentTypes.ATTRIBUTE_MODIFIERS));
+        BrokenToolListener listener = new BrokenToolListener(items);
+        org.bukkit.entity.Player player = MockBukkit.getMock().addPlayer();
+        org.bukkit.inventory.meta.Damageable meta = (org.bukkit.inventory.meta.Damageable) stack.getItemMeta();
+        meta.setDamage(meta.getMaxDamage() - 1);
+        stack.setItemMeta(meta);
+        org.bukkit.event.player.PlayerItemDamageEvent event =
+                new org.bukkit.event.player.PlayerItemDamageEvent(player, stack, 1);
+        listener.onItemDamage(event);
+        assertTrue(event.isCancelled());
+        assertTrue(listener.isBroken(stack));
+        assertTrue(items.of(stack).isPresent());
+        var modifiers = stack.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        assertTrue(modifiers == null || modifiers.modifiers().isEmpty());
+    }
+
+    @Test
     void theTestHelmetIsRegistered() {
         assertTrue(plugin.getServer().getPluginManager().isPluginEnabled(plugin));
         ItemRegistry registry = plugin.context().get(ItemRegistry.class);

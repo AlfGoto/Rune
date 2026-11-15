@@ -25,6 +25,11 @@ final class ArmorComponents {
         stack.setData(DataComponentTypes.MAX_DAMAGE, stats.durability());
     }
 
+    /** Removes the protection (used while a piece is Broken). */
+    static void clear(ItemStack stack) {
+        stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.itemAttributes().build());
+    }
+
     private static void add(
             ItemAttributeModifiers.Builder builder, Attribute attribute, String name, double amount, ArmorStats stats) {
         if (amount <= 0) {
