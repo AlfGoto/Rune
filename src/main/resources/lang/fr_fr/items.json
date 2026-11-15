@@ -17,10 +17,5 @@
   "rune.command.give_rune.unknown": "Rune inconnue : %s",
   "rune.command.give_rune.bad_rank": "Le rang doit être un nombre de 1 à %s.",
   "rune.command.give_rune.bad_rank_min": "Le rang doit être 1 ou plus.",
-  "rune.command.give_rune.done": "Vous avez reçu %s, rang %s.",
-  "rune.mastery.debug.usage": "Utilisation : /rune debug mastery add <n>",
-  "rune.mastery.debug.player_only": "Seul un joueur peut faire ça.",
-  "rune.mastery.debug.no_mastery": "Tenez un outil Rune qui a une Maîtrise (pioche ou hache).",
-  "rune.mastery.debug.maxed": "Cet outil a déjà toute sa Maîtrise.",
-  "rune.mastery.debug.done": "%s actions ajoutées. Maîtrise : +%s de capacité."
+  "rune.command.give_rune.done": "Vous avez reçu %s, rang %s."
 }

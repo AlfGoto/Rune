@@ -17,10 +17,5 @@
   "rune.command.give_rune.unknown": "Unknown Rune: %s",
   "rune.command.give_rune.bad_rank": "The Rank must be a number from 1 to %s.",
   "rune.command.give_rune.bad_rank_min": "The Rank must be 1 or more.",
-  "rune.command.give_rune.done": "Gave %s, Rank %s.",
-  "rune.mastery.debug.usage": "Usage: /rune debug mastery add <n>",
-  "rune.mastery.debug.player_only": "Only a player can do this.",
-  "rune.mastery.debug.no_mastery": "Hold a Rune Tool that has Mastery (pickaxe or axe).",
-  "rune.mastery.debug.maxed": "This tool already has all its Mastery.",
-  "rune.mastery.debug.done": "Added %s actions. Mastery: +%s Capacity."
+  "rune.command.give_rune.done": "Gave %s, Rank %s."
 }

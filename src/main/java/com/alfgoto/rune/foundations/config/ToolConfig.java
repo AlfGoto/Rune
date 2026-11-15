@@ -70,7 +70,7 @@ public record ToolConfig(
                         section, logger, CAPACITY_BY_RARITY, RARITY_COUNT, toDoubles(d.capacityByRarity), true)),
                 (int) readNumber(section, logger, PICKAXE_MASTERY_ACTIONS, d.pickaxeMasteryActions),
                 (int) readNumber(section, logger, AXE_MASTERY_ACTIONS, d.axeMasteryActions),
-                readNumber(section, logger, MASTERY_MAX_BONUS, d.masteryMaxBonus));
+                Math.min(1.0, readNumber(section, logger, MASTERY_MAX_BONUS, d.masteryMaxBonus)));
     }
 
     private static double readNumber(ConfigurationSection s, Logger log, String path, double fallback) {
