@@ -91,6 +91,15 @@ public final class JobProgress {
         notifyLevel(player, job, gain.jobLevelBefore(), gain.jobLevelAfter());
     }
 
+    /**
+     * Adds Account XP that no Job XP produced (a reward). Job XP is left alone. No Job XP listener
+     * runs: there is no Job gain to show.
+     */
+    public void addAccountXpBonus(UUID player, double amount) {
+        requireAmount(amount);
+        write(player, ACCOUNT_XP_KEY, accountXp(player) + amount);
+    }
+
     /** Sets the Job XP. Account XP is left alone. */
     public void setJobXp(UUID player, Job job, double amount) {
         requireAmount(amount);

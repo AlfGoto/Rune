@@ -57,6 +57,22 @@ public final class RerollTokens {
         return true;
     }
 
+    /**
+     * Gives {@code amount} Reroll Tokens, never going over the most a player can hold.
+     * Returns how many were really added (0 when the player already holds the maximum).
+     */
+    public int grant(UUID player, int amount) {
+        if (amount < 1) {
+            throw new IllegalArgumentException("Amount must be 1 or more, got " + amount);
+        }
+        int held = count(player);
+        int total = Math.min(config.questMaxRerollTokens(), held + amount);
+        if (total > held) {
+            storage.set(player, TOKENS_KEY, Integer.toString(total));
+        }
+        return Math.max(0, total - held);
+    }
+
     private void write(UUID player, int tokens, long day) {
         storage.set(player, TOKENS_KEY, Integer.toString(tokens));
         storage.set(player, DAY_KEY, Long.toString(day));

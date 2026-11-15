@@ -1,0 +1,11 @@
+{
+  "rune.command.loot.usage": "Utilisation : /rune loot roll <table> [rareté] [métier]",
+  "rune.command.loot.unknown_table": "Table de butin inconnue : %s",
+  "rune.command.loot.unknown_rarity": "Rareté inconnue : %s",
+  "rune.command.loot.header": "Tirage de %s en %s : %s résultat(s)",
+  "rune.command.loot.entry": "- %s",
+  "rune.reward.item": "%s x%s",
+  "rune.reward.job_xp": "+%s XP de %s",
+  "rune.reward.account_xp": "+%s XP de compte",
+  "rune.reward.reroll_token": "+%s jeton(s) de relance"
+}
