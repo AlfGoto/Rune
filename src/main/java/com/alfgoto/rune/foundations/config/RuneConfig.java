@@ -27,6 +27,12 @@ public final class RuneConfig {
     public static final String QUEST_MAX_REROLL_TOKENS = "quests.max-reroll-tokens";
     public static final String RUNE_COST_BASE = "capacity.rune-cost.base";
     public static final String RUNE_COST_PER_RANK = "capacity.rune-cost.per-rank";
+    public static final String PLAYER_CAPACITY_BASE = "capacity.player.base";
+    public static final String PLAYER_CAPACITY_PER_LEVEL = "capacity.player.per-account-level";
+    public static final String PLAYER_CAPACITY_MAX = "capacity.player.max";
+    public static final String REWARDS_RARITY_BOOST = "rewards.rarity-boost";
+    public static final String REWARDS_ROLLS_BY_RARITY = "rewards.rolls-by-rarity";
+    public static final String REWARDS_JOB_BIAS = "rewards.job-bias";
 
     static final double DEFAULT_LEVEL_CURVE_BASE = 50;
     static final double DEFAULT_LEVEL_CURVE_EXPONENT = 1.3;
@@ -40,6 +46,12 @@ public final class RuneConfig {
     static final int DEFAULT_QUEST_MAX_REROLL_TOKENS = 3;
     static final List<Double> DEFAULT_RUNE_COST_BASE = List.of(1.0, 2.0, 3.0, 5.0, 8.0);
     static final double DEFAULT_RUNE_COST_PER_RANK = 1;
+    static final int DEFAULT_PLAYER_CAPACITY_BASE = 5;
+    static final int DEFAULT_PLAYER_CAPACITY_PER_LEVEL = 1;
+    static final int DEFAULT_PLAYER_CAPACITY_MAX = 40;
+    static final List<Double> DEFAULT_REWARDS_RARITY_BOOST = List.of(1.0, 1.5, 2.0, 3.0, 4.0);
+    static final List<Double> DEFAULT_REWARDS_ROLLS_BY_RARITY = List.of(1.0, 1.0, 2.0, 2.0, 3.0);
+    static final double DEFAULT_REWARDS_JOB_BIAS = 0.6;
     /** One multiplier per Rarity. */
     static final int QUEST_TIER_COUNT = 5;
 
@@ -56,6 +68,12 @@ public final class RuneConfig {
     private final int questMaxRerollTokens;
     private final List<Double> runeCostBase;
     private final double runeCostPerRank;
+    private final int playerCapacityBase;
+    private final int playerCapacityPerLevel;
+    private final int playerCapacityMax;
+    private final List<Double> rewardsRarityBoost;
+    private final List<Integer> rewardsRollsByRarity;
+    private final double rewardsJobBias;
     private final ToolConfig tools;
 
     private RuneConfig(
@@ -72,7 +90,21 @@ public final class RuneConfig {
             int maxRerollTokens,
             List<Double> runeCostBase,
             double runeCostPerRank,
+            int playerCapacityBase,
+            int playerCapacityPerLevel,
+            int playerCapacityMax,
+            List<Double> rewardsRarityBoost,
+            List<Double> rewardsRollsByRarity,
+            double rewardsJobBias,
             ToolConfig tools) {
+        this.rewardsRarityBoost = List.copyOf(rewardsRarityBoost);
+        this.rewardsRollsByRarity = rewardsRollsByRarity.stream()
+                .map(rolls -> (int) Math.min(1000, Math.max(1, Math.round(rolls))))
+                .toList();
+        this.rewardsJobBias = rewardsJobBias;
+        this.playerCapacityBase = playerCapacityBase;
+        this.playerCapacityPerLevel = playerCapacityPerLevel;
+        this.playerCapacityMax = playerCapacityMax;
         this.runeCostBase = List.copyOf(runeCostBase);
         this.runeCostPerRank = runeCostPerRank;
         this.tools = tools;
@@ -105,6 +137,12 @@ public final class RuneConfig {
                 DEFAULT_QUEST_MAX_REROLL_TOKENS,
                 DEFAULT_RUNE_COST_BASE,
                 DEFAULT_RUNE_COST_PER_RANK,
+                DEFAULT_PLAYER_CAPACITY_BASE,
+                DEFAULT_PLAYER_CAPACITY_PER_LEVEL,
+                DEFAULT_PLAYER_CAPACITY_MAX,
+                DEFAULT_REWARDS_RARITY_BOOST,
+                DEFAULT_REWARDS_ROLLS_BY_RARITY,
+                DEFAULT_REWARDS_JOB_BIAS,
                 ToolConfig.defaults());
     }
 
@@ -129,6 +167,20 @@ public final class RuneConfig {
                 readPositive(section, logger, QUEST_MAX_REROLL_TOKENS, DEFAULT_QUEST_MAX_REROLL_TOKENS));
         List<Double> costBase = readList(section, logger, RUNE_COST_BASE, DEFAULT_RUNE_COST_BASE, true);
         double costPerRank = readPositive(section, logger, RUNE_COST_PER_RANK, DEFAULT_RUNE_COST_PER_RANK);
+        int capacityBase = readCount(section, logger, PLAYER_CAPACITY_BASE, DEFAULT_PLAYER_CAPACITY_BASE);
+        int capacityPerLevel =
+                readCount(section, logger, PLAYER_CAPACITY_PER_LEVEL, DEFAULT_PLAYER_CAPACITY_PER_LEVEL);
+        int capacityMax = readCount(section, logger, PLAYER_CAPACITY_MAX, DEFAULT_PLAYER_CAPACITY_MAX);
+        List<Double> rarityBoost =
+                readList(section, logger, REWARDS_RARITY_BOOST, DEFAULT_REWARDS_RARITY_BOOST, true);
+        List<Double> rollsByRarity =
+                readList(section, logger, REWARDS_ROLLS_BY_RARITY, DEFAULT_REWARDS_ROLLS_BY_RARITY, true);
+        double jobBias = readPositive(section, logger, REWARDS_JOB_BIAS, DEFAULT_REWARDS_JOB_BIAS);
+        if (jobBias > 1) {
+            logger.severe("Config '" + REWARDS_JOB_BIAS + "' must be a chance from 0 to 1, got " + jobBias
+                    + ". Using default " + DEFAULT_REWARDS_JOB_BIAS + ".");
+            jobBias = DEFAULT_REWARDS_JOB_BIAS;
+        }
         return new RuneConfig(
                 base,
                 exponent,
@@ -143,6 +195,12 @@ public final class RuneConfig {
                 maxTokens,
                 costBase,
                 costPerRank,
+                capacityBase,
+                capacityPerLevel,
+                capacityMax,
+                rarityBoost,
+                rollsByRarity,
+                jobBias,
                 ToolConfig.load(section, logger));
     }
 
@@ -207,6 +265,36 @@ public final class RuneConfig {
         return runeCostPerRank;
     }
 
+    /** Player Capacity at Account Level 0 (5). */
+    public int playerCapacityBase() {
+        return playerCapacityBase;
+    }
+
+    /** Player Capacity gained per Account Level (1). */
+    public int playerCapacityPerLevel() {
+        return playerCapacityPerLevel;
+    }
+
+    /** Highest Player Capacity (40). */
+    public int playerCapacityMax() {
+        return playerCapacityMax;
+    }
+
+    /** Odds boost per source Rarity, lowest first: an entry weighs base x boost ^ (its Rarity index). */
+    public List<Double> rewardsRarityBoost() {
+        return rewardsRarityBoost;
+    }
+
+    /** How many times a source of each Rarity rolls a loot table, lowest first. */
+    public List<Integer> rewardsRollsByRarity() {
+        return rewardsRollsByRarity;
+    }
+
+    /** Chance that a Job-bound Rune roll picks that Job's Runes (0.6). */
+    public double rewardsJobBias() {
+        return rewardsJobBias;
+    }
+
     /** Most Reroll Tokens a player can hold. */
     public int questMaxRerollTokens() {
         return questMaxRerollTokens;
@@ -239,6 +327,24 @@ public final class RuneConfig {
             out.put(material, n.doubleValue());
         }
         return out;
+    }
+
+    /** A whole number from 0 to 1,000,000. */
+    private static int readCount(ConfigurationSection s, Logger log, String path, int fallback) {
+        if (!s.contains(path)) {
+            log.severe("Config '" + path + "' is missing. Using default " + fallback + ".");
+            return fallback;
+        }
+        Object raw = s.get(path);
+        if (!(raw instanceof Number n)
+                || n.doubleValue() != Math.rint(n.doubleValue())
+                || n.doubleValue() < 0
+                || n.doubleValue() > 1_000_000) {
+            log.severe("Config '" + path + "' must be a whole number from 0 to 1000000, got '" + raw
+                    + "'. Using default " + fallback + ".");
+            return fallback;
+        }
+        return n.intValue();
     }
 
     private static double readPositive(ConfigurationSection s, Logger log, String path, double fallback) {

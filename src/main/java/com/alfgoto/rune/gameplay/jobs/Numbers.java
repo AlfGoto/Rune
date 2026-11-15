@@ -2,7 +2,7 @@ package com.alfgoto.rune.gameplay.jobs;
 import java.util.Locale;
 
 /** Number parsing and display for admin commands. */
-final class Numbers {
+public final class Numbers {
 
     private Numbers() {}
 
@@ -27,7 +27,7 @@ final class Numbers {
     }
 
     /** One decimal at most, e.g. {@code 12.5} or {@code 40}. */
-    static String format(double value) {
+    public static String format(double value) {
         String text = String.format(Locale.ROOT, "%.1f", value);
         return text.endsWith(".0") ? text.substring(0, text.length() - 2) : text;
     }
