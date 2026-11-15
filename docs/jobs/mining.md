@@ -178,6 +178,7 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 | Veinminer | Legendary | 3 | Mines a vein of ores: 8 / 16 / 32 blocks | pickaxe |
 
 - Each variant (Affinity: Lush Caves, Specialist: Iron…) is a separate Rune. Affinity Runes can appear in their place's chest loot.
+- Speed Runes (Haste, Specialist, Affinity; `gameplay.runes.SpeedBonuses`, `content.runes.SpeedRunesModule`): each variant is its own Rune and its own effect id (`haste`, `specialist_iron`, `affinity_taiga`…). The speed of all installed Runes that apply is summed (Stacking), then applied to the player's block break speed (× 1 + total/100) when a block starts to break, so it follows the tool in hand, the block and the Place. Per-Rank values and Max Ranks are in config (`runes.speed.*`). Specialist: <wood> is not built.
 - Ore Bloom: bloomed ores give full XP and can bloom again. Does not work with Silk Touch.
 - Silk-touched ore gives normal XP when first broken; once placed it gives 0.
 

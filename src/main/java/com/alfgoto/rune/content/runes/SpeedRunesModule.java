@@ -1,5 +1,6 @@
 package com.alfgoto.rune.content.runes;
 
+import com.alfgoto.rune.foundations.config.SpeedRuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
@@ -56,26 +57,48 @@ public final class SpeedRunesModule implements RuneModule {
         EffectRegistry effects = ctx.get(EffectRegistry.class);
         SpeedBonuses speed = ctx.get(SpeedBonuses.class);
         PlaceDetector detector = ctx.get(PlaceDetector.class);
+        SpeedRuneConfig config = ctx.config().speedRunes();
 
-        // Haste: +8% per Rank, up to Rank 5, on any block.
+        // Haste: on any block.
         speed.register("haste", (player, block) -> true);
-        register(runes, effects, "haste", Rarity.COMMON, 8, 5, Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL));
+        register(
+                runes,
+                effects,
+                "haste",
+                Rarity.COMMON,
+                config.hastePerRank(),
+                config.hasteMaxRank(),
+                Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL));
 
-        // Specialist: +20% per Rank, up to Rank 3, on one ore. Pickaxe only.
+        // Specialist: on one ore. Pickaxe only.
         for (Map.Entry<String, Set<Material>> ore : ORES.entrySet()) {
             String id = "specialist_" + ore.getKey();
             speed.register(id, (player, block) -> ore.getValue().contains(block.getType()));
-            register(runes, effects, id, Rarity.COMMON, 20, 3, Set.of(Fit.PICKAXE));
+            register(
+                    runes,
+                    effects,
+                    id,
+                    Rarity.COMMON,
+                    config.specialistPerRank(),
+                    config.specialistMaxRank(),
+                    Set.of(Fit.PICKAXE));
         }
 
-        // Affinity: +10% per Rank, up to Rank 3, while the player stands in one Place. Pickaxe and axe.
+        // Affinity: while the player stands in one Place. Pickaxe and axe.
         for (String place : PLACES) {
             String id = "affinity_" + place;
             speed.register(
                     id,
                     (player, block) ->
                             detector.placesOf(player).stream().anyMatch(p -> p.id().equals(place)));
-            register(runes, effects, id, Rarity.UNCOMMON, 10, 3, Set.of(Fit.PICKAXE, Fit.AXE));
+            register(
+                    runes,
+                    effects,
+                    id,
+                    Rarity.UNCOMMON,
+                    config.affinityPerRank(),
+                    config.affinityMaxRank(),
+                    Set.of(Fit.PICKAXE, Fit.AXE));
         }
     }
 
