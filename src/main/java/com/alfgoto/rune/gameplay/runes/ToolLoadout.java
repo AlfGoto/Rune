@@ -95,8 +95,8 @@ public final class ToolLoadout {
     }
 
     /** The Capacity used by the installed Runes. */
-    public int used(ItemStack tool) {
-        int sum = 0;
+    public long used(ItemStack tool) {
+        long sum = 0;
         for (Installed installed : installed(tool)) {
             sum += runes.capacityCost(installed.rune(), installed.rank());
         }

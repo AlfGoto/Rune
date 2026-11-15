@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/** Debug commands on the held Rune Tool: {@code /rune install <rune> [rank]} and {@code /rune uninstall <slot>}. */
+/** Debug commands on the held Rune Tool: {@code /rune debug install <rune> [rank]} and {@code /rune debug uninstall <slot>}. */
 final class LoadoutSubcommands {
 
     private LoadoutSubcommands() {}
@@ -29,7 +29,7 @@ final class LoadoutSubcommands {
                     return;
                 }
                 if (args.isEmpty() || args.size() > 2) {
-                    player.sendMessage(error("rune.command.install.usage", "Usage: /rune install <rune> [rank]"));
+                    player.sendMessage(error("rune.command.install.usage", "Usage: /rune debug install <rune> [rank]"));
                     return;
                 }
                 Rune rune = runes.find(args.get(0).toLowerCase(Locale.ROOT)).orElse(null);
@@ -119,7 +119,7 @@ final class LoadoutSubcommands {
                     }
                 }
                 if (slot < 1) {
-                    player.sendMessage(error("rune.command.uninstall.usage", "Usage: /rune uninstall <slot>"));
+                    player.sendMessage(error("rune.command.uninstall.usage", "Usage: /rune debug uninstall <slot>"));
                     return;
                 }
                 ToolLoadout.Installed removed = loadout.uninstall(tool, slot).orElse(null);

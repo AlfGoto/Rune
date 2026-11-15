@@ -25,7 +25,7 @@ public final class RunesModule implements RuneModule {
         ctx.get(GiveSubcommand.class).addVariant(new GiveRuneVariant(registry));
         ToolLoadout loadout =
                 ctx.provide(ToolLoadout.class, new ToolLoadout(ctx.plugin(), ctx.get(ItemRegistry.class), registry));
-        ctx.subcommand(LoadoutSubcommands.install(loadout, registry));
-        ctx.subcommand(LoadoutSubcommands.uninstall(loadout));
+        ctx.debug(LoadoutSubcommands.install(loadout, registry));
+        ctx.debug(LoadoutSubcommands.uninstall(loadout));
     }
 }

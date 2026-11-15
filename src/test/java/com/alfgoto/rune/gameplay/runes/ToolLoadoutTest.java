@@ -108,6 +108,16 @@ class ToolLoadoutTest {
     }
 
     @Test
+    void hugeRankCannotWrapAroundTheCapacityCheck() {
+        Rune cheap = rune("wrap_rune", "w", Rarity.COMMON, null, Fit.PICKAXE);
+        ItemStack pick = tool("wrap_pick", Rarity.RARE, ToolKind.PICKAXE);
+
+        assertEquals(Result.INSTALLED, loadout.install(pick, cheap, 1));
+        assertEquals(Result.OVER_CAPACITY, loadout.install(pick, cheap, Integer.MAX_VALUE));
+        assertEquals(1, loadout.installed(pick).size());
+    }
+
+    @Test
     void rejectsWhenNoSlotIsFree() {
         Rune cheap = rune("cheap", "c", Rarity.COMMON, null, Fit.PICKAXE); // cost 1
         ItemStack pick = tool("common_pick", Rarity.COMMON, ToolKind.PICKAXE); // 1 slot, Capacity 3
@@ -147,7 +157,7 @@ class ToolLoadoutTest {
 
     @Test
     void debugCommandsInstallAndUninstallOnTheHeldTool() {
-        Rune speed = rune("speed_cmd", "speed", Rarity.COMMON, null, Fit.PICKAXE);
+        rune("speed_cmd","speed", Rarity.COMMON, null, Fit.PICKAXE);
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, RuneCommand.PERMISSION, true);
         ItemStack pick = tool("cmd_pick", Rarity.COMMON, ToolKind.PICKAXE); // 1 slot, Capacity 3
@@ -164,7 +174,5 @@ class ToolLoadoutTest {
         assertEquals(1, loadout.installed(player.getInventory().getItemInMainHand()).size());
 
         uninstall.execute(player, java.util.List.of("1"));
-        assertTrue(loadout.installed(player.getInventory().getItemInMainHand()).isEmpty());
-        assertEquals(speed.id(), "speed_cmd");
-    }
+        assertTrue(loadout.installed(player.getInventory().getItemInMainHand()).isEmpty());    }
 }
