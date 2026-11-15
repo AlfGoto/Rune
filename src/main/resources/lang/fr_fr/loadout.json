@@ -1,12 +1,12 @@
 {
   "rune.command.loadout.not_a_tool": "Tenez un outil runique dans votre main principale.",
-  "rune.command.install.usage": "Utilisation : /rune debug install<rune> [rang]",
+  "rune.command.install.usage": "Utilisation : /rune debug install <rune> [rang]",
   "rune.command.install.unknown": "Rune inconnue : %s",
   "rune.command.install.no_fit": "%s ne va pas dans cet outil.",
   "rune.command.install.no_slot": "Aucun emplacement de rune libre sur cet outil.",
   "rune.command.install.over_capacity": "Capacité insuffisante : cette rune coûte %s, il en reste %s.",
   "rune.command.install.done": "%s installée, rang %s. Capacité : %s / %s.",
-  "rune.command.uninstall.usage": "Utilisation : /rune debug uninstall<emplacement>",
+  "rune.command.uninstall.usage": "Utilisation : /rune debug uninstall <emplacement>",
   "rune.command.uninstall.empty": "L'emplacement %s ne contient aucune rune.",
   "rune.command.uninstall.done": "%s retirée, rang %s. Capacité : %s / %s."
 }
