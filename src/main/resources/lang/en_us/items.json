@@ -1,5 +1,6 @@
 {
   "rune.item.test_item": "Test Item",
+  "rune.item.test_rune": "Test Rune",
   "rune.item.test_pickaxe": "Test Pickaxe",
   "rune.item.reinforced_handle": "Reinforced Handle",
   "rune.item.reinforced_lining": "Reinforced Lining",
@@ -11,5 +12,10 @@
   "rune.command.give.usage": "Usage: /rune give <id> [amount]",
   "rune.command.give.unknown": "Unknown item: %s",
   "rune.command.give.bad_amount": "The amount must be a number from 1 to %s.",
-  "rune.command.give.done": "Gave %s x%s."
+  "rune.command.give.done": "Gave %s x%s.",
+  "rune.command.give_rune.usage": "Usage: /rune give rune <id> [rank]",
+  "rune.command.give_rune.unknown": "Unknown Rune: %s",
+  "rune.command.give_rune.bad_rank": "The Rank must be a number from 1 to %s.",
+  "rune.command.give_rune.bad_rank_min": "The Rank must be 1 or more.",
+  "rune.command.give_rune.done": "Gave %s, Rank %s."
 }
