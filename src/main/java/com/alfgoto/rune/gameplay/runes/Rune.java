@@ -1,7 +1,10 @@
 package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.foundations.registry.Identified;
+import com.alfgoto.rune.foundations.triggers.RuneClickEvent;
 import com.alfgoto.rune.gameplay.effects.EffectBinding;
+import com.alfgoto.rune.gameplay.effects.EffectTriggers;
+import com.alfgoto.rune.gameplay.effects.RankValues;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.text.Rarity;
@@ -22,6 +25,7 @@ public final class Rune implements Identified {
     private final EffectBinding<?> effect;
     private final Set<Fit> fits;
     private final @Nullable Job job;
+    private final @Nullable RankValues cooldown;
 
     /** A general Rune (no Job). */
     public Rune(RuneItem item, EffectBinding<?> effect, Set<Fit> fits) {
@@ -30,7 +34,30 @@ public final class Rune implements Identified {
 
     /** A Rune of {@code job}: a Rune Cache dropped by that Job leans towards it. {@code null} means a general Rune. */
     public Rune(RuneItem item, EffectBinding<?> effect, Set<Fit> fits, @Nullable Job job) {
+        this(item, effect, fits, job, null);
+    }
+
+    /**
+     * An Active Rune: its Effect runs on a click in air from an Active Slot, then the Rune is on cooldown for
+     * {@code cooldownSeconds} (base + growth per Rank, in seconds).
+     */
+    public static Rune active(
+            RuneItem item,
+            EffectBinding<RuneClickEvent> effect,
+            Set<Fit> fits,
+            @Nullable Job job,
+            RankValues cooldownSeconds) {
+        return new Rune(item, effect, fits, job, Objects.requireNonNull(cooldownSeconds, "cooldownSeconds"));
+    }
+
+    private Rune(
+            RuneItem item,
+            EffectBinding<?> effect,
+            Set<Fit> fits,
+            @Nullable Job job,
+            @Nullable RankValues cooldown) {
         this.job = job;
+        this.cooldown = cooldown;
         this.item = Objects.requireNonNull(item, "item");
         this.effect = Objects.requireNonNull(effect, "effect");
         Objects.requireNonNull(fits, "fits");
@@ -38,6 +65,10 @@ public final class Rune implements Identified {
             throw new IllegalArgumentException("A Rune must fit somewhere: " + item.id());
         }
         this.fits = Set.copyOf(fits);
+        if ((cooldown != null) != (effect.effect().trigger() == EffectTriggers.CLICK)) {
+            throw new IllegalArgumentException(
+                    "A Rune with a click Trigger must be built with Rune.active, and only those: " + item.id());
+        }
     }
 
     @Override
@@ -47,6 +78,19 @@ public final class Rune implements Identified {
 
     public RuneItem item() {
         return item;
+    }
+
+    /** True for an Active Rune: it runs on a click in air from an Active Slot and has a cooldown. */
+    public boolean isActive() {
+        return cooldown != null;
+    }
+
+    /** The cooldown in seconds at {@code rank}. Throws if this is not an Active Rune. */
+    public double cooldownSeconds(int rank) {
+        if (cooldown == null) {
+            throw new IllegalStateException("Not an Active Rune: " + id());
+        }
+        return cooldown.at(rank);
     }
 
     /** The Job this Rune belongs to, or empty for a general Rune. */

@@ -1,5 +1,7 @@
 package com.alfgoto.rune.gameplay.items;
 
+import com.alfgoto.rune.foundations.triggers.ClickType;
+import java.util.List;
 import java.util.Optional;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -24,6 +26,15 @@ public enum ToolKind {
     /** The vanilla material a Rune Tool of this kind is made on. */
     public Material material() {
         return material;
+    }
+
+    /**
+     * The clicks of the Active Slots, in Rune slot order: slot 1 is the first click, slot 2 the second.
+     * Today's kinds all have two. Tools whose right-click in air is already used (bow, crossbow, trident,
+     * rod, shield) will have only {@link ClickType#LEFT} when they are built.
+     */
+    public List<ClickType> activeClicks() {
+        return List.of(ClickType.RIGHT, ClickType.LEFT);
     }
 
     /** The vanilla tag of blocks this kind of tool mines. */
