@@ -262,6 +262,13 @@ tools:
   slots-by-rarity: [1, 2, 3, 4, 5]
   # Capacity by Rarity, lowest first
   capacity-by-rarity: [3, 6, 10, 14, 18]
+  mastery:
+    # Valuable Job Actions for +1 Capacity: pickaxe = ores mined, axe = logs cut
+    # (bone-meal-grown logs count x jobs.bonemeal-multiplier). Other tools have no Mastery yet.
+    pickaxe-actions: 500
+    axe-actions: 1000
+    # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
+    max-bonus: 0.75
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

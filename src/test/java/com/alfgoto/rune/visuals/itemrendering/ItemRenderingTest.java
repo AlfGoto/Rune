@@ -10,6 +10,7 @@ import com.alfgoto.rune.gameplay.effects.EffectTriggers;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
+import com.alfgoto.rune.gameplay.items.ToolMastery;
 import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.runes.CapacityCost;
 import com.alfgoto.rune.gameplay.runes.Fit;
@@ -102,6 +103,51 @@ class ItemRenderingTest {
         TranslatableComponent capacity = (TranslatableComponent) lore.get(3);
         assertEquals("rune.item.lore.capacity", capacity.key());
         assertEquals(Component.text(10).color(NamedTextColor.WHITE), capacity.arguments().get(0).asComponent());
+    }
+
+    @Test
+    void toolLoreShowsMasteryProgressAndTotalCapacity() {
+        registry.register(RuneItem.tool("mastery_pick", Rarity.RARE, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        ToolMastery mastery = new ToolMastery(
+                MockBukkit.createMockPlugin(), registry, com.alfgoto.rune.foundations.config.ToolConfig.defaults());
+        registry.addRedrawer(new ItemRenderer(runes, registry::toolStats, mastery::status));
+        ItemStack stack = registry.create(registry.get("mastery_pick"), 1);
+        mastery.add(stack, 620);
+        List<Component> lore = stack.getItemMeta().lore();
+        TranslatableComponent capacity = null;
+        TranslatableComponent line = null;
+        TranslatableComponent next = null;
+        for (Component c : lore) {
+            if (c instanceof TranslatableComponent t) {
+                switch (t.key()) {
+                    case "rune.item.lore.capacity" -> capacity = t;
+                    case "rune.item.lore.mastery" -> line = t;
+                    case "rune.item.lore.mastery_next" -> next = t;
+                    default -> {}
+                }
+            }
+        }
+        // Rare Capacity 10 + 1 earned = 11; +75% of 10 rounds down to a max of +7; 120 / 500 to the next.
+        assertEquals(Component.text(11).color(NamedTextColor.WHITE), capacity.arguments().get(0).asComponent());
+        assertEquals(Component.text(1).color(NamedTextColor.WHITE), line.arguments().get(0).asComponent());
+        assertEquals(Component.text(7).color(NamedTextColor.WHITE), line.arguments().get(1).asComponent());
+        assertEquals(Component.text(120).color(NamedTextColor.WHITE), next.arguments().get(0).asComponent());
+        assertEquals(Component.text(500).color(NamedTextColor.WHITE), next.arguments().get(1).asComponent());
+    }
+
+    @Test
+    void maxedMasteryShowsTheMaxLine() {
+        registry.register(RuneItem.tool("maxed_pick", Rarity.COMMON, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        ToolMastery mastery = new ToolMastery(
+                MockBukkit.createMockPlugin(), registry, com.alfgoto.rune.foundations.config.ToolConfig.defaults());
+        registry.addRedrawer(new ItemRenderer(runes, registry::toolStats, mastery::status));
+        ItemStack stack = registry.create(registry.get("maxed_pick"), 1);
+        mastery.add(stack, 100_000);
+        List<String> keys = stack.getItemMeta().lore().stream()
+                .map(c -> ((TranslatableComponent) c).key())
+                .toList();
+        assertEquals(true, keys.contains("rune.item.lore.mastery_max"));
+        assertEquals(false, keys.contains("rune.item.lore.mastery_next"));
     }
 
     @Test

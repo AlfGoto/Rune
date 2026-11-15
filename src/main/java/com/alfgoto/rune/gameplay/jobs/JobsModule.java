@@ -25,9 +25,10 @@ public final class JobsModule implements RuneModule {
         ctx.provide(JobProgress.class, progress);
         // Block breaks → Job XP. Content fills the table; the listener reads it when a block breaks.
         BlockActions blockActions = ctx.provide(BlockActions.class, new BlockActions());
+        BlockXpRules rules = ctx.provide(BlockXpRules.class, new BlockXpRules(config.bonemealXpMultiplier()));
         ctx.listen(new BlockActionListener(
                 blockActions,
-                new BlockXpRules(config.bonemealXpMultiplier()),
+                rules,
                 ctx.get(BlockTracker.class),
                 progress));
         // The commands read the registry when they run, so Jobs added later by content show up.

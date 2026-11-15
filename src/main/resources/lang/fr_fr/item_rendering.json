@@ -22,6 +22,9 @@
   "rune.item.lore.slots": "Emplacements de Runes : %s",
   "rune.item.lore.capacity": "Capacité : %s",
   "rune.item.lore.trait": "Trait : %s",
+  "rune.item.lore.mastery": "Maîtrise : +%s / +%s de capacité",
+  "rune.item.lore.mastery_next": "Prochain +1 de capacité : %s / %s",
+  "rune.item.lore.mastery_max": "Maîtrise : +%s de capacité (max)",
   "rune.harvest_tier.stone": "Pierre",
   "rune.harvest_tier.iron": "Fer",
   "rune.harvest_tier.diamond": "Diamant"

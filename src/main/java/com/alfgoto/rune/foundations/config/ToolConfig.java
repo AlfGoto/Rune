@@ -16,7 +16,10 @@ public record ToolConfig(
         List<Integer> durabilityByTier,
         int epicDurability,
         List<Integer> slotsByRarity,
-        List<Integer> capacityByRarity) {
+        List<Integer> capacityByRarity,
+        int pickaxeMasteryActions,
+        int axeMasteryActions,
+        double masteryMaxBonus) {
 
     public static final String SPEED_BY_TIER = "tools.speed-by-tier";
     public static final String EPIC_SPEED = "tools.epic-speed";
@@ -24,6 +27,9 @@ public record ToolConfig(
     public static final String EPIC_DURABILITY = "tools.epic-durability";
     public static final String SLOTS_BY_RARITY = "tools.slots-by-rarity";
     public static final String CAPACITY_BY_RARITY = "tools.capacity-by-rarity";
+    public static final String PICKAXE_MASTERY_ACTIONS = "tools.mastery.pickaxe-actions";
+    public static final String AXE_MASTERY_ACTIONS = "tools.mastery.axe-actions";
+    public static final String MASTERY_MAX_BONUS = "tools.mastery.max-bonus";
 
     /** One value per Harvest Tier: stone, iron, diamond. */
     static final int TIER_COUNT = 3;
@@ -45,7 +51,10 @@ public record ToolConfig(
                 List.of(131, 250, 1561),
                 2031,
                 List.of(1, 2, 3, 4, 5),
-                List.of(3, 6, 10, 14, 18));
+                List.of(3, 6, 10, 14, 18),
+                500,
+                1000,
+                0.75);
     }
 
     /** Reads the {@code tools} section. Bad or missing values are logged and replaced by defaults. */
@@ -58,7 +67,10 @@ public record ToolConfig(
                 (int) readNumber(section, logger, EPIC_DURABILITY, d.epicDurability),
                 toInts(readNumbers(section, logger, SLOTS_BY_RARITY, RARITY_COUNT, toDoubles(d.slotsByRarity), true)),
                 toInts(readNumbers(
-                        section, logger, CAPACITY_BY_RARITY, RARITY_COUNT, toDoubles(d.capacityByRarity), true)));
+                        section, logger, CAPACITY_BY_RARITY, RARITY_COUNT, toDoubles(d.capacityByRarity), true)),
+                (int) readNumber(section, logger, PICKAXE_MASTERY_ACTIONS, d.pickaxeMasteryActions),
+                (int) readNumber(section, logger, AXE_MASTERY_ACTIONS, d.axeMasteryActions),
+                Math.min(1.0, readNumber(section, logger, MASTERY_MAX_BONUS, d.masteryMaxBonus)));
     }
 
     private static double readNumber(ConfigurationSection s, Logger log, String path, double fallback) {

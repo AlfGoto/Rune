@@ -22,6 +22,9 @@
   "rune.item.lore.slots": "Rune slots: %s",
   "rune.item.lore.capacity": "Capacity: %s",
   "rune.item.lore.trait": "Trait: %s",
+  "rune.item.lore.mastery": "Mastery: +%s / +%s Capacity",
+  "rune.item.lore.mastery_next": "Next +1 Capacity: %s / %s",
+  "rune.item.lore.mastery_max": "Mastery: +%s Capacity (max)",
   "rune.harvest_tier.stone": "Stone",
   "rune.harvest_tier.iron": "Iron",
   "rune.harvest_tier.diamond": "Diamond"
