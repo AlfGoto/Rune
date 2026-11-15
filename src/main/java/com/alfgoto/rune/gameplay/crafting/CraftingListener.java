@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -29,10 +30,6 @@ public final class CraftingListener implements Listener {
     private final ItemRegistry items;
     private final ToolLoadout loadout;
     private final RuneRegistry runes;
-
-    public CraftingListener(RecipeBook book, ItemRegistry items) {
-        this(book, items, null, null);
-    }
 
     public CraftingListener(RecipeBook book, ItemRegistry items, ToolLoadout loadout, RuneRegistry runes) {
         this.book = book;
@@ -68,8 +65,7 @@ public final class CraftingListener implements Listener {
             return;
         }
         ItemStack result = items.create(items.get(recipe.result()), recipe.amount());
-        List<ToolLoadout.Installed> overflow = carryOver(event.getInventory(), result);
-        if (overflow == null) {
+        if (carryOver(event.getInventory(), result) == null) {
             return; // nothing to carry over
         }
         if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
@@ -77,6 +73,24 @@ public final class CraftingListener implements Listener {
             return;
         }
         event.setCurrentItem(result);
+    }
+
+    /**
+     * Gives back the Runes that did not fit, only when the craft really happens (no other listener cancelled
+     * it), so a cancelled craft never duplicates Runes. The grid is still full at this point.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCraftDone(CraftItemEvent event) {
+        CraftingRecipe recipe = book.of(event.getRecipe()).orElse(null);
+        if (recipe == null) {
+            return;
+        }
+        ItemStack result = items.create(items.get(recipe.result()), recipe.amount());
+        List<ToolLoadout.Installed> overflow = carryOver(event.getInventory(), result);
+        if (overflow == null) {
+            return;
+        }
+        HumanEntity who = event.getWhoClicked();
         for (ToolLoadout.Installed back : overflow) {
             ItemStack stack = runes.create(back.rune(), back.rank());
             who.getInventory().addItem(stack).values()
@@ -85,13 +99,10 @@ public final class CraftingListener implements Listener {
     }
 
     /**
-     * Installs on {@code result} the Runes of the Rune gear in the grid. Returns the Runes that did not fit, or
+     * Installs on {@code result} the Runes of the Rune gear in the grid. Returns the Runes that did not fit (all of them when the result is not a Rune Tool), or
      * null when there is nothing to carry over.
      */
     private List<ToolLoadout.Installed> carryOver(CraftingInventory inventory, ItemStack result) {
-        if (loadout == null || loadout.stats(result).isEmpty()) {
-            return null;
-        }
         List<ItemStack> sources = new ArrayList<>();
         for (ItemStack stack : inventory.getMatrix()) {
             if (stack != null && !loadout.installed(stack).isEmpty()) {

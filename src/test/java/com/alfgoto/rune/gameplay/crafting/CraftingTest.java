@@ -9,7 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
+import com.alfgoto.rune.foundations.config.RuneConfig;
+import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.gameplay.jobs.Job;
+import com.alfgoto.rune.gameplay.runes.CapacityCost;
+import com.alfgoto.rune.gameplay.runes.RuneRegistry;
+import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import com.alfgoto.rune.storage.PlayerStorage;
@@ -42,6 +47,8 @@ class CraftingTest {
     private JobProgress progress;
     private ItemRegistry items;
     private RecipeBook book;
+    private RuneRegistry runes;
+    private ToolLoadout loadout;
     private PlayerMock player;
     private CraftingRecipe recipe;
 
@@ -50,7 +57,9 @@ class CraftingTest {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(RunePlugin.class);
         progress = new JobProgress(new MemoryStorage(), new LevelCurve(50, 1.3), new LevelCurve(200, 1.3));
-        items = new ItemRegistry(plugin);
+        items = new ItemRegistry(plugin, ToolConfig.defaults());
+        runes = new RuneRegistry(plugin, items, new CapacityCost(RuneConfig.defaults()));
+        loadout = new ToolLoadout(plugin, items, runes);
         items.register(new RuneItem("component", Rarity.COMMON, Material.PAPER, "test_rune"));
         items.register(new RuneItem("gear", Rarity.UNCOMMON, Material.STICK, "test_rune"));
         book = new RecipeBook(plugin, items, progress);
@@ -120,7 +129,7 @@ class CraftingTest {
             null, null, null, null, null
         });
         inventory.setResult(items.create(items.get("gear"), 1));
-        new CraftingListener(book, items).onPrepare(
+        new CraftingListener(book, items, loadout, runes).onPrepare(
                 new PrepareItemCraftEvent(inventory, view, false) {
                     @Override
                     public Recipe getRecipe() {
