@@ -101,13 +101,13 @@ def rune_loadout():
     header(d, '#e9b115')
     panel(d, 0, 1, 2, 3, '#a8a8a8')                                      # the tool on display
     slot(d, 1, 2); gold_frame(d, 1, 2)
-    # five rune sockets, carved into a deepslate band
+    # five Rune slots, carved into a deepslate band
     x0, y0 = sxy(4, 2); x1, _ = sxy(8, 2)
     inset(d, x0 - 2, y0 - 2, 168, y0 + 19, hx('#3d3d43'))
     for c in range(4, 9):
         slot(d, c, 2, hx('#515151'))
     gold_frame(d, 4, 2); gold_frame(d, 5, 2)                              # the 2 Active slots
-    for c in range(4, 9):                                                # socket numbers as pips above
+    for c in range(4, 9):                                                # slot numbers as pips above
         x, y = sxy(c, 1)
         for k in range(c - 3):
             d.point((x + 9 - (c - 3) + 2 * k, y + 13), fill=hx('#6f6f6f'))
