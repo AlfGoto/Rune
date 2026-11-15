@@ -21,6 +21,7 @@ public final class JobProgress {
     private final LevelCurve jobCurve;
     private final LevelCurve accountCurve;
     private final List<JobXpListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<JobLevelListener> levelListeners = new CopyOnWriteArrayList<>();
 
     public JobProgress(PlayerStorage storage, LevelCurve jobCurve, LevelCurve accountCurve) {
         this.storage = storage;
@@ -57,6 +58,11 @@ public final class JobProgress {
         listeners.add(listener);
     }
 
+    /** Called whenever a Job Level changes, whatever the cause. Lets Crafting react to levels. */
+    public void addLevelListener(JobLevelListener listener) {
+        levelListeners.add(listener);
+    }
+
     /**
      * Adds Job XP and feeds Account XP with {@code amount × Account Rate}.
      * Run on the main thread: listeners call Bukkit player methods.
@@ -82,17 +88,35 @@ public final class JobProgress {
                 LOGGER.log(Level.WARNING, "A Job XP listener failed", e);
             }
         }
+        notifyLevel(player, job, gain.jobLevelBefore(), gain.jobLevelAfter());
     }
 
     /** Sets the Job XP. Account XP is left alone. */
     public void setJobXp(UUID player, Job job, double amount) {
         requireAmount(amount);
+        int before = jobLevel(player, job);
         write(player, jobKey(job), amount);
+        notifyLevel(player, job, before, jobLevel(player, job));
     }
 
     /** Sets the Job XP to the minimum for {@code level}. Account XP is left alone. */
     public void setJobLevel(UUID player, Job job, int level) {
+        int before = jobLevel(player, job);
         write(player, jobKey(job), jobCurve.totalXpForLevel(level));
+        notifyLevel(player, job, before, jobLevel(player, job));
+    }
+
+    private void notifyLevel(UUID player, Job job, int before, int after) {
+        if (before == after) {
+            return;
+        }
+        for (JobLevelListener listener : levelListeners) {
+            try {
+                listener.onJobLevelChange(player, job, before, after);
+            } catch (RuntimeException e) {
+                LOGGER.log(Level.WARNING, "A Job Level listener failed", e);
+            }
+        }
     }
 
     private static String jobKey(Job job) {
