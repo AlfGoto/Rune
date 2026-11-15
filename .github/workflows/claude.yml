@@ -18,11 +18,14 @@ jobs:
   # Is this comment a human reply to Claude (no "@claude" needed)?
   # - Issue / PR conversation: the last earlier comment (other bots ignored) is from claude[bot].
   # - Inline PR thread: the comment replies to a claude[bot] comment.
+  # `/preview` commands are never replies: preview.yml handles them (same match as there).
   reply:
     if: >-
       (github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
       github.event.comment.user.type != 'Bot' &&
-      !contains(github.event.comment.body, '@claude')
+      !contains(github.event.comment.body, '@claude') &&
+      github.event.comment.body != '/preview' &&
+      !startsWith(github.event.comment.body, '/preview ')
     runs-on: ubuntu-latest
     permissions:
       issues: read
