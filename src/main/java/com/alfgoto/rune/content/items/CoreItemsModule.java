@@ -24,5 +24,18 @@ public final class CoreItemsModule implements RuneModule {
         ItemRegistry items = ctx.get(ItemRegistry.class);
         // Uses the test model of the resource pack (assets/rune/items/test_rune.json).
         items.register(new RuneItem("test_item", Rarity.COMMON, Material.PAPER, "test_rune"));
+        // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
+        // Paper as base material so vanilla recipes never accept them as sticks, leather…
+        component(items, "reinforced_handle", Rarity.UNCOMMON);
+        component(items, "reinforced_lining", Rarity.UNCOMMON);
+        component(items, "gem_setting", Rarity.RARE);
+        component(items, "echo_lens", Rarity.RARE);
+        component(items, "deep_core", Rarity.EPIC);
+        component(items, "abyssal_plate", Rarity.EPIC);
+        component(items, "legendary_core", Rarity.LEGENDARY);
+    }
+
+    private static void component(ItemRegistry items, String id, Rarity rarity) {
+        items.register(new RuneItem(id, rarity, Material.PAPER, id));
     }
 }
