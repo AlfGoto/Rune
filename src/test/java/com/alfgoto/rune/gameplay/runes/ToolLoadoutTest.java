@@ -115,6 +115,13 @@ class ToolLoadoutTest {
         assertEquals(Result.INSTALLED, loadout.install(pick, cheap, 1));
         assertEquals(Result.OVER_CAPACITY, loadout.install(pick, cheap, Integer.MAX_VALUE));
         assertEquals(1, loadout.installed(pick).size());
+
+        // Rare cost at this Rank is above Integer.MAX_VALUE: it must not wrap negative.
+        Rune rare = rune("wrap_rare", "wr", Rarity.RARE, null, Fit.PICKAXE);
+        assertEquals(Result.OVER_CAPACITY, loadout.install(pick, rare, Integer.MAX_VALUE));
+        Rune legendary = rune("wrap_legendary", "wl", Rarity.LEGENDARY, null, Fit.PICKAXE);
+        assertEquals(Result.OVER_CAPACITY, loadout.install(pick, legendary, Integer.MAX_VALUE));
+        assertEquals(1, loadout.installed(pick).size());
     }
 
     @Test
@@ -157,7 +164,7 @@ class ToolLoadoutTest {
 
     @Test
     void debugCommandsInstallAndUninstallOnTheHeldTool() {
-        rune("speed_cmd","speed", Rarity.COMMON, null, Fit.PICKAXE);
+        rune("speed_cmd", "speed", Rarity.COMMON, null, Fit.PICKAXE);
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, RuneCommand.PERMISSION, true);
         ItemStack pick = tool("cmd_pick", Rarity.COMMON, ToolKind.PICKAXE); // 1 slot, Capacity 3
