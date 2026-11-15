@@ -137,6 +137,15 @@ class CraftingUpgradeTest {
         assertEquals(0, runeItemsInInventory());
     }
 
+    @Test
+    void numberKeyAndDropAreRefusedWhenThereAreRunesToCarryOver() {
+        for (ClickType click : new ClickType[] {ClickType.NUMBER_KEY, ClickType.DROP, ClickType.CONTROL_DROP}) {
+            CraftItemEvent event = craft(click, false);
+            assertTrue(event.isCancelled(), click.name());
+        }
+        assertEquals(0, runeItemsInInventory());
+    }
+
     /** Another listener (like Locked Gear) that cancels the craft after Crafting looked at it. */
     private static final class Canceller implements Listener {
         @EventHandler(priority = EventPriority.HIGH)

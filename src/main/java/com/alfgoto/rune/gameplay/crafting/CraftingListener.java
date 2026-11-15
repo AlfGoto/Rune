@@ -21,8 +21,9 @@ import org.bukkit.inventory.ItemStack;
  * An unlocked Rune recipe gets a fresh result, so it goes through the redrawers (name, lore) like /rune give.
  *
  * <p>Upgrade: when the ingredients are Rune gear with installed Runes, the result keeps the Runes that fit its
- * slots and Capacity. The rest go to the player's inventory, or drop on the ground if it is full. Shift-click
- * is refused for an Upgrade that has Runes to carry over, because one click would craft many results.
+ * slots and Capacity. The rest go to the player's inventory, or drop on the ground if it is full. Only a plain
+ * left or right click is allowed for an Upgrade that has Runes to carry over: shift-click would craft many
+ * results, and number keys or drop would move the result without a clean single craft.
  */
 public final class CraftingListener implements Listener {
 
@@ -68,7 +69,7 @@ public final class CraftingListener implements Listener {
         if (carryOver(event.getInventory(), result) == null) {
             return; // nothing to carry over
         }
-        if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+        if (event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT) {
             event.setCancelled(true);
             return;
         }
