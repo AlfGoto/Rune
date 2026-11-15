@@ -1,3 +1,21 @@
 {
-  "rune.item.lore.stats_placeholder": "No stats yet"
+  "rune.item.lore.stats_placeholder": "No stats yet",
+  "rune.item.lore.rank": "Rank: %s",
+  "rune.item.lore.rank_max": "Rank: %s / %s",
+  "rune.item.lore.capacity_cost": "Capacity Cost: %s",
+  "rune.item.lore.fits": "Fits: %s",
+  "rune.fit.player": "Player",
+  "rune.fit.pickaxe": "Pickaxe",
+  "rune.fit.axe": "Axe",
+  "rune.fit.shovel": "Shovel",
+  "rune.fit.sword": "Sword",
+  "rune.fit.bow": "Bow",
+  "rune.fit.crossbow": "Crossbow",
+  "rune.fit.trident": "Trident",
+  "rune.fit.fishing_rod": "Fishing Rod",
+  "rune.fit.shield": "Shield",
+  "rune.fit.helmet": "Helmet",
+  "rune.fit.chestplate": "Chestplate",
+  "rune.fit.leggings": "Leggings",
+  "rune.fit.boots": "Boots"
 }

@@ -1,7 +1,12 @@
 {
   "rune.item.test_item": "Objet de test",
+  "rune.item.test_rune": "Rune de test",
   "rune.command.give.usage": "Utilisation : /rune give <id> [quantité]",
   "rune.command.give.unknown": "Objet inconnu : %s",
   "rune.command.give.bad_amount": "La quantité doit être un nombre de 1 à %s.",
-  "rune.command.give.done": "Vous avez reçu %s x%s."
+  "rune.command.give.done": "Vous avez reçu %s x%s.",
+  "rune.command.give_rune.usage": "Utilisation : /rune give rune <id> [rang]",
+  "rune.command.give_rune.unknown": "Rune inconnue : %s",
+  "rune.command.give_rune.bad_rank": "Le rang de cette Rune doit être un nombre de %s.",
+  "rune.command.give_rune.done": "Vous avez reçu %s, rang %s."
 }

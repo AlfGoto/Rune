@@ -57,6 +57,10 @@ class RuneConfigTest {
                   level-curve:
                     base: 100
                     exponent: 1.1
+                capacity:
+                  rune-cost:
+                    base: [1, 2, 3, 5, 8]
+                    per-rank: 1
                 quests:
                   tier-multipliers: [1, 2, 3, 4, 6]
                   tier-min-levels: [1, 2, 3, 4, 5]
@@ -66,6 +70,8 @@ class RuneConfigTest {
                   max-reroll-tokens: 5
                 """);
         assertEquals(5, c.questMaxRerollTokens());
+        assertEquals(List.of(1.0, 2.0, 3.0, 5.0, 8.0), c.runeCostBase());
+        assertEquals(1, c.runeCostPerRank());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierMinLevels());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierWeightBase());
         assertEquals(List.of(-1.0, 0.0, 1.0, 2.0, 3.0), c.questTierWeightPerLevel());
@@ -106,6 +112,10 @@ class RuneConfigTest {
                   level-curve:
                     base: 200
                     exponent: 1.3
+                capacity:
+                  rune-cost:
+                    base: [1, 2, 3, 5, 8]
+                    per-rank: 1
                 quests:
                   tier-multipliers: [1, 2]
                   tier-min-levels: [1, 1, 1, 15, 25]
@@ -126,7 +136,9 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(11, errors.size());
+        assertEquals(13, errors.size());
+        assertEquals(RuneConfig.defaults().runeCostBase(), c.runeCostBase());
+        assertEquals(1, c.runeCostPerRank());
         assertTrue(c.blockXp().isEmpty());
         assertEquals(0.25, c.bonemealXpMultiplier());
         assertEquals(3, c.questMaxRerollTokens());
@@ -165,6 +177,10 @@ class RuneConfigTest {
                   level-curve:
                     base: 200
                     exponent: 1.3
+                capacity:
+                  rune-cost:
+                    base: [1, 2, 3, 5, 8]
+                    per-rank: 1
                 quests:
                   tier-multipliers: [1, 1.5, 0, 3, 5]
                   tier-min-levels: [1, 1, 1, 15, 25]

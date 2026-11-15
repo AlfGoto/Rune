@@ -11,6 +11,7 @@ public final class ItemsModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         ItemRegistry registry = ctx.provide(ItemRegistry.class, new ItemRegistry(ctx.plugin()));
-        ctx.subcommand(new GiveSubcommand(registry));
+        GiveSubcommand give = ctx.provide(GiveSubcommand.class, new GiveSubcommand(registry));
+        ctx.subcommand(give);
     }
 }
