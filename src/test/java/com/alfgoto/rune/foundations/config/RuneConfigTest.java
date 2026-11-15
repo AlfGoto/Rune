@@ -72,6 +72,10 @@ class RuneConfigTest {
                     base: [1, 2, 3, 4, 5]
                     per-level: [-1, 0, 1, 2, 3]
                   max-reroll-tokens: 5
+                rewards:
+                  rarity-boost: [1, 2, 3, 4, 5]
+                  rolls-by-rarity: [1, 2, 3, 4, 5.4]
+                  job-bias: 0.25
                 tools:
                   speed-by-tier: [1, 2, 3.5]
                   epic-speed: 9
@@ -87,6 +91,9 @@ class RuneConfigTest {
         assertEquals(List.of(2, 3, 4, 5, 6), c.tools().slotsByRarity());
         assertEquals(List.of(1, 2, 3, 4, 5), c.tools().capacityByRarity());
         assertEquals(5, c.questMaxRerollTokens());
+        assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.rewardsRarityBoost());
+        assertEquals(List.of(1, 2, 3, 4, 5), c.rewardsRollsByRarity());
+        assertEquals(0.25, c.rewardsJobBias());
         assertEquals(List.of(1.0, 2.0, 3.0, 5.0, 8.0), c.runeCostBase());
         assertEquals(1, c.runeCostPerRank());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierMinLevels());
@@ -144,6 +151,10 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                rewards:
+                  rarity-boost: [1, 1.5, 2, 3, 4]
+                  rolls-by-rarity: [1, 1, 2, 2, 3]
+                  job-bias: 0.6
                 tools:
                   speed-by-tier: [4, 6, 8]
                   epic-speed: 12
@@ -164,7 +175,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(22, errors.size());
+        assertEquals(25, errors.size());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -176,6 +187,16 @@ class RuneConfigTest {
         assertEquals(50, c.levelCurveBase());
         assertEquals(200, c.accountCurveBase());
         assertEquals(1.3, c.accountCurveExponent());
+    }
+
+    @Test
+    void jobBiasAboveOneFallsBack() throws Exception {
+        RuneConfig c = load("""
+                rewards:
+                  job-bias: 1.5
+                """);
+        assertEquals(0.6, c.rewardsJobBias());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("rewards.job-bias")));
     }
 
     @Test
@@ -223,6 +244,10 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                rewards:
+                  rarity-boost: [1, 1.5, 2, 3, 4]
+                  rolls-by-rarity: [1, 1, 2, 2, 3]
+                  job-bias: 0.6
                 tools:
                   speed-by-tier: [4, 6, 8]
                   epic-speed: 12

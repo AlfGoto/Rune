@@ -1,0 +1,11 @@
+{
+  "rune.command.loot.usage": "Usage: /rune loot roll <table> [rarity] [job]",
+  "rune.command.loot.unknown_table": "Unknown loot table: %s",
+  "rune.command.loot.unknown_rarity": "Unknown Rarity: %s",
+  "rune.command.loot.header": "Rolled %s as %s: %s result(s)",
+  "rune.command.loot.entry": "- %s",
+  "rune.reward.item": "%s x%s",
+  "rune.reward.job_xp": "+%s %s XP",
+  "rune.reward.account_xp": "+%s Account XP",
+  "rune.reward.reroll_token": "+%s Reroll Token(s)"
+}
