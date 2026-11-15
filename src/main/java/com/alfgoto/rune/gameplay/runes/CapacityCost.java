@@ -19,10 +19,10 @@ public final class CapacityCost {
     }
 
     /** The Capacity Cost of a Rune of this Rarity at {@code rank} (at least 1). */
-    public int of(Rarity rarity, int rank) {
+    public long of(Rarity rarity, int rank) {
         if (rank < 1) {
             throw new IllegalArgumentException("Rank starts at 1, got " + rank);
         }
-        return (int) Math.round(base.get(rarity.ordinal()) + perRank * (rank - 1L));
+        return Math.round(base.get(rarity.ordinal()) + perRank * (rank - 1L));
     }
 }

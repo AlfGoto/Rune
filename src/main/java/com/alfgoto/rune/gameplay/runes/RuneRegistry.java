@@ -47,7 +47,7 @@ public final class RuneRegistry {
     }
 
     /** The Capacity Cost of {@code rune} at {@code rank}. */
-    public int capacityCost(Rune rune, int rank) {
+    public long capacityCost(Rune rune, int rank) {
         return capacityCost.of(rune.rarity(), rank);
     }
 
