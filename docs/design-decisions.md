@@ -59,7 +59,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Movement abilities are contextual Tool Runes (Axe: dash to tree; Sword: lunge to monster; Pickaxe: dash to ore).
 - UI: dedicated loadout menus, Active Slots highlighted, rarity colours, custom icon glyphs in names.
 - Menus open from a Rune Codex item in the inventory (main menu: Jobs, Quests, Runes).
-- Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu.
+- Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu. It is given on join and on respawn. Step 1: the Codex uses the test model and the main menu only has Jobs; the Quests and Runes pages come with their own tickets.
 
 ## Capacity (2026-11-10)
 - Capacity Cost = Rarity base (Common 1, Uncommon 2, Rare 3, Epic 5, Legendary 8) + 1 per Rank above 1.
@@ -67,7 +67,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Traits can add or remove Capacity (bonus / drawback).
 - Mastery: a Rune Tool gains +1 Capacity every N valuable Job Actions, up to +75% of base Capacity. Pickaxe: 500 ores. Axe: 1,000 logs. Other tools set when their Job is designed. Rune Armor has fixed Capacity.
 - Account Level curve: XP to next level = `200 × L^1.3` (rewards playing several Jobs; config: `account.level-curve.base` / `.exponent`). Account XP = Job XP × the Job's Account Rate. The Account Rate lives in the Job definition (Java).
-- Player Capacity = 5 + 1 per Account Level, capped at 40 (Account Level 35, ~120 h at 2,500 Account XP/h).
+- Player Capacity = 5 + 1 per Account Level, capped at 40 (Account Level 35, ~120 h at 2,500 Account XP/h). Config: `capacity.player.base` / `.per-account-level` / `.max`.
 
 ## Tools & armor
 - Start like vanilla: players spawn with nothing and craft wooden tools.

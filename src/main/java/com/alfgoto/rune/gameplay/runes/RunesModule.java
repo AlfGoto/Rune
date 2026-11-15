@@ -22,6 +22,7 @@ public final class RunesModule implements RuneModule {
         RuneRegistry registry = ctx.provide(
                 RuneRegistry.class,
                 new RuneRegistry(ctx.plugin(), ctx.get(ItemRegistry.class), new CapacityCost(ctx.config())));
+        ctx.provide(PlayerCapacity.class, new PlayerCapacity(ctx.config()));
         ctx.get(GiveSubcommand.class).addVariant(new GiveRuneVariant(registry));
     }
 }

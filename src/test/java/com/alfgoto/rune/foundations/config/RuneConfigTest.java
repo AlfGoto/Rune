@@ -61,6 +61,10 @@ class RuneConfigTest {
                   rune-cost:
                     base: [1, 2, 3, 5, 8]
                     per-rank: 1
+                  player:
+                    base: 5
+                    per-account-level: 1
+                    max: 40
                 quests:
                   tier-multipliers: [1, 2, 3, 4, 6]
                   tier-min-levels: [1, 2, 3, 4, 5]
@@ -129,6 +133,10 @@ class RuneConfigTest {
                   rune-cost:
                     base: [1, 2, 3, 5, 8]
                     per-rank: 1
+                  player:
+                    base: 5
+                    per-account-level: 1
+                    max: 40
                 quests:
                   tier-multipliers: [1, 2]
                   tier-min-levels: [1, 1, 1, 15, 25]
@@ -156,7 +164,10 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(19, errors.size());
+        assertEquals(22, errors.size());
+        assertEquals(5, c.playerCapacityBase());
+        assertEquals(1, c.playerCapacityPerLevel());
+        assertEquals(40, c.playerCapacityMax());
         assertEquals(RuneConfig.defaults().runeCostBase(), c.runeCostBase());
         assertEquals(1, c.runeCostPerRank());
         assertTrue(c.blockXp().isEmpty());
@@ -201,6 +212,10 @@ class RuneConfigTest {
                   rune-cost:
                     base: [1, 2, 3, 5, 8]
                     per-rank: 1
+                  player:
+                    base: 5
+                    per-account-level: 1
+                    max: 40
                 quests:
                   tier-multipliers: [1, 1.5, 0, 3, 5]
                   tier-min-levels: [1, 1, 1, 15, 25]

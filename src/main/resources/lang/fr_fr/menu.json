@@ -11,5 +11,13 @@
   "rune.menu.debug.clicked": "Cliqué !",
   "rune.menu.debug.item": "Objet %s",
   "rune.menu.debug.item_clicked": "Tu as cliqué sur l'objet %s.",
-  "rune.menu.debug.pages_title": "Pages"
+  "rune.menu.debug.pages_title": "Pages",
+  "rune.menu.codex.title": "Codex des Runes",
+  "rune.menu.codex.jobs": "Métiers",
+  "rune.menu.jobs.title": "Métiers",
+  "rune.menu.jobs.account": "Niveau de compte %s",
+  "rune.menu.jobs.capacity": "Capacité du joueur : %s",
+  "rune.menu.jobs.account_xp": "%s / %s XP du compte",
+  "rune.menu.jobs.level": "Niveau %s",
+  "rune.menu.jobs.xp": "%s / %s XP"
 }

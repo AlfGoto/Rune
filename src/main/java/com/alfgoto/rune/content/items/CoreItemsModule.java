@@ -2,6 +2,7 @@ package com.alfgoto.rune.content.items;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.items.Codex;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
@@ -28,6 +29,8 @@ public final class CoreItemsModule implements RuneModule {
         items.register(new RuneItem("test_item", Rarity.COMMON, Material.PAPER, "test_rune"));
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
         items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
+        items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, "test_rune"));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
