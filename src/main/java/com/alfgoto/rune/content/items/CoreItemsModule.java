@@ -29,7 +29,7 @@ public final class CoreItemsModule implements RuneModule {
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
         items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
-        // Paper as base material so vanilla recipes never accept them as sticks, leather…
+        // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
         component(items, "reinforced_lining", Rarity.UNCOMMON);
         component(items, "gem_setting", Rarity.RARE);
