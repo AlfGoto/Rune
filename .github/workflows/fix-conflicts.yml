@@ -1,6 +1,6 @@
 name: fix-conflicts
 
-# After each push to main: find open PRs (base main) that now have merge conflicts
+# After each PR merged into main: find open PRs (base main) that now have merge conflicts
 # and comment "@claude fix conflicts" on them. The comment starts claude.yml,
 # which merges main into the PR branch and fixes the conflicts.
 #
@@ -9,9 +9,13 @@ name: fix-conflicts
 #
 # The comment is posted by a tiny Claude step (App token, as in claude-review.yml):
 # comments made with GITHUB_TOKEN never trigger other workflows.
+#
+# Why "PR merged" and not "push to main": claude-code-action refuses push events
+# ("Unsupported event type: push"). Direct pushes to main are not covered.
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
 
 concurrency:
@@ -20,6 +24,8 @@ concurrency:
 
 jobs:
   find:
+    # Closed without merge: main did not change.
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -73,6 +79,14 @@ jobs:
       issues: write
       id-token: write
     steps:
+      # On pull_request events the action sets up git, so it needs a checkout
+      # (without it: "fatal: not in a git directory"). main, because the merged PR's
+      # merge ref may be gone.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

@@ -147,7 +147,12 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Vanilla's own advancement tabs stay.
 - The screen can't be clicked to choose things. If Jobs ever offer choices, a chest menu does the choosing and the Unlock Tree stays the map.
 - The Rune Codex Jobs page keeps levels and XP bars; it does not copy the tree.
-- How the tab is registered (Paper's `loadAdvancement`, a generated datapack, or a library such as UltimateAdvancementAPI) is decided by a prototype. Prefer no extra dependency, so Minecraft version updates stay easy. The prototype also checks how vanilla reveals nodes that are not reached yet (whole line visible, or only the next few).
+- **How the tab is registered:** at runtime with Paper's `loadAdvancement` (in memory, not persisted). It is rebuilt from the Job registries on every plugin enable.
+  - Why: simplest option. Same display as a generated datapack. No files in the world folder, no datapack reload, no extra dependency.
+  - Risk: the API is `@Deprecated` in `UnsafeValues`. Keep the JSON building separate from the loading. Then switching to a generated datapack (tested, works) only changes the loading step.
+  - Not chosen: a library such as UltimateAdvancementAPI (extra dependency, not needed).
+- **Reveal of locked nodes:** keep vanilla behaviour. Only the next few nodes after the last unlocked one are shown.
+- Tested in game (prototype, since deleted): parallel lines per Job, toast without chat line, revoke works.
 
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
@@ -168,6 +173,9 @@ The first milestone the issues aim at:
 ## Items
 - `RuneItem` base (2026-11-14, `gameplay.items`): a `RuneItem` has an id, a Rarity, a vanilla material and a model (the name of an item definition in the `rune` namespace of the resource pack). `ItemRegistry` (a service of `ItemsModule`) holds them, builds stacks (`create`) and reads the id back (`of`). The id is stored in the item's PDC under `rune:item_id`, so it survives restarts. The model is set with the `item_model` component; the name is the translation key `rune.item.<id>` coloured with the Rarity colour. Lore and slots come with Item Rendering. Content modules fill the registry (`content.items.CoreItemsModule` registers one test item, `test_item`, on the `test_rune` model).
 - Item Rendering (2026-11-15, `visuals.itemrendering`): `ItemRegistry` no longer builds the name and lore. It calls its `ItemRedrawer`s on `create`, `update(stack, change)` and `redraw(stack)`; `ItemRenderingModule` registers the `ItemRenderer`. Name: translation key in the Rarity colour. Lore: the translated Rarity name, then a stats placeholder line ("No stats yet", replaced when items get stats). Data change → `update` → lore rebuilt from scratch. Lang file: `item_rendering.json`.
+- Rune Tool item type (2026-11-15, #30, `gameplay.items`): a `RuneItem` with a `ToolSpec` is a Rune Tool (`RuneItem.tool(...)`). It is built on the vanilla wooden tool of its `ToolKind` (pickaxe, axe, shovel; wooden tools are not Locked Gear). `ItemRegistry.create` sets vanilla components from `ToolStats`: the `tool` component (same two rules as vanilla: blocks the Harvest Tier cannot harvest give no drops, then the kind's blocks mine at the tool's speed) and `max_damage`. So the game itself mines at that tier. Note: in vanilla, iron tier already mines diamond ore; obsidian and ancient debris need diamond tier.
+- Rune Tool stats: Harvest Tier = default from Rarity, shifted by `tierOffset` (-1, 0, +1; outside stone..diamond is refused). Speed and durability follow the tier (config `tools.speed-by-tier` 4/6/8, `tools.durability-by-tier` 131/250/1561); Epic and Legendary use `tools.epic-speed` 12 and `tools.epic-durability` 2031 whatever their tier. Slots and Capacity follow Rarity (`tools.slots-by-rarity` 1–5, `tools.capacity-by-rarity` 3/6/10/14/18). Each of speed, durability, slots and Capacity can be overridden per tool in its `ToolSpec`. Lore (Item Rendering) shows Harvest Tier, Rune slots, Capacity and Trait.
+- Not decided yet: how a Trait is built. For now a `ToolSpec` only keeps an optional Trait id (shown in the lore as `rune.trait.<id>`); no Trait does anything. Mastery, installed Runes and Broken are not built. First test content: `test_pickaxe` (Common, stone tier).
 - `/rune give <id> [amount]` (2026-11-14): gives the item to yourself (player only), with tab completion on ids. Amount 1 to 2304 (a full inventory); it is split into stacks and what does not fit drops at your feet.
 
 ## Crafting
@@ -179,6 +187,8 @@ The first milestone the issues aim at:
 
 ## Places
 - Places (2026-11-11): a Place is a biome or structure, matched by Minecraft key (framework and `PlacesModule` in `gameplay.places`, which provides an empty `PlaceRegistry`; `content.places.CorePlacesModule` fills it). `PlaceDetector` caches the result per player and recomputes only when the player changes block. Structures match on their pieces, not the whole box. First Places: Lush Caves, Taiga (taiga + snowy taiga), Mineshaft (incl. badlands). Command: `/rune where`. Other Places named in the Job docs (Dripstone, Deep Dark, Mountains, Jungle) are added with their Runes/Quests.
+
+- Menu framework (2026-11-15, package `visuals.menu`): `Menu` (chest menu, optional parent), `PagedMenu`, `Button` (icon + click action). Every click and drag is cancelled while a menu is open, in the menu and in the player's inventory, so nothing can be taken out. A menu with a parent shows a Back arrow in the middle of the bottom row; paged menus add Previous/Next arrows beside it, only when they lead somewhere. Test: `/rune debug menu`. Menus are built by later tickets (Rune Codex, Jobs, Quests, loadout, Cache reel).
 
 ## Later (not at launch)
 - Transmuting at a Rune Altar (custom block).

@@ -13,7 +13,8 @@ public final class ItemRenderingModule implements RuneModule {
 
     @Override
     public void enable(RuneContext ctx) {
-        ctx.get(ItemRegistry.class).addRedrawer(new ItemRenderer());
+        ItemRegistry items = ctx.get(ItemRegistry.class);
+        items.addRedrawer(new ItemRenderer(items::toolStats));
     }
 
     @Override
