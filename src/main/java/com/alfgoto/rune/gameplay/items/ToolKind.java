@@ -11,8 +11,7 @@ import org.bukkit.Tag;
 public enum ToolKind {
     PICKAXE(Material.WOODEN_PICKAXE, Tag.MINEABLE_PICKAXE),
     AXE(Material.WOODEN_AXE, Tag.MINEABLE_AXE),
-    SHOVEL(Material.WOODEN_SHOVEL, Tag.MINEABLE_SHOVEL),
-    HOE(Material.WOODEN_HOE, Tag.MINEABLE_HOE);
+    SHOVEL(Material.WOODEN_SHOVEL, Tag.MINEABLE_SHOVEL);
 
     private final Material material;
     private final Tag<Material> mineable;

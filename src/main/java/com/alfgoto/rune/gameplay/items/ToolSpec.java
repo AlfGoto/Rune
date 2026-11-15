@@ -50,8 +50,4 @@ public record ToolSpec(
     public ToolSpec withTierOffset(int offset) {
         return new ToolSpec(offset, speed, durability, slots, capacity, trait);
     }
-
-    public ToolSpec withTrait(String traitId) {
-        return new ToolSpec(tierOffset, speed, durability, slots, capacity, traitId);
-    }
 }

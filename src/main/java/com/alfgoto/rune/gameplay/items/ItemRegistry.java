@@ -43,6 +43,7 @@ public final class ItemRegistry {
     }
 
     public RuneItem register(RuneItem item) {
+        toolStats(item); // fail fast on a bad Rune Tool (e.g. Harvest Tier offset out of range)
         return items.register(item);
     }
 
