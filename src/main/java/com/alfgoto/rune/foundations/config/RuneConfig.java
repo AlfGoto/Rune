@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -208,16 +209,16 @@ public final class RuneConfig {
     }
 
     /**
-     * A number of a Rune from {@code runes.<runeId>.<key>} (e.g. {@code runes.fortune.base}). A missing or
-     * bad value gives {@code fallback}.
+     * A number of a Rune from {@code runes.<runeId>.<key>} (e.g. {@code runes.fortune.base}). Empty when the
+     * value is missing or not a finite number.
      */
-    public double runeNumber(String runeId, String key, double fallback) {
+    public OptionalDouble runeNumber(String runeId, String key) {
         if (runes == null
                 || !(runes.get(runeId + "." + key) instanceof Number n)
                 || !Double.isFinite(n.doubleValue())) {
-            return fallback;
+            return OptionalDouble.empty();
         }
-        return n.doubleValue();
+        return OptionalDouble.of(n.doubleValue());
     }
 
     /** Rune Tool balancing: speed, durability, slots and Capacity. */

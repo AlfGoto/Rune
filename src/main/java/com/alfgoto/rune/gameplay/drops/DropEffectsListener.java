@@ -6,12 +6,10 @@ import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.function.DoubleSupplier;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
@@ -31,7 +29,6 @@ public final class DropEffectsListener implements Listener {
     private final ToolLoadout loadout;
     private final Smelting smelting;
     private final DoubleSupplier random;
-    private final Map<UUID, List<ItemStack>> silkDrops = new HashMap<>();
 
     public DropEffectsListener(ItemRegistry items, ToolLoadout loadout, Smelting smelting, DoubleSupplier random) {
         this.items = items;
@@ -49,45 +46,29 @@ public final class DropEffectsListener implements Listener {
         List<Stacking.Source> sources = loadout.sources(tool);
         switch (DropRules.mode(sources)) {
             case UNCHANGED -> {}
-            case SILK -> silk(event);
+            case SILK -> {} // handled in onBreak
             case CHANGED -> change(event, sources);
         }
     }
 
     /**
-     * Just before the block breaks it still exists, so ask what a vanilla Silk Touch tool would drop. The drop
-     * event comes right after and uses the answer (the block is air by then).
+     * Silk Touch: the block drops what a vanilla Silk Touch version of the held tool would give. The vanilla drops
+     * are turned off and made here, so blocks that vanilla drops nothing for (glass) still work. The copy of the
+     * tool keeps its own Harvest Tier.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        silkDrops.remove(event.getPlayer().getUniqueId());
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
         if (items.of(tool).isEmpty() || DropRules.mode(loadout.sources(tool)) != Mode.SILK) {
             return;
         }
-        ItemStack silkTool = new ItemStack(Material.NETHERITE_PICKAXE);
+        ItemStack silkTool = tool.clone();
         silkTool.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 1);
-        silkDrops.put(
-                event.getPlayer().getUniqueId(),
-                new ArrayList<>(event.getBlock().getDrops(silkTool, event.getPlayer())));
-    }
-
-    /** The block drops itself: what a vanilla Silk Touch pickaxe would give. */
-    private void silk(BlockDropItemEvent event) {
-        List<ItemStack> wanted = silkDrops.remove(event.getPlayer().getUniqueId());
-        if (wanted == null || wanted.isEmpty()) {
-            return; // nothing to put back (e.g. a block that never drops)
-        }
-        List<Item> dropped = event.getItems();
-        int shared = Math.min(dropped.size(), wanted.size());
-        for (int i = 0; i < shared; i++) {
-            dropped.get(i).setItemStack(wanted.get(i));
-        }
-        // More vanilla drops than silk drops: the extra ones are not dropped.
-        dropped.subList(shared, dropped.size()).clear();
-        // Fewer vanilla drops than silk drops: drop the rest.
-        for (int i = shared; i < wanted.size(); i++) {
-            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), wanted.get(i));
+        Block block = event.getBlock();
+        List<ItemStack> wanted = new ArrayList<>(block.getDrops(silkTool, event.getPlayer()));
+        event.setDropItems(false);
+        for (ItemStack stack : wanted) {
+            block.getWorld().dropItemNaturally(block.getLocation(), stack);
         }
     }
 

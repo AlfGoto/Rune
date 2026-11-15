@@ -41,25 +41,34 @@ public final class CoreRunesModule implements RuneModule {
         // Drop-changing Runes (docs/jobs/mining.md). Numbers come from config.yml ("runes"). No Rune texture is
         // drawn yet, so they use the test Rune model.
         Set<Fit> diggers = Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL);
-        dropRune(ctx, "fortune", Rarity.UNCOMMON, 15, 15, 3, diggers);
-        dropRune(ctx, "smelt", Rarity.RARE, 25, 25, 3, diggers);
-        dropRune(ctx, "silk_touch", Rarity.EPIC, 1, 0, 1, diggers);
+        dropRune(ctx, "fortune", Rarity.UNCOMMON, diggers);
+        dropRune(ctx, "smelt", Rarity.RARE, diggers);
+        dropRune(ctx, "silk_touch", Rarity.EPIC, diggers);
     }
 
-    /** Registers a Rune whose effect id is its id, with base, growth and Max Rank read from config. */
-    private static void dropRune(
-            RuneContext ctx, String id, Rarity rarity, double base, double perRank, int maxRank, Set<Fit> fits) {
+    /**
+     * Registers a Rune whose effect id is its id, with base, growth and Max Rank read from config ("runes").
+     * A missing number logs an error and the Rune is not registered.
+     */
+    private static void dropRune(RuneContext ctx, String id, Rarity rarity, Set<Fit> fits) {
+        var config = ctx.config();
+        var base = config.runeNumber(id, "base");
+        var perRank = config.runeNumber(id, "per-rank");
+        var maxRank = config.runeNumber(id, "max-rank");
+        if (base.isEmpty() || perRank.isEmpty() || maxRank.isEmpty()) {
+            ctx.logger().severe("Config 'runes." + id + "' needs base, per-rank and max-rank numbers. Rune '" + id
+                    + "' is not registered.");
+            return;
+        }
         Effect<RuneBlockBreakEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(id, EffectTriggers.BLOCK_BREAK)
                         // The drops are changed by gameplay.drops; this Effect only names the value.
                         .does(context -> {}));
-        var config = ctx.config();
-        int max = (int) Math.max(1, config.runeNumber(id, "max-rank", maxRank));
+        int max = (int) Math.max(1, maxRank.getAsDouble());
         ctx.get(RuneRegistry.class)
                 .register(new Rune(
                         new RuneItem(id, rarity, Material.PAPER, "test_rune"),
-                        effect.with(
-                                config.runeNumber(id, "base", base), config.runeNumber(id, "per-rank", perRank), max),
+                        effect.with(base.getAsDouble(), perRank.getAsDouble(), max),
                         fits));
     }
 }
