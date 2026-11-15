@@ -16,5 +16,6 @@ public final class ItemsModule implements RuneModule {
         ctx.subcommand(give);
         Codex codex = ctx.provide(Codex.class, new Codex(registry));
         ctx.listen(new CodexListener(codex));
+        ctx.listen(new BrokenToolListener(registry));
     }
 }

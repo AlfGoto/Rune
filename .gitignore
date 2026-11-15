@@ -4,3 +4,5 @@ run/
 .idea/
 *.iml
 pr-body.md
+__pycache__/
+*.pyc
