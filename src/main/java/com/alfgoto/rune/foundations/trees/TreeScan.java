@@ -12,27 +12,15 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 
 /**
- * The shared tree scan (Treefeller rules, see {@code docs/jobs/woodcutting.md}): from a broken block, follows
- * natural logs of the same wood type that touch each other (sides, edges and corners), plus the canopy blocks
- * (leaves, wart blocks, shroomlight) touching those logs.
+ * The shared tree scan (see {@code docs/jobs/woodcutting.md}): from a block, follows natural logs of the same wood
+ * type that touch each other (sides, edges and corners), in every direction.
  *
- * <p>"Natural" means not tagged {@link BlockTag#PLACED}. The origin block is never part of the result: it is
- * the block being broken. Everything counts towards the cap. Main thread only.
+ * <p>"Natural" means not tagged {@link BlockTag#PLACED}. The origin block is never part of the result. Main thread
+ * only.
  */
 public final class TreeScan {
-
-    /** What a scan found. Logs come first in the cap, then canopy. */
-    public record Result(List<Block> logs, List<Block> canopy) {}
-
-    private static final Set<Material> CANOPY_EXTRA =
-            Set.of(Material.NETHER_WART_BLOCK, Material.WARPED_WART_BLOCK, Material.SHROOMLIGHT);
-
-    private static final BlockFace[] SIDES = {
-        BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-    };
 
     private final BlockTracker tracker;
 
@@ -41,20 +29,16 @@ public final class TreeScan {
     }
 
     /**
-     * Scans from {@code origin}.
+     * Scans from {@code origin} and returns the connected natural logs of its wood type, without the origin.
      *
-     * @param cap max blocks returned (logs and canopy together)
-     * @param aboveOnly only logs at or above the origin's height (Treefeller). When false, the whole connected
-     *     trunk is followed: Felled Tree needs that to know whether logs are left below.
+     * @param cap max logs returned
      */
-    public Result scan(Block origin, int cap, boolean aboveOnly) {
+    public List<Block> scan(Block origin, int cap) {
         List<Block> logs = new ArrayList<>();
-        List<Block> canopy = new ArrayList<>();
         String wood = woodType(origin.getType());
         if (wood == null || cap <= 0) {
-            return new Result(logs, canopy);
+            return logs;
         }
-        int minY = aboveOnly ? origin.getY() : Integer.MIN_VALUE;
         Set<Block> seen = new HashSet<>();
         seen.add(origin);
         Deque<Block> queue = new ArrayDeque<>();
@@ -65,10 +49,7 @@ public final class TreeScan {
                 for (int dy = -1; dy <= 1; dy++) {
                     for (int dz = -1; dz <= 1; dz++) {
                         Block next = current.getRelative(dx, dy, dz);
-                        if (logs.size() < cap
-                                && next.getY() >= minY
-                                && !seen.contains(next)
-                                && isNaturalLog(next, wood)) {
+                        if (logs.size() < cap && !seen.contains(next) && isNaturalLog(next, wood)) {
                             seen.add(next);
                             logs.add(next);
                             queue.add(next);
@@ -77,36 +58,18 @@ public final class TreeScan {
                 }
             }
         }
-        Set<Block> canopySeen = new HashSet<>();
-        for (Block log : logs) {
-            for (BlockFace face : SIDES) {
-                if (logs.size() + canopy.size() >= cap) {
-                    return new Result(logs, canopy);
-                }
-                Block next = log.getRelative(face);
-                if (isNaturalCanopy(next) && canopySeen.add(next)) {
-                    canopy.add(next);
-                }
-            }
-        }
-        return new Result(logs, canopy);
+        return logs;
     }
 
-    /** True when {@code origin} is a natural log and no other natural log of its wood type is connected to it. */
-    public boolean isLastLog(Block origin) {
-        String wood = woodType(origin.getType());
-        return isNaturalLog(origin, wood) && scan(origin, 1, false).logs().isEmpty();
+    /** True when the block is a log that is not tagged {@link BlockTag#PLACED}. */
+    boolean isNaturalLog(Block block) {
+        return isNaturalLog(block, woodType(block.getType()));
     }
 
-    private boolean isNaturalLog(Block block, String wood) {
+    /** True when the block is a natural log of the given wood type. */
+    boolean isNaturalLog(Block block, String wood) {
         return wood != null
                 && wood.equals(woodType(block.getType()))
-                && !tracker.has(block, BlockTag.PLACED);
-    }
-
-    private boolean isNaturalCanopy(Block block) {
-        Material type = block.getType();
-        return (Tag.LEAVES.isTagged(type) || CANOPY_EXTRA.contains(type))
                 && !tracker.has(block, BlockTag.PLACED);
     }
 

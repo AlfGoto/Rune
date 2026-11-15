@@ -15,7 +15,7 @@ public final class TreesModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         TreeScan scan = ctx.provide(TreeScan.class, new TreeScan(ctx.get(BlockTracker.class)));
-        ctx.listen(new TreeFelledListener(ctx.plugin().getServer(), scan));
+        ctx.listen(new TreeFelledListener(ctx.plugin().getServer(), new FellingSessions(scan, System::currentTimeMillis)));
     }
 
     @Override

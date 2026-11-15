@@ -34,6 +34,8 @@ class TreeFelledTest {
     private PlayerMock player;
     private BlockTracker tracker;
     private TreeScan scan;
+    private FellingSessions sessions;
+    private long now = 1_000_000L;
     private final List<TreeFelled> felled = new ArrayList<>();
 
     @BeforeEach
@@ -43,8 +45,9 @@ class TreeFelledTest {
         player = server.addPlayer();
         tracker = new PdcBlockTracker("rune");
         scan = new TreeScan(tracker);
+        sessions = new FellingSessions(scan, () -> now);
         Plugin plugin = MockBukkit.createMockPlugin();
-        server.getPluginManager().registerEvents(new TreeFelledListener(server, scan), plugin);
+        server.getPluginManager().registerEvents(new TreeFelledListener(server, sessions), plugin);
         server.getPluginManager().registerEvents(new Collector(), plugin);
     }
 
@@ -171,44 +174,54 @@ class TreeFelledTest {
     }
 
     @Test
-    void scanAtOrAboveSkipsLogsBelow() {
-        List<Block> logs = trunk();
-        TreeScan.Result above = scan.scan(logs.get(1), 100, true);
-        assertEquals(List.of(logs.get(2), logs.get(3)), above.logs());
-        TreeScan.Result all = scan.scan(logs.get(1), 100, false);
-        assertEquals(3, all.logs().size());
+    void middleFirstOrderFiresExactlyOnceAtTheLastLog() {
+        List<Block> logs = trunk(); // y=64..67
+        breakBlock(logs.get(3)); // 67
+        breakBlock(logs.get(1)); // 65
+        breakBlock(logs.get(2)); // 66
+        assertTrue(felled.isEmpty());
+        breakBlock(logs.get(0)); // 64
+        assertEquals(1, felled.size());
+        assertEquals(logs.get(0), felled.get(0).lastLog());
+        assertEquals(0, sessions.size());
     }
 
     @Test
-    void scanNeverReturnsTheOrigin() {
+    void logsRemovedByOtherCausesArePruned() {
         List<Block> logs = trunk();
-        assertFalse(scan.scan(logs.get(0), 100, true).logs().contains(logs.get(0)));
+        breakBlock(logs.get(3));
+        logs.get(0).setType(Material.AIR); // fire or an explosion
+        logs.get(1).setType(Material.AIR);
+        breakBlock(logs.get(2));
+        assertEquals(1, felled.size());
     }
 
     @Test
-    void scanAddsTouchingCanopyButNotPlacedCanopy() {
+    void sessionExpiresAfterThirtyMinutes() {
         List<Block> logs = trunk();
-        Block leaf = at(1, 67, 0, Material.OAK_LEAVES);
-        Block wart = at(-1, 66, 0, Material.NETHER_WART_BLOCK);
-        Block placedLeaf = at(0, 68, 0, Material.OAK_LEAVES);
-        tracker.add(placedLeaf, BlockTag.PLACED);
-        Block far = at(5, 67, 5, Material.OAK_LEAVES);
-        TreeScan.Result result = scan.scan(logs.get(0), 100, true);
-        assertTrue(result.canopy().contains(leaf));
-        assertTrue(result.canopy().contains(wart));
-        assertFalse(result.canopy().contains(placedLeaf));
-        assertFalse(result.canopy().contains(far));
+        breakBlock(logs.get(3));
+        assertEquals(1, sessions.size());
+        now += FellingSessions.EXPIRY_MILLIS + 1;
+        // The old session is dropped; a new scan sees only the 2 logs left standing below.
+        breakBlock(logs.get(2));
+        assertTrue(felled.isEmpty());
+        breakBlock(logs.get(1));
+        breakBlock(logs.get(0));
+        assertEquals(1, felled.size());
     }
 
     @Test
-    void capCountsLogsAndCanopyTogether() {
+    void scanNeverReturnsTheOriginAndFollowsTheWholeTrunk() {
         List<Block> logs = trunk();
-        at(1, 64, 0, Material.OAK_LEAVES);
-        at(1, 65, 0, Material.OAK_LEAVES);
-        TreeScan.Result result = scan.scan(logs.get(0), 4, true);
-        assertEquals(3, result.logs().size());
-        assertEquals(1, result.canopy().size());
-        assertEquals(1, scan.scan(logs.get(0), 1, true).logs().size());
+        List<Block> found = scan.scan(logs.get(1), 100);
+        assertEquals(3, found.size());
+        assertFalse(found.contains(logs.get(1)));
+    }
+
+    @Test
+    void scanRespectsTheCap() {
+        List<Block> logs = trunk();
+        assertEquals(1, scan.scan(logs.get(0), 1).size());
     }
 
     @Test

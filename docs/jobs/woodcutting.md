@@ -18,7 +18,7 @@ Requires Minecraft 26.3+ (Poplar trees, Dappled Forest, Abandoned Camps).
 - Account Rate: **0.8**.
 
 ### Felled Tree
-A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). Uses the same tree scan as Treefeller, except it follows the whole connected trunk (not only at or above the broken log), so logs left below keep the tree alive. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees.
+A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). The first break scans the whole connected trunk (not only at or above the broken log) and starts an in-memory felling session with those log positions. Each break removes its log; logs that are gone for another reason (fire, explosions, other players) are dropped too. The tree is felled, exactly once, when no log is left, in any break order. Sessions last 30 minutes and track up to 200 logs. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees.
 
 ## Job XP per block
 
@@ -171,7 +171,7 @@ Generic Mining Runes already fit axes: Haste, Sturdy, Fortune (+1 log / leaf dro
 | Great Fell / Grand Abattage *(Active)* | Legendary | 3 | Fells every tree within radius 6 / 9 / 12; cooldown 90 → 30 s | axe |
 | Sanctuary: <biome> / Sanctuaire : <biome> | Rare | 3 | In that biome: Regeneration I → + Resistance I → Regeneration II | player, armor |
 
-**Treefeller rules** (also used by the Felled Tree scan, Tempest Axe, Great Fell, Boomerang): follows natural logs of **the same wood type** as the broken block, connected, **at or above** the broken block only, plus the canopy blocks touching them (leaves, wart blocks, shroomlight). Everything counts towards the block cap, so packed forests (Nether, jungle, dark oak) are never cut whole.
+**Treefeller rules** (also used by Tempest Axe, Great Fell, Boomerang; Felled Tree uses only the log scan, in every direction, see above): follows natural logs of **the same wood type** as the broken block, connected, **at or above** the broken block only, plus the canopy blocks touching them (leaves, wart blocks, shroomlight). Everything counts towards the block cap, so packed forests (Nether, jungle, dark oak) are never cut whole.
 
 ## Woodcutting armor ("Rhythm")
 **Rhythm** (FR: Cadence): each Felled Tree adds one charge, max 10; all charges reset after 30 s without felling a tree. Each piece's Trait scales from 0% (no charge) to 100% (10 charges). Protection follows vanilla by Rarity, overridable. Capacity fixed (no Mastery).
