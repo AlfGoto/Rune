@@ -19,10 +19,10 @@ public final class CraftingModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         JobProgress progress = ctx.get(JobProgress.class);
-        RecipeBook recipeBook =
-                ctx.provide(RecipeBook.class, new RecipeBook(ctx.plugin(), ctx.get(ItemRegistry.class), progress));
+        ItemRegistry items = ctx.get(ItemRegistry.class);
+        RecipeBook recipeBook = ctx.provide(RecipeBook.class, new RecipeBook(ctx.plugin(), items, progress));
         book = recipeBook;
-        ctx.listen(new CraftingListener(recipeBook));
+        ctx.listen(new CraftingListener(recipeBook, items));
         // Unlock on level-up, and lock again when a level goes down.
         progress.addLevelListener((uuid, job, before, after) -> {
             Player player = ctx.plugin().getServer().getPlayer(uuid);

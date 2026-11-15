@@ -2,6 +2,7 @@ package com.alfgoto.rune.gameplay.crafting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,6 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.junit.jupiter.api.AfterEach;
@@ -90,6 +95,39 @@ class CraftingTest {
                 .distinct()
                 .count());
         assertEquals(recipe, book.of(registered).orElseThrow());
+    }
+
+    @Test
+    void preparedResultOfAnUnlockedRuneRecipeIsDrawn() {
+        items.addRedrawer((stack, item) -> stack.editMeta(meta -> meta.setDisplayName("drawn " + item.id())));
+        progress.setJobLevel(player.getUniqueId(), mining, 2);
+        CraftingInventory inventory = prepare(player);
+        assertEquals("gear", items.of(inventory.getResult()).orElseThrow().id());
+        assertEquals("drawn gear", inventory.getResult().getItemMeta().getDisplayName());
+    }
+
+    @Test
+    void preparedResultOfALockedRuneRecipeIsRemoved() {
+        assertNull(prepare(player).getResult());
+    }
+
+    private CraftingInventory prepare(PlayerMock who) {
+        InventoryView view = who.openWorkbench(null, true);
+        CraftingInventory inventory = (CraftingInventory) view.getTopInventory();
+        inventory.setMatrix(new ItemStack[] {
+            items.create(items.get("component"), 1), items.create(items.get("component"), 1),
+            items.create(items.get("component"), 1), new ItemStack(Material.IRON_INGOT),
+            null, null, null, null, null
+        });
+        inventory.setResult(items.create(items.get("gear"), 1));
+        new CraftingListener(book, items).onPrepare(
+                new PrepareItemCraftEvent(inventory, view, false) {
+                    @Override
+                    public Recipe getRecipe() {
+                        return server.getRecipe(book.key("test_gear"));
+                    }
+                });
+        return inventory;
     }
 
     @Test
