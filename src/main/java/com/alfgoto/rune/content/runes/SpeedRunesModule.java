@@ -1,0 +1,99 @@
+package com.alfgoto.rune.content.runes;
+
+import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
+import com.alfgoto.rune.gameplay.effects.Effect;
+import com.alfgoto.rune.gameplay.effects.EffectRegistry;
+import com.alfgoto.rune.gameplay.effects.EffectTriggers;
+import com.alfgoto.rune.gameplay.effects.EffectsModule;
+import com.alfgoto.rune.gameplay.items.RuneItem;
+import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.gameplay.places.PlacesModule;
+import com.alfgoto.rune.gameplay.runes.Fit;
+import com.alfgoto.rune.gameplay.runes.Rune;
+import com.alfgoto.rune.gameplay.runes.RuneRegistry;
+import com.alfgoto.rune.gameplay.runes.RunesModule;
+import com.alfgoto.rune.gameplay.runes.SpeedBonuses;
+import com.alfgoto.rune.gameplay.runes.SpeedModule;
+import com.alfgoto.rune.text.Rarity;
+import com.google.auto.service.AutoService;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import org.bukkit.Material;
+
+/**
+ * The mining speed Runes of docs/jobs/mining.md: Haste, Specialist: &lt;ore&gt; and Affinity: &lt;place&gt;.
+ * Each variant is its own Rune with its own effect id, so they rank up separately and stack.
+ */
+@AutoService(RuneModule.class)
+public final class SpeedRunesModule implements RuneModule {
+
+    /** Specialist ores (id, matching blocks). Proposed by Claude, to confirm: the 8 common overworld ores. */
+    static final Map<String, Set<Material>> ORES = new TreeMap<>(Map.of(
+            "coal", Set.of(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE),
+            "copper", Set.of(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE),
+            "iron", Set.of(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE),
+            "gold", Set.of(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE),
+            "redstone", Set.of(Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE),
+            "lapis", Set.of(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE),
+            "diamond", Set.of(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE),
+            "emerald", Set.of(Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)));
+
+    /** Affinity places: the Places that exist today (see CorePlaces). More come with their Places. */
+    static final List<String> PLACES = List.of("lush_caves", "taiga", "mineshaft");
+
+    @Override
+    public Set<Class<? extends RuneModule>> dependsOn() {
+        return Set.of(RunesModule.class, EffectsModule.class, SpeedModule.class, PlacesModule.class);
+    }
+
+    @Override
+    public void enable(RuneContext ctx) {
+        RuneRegistry runes = ctx.get(RuneRegistry.class);
+        EffectRegistry effects = ctx.get(EffectRegistry.class);
+        SpeedBonuses speed = ctx.get(SpeedBonuses.class);
+        PlaceDetector detector = ctx.get(PlaceDetector.class);
+
+        // Haste: +8% per Rank, up to Rank 5, on any block.
+        speed.register("haste", (player, block) -> true);
+        register(runes, effects, "haste", Rarity.COMMON, 8, 5, Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL));
+
+        // Specialist: +20% per Rank, up to Rank 3, on one ore. Pickaxe only.
+        for (Map.Entry<String, Set<Material>> ore : ORES.entrySet()) {
+            String id = "specialist_" + ore.getKey();
+            speed.register(id, (player, block) -> ore.getValue().contains(block.getType()));
+            register(runes, effects, id, Rarity.COMMON, 20, 3, Set.of(Fit.PICKAXE));
+        }
+
+        // Affinity: +10% per Rank, up to Rank 3, while the player stands in one Place. Pickaxe and axe.
+        for (String place : PLACES) {
+            String id = "affinity_" + place;
+            speed.register(
+                    id,
+                    (player, block) ->
+                            detector.placesOf(player).stream().anyMatch(p -> p.id().equals(place)));
+            register(runes, effects, id, Rarity.UNCOMMON, 10, 3, Set.of(Fit.PICKAXE, Fit.AXE));
+        }
+    }
+
+    private static void register(
+            RuneRegistry runes,
+            EffectRegistry effects,
+            String id,
+            Rarity rarity,
+            double perRank,
+            int maxRank,
+            Set<Fit> fits) {
+        // The speed is applied by SpeedListener, so the Effect itself does nothing.
+        Effect<RuneBlockBreakEvent> effect =
+                effects.register(Effect.builder(id, EffectTriggers.BLOCK_BREAK).does(context -> {}));
+        // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
+        runes.register(new Rune(
+                new RuneItem(id, rarity, Material.PAPER, "test_rune"),
+                effect.with(perRank, perRank, maxRank),
+                fits));
+    }
+}
