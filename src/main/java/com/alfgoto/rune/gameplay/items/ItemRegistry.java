@@ -2,9 +2,11 @@ package com.alfgoto.rune.gameplay.items;
 
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.text.Text;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.function.Consumer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,12 +16,14 @@ import org.bukkit.plugin.Plugin;
 /**
  * All known {@link RuneItem}s. Shared as a service; content modules fill it (ADR 0004).
  * It builds item stacks and reads the id back from them. The id lives in the item's
- * PersistentDataContainer, so it survives restarts.
+ * PersistentDataContainer, so it survives restarts. The look (name, lore) is drawn by the
+ * {@link ItemRedrawer}s that Visuals register.
  */
 public final class ItemRegistry {
 
     private final Registry<RuneItem> items = new Registry<>("items");
     private final NamespacedKey idKey;
+    private final List<ItemRedrawer> redrawers = new ArrayList<>();
 
     public ItemRegistry(Plugin plugin) {
         this.idKey = new NamespacedKey(plugin, "item_id");
@@ -42,17 +46,34 @@ public final class ItemRegistry {
         return items.all();
     }
 
-    /** A new stack of {@code item}: its id, model and name are set. */
+    /** Adds a redrawer (name, lore). It runs on every {@link #create}, {@link #update} and {@link #redraw}. */
+    public void addRedrawer(ItemRedrawer redrawer) {
+        redrawers.add(redrawer);
+    }
+
+    /** A new stack of {@code item}: its id and model are set, then it is drawn. */
     public ItemStack create(RuneItem item, int amount) {
         ItemStack stack = new ItemStack(item.material(), amount);
         ItemMeta meta = stack.getItemMeta();
         meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, item.id());
         meta.setItemModel(new NamespacedKey(Text.NAMESPACE, item.model()));
-        meta.itemName(Text.translatable(item.translationKey(), item.fallbackName())
-                .color(item.rarity().color())
-                .decoration(TextDecoration.ITALIC, false));
         stack.setItemMeta(meta);
+        redraw(stack);
         return stack;
+    }
+
+    /** Changes the data of {@code stack} (its meta), then redraws it. Does nothing for a vanilla stack. */
+    public void update(ItemStack stack, Consumer<ItemMeta> change) {
+        if (of(stack).isEmpty()) {
+            return;
+        }
+        stack.editMeta(change);
+        redraw(stack);
+    }
+
+    /** Draws the name and lore of {@code stack} again from its data. Does nothing for a vanilla stack. */
+    public void redraw(ItemStack stack) {
+        of(stack).ifPresent(item -> redrawers.forEach(r -> r.redraw(stack, item)));
     }
 
     /** The {@link RuneItem} this stack is, or empty for a vanilla stack or an unknown id. */
