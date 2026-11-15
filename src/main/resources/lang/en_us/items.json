@@ -1,5 +1,6 @@
 {
   "rune.item.test_item": "Test Item",
+  "rune.item.test_pickaxe": "Test Pickaxe",
   "rune.command.give.usage": "Usage: /rune give <id> [amount]",
   "rune.command.give.unknown": "Unknown item: %s",
   "rune.command.give.bad_amount": "The amount must be a number from 1 to %s.",

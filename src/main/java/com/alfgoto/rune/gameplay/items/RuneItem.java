@@ -5,7 +5,9 @@ import com.alfgoto.rune.text.Rarity;
 import com.alfgoto.rune.text.Text;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import org.bukkit.Material;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base of every custom item (ADR 0002): an id, a Rarity, a vanilla material and a model.
@@ -13,8 +15,12 @@ import org.bukkit.Material;
  *
  * <p>{@code model} is the name of an item definition of the resource pack, in the {@code rune}
  * namespace (e.g. {@code test_rune} for {@code assets/rune/items/test_rune.json}).
+ *
+ * <p>{@code tool} is set for a Rune Tool (see {@link #tool(String, Rarity, ToolKind, String, ToolSpec)}),
+ * and {@code null} for any other item.
  */
-public record RuneItem(String id, Rarity rarity, Material material, String model) implements Identified {
+public record RuneItem(String id, Rarity rarity, Material material, String model, @Nullable ToolSpec tool)
+        implements Identified {
 
     public RuneItem {
         Objects.requireNonNull(id, "id");
@@ -24,6 +30,24 @@ public record RuneItem(String id, Rarity rarity, Material material, String model
         if (id.isBlank() || !id.equals(id.toLowerCase(Locale.ROOT)) || id.contains(" ")) {
             throw new IllegalArgumentException("Item id must be lower case with no spaces: '" + id + "'");
         }
+        if (tool != null && ToolKind.of(material).isEmpty()) {
+            throw new IllegalArgumentException("A Rune Tool must use a vanilla wooden tool as base: " + material);
+        }
+    }
+
+    /** A plain item (no tool stats). */
+    public RuneItem(String id, Rarity rarity, Material material, String model) {
+        this(id, rarity, material, model, null);
+    }
+
+    /** A Rune Tool of {@code kind}. */
+    public static RuneItem tool(String id, Rarity rarity, ToolKind kind, String model, ToolSpec spec) {
+        return new RuneItem(id, rarity, kind.material(), model, Objects.requireNonNull(spec, "spec"));
+    }
+
+    /** The Rune Tool data, or empty when this item is not a Rune Tool. */
+    public Optional<ToolSpec> toolSpec() {
+        return Optional.ofNullable(tool);
     }
 
     /** Translation key of the item name, e.g. {@code rune.item.test_item}. */

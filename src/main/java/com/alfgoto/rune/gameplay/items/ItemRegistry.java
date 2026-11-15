@@ -1,5 +1,6 @@
 package com.alfgoto.rune.gameplay.items;
 
+import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.text.Text;
 import java.util.ArrayList;
@@ -25,8 +26,20 @@ public final class ItemRegistry {
     private final NamespacedKey idKey;
     private final List<ItemRedrawer> redrawers = new ArrayList<>();
 
+    private final ToolConfig toolConfig;
+
     public ItemRegistry(Plugin plugin) {
+        this(plugin, ToolConfig.defaults());
+    }
+
+    public ItemRegistry(Plugin plugin, ToolConfig toolConfig) {
         this.idKey = new NamespacedKey(plugin, "item_id");
+        this.toolConfig = toolConfig;
+    }
+
+    /** The final stats of {@code item} when it is a Rune Tool, or empty. */
+    public Optional<ToolStats> toolStats(RuneItem item) {
+        return ToolStats.of(item, toolConfig);
     }
 
     public RuneItem register(RuneItem item) {
@@ -58,6 +71,7 @@ public final class ItemRegistry {
         meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, item.id());
         meta.setItemModel(new NamespacedKey(Text.NAMESPACE, item.model()));
         stack.setItemMeta(meta);
+        toolStats(item).ifPresent(stats -> ToolComponents.apply(stack, stats));
         redraw(stack);
         return stack;
     }

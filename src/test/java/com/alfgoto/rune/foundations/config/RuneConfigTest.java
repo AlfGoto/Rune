@@ -64,7 +64,20 @@ class RuneConfigTest {
                     base: [1, 2, 3, 4, 5]
                     per-level: [-1, 0, 1, 2, 3]
                   max-reroll-tokens: 5
+                tools:
+                  speed-by-tier: [1, 2, 3.5]
+                  epic-speed: 9
+                  durability-by-tier: [10, 20, 30]
+                  epic-durability: 40
+                  slots-by-rarity: [2, 3, 4, 5, 6]
+                  capacity-by-rarity: [1, 2, 3, 4, 5]
                 """);
+        assertEquals(List.of(1.0, 2.0, 3.5), c.tools().speedByTier());
+        assertEquals(9, c.tools().epicSpeed());
+        assertEquals(List.of(10, 20, 30), c.tools().durabilityByTier());
+        assertEquals(40, c.tools().epicDurability());
+        assertEquals(List.of(2, 3, 4, 5, 6), c.tools().slotsByRarity());
+        assertEquals(List.of(1, 2, 3, 4, 5), c.tools().capacityByRarity());
         assertEquals(5, c.questMaxRerollTokens());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierMinLevels());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questTierWeightBase());
@@ -113,6 +126,13 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                tools:
+                  speed-by-tier: [4, 6, 8]
+                  epic-speed: 12
+                  durability-by-tier: [131, 250, 1561]
+                  epic-durability: 2031
+                  slots-by-rarity: [1, 2, 3, 4, 5]
+                  capacity-by-rarity: [3, 6, 10, 14, 18]
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -126,7 +146,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(11, errors.size());
+        assertEquals(17, errors.size());
         assertTrue(c.blockXp().isEmpty());
         assertEquals(0.25, c.bonemealXpMultiplier());
         assertEquals(3, c.questMaxRerollTokens());
@@ -172,8 +192,33 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                tools:
+                  speed-by-tier: [4, 6, 8]
+                  epic-speed: 12
+                  durability-by-tier: [131, 250, 1561]
+                  epic-durability: 2031
+                  slots-by-rarity: [1, 2, 3, 4, 5]
+                  capacity-by-rarity: [3, 6, 10, 14, 18]
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
+    }
+
+    @Test
+    void badToolValuesLogAndFallBack() throws Exception {
+        RuneConfig c = load("""
+                tools:
+                  speed-by-tier: [4, 6]
+                  epic-speed: banana
+                  durability-by-tier: [131, 250.5, 1561]
+                  epic-durability: 2031
+                  slots-by-rarity: [1, 2, 3, 4, 0]
+                  capacity-by-rarity: [3, 6, 10, 14, 18]
+                """);
+        assertEquals(ToolConfig.defaults(), c.tools());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("tools.speed-by-tier")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("tools.epic-speed")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("tools.durability-by-tier")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("tools.slots-by-rarity")));
     }
 }
