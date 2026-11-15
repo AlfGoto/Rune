@@ -1,0 +1,12 @@
+{
+  "rune.command.loadout.not_a_tool": "Hold a Rune Tool in your main hand.",
+  "rune.command.install.usage": "Usage: /rune install <rune> [rank]",
+  "rune.command.install.unknown": "Unknown Rune: %s",
+  "rune.command.install.no_fit": "%s does not fit in this tool.",
+  "rune.command.install.no_slot": "No free Rune slot on this tool.",
+  "rune.command.install.over_capacity": "Not enough Capacity: this Rune costs %s, %s left.",
+  "rune.command.install.done": "Installed %s, Rank %s. Capacity: %s / %s.",
+  "rune.command.uninstall.usage": "Usage: /rune uninstall <slot>",
+  "rune.command.uninstall.empty": "Slot %s has no Rune.",
+  "rune.command.uninstall.done": "Removed %s, Rank %s. Capacity: %s / %s."
+}
