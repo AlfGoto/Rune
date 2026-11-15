@@ -152,7 +152,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
   - Risk: the API is `@Deprecated` in `UnsafeValues`. Keep the JSON building separate from the loading. Then switching to a generated datapack (tested, works) only changes the loading step.
   - Not chosen: a library such as UltimateAdvancementAPI (extra dependency, not needed).
 - **Reveal of locked nodes:** keep vanilla behaviour. Only the next few nodes after the last unlocked one are shown.
-- Tested in game (prototype, since deleted): parallel lines per Job, toast without chat line. Revoke was not confirmed in the prototype; #139 must prove it (level going down removes nodes).
+- Tested in game (prototype, since deleted): parallel lines per Job, toast without chat line, revoke works.
 
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
