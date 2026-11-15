@@ -75,6 +75,7 @@ public final class RuneConfig {
     private final List<Integer> rewardsRollsByRarity;
     private final double rewardsJobBias;
     private final ToolConfig tools;
+    private ConfigurationSection runes; // the 'runes' section, null when there is none
 
     private RuneConfig(
             double base,
@@ -181,7 +182,7 @@ public final class RuneConfig {
                     + ". Using default " + DEFAULT_REWARDS_JOB_BIAS + ".");
             jobBias = DEFAULT_REWARDS_JOB_BIAS;
         }
-        return new RuneConfig(
+        RuneConfig loaded = new RuneConfig(
                 base,
                 exponent,
                 accountBase,
@@ -202,6 +203,21 @@ public final class RuneConfig {
                 rollsByRarity,
                 jobBias,
                 ToolConfig.load(section, logger));
+        loaded.runes = section.getConfigurationSection("runes");
+        return loaded;
+    }
+
+    /**
+     * A number of a Rune from {@code runes.<runeId>.<key>} (e.g. {@code runes.fortune.base}). A missing or
+     * bad value gives {@code fallback}.
+     */
+    public double runeNumber(String runeId, String key, double fallback) {
+        if (runes == null
+                || !(runes.get(runeId + "." + key) instanceof Number n)
+                || !Double.isFinite(n.doubleValue())) {
+            return fallback;
+        }
+        return n.doubleValue();
     }
 
     /** Rune Tool balancing: speed, durability, slots and Capacity. */

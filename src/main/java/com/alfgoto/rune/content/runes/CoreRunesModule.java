@@ -37,5 +37,29 @@ public final class CoreRunesModule implements RuneModule {
                         new RuneItem("test_rune", Rarity.RARE, Material.PAPER, "test_rune"),
                         effect.with(5, 5, 4),
                         Set.of(Fit.PLAYER, Fit.PICKAXE)));
+
+        // Drop-changing Runes (docs/jobs/mining.md). Numbers come from config.yml ("runes"). No Rune texture is
+        // drawn yet, so they use the test Rune model.
+        Set<Fit> diggers = Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL);
+        dropRune(ctx, "fortune", Rarity.UNCOMMON, 15, 15, 3, diggers);
+        dropRune(ctx, "smelt", Rarity.RARE, 25, 25, 3, diggers);
+        dropRune(ctx, "silk_touch", Rarity.EPIC, 1, 0, 1, diggers);
+    }
+
+    /** Registers a Rune whose effect id is its id, with base, growth and Max Rank read from config. */
+    private static void dropRune(
+            RuneContext ctx, String id, Rarity rarity, double base, double perRank, int maxRank, Set<Fit> fits) {
+        Effect<RuneBlockBreakEvent> effect = ctx.get(EffectRegistry.class)
+                .register(Effect.builder(id, EffectTriggers.BLOCK_BREAK)
+                        // The drops are changed by gameplay.drops; this Effect only names the value.
+                        .does(context -> {}));
+        var config = ctx.config();
+        int max = (int) Math.max(1, config.runeNumber(id, "max-rank", maxRank));
+        ctx.get(RuneRegistry.class)
+                .register(new Rune(
+                        new RuneItem(id, rarity, Material.PAPER, "test_rune"),
+                        effect.with(
+                                config.runeNumber(id, "base", base), config.runeNumber(id, "per-rank", perRank), max),
+                        fits));
     }
 }
