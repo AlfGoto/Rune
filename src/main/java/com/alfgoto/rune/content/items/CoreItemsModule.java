@@ -27,7 +27,8 @@ public final class CoreItemsModule implements RuneModule {
         // Uses the test model of the resource pack (assets/rune/items/test_rune.json).
         items.register(new RuneItem("test_item", Rarity.COMMON, Material.PAPER, "test_rune"));
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
-        items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
+        // Shows the Flint Pickaxe texture so the pack can be checked in game.
+        items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe", ToolSpec.DEFAULT));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
