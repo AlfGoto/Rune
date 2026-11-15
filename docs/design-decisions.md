@@ -193,6 +193,7 @@ The first milestone the issues aim at:
 - Menu framework (2026-11-15, package `visuals.menu`): `Menu` (chest menu, optional parent), `PagedMenu`, `Button` (icon + click action). Every click and drag is cancelled while a menu is open, in the menu and in the player's inventory, so nothing can be taken out. A menu with a parent shows a Back arrow in the middle of the bottom row; paged menus add Previous/Next arrows beside it, only when they lead somewhere. Test: `/rune debug menu`. Menus are built by later tickets (Rune Codex, Jobs, Quests, loadout, Cache reel).
 
 ## Later (not at launch)
+- Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.
 - Transmuting at a Rune Altar (custom block).
 - Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions, Salvage yields) — one `docs/jobs/<job>.md` each.
 - Challenge-type Quests (conditions like "without placing torches"; timed).
