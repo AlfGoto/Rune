@@ -165,6 +165,7 @@ The first milestone the issues aim at:
 
 ## Items
 - `RuneItem` base (2026-11-14, `gameplay.items`): a `RuneItem` has an id, a Rarity, a vanilla material and a model (the name of an item definition in the `rune` namespace of the resource pack). `ItemRegistry` (a service of `ItemsModule`) holds them, builds stacks (`create`) and reads the id back (`of`). The id is stored in the item's PDC under `rune:item_id`, so it survives restarts. The model is set with the `item_model` component; the name is the translation key `rune.item.<id>` coloured with the Rarity colour. Lore and slots come with Item Rendering. Content modules fill the registry (`content.items.CoreItemsModule` registers one test item, `test_item`, on the `test_rune` model).
+- Item Rendering (2026-11-15, `visuals.itemrendering`): `ItemRegistry` no longer builds the name and lore. It calls its `ItemRedrawer`s on `create`, `update(stack, change)` and `redraw(stack)`; `ItemRenderingModule` registers the `ItemRenderer`. Name: translation key in the Rarity colour. Lore: the translated Rarity name, then a stats placeholder line ("No stats yet", replaced when items get stats). Data change → `update` → lore rebuilt from scratch. Lang file: `item_rendering.json`.
 - `/rune give <id> [amount]` (2026-11-14): gives the item to yourself (player only), with tab completion on ids. Amount 1 to 2304 (a full inventory); it is split into stacks and what does not fit drops at your feet.
 
 ## Places
