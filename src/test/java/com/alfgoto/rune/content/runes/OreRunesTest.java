@@ -173,6 +173,17 @@ class OreRunesTest {
     }
 
     @Test
+    void aPlacedOreDoesNotBloom() {
+        Block ore = world.getBlockAt(0, 10, 0);
+        ore.setType(Material.DIAMOND_ORE);
+        Block stone = world.getBlockAt(1, 10, 0);
+        stone.setType(Material.STONE);
+        tracker.add(ore, BlockTag.PLACED);
+        mine(bloom(0), ore, pick("ore_bloom", 1));
+        assertEquals(Material.STONE, stone.getType());
+    }
+
+    @Test
     void stoneFamilyRules() {
         assertTrue(StoneFamily.isStone(Material.TUFF));
         assertTrue(StoneFamily.isStone(Material.NETHERRACK));

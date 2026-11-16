@@ -52,6 +52,11 @@ final class OreBloomListener implements Listener {
         if (!StoneFamily.isOre(ore) || items.of(event.item()).isEmpty()) {
             return;
         }
+        // A tagged ore (placed, grown...) gives no Job XP, so it must not bloom into full-XP ore.
+        // Triggers fires before Block Tracking clears the tags, so they are still here.
+        if (!tracker.tags(event.block()).isEmpty()) {
+            return;
+        }
         int blooms = Stacking.rolls(Stacking.total(EFFECT_ID, loadout.sources(event.item())), random);
         for (int i = 0; i < blooms; i++) {
             if (!bloomOnce(event.block(), ore)) {

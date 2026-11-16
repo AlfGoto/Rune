@@ -167,7 +167,7 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 | Magnet | Uncommon | 3 | Pull radius +2 blocks | pickaxe, axe, shovel |
 | Ore Sense | Uncommon | 3 | +5% chance to outline nearby ores | pickaxe |
 | Affinity: <place> | Uncommon | 3 | +10% speed in one place (Lush Caves, Dripstone, Deep Dark, Mineshaft, Mountains…; forest places for axes) | pickaxe (cave / mining places) or axe (forest places) |
-| Deepstride | Uncommon | none | Move faster below Y 0, +16 Y per Rank | pickaxe |
+| Deepstride | Uncommon | none | Mine faster (+20% mining speed) below Y 0, +16 Y per Rank | pickaxe |
 | Smelt | Rare | 3 | +25% smelt chance | pickaxe, axe, shovel |
 | Cache Hunter | Rare | 3 | +15% Rune Cache chance | pickaxe, axe, shovel |
 | Ore Dash *(Active)* | Rare | 3 | Dash to nearest visible ore, range 8/12/16, cooldown 20 s | pickaxe |
