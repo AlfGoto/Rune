@@ -2,6 +2,7 @@ package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.GiveSubcommand;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
@@ -26,6 +27,7 @@ public final class RunesModule implements RuneModule {
         ctx.get(GiveSubcommand.class).addVariant(new GiveRuneVariant(registry));
         ToolLoadout loadout =
                 ctx.provide(ToolLoadout.class, new ToolLoadout(ctx.plugin(), ctx.get(ItemRegistry.class), registry));
+        ctx.listen(ctx.provide(ActiveRunes.class, new ActiveRunes(loadout, ctx.get(BrokenToolListener.class)::isBroken)));
         ctx.debug(LoadoutSubcommands.install(loadout, registry));
         ctx.debug(LoadoutSubcommands.uninstall(loadout));
     }
