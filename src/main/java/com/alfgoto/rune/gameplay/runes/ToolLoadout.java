@@ -188,6 +188,23 @@ public final class ToolLoadout {
     }
 
     /**
+     * Carries the Runes of {@code sources} over to {@code result} (an Upgrade): each Rune is installed in order
+     * (sources in the given order, slots in order) if it still fits, and the Runes that do not fit are returned
+     * so the caller can give them back. Sources that are not Rune Tools are ignored.
+     */
+    public List<Installed> inherit(ItemStack result, List<ItemStack> sources) {
+        List<Installed> overflow = new ArrayList<>();
+        for (ItemStack source : sources) {
+            for (Installed old : installed(source)) {
+                if (install(result, old.rune(), old.rank()) != Result.INSTALLED) {
+                    overflow.add(old);
+                }
+            }
+        }
+        return overflow;
+    }
+
+    /**
      * Every installed Rune as an effect source, ready for {@link Stacking}. This is what feeds the Effect
      * system. The tool's Trait is not built yet, so it is not in the list.
      */

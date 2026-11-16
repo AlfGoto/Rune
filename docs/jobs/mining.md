@@ -166,7 +166,7 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 | Fortune | Uncommon | 3 | +15% chance of +1 drop | pickaxe, axe, shovel |
 | Magnet | Uncommon | 3 | Pull radius +2 blocks | pickaxe, axe, shovel |
 | Ore Sense | Uncommon | 3 | +5% chance to outline nearby ores | pickaxe |
-| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Lush Caves, Dripstone, Deep Dark, Mineshaft, Mountains…; forest places for axes) | pickaxe, axe |
+| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Lush Caves, Dripstone, Deep Dark, Mineshaft, Mountains…; forest places for axes) | pickaxe (cave / mining places) or axe (forest places) |
 | Deepstride | Uncommon | none | Move faster below Y 0, +16 Y per Rank | pickaxe |
 | Smelt | Rare | 3 | +25% smelt chance | pickaxe, axe, shovel |
 | Cache Hunter | Rare | 3 | +15% Rune Cache chance | pickaxe, axe, shovel |
@@ -178,6 +178,7 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 | Veinminer | Legendary | 3 | Mines a vein of ores: 8 / 16 / 32 blocks | pickaxe |
 
 - Each variant (Affinity: Lush Caves, Specialist: Iron…) is a separate Rune. Affinity Runes can appear in their place's chest loot.
+- Speed Runes (Haste, Specialist, Affinity; `gameplay.runes.SpeedBonuses`, `content.runes.SpeedRunesModule`): each variant is its own Rune and its own effect id (`haste`, `specialist_iron`, `affinity_taiga`…). The speed of all installed Runes that apply is summed (Stacking), then applied to the player's block break speed (× 1 + total/100) when a block starts to break, so it follows the tool in hand, the block and the Place. Per-Rank values and Max Ranks are in config (`runes.speed.*`). Affinity fits pickaxes in cave and mining Places (Lush Caves, Mineshaft) and axes only in forest Places (Taiga). Specialist ores: coal, copper, iron, gold, redstone, lapis, diamond, emerald (with deepslate variants). Specialist: <wood> is not built.
 - Ore Bloom: bloomed ores give full XP and can bloom again. Does not work with Silk Touch.
 - Silk-touched ore gives normal XP when first broken; once placed it gives 0.
 

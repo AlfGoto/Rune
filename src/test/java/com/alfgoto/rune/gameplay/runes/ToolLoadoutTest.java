@@ -163,6 +163,36 @@ class ToolLoadoutTest {
     }
 
     @Test
+    void upgradeKeepsWhatFitsAndReturnsTheRest() {
+        Rune speed = rune("speed_up", "speed", Rarity.COMMON, null, Fit.PICKAXE);
+        Rune smelt = rune("smelt_up", "smelt", Rarity.COMMON, null, Fit.PICKAXE);
+        ItemStack old = tool("old_pick", Rarity.RARE, ToolKind.PICKAXE); // 3 slots, Capacity 10
+        loadout.install(old, speed, 1);
+        loadout.install(old, smelt, 2);
+        loadout.install(old, speed, 3);
+        ItemStack next = tool("new_pick", Rarity.COMMON, ToolKind.PICKAXE); // 1 slot, Capacity 3
+
+        var overflow = loadout.inherit(next, java.util.List.of(old));
+
+        assertEquals(1, loadout.installed(next).size());
+        assertEquals("speed_up", loadout.installed(next).get(0).rune().id());
+        assertEquals(2, overflow.size());
+        assertEquals("smelt_up", overflow.get(0).rune().id());
+        assertEquals(2, overflow.get(0).rank());
+        assertEquals(3, loadout.installed(old).size()); // the source is not changed
+    }
+
+    @Test
+    void upgradeWithRoomKeepsEverything() {
+        Rune speed = rune("speed_all", "speed", Rarity.COMMON, null, Fit.PICKAXE);
+        ItemStack old = tool("old_all", Rarity.UNCOMMON, ToolKind.PICKAXE);
+        loadout.install(old, speed, 1);
+        ItemStack next = tool("new_all", Rarity.LEGENDARY, ToolKind.PICKAXE);
+        assertTrue(loadout.inherit(next, java.util.List.of(old)).isEmpty());
+        assertEquals(1, loadout.installed(next).size());
+    }
+
+    @Test
     void debugCommandsInstallAndUninstallOnTheHeldTool() {
         rune("speed_cmd", "speed", Rarity.COMMON, null, Fit.PICKAXE);
         PlayerMock player = server.addPlayer();
