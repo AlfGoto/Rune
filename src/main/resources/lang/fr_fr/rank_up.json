@@ -1,0 +1,8 @@
+{
+  "rune.rank_up.cost": "Coût d'amélioration : %s niveaux d'XP",
+  "rune.rank_up.not_enough": "Il vous faut %s niveaux d'XP.",
+  "rune.rank_up.different": "Les 3 runes doivent être la même rune au même rang.",
+  "rune.rank_up.max_rank": "Cette rune est déjà à son rang maximum.",
+  "rune.rank_up.cursor_full": "Videz d'abord votre curseur.",
+  "rune.rank_up.done": "%s est passée au rang %s pour %s niveaux d'XP."
+}
