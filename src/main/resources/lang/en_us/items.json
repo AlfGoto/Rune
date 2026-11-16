@@ -8,6 +8,8 @@
   "rune.item.silk_touch": "Rune of Silk Touch",
   "rune.item.test_pickaxe": "Test Pickaxe",
   "rune.item.test_helmet": "Test Helmet",
+  "rune.item.test_trait_pickaxe": "Test Trait Pickaxe",
+  "rune.trait.test_trait": "Test Trait (Smelt, slower)",
   "rune.item.reinforced_handle": "Reinforced Handle",
   "rune.item.reinforced_lining": "Reinforced Lining",
   "rune.item.gem_setting": "Gem Setting",

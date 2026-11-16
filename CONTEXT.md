@@ -87,7 +87,9 @@ _Avoid_: skill tree (Job Levels never give passive stats)
 
 **Rune Armor** — A named armor piece, the armor counterpart of a Rune Tool: fixed Rarity, Trait, Rune slots (for Armor Runes), Capacity.
 
-**Trait** — A Rune Tool's or Rune Armor's built-in effect, independent of installed Runes (e.g. Fiery Pickaxe has a chance to smelt). A Trait can share its effect with Runes; they stack (see Stacking). A Trait can be a bonus, a drawback, or both (e.g. faster but less durable), including more or less Capacity.
+**Trait** — A Rune Tool's or Rune Armor's built-in effect, independent of installed Runes (e.g. Fiery Pickaxe has a chance to smelt). A Trait can share its effect with Runes; they stack (see Stacking). A Trait can be a bonus, a drawback, or both (e.g. faster but less durable), including more or less Capacity. A Trait is a list of **Trait bindings**: an effect id, a value (can be negative) and a **Scale**.
+
+**Scale** — A number from 0 to 1 for a player and an item (e.g. `always` = 1). A Trait binding's final value = value × Scale. Registered by id, like Effects.
 
 **Harvest Tier** — Which blocks a Rune Tool can harvest (vanilla's stone / iron / diamond tiers). Defaults from the tool's Rarity (Common = stone-tier, Uncommon = iron-tier, Rare and above = diamond-tier); a tool can be one tier above or below its default as a bonus or drawback.
 

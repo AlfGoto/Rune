@@ -10,6 +10,7 @@ import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolSpec;
+import com.alfgoto.rune.gameplay.items.TraitBinding;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -32,6 +33,14 @@ public final class CoreItemsModule implements RuneModule {
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
         // Shows the Flint Pickaxe texture so the pack can be checked in game.
         items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe", ToolSpec.DEFAULT));
+        // Test content for Traits (#178): smelt 100 + haste -20 (slower), Capacity -1.
+        items.register(RuneItem.tool(
+                "test_trait_pickaxe",
+                Rarity.COMMON,
+                ToolKind.PICKAXE,
+                "flint_pickaxe",
+                ToolSpec.DEFAULT.withTrait(
+                        "test_trait", -1, TraitBinding.always("smelt", 100), TraitBinding.always("haste", -20))));
         // Common helmet: leather protection, 1 slot, Capacity 3. No armor texture exists yet, so it uses the
         // test model (placeholder).
         items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
