@@ -63,6 +63,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Menus open from a Rune Codex item in the inventory (main menu: Jobs, Quests, Runes).
 - Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu. It is given on join and on respawn. Step 1: the Codex uses the test model and the main menu only has Jobs; the Quests and Runes pages come with their own tickets.
 
+- No Salvage (2026-11-16, Alfred): Salvage was never decided by Alfred and is removed. For now a player has no way to delete, destroy or recycle a Rune.
+
 ## Capacity (2026-11-10)
 - Capacity Cost = Rarity base (Common 1, Uncommon 2, Rare 3, Epic 5, Legendary 8) + 1 per Rank above 1.
 - Rune Tool / Rune Armor base Capacity by Rarity: Common 3, Uncommon 6, Rare 10, Epic 14, Legendary 18. Slots: Common 1 … Legendary 5.
@@ -75,8 +77,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Start like vanilla: players spawn with nothing and craft wooden tools.
 - Vanilla wooden tools craftable, no Capacity, no bonuses.
 - No lost Runes (2026-11-16, Alfred): a player can't lose or delete a Rune for now. Dropped Rune items, Rune Tools and Rune Armor pieces (they carry Runes) are indestructible: immune to fire, lava, cactus, explosions and lightning, and they never despawn. Falling into the void teleports the item to the world spawn. They can still be dropped, picked up and kept in chests. Code: `gameplay.runes.IndestructibleItems`.
-- Vanilla stone, iron, gold, diamond and netherite tools and weapons: locked forever (found ones are unusable), can be salvaged.
-- All vanilla armor (leather, chainmail, iron, gold, diamond, netherite) is Locked Gear: unusable, salvageable. New players have no armor until their first Rune Armor.
+- Vanilla stone, iron, gold, diamond and netherite tools and weapons: locked forever (found ones are unusable).
+- All vanilla armor (leather, chainmail, iron, gold, diamond, netherite) is Locked Gear: unusable. New players have no armor until their first Rune Armor.
 - Rune Armor: named pieces with Rarity, Trait, Rune slots, Capacity — the armor counterpart of Rune Tools. Protection follows vanilla by Rarity (Common ≈ leather … Legendary ≈ netherite), overridable per piece.
 - Rune Tools: many named tools per Rarity, each with a Trait. Slots + Capacity grow with Rarity.
 - Tool base stats follow vanilla by Harvest Tier (stone / iron / diamond); Epic and Legendary get gold speed (12) and netherite durability (2,031). Overridable per tool; Relics may exceed them. Axes keep vanilla axe damage (balance vs swords revisited with Combat).
@@ -101,7 +103,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Enchanted books in loot (chests, fishing, trades) are replaced by Runes / Rune Caches.
 - Smithing no longer covers enchanting.
 - Vanilla XP stays and is spent on: anvil repairs of Rune gear, Rune rank-ups, and (optionally, per piece) Evolution.
-- Vanilla Overrides, first slice (2026-11-11, package `com.alfgoto.rune.overrides`): enchanting table and enchant events are cancelled; the anvil result is removed when an enchanted book is involved or the enchantments change (repairs and renames stay). Locked Gear is matched by material name (stone, iron, gold, diamond, netherite tools and weapons; leather, chainmail, iron, gold, diamond, netherite armor). It can't be crafted (crafting table, smithing table), can't mine, attack or be right-clicked with, and armor is taken off into the inventory (or dropped). No message is shown yet. Salvage and enchanted books in loot come in later tickets. Rune gear built on a vanilla material is not locked: a stack with the `rune:item_id` marker is never Locked Gear (done with Rune Armor, see Items).
+- Vanilla Overrides, first slice (2026-11-11, package `com.alfgoto.rune.overrides`): enchanting table and enchant events are cancelled; the anvil result is removed when an enchanted book is involved or the enchantments change (repairs and renames stay). Locked Gear is matched by material name (stone, iron, gold, diamond, netherite tools and weapons; leather, chainmail, iron, gold, diamond, netherite armor). It can't be crafted (crafting table, smithing table), can't mine, attack or be right-clicked with, and armor is taken off into the inventory (or dropped). No message is shown yet. Enchanted books in loot come in a later ticket. Rune gear built on a vanilla material is not locked: a stack with the `rune:item_id` marker is never Locked Gear (done with Rune Armor, see Items).
 
 ## Trading
 - Runes, Rune Tools and Rune Armor are freely tradeable; no Job Level requirement to use them. Good gear is meant to be very rare, so trading is fine.
@@ -204,7 +206,7 @@ The first milestone the issues aim at:
 ## Later (not at launch)
 - Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.
 - Transmuting at a Rune Altar (custom block).
-- Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions, Salvage yields) — one `docs/jobs/<job>.md` each.
+- Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions) — one `docs/jobs/<job>.md` each.
 - Challenge-type Quests (conditions like "without placing torches"; timed).
 - Config option to restrict trading of Runes / Rune gear.
 - PvP: not considered yet.
