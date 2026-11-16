@@ -65,7 +65,7 @@ public final class DropEffectsListener implements Listener {
         ItemStack silkTool = tool.clone();
         silkTool.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 1);
         Block block = event.getBlock();
-        List<ItemStack> wanted = new ArrayList<>(block.getDrops(silkTool, event.getPlayer()));
+        var wanted = block.getDrops(silkTool, event.getPlayer());
         event.setDropItems(false);
         for (ItemStack stack : wanted) {
             block.getWorld().dropItemNaturally(block.getLocation(), stack);
