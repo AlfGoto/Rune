@@ -102,6 +102,12 @@ class RankUpTest {
     }
 
     @Test
+    void anyRuneSeesARuneMixedWithPlainItems() {
+        assertTrue(rankUp.anyRune(stack(capped, 1), new ItemStack(Material.PAPER), null));
+        assertTrue(!rankUp.anyRune(new ItemStack(Material.PAPER), null, new ItemStack(Material.PAPER)));
+    }
+
+    @Test
     void previewShowsTheCostAndTheMissingLevelsInTheLore() {
         RankUp.Plan plan = rankUp.plan(stack(capped, 1), stack(capped, 1), stack(capped, 1));
         int withEnough = rankUp.preview(plan, 30).lore().size();

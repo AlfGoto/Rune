@@ -66,7 +66,12 @@ public final class RankUpListener implements Listener {
         SmithingInventory inventory = event.getInventory();
         RankUp.Plan plan = plan(inventory);
         if (plan.refusal() == RankUp.Refusal.NOT_RUNES) {
-            return; // not ours: vanilla (and other plugins) decide
+            if (mixesRunes(inventory)) {
+                // A Rune with a plain item of the same material would match the hidden recipe: never let
+                // vanilla's result be taken, it would eat the Runes.
+                event.setResult(null);
+            }
+            return; // otherwise not ours: vanilla (and other plugins) decide
         }
         if (!plan.valid()) {
             event.setResult(null);
@@ -85,6 +90,9 @@ public final class RankUpListener implements Listener {
         }
         RankUp.Plan plan = plan(inventory);
         if (plan.refusal() == RankUp.Refusal.NOT_RUNES) {
+            if (mixesRunes(inventory)) {
+                event.setCancelled(true);
+            }
             return;
         }
         event.setCancelled(true);
@@ -127,9 +135,14 @@ public final class RankUpListener implements Listener {
                 Component.translatable(Text.key("item", plan.rune().id())),
                 Component.text(plan.fromRank() + 1),
                 Component.text(plan.cost())));
-        // Recompute the output slot now that the inputs changed.
+        // Clear the output slot: the inputs changed. If 2+ Runes were stacked, the next preview shows
+        // when the player moves an item.
         inventory.setResult(null);
         player.updateInventory();
+    }
+
+    private boolean mixesRunes(SmithingInventory inventory) {
+        return rankUp.anyRune(inventory.getItem(0), inventory.getItem(1), inventory.getItem(2));
     }
 
     private RankUp.Plan plan(SmithingInventory inventory) {
