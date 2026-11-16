@@ -32,7 +32,7 @@ import org.bukkit.Material;
 @AutoService(RuneModule.class)
 public final class SpeedRunesModule implements RuneModule {
 
-    /** Specialist ores (id, matching blocks). Proposed by Claude, to confirm: the 8 common overworld ores. */
+    /** Specialist ores (id, matching blocks). The 8 common overworld ores. */
     static final Map<String, Set<Material>> ORES = new TreeMap<>(Map.of(
             "coal", Set.of(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE),
             "copper", Set.of(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE),
@@ -46,7 +46,7 @@ public final class SpeedRunesModule implements RuneModule {
     /** Affinity places: the Places that exist today (see CorePlaces). More come with their Places. */
     static final List<String> PLACES = List.of("lush_caves", "taiga", "mineshaft");
 
-    /** Forest Places: only these fit axes (docs/jobs/mining.md). */
+    /** Forest Places: their Affinity fits axes only. Other Places fit pickaxes only (docs/jobs/mining.md). */
     static final Set<String> FOREST_PLACES = Set.of("taiga");
 
     @Override
@@ -87,7 +87,7 @@ public final class SpeedRunesModule implements RuneModule {
                     Set.of(Fit.PICKAXE));
         }
 
-        // Affinity: while the player stands in one Place. Pickaxe everywhere, axe only in forest Places.
+        // Affinity: while the player stands in one Place. Pickaxe in cave and mining Places, axe in forest Places.
         for (String place : PLACES) {
             String id = "affinity_" + place;
             speed.register(
@@ -101,7 +101,7 @@ public final class SpeedRunesModule implements RuneModule {
                     Rarity.UNCOMMON,
                     config.affinityPerRank(),
                     config.affinityMaxRank(),
-                    FOREST_PLACES.contains(place) ? Set.of(Fit.PICKAXE, Fit.AXE) : Set.of(Fit.PICKAXE));
+                    FOREST_PLACES.contains(place) ? Set.of(Fit.AXE) : Set.of(Fit.PICKAXE));
         }
     }
 
