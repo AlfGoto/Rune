@@ -249,6 +249,34 @@ rewards:
   rolls-by-rarity: [1, 1, 2, 2, 3]
   # Chance that a roll with a Job gives that Job's Runes instead of general Runes (0 to 1)
   job-bias: 0.6
+runes:
+  # Value of a Rune = base + per-rank * (Rank - 1), from docs/jobs/mining.md. Chances are in percent
+  # (100 = guaranteed). Silk Touch is on/off. max-rank is the highest Rank when ranking up.
+  fortune:
+    base: 15
+    per-rank: 15
+    max-rank: 3
+  smelt:
+    base: 25
+    per-rank: 25
+    max-rank: 3
+  silk_touch:
+    base: 1
+    per-rank: 0
+    max-rank: 1
+  speed:
+    # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
+    haste:
+      per-rank: 8
+      max-rank: 5
+    # One Rune per ore
+    specialist:
+      per-rank: 20
+      max-rank: 3
+    # One Rune per Place
+    affinity:
+      per-rank: 10
+      max-rank: 3
 tools:
   # Mining speed by Harvest Tier: stone, iron, diamond (vanilla values)
   speed-by-tier: [4, 6, 8]
@@ -269,20 +297,6 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
-runes:
-  speed:
-    # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
-    haste:
-      per-rank: 8
-      max-rank: 5
-    # One Rune per ore
-    specialist:
-      per-rank: 20
-      max-rank: 3
-    # One Rune per Place
-    affinity:
-      per-rank: 10
-      max-rank: 3
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

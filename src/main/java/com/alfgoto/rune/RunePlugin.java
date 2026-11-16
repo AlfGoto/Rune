@@ -8,9 +8,13 @@ import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.storage.PdcPlayerStorage;
 import com.alfgoto.rune.storage.PlayerStorage;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -38,6 +42,7 @@ public class RunePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        addMissingConfigKeys();
         RuneConfig config = RuneConfig.load(getConfig(), getLogger());
         RuneCommand command = new RuneCommand(List.of());
         DebugCommand debug = new DebugCommand();
@@ -54,6 +59,28 @@ public class RunePlugin extends JavaPlugin {
         rune.setExecutor(command);
         rune.setTabCompleter(command);
         getLogger().info("Rune enabled (" + modules.size() + " modules)");
+    }
+
+    /**
+     * An older config.yml does not have the sections added since. Copy the missing keys from the jar's config.yml
+     * (existing values are never changed) and save, so new Runes still register on existing servers.
+     */
+    private void addMissingConfigKeys() {
+        try (var stream = getResource("config.yml")) {
+            if (stream == null) {
+                return;
+            }
+            var defaults = YamlConfiguration.loadConfiguration(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            var config = getConfig();
+            boolean missing = defaults.getKeys(true).stream().anyMatch(key -> !config.contains(key, true));
+            if (missing) {
+                config.setDefaults(defaults);
+                config.options().copyDefaults(true);
+                saveConfig();
+            }
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, "Could not add missing config keys", e);
+        }
     }
 
     @Override
