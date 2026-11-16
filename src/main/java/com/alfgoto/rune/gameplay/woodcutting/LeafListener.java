@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Leaves;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,12 +64,22 @@ final class LeafListener implements Listener {
         if (radius < 1) {
             return;
         }
+        // The Silk Touch Rune is not an enchantment, so the leaves that fall get a Silk Touch copy of the tool.
+        ItemStack breaker = null;
+        if (Stacking.total(Stacking.SILK_TOUCH, sources) > 0) {
+            breaker = tool.clone();
+            breaker.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 1);
+        }
         for (Offset offset : LeafRules.offsets(radius)) {
             Block leaves = log.getRelative(offset.x(), offset.y(), offset.z());
             // Leaves a player placed do not decay in vanilla, so they do not fall either.
             if (leaves.getBlockData() instanceof Leaves data && !data.isPersistent()) {
                 orchard(player, tool, sources, leaves);
-                leaves.breakNaturally();
+                if (breaker == null) {
+                    leaves.breakNaturally();
+                } else {
+                    leaves.breakNaturally(breaker);
+                }
             }
         }
     }
