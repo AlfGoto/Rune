@@ -42,7 +42,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 ## Runes
 - Runes are physical items.
 - 5 Rarities: Common, Uncommon, Rare, Epic, Legendary (Legendary = game-changing, e.g. Veinminer).
-- Rank up: 3 identical Runes of rank N at a smithing table → rank N+1, costs vanilla XP. (Prototype needed: smithing table slot restrictions.)
+- Rank up: 3 identical Runes of rank N at a smithing table → rank N+1, costs vanilla XP. Decided (Alfred, 2026-11-16, #57): the smithing table is the UX, no custom menu and no prototype. Built in #58.
 - Max Rank is set per Rune, by what makes sense for its effect. Some Runes have no Max Rank (e.g. Deepstride); the 3× cost per Rank caps them naturally. Defined in each Rune's definition.
 - Variants (Affinity: <place>, Specialist: <ore>, Specialist: <wood>, Sanctuary: <biome>) are separate Runes: they rank up separately and stack with each other. One effect class with a parameter. Variants can appear in their place's chest loot.
 - Stacking: the same effect from a Trait and/or several Runes adds up. Every effect is a number (on/off effects become chances). Chances above 100% roll again (e.g. Smelt 150% → always one smelt, 50% chance of a second: cobblestone → stone → smooth stone). Exception: Silk Touch (on/off) disables Fortune, Smelt and Ore Bloom.
