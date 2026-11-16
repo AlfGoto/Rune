@@ -199,6 +199,12 @@ The first milestone the issues aim at:
 
 - Menu framework (2026-11-15, package `visuals.menu`): `Menu` (chest menu, optional parent), `PagedMenu`, `Button` (icon + click action). Every click and drag is cancelled while a menu is open, in the menu and in the player's inventory, so nothing can be taken out. A menu with a parent shows a Back arrow in the middle of the bottom row; paged menus add Previous/Next arrows beside it, only when they lead somewhere. Test: `/rune debug menu`. Menus are built by later tickets (Rune Codex, Jobs, Quests, loadout, Cache reel).
 
+- Woodcutting passive Runes (2026-11-16, #85, `gameplay.woodcutting` + `content.runes.WoodcuttingRunesModule`): all axe-only. Numbers are starting values in `config.yml` (`runes.leaf_fall`, `runes.orchard`, `runes.canopy_stride`).
+  - Specialist: <wood>: 12 Runes (oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, pale oak, poplar, crimson, warped), each its own Rune and effect id, through `SpeedBonuses`. Matches the logs, wood and stripped versions of that type. Uses the numbers of `runes.speed.specialist`.
+  - Leaf Fall (radius 2 / 4 / 6): breaking a log breaks the non-persistent leaves in a sphere around it at once, with normal drops. They are broken without a break event, so they give 0 XP. Leaves a player placed (persistent) do not fall.
+  - Orchard (+10% per Rank): each leaf the player breaks or makes fall can roll its vanilla loot again and keep only apples and saplings. Off with Silk Touch. Natural decay is not by the player, so it gets no bonus.
+  - Canopy Stride (+10% move speed per Rank, no Max Rank): a transient `MOVEMENT_SPEED` modifier while the player holds the axe and stands on leaves or logs.
+
 ## Later (not at launch)
 - Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.
 - Transmuting at a Rune Altar (custom block).
