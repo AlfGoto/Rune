@@ -4,12 +4,12 @@ import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.gameplay.jobs.JobActionEvent;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
+import com.alfgoto.rune.gameplay.jobs.Numbers;
 import com.alfgoto.rune.gameplay.rewards.Drop;
 import com.alfgoto.rune.gameplay.rewards.LootRoller;
 import com.alfgoto.rune.gameplay.rewards.LootTable;
 import com.alfgoto.rune.gameplay.rewards.LootTableRegistry;
 import com.alfgoto.rune.gameplay.rewards.RollContext;
-import com.alfgoto.rune.gameplay.jobs.Numbers;
 import com.alfgoto.rune.text.Text;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +19,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -74,13 +75,7 @@ public final class QuestTracker implements Listener {
             if (done >= quest.target()) {
                 complete(player, slot, quest);
             } else {
-                player.sendActionBar(Component.translatable(
-                                "rune.quest.progress",
-                                "%s: %s/%s",
-                                Component.translatable(quest.type().translationKey(), quest.type().fallbackName()),
-                                Component.text(done),
-                                Component.text(quest.target()))
-                        .color(NamedTextColor.YELLOW));
+                Bukkit.getPluginManager().callEvent(new QuestProgressEvent(player, quest, done));
             }
         }
     }
