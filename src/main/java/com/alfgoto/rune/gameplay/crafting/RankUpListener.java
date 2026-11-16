@@ -35,6 +35,7 @@ public final class RankUpListener implements Listener {
     private final RankUp rankUp;
     private final java.util.function.Supplier<Set<Material>> runeMaterials;
     private NamespacedKey recipeKey;
+    private Set<Material> recipeMaterials = Set.of();
 
     /** {@code runeMaterials} gives the vanilla materials of all Runes; read when the recipe is registered. */
     public RankUpListener(Plugin plugin, RankUp rankUp, java.util.function.Supplier<Set<Material>> runeMaterials) {
@@ -49,6 +50,7 @@ public final class RankUpListener implements Listener {
         if (materials.isEmpty()) {
             return;
         }
+        recipeMaterials = materials;
         recipeKey = new NamespacedKey(plugin, "rank_up");
         RecipeChoice choice = new RecipeChoice.MaterialChoice(materials.toArray(Material[]::new));
         Bukkit.addRecipe(new SmithingTransformRecipe(recipeKey, new ItemStack(Material.PAPER), choice, choice, choice));
@@ -66,9 +68,9 @@ public final class RankUpListener implements Listener {
         SmithingInventory inventory = event.getInventory();
         RankUp.Plan plan = plan(inventory);
         if (plan.refusal() == RankUp.Refusal.NOT_RUNES) {
-            if (mixesRunes(inventory)) {
-                // A Rune with a plain item of the same material would match the hidden recipe: never let
-                // vanilla's result be taken, it would eat the Runes.
+            if (matchesHiddenRecipe(inventory)) {
+                // Plain items of a Rune's material (with or without a Rune) match the hidden recipe: never
+                // let vanilla's result be taken, it would eat the items.
                 event.setResult(null);
             }
             return; // otherwise not ours: vanilla (and other plugins) decide
@@ -90,7 +92,7 @@ public final class RankUpListener implements Listener {
         }
         RankUp.Plan plan = plan(inventory);
         if (plan.refusal() == RankUp.Refusal.NOT_RUNES) {
-            if (mixesRunes(inventory)) {
+            if (matchesHiddenRecipe(inventory)) {
                 event.setCancelled(true);
             }
             return;
@@ -141,8 +143,18 @@ public final class RankUpListener implements Listener {
         player.updateInventory();
     }
 
-    private boolean mixesRunes(SmithingInventory inventory) {
-        return rankUp.anyRune(inventory.getItem(0), inventory.getItem(1), inventory.getItem(2));
+    /** True when the 3 slots all hold a material of the hidden recipe: vanilla would show (and eat) its result. */
+    private boolean matchesHiddenRecipe(SmithingInventory inventory) {
+        if (recipeKey == null) {
+            return false;
+        }
+        for (int slot = 0; slot < 3; slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            if (stack == null || stack.isEmpty() || !recipeMaterials.contains(stack.getType())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private RankUp.Plan plan(SmithingInventory inventory) {

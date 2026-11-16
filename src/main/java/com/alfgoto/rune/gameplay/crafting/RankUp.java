@@ -79,16 +79,6 @@ public final class RankUp {
         return new Plan(rune, rank, cost(rank), null);
     }
 
-    /** True when at least one of the stacks is a Rune (even if the others are not). */
-    public boolean anyRune(ItemStack... stacks) {
-        for (ItemStack stack : stacks) {
-            if (stack != null && !stack.isEmpty() && runes.of(stack).isPresent()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /** The clean Rune the player receives. */
     public ItemStack result(Plan plan) {
         return runes.create(plan.rune(), plan.fromRank() + 1);
