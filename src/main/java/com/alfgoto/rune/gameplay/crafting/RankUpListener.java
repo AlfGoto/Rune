@@ -137,9 +137,10 @@ public final class RankUpListener implements Listener {
                 Component.translatable(Text.key("item", plan.rune().id())),
                 Component.text(plan.fromRank() + 1),
                 Component.text(plan.cost())));
-        // Clear the output slot: the inputs changed. If 2+ Runes were stacked, the next preview shows
-        // when the player moves an item.
-        inventory.setResult(null);
+        // The inputs changed and no prepare event fires: show the next preview now (stacked Runes can
+        // still rank up), or clear the slot when nothing is left to rank up.
+        RankUp.Plan next = plan(inventory);
+        inventory.setResult(next.valid() ? rankUp.preview(next, player.getLevel()) : null);
         player.updateInventory();
     }
 
