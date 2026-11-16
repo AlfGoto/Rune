@@ -74,6 +74,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 ## Tools & armor
 - Start like vanilla: players spawn with nothing and craft wooden tools.
 - Vanilla wooden tools craftable, no Capacity, no bonuses.
+- No lost Runes (2026-11-16, Alfred): a player can't lose or delete a Rune for now. Dropped Rune items, Rune Tools and Rune Armor pieces (they carry Runes) are indestructible: immune to fire, lava, cactus, explosions and lightning, and they never despawn. Falling into the void teleports the item to the world spawn. They can still be dropped, picked up and kept in chests. Code: `gameplay.runes.IndestructibleItems`.
 - Vanilla stone, iron, gold, diamond and netherite tools and weapons: locked forever (found ones are unusable), can be salvaged.
 - All vanilla armor (leather, chainmail, iron, gold, diamond, netherite) is Locked Gear: unusable, salvageable. New players have no armor until their first Rune Armor.
 - Rune Armor: named pieces with Rarity, Trait, Rune slots, Capacity — the armor counterpart of Rune Tools. Protection follows vanilla by Rarity (Common ≈ leather … Legendary ≈ netherite), overridable per piece.
