@@ -3,6 +3,7 @@ package com.alfgoto.rune.gameplay.crafting;
 import com.alfgoto.rune.text.Text;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -33,12 +34,12 @@ public final class RankUpListener implements Listener {
 
     private final Plugin plugin;
     private final RankUp rankUp;
-    private final java.util.function.Supplier<Set<Material>> runeMaterials;
+    private final Supplier<Set<Material>> runeMaterials;
     private NamespacedKey recipeKey;
     private Set<Material> recipeMaterials = Set.of();
 
     /** {@code runeMaterials} gives the vanilla materials of all Runes; read when the recipe is registered. */
-    public RankUpListener(Plugin plugin, RankUp rankUp, java.util.function.Supplier<Set<Material>> runeMaterials) {
+    public RankUpListener(Plugin plugin, RankUp rankUp, Supplier<Set<Material>> runeMaterials) {
         this.plugin = plugin;
         this.rankUp = rankUp;
         this.runeMaterials = runeMaterials;
