@@ -63,6 +63,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Menus open from a Rune Codex item in the inventory (main menu: Jobs, Quests, Runes).
 - Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu. It is given on join and on respawn. Step 1: the Codex uses the test model and the main menu only has Jobs; the Quests and Runes pages come with their own tickets.
 
+- No Salvage (2026-11-16, Alfred): Salvage was never decided by Alfred and is removed. For now a player has no way to delete, destroy or recycle a Rune.
+
 ## Capacity (2026-11-10)
 - Capacity Cost = Rarity base (Common 1, Uncommon 2, Rare 3, Epic 5, Legendary 8) + 1 per Rank above 1.
 - Rune Tool / Rune Armor base Capacity by Rarity: Common 3, Uncommon 6, Rare 10, Epic 14, Legendary 18. Slots: Common 1 … Legendary 5.
@@ -74,8 +76,8 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 ## Tools & armor
 - Start like vanilla: players spawn with nothing and craft wooden tools.
 - Vanilla wooden tools craftable, no Capacity, no bonuses.
-- Vanilla stone, iron, gold, diamond and netherite tools and weapons: locked forever (found ones are unusable), can be salvaged.
-- All vanilla armor (leather, chainmail, iron, gold, diamond, netherite) is Locked Gear: unusable, salvageable. New players have no armor until their first Rune Armor.
+- Vanilla stone, iron, gold, diamond and netherite tools and weapons: locked forever (found ones are unusable).
+- All vanilla armor (leather, chainmail, iron, gold, diamond, netherite) is Locked Gear: unusable. New players have no armor until their first Rune Armor.
 - Rune Armor: named pieces with Rarity, Trait, Rune slots, Capacity — the armor counterpart of Rune Tools. Protection follows vanilla by Rarity (Common ≈ leather … Legendary ≈ netherite), overridable per piece.
 - Rune Tools: many named tools per Rarity, each with a Trait. Slots + Capacity grow with Rarity.
 - Tool base stats follow vanilla by Harvest Tier (stone / iron / diamond); Epic and Legendary get gold speed (12) and netherite durability (2,031). Overridable per tool; Relics may exceed them. Axes keep vanilla axe damage (balance vs swords revisited with Combat).
@@ -202,7 +204,7 @@ The first milestone the issues aim at:
 ## Later (not at launch)
 - Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.
 - Transmuting at a Rune Altar (custom block).
-- Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions, Salvage yields) — one `docs/jobs/<job>.md` each.
+- Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions) — one `docs/jobs/<job>.md` each.
 - Challenge-type Quests (conditions like "without placing torches"; timed).
 - Config option to restrict trading of Runes / Rune gear.
 - PvP: not considered yet.
