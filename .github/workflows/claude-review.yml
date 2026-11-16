@@ -100,6 +100,10 @@ jobs:
             6. Simplicity: is there a simpler way to do what this PR does?
                List files or changes not needed for the PR's goal, and code that could be shorter.
                Suggest the smaller version.
+            7. PR body "How to test": step-by-step checkboxes, every command written out in full,
+               each with the result to expect. Check each step works on this branch (item id exists,
+               Rune fits the tool, Capacity Cost and slots fit, Harvest Tier can mine the block).
+               A wrong or missing step, or a vague one ("mine some ores"), = "fix first".
 
             How to write:
             - Alfred, who reads your review, has ADHD. Write for that:

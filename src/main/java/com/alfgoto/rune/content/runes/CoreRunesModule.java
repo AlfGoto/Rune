@@ -12,6 +12,8 @@ import com.alfgoto.rune.gameplay.runes.Rune;
 import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
+import com.alfgoto.rune.foundations.triggers.RuneClickEvent;
+import com.alfgoto.rune.gameplay.effects.RankValues;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -37,6 +39,17 @@ public final class CoreRunesModule implements RuneModule {
                         new RuneItem("test_rune", Rarity.RARE, Material.PAPER, "test_rune"),
                         effect.with(5, 5, 4),
                         Set.of(Fit.PLAYER, Fit.PICKAXE)));
+        // The test Active Rune does nothing but start its cooldown (10 s, 2 s less per Rank), so the Active
+        // Slots and the action bar can be tested: /rune debug install test_active_rune, then click in air.
+        Effect<RuneClickEvent> active = ctx.get(EffectRegistry.class)
+                .register(Effect.builder("test_active_rune", EffectTriggers.CLICK).does(context -> {}));
+        ctx.get(RuneRegistry.class)
+                .register(Rune.active(
+                        new RuneItem("test_active_rune", Rarity.RARE, Material.PAPER, "test_rune"),
+                        active.with(1, 1, 3),
+                        Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL),
+                        null,
+                        RankValues.of(10, -2, 3)));
 
         // Drop-changing Runes (docs/jobs/mining.md). Numbers come from config.yml ("runes"). No Rune texture is
         // drawn yet, so they use the test Rune model.

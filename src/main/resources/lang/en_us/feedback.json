@@ -2,5 +2,7 @@
   "rune.feedback.xp_gain": "+%s %s XP",
   "rune.feedback.level_up.title": "Level up!",
   "rune.feedback.level_up.subtitle": "%s is now level %s",
-  "rune.feedback.account_level_up": "Account level up! You are now Account Level %s."
+  "rune.feedback.account_level_up": "Account level up! You are now Account Level %s.",
+  "rune.feedback.active_used": "%s used. Cooldown: %ss",
+  "rune.feedback.active_cooldown": "%s is recharging: %ss"
 }
