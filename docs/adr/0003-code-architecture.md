@@ -32,7 +32,7 @@ The rules of the game.
 - **Rewards** — Loot tables.
 - **Quests** — Quest Type × Quest Tier, the 3 active Quests, Reroll Tokens. Uses Rewards.
 - **Crafting** — Recipes, Blueprints, Upgrade, Evolve, Components, Rank-up at the smithing table.
-- **Vanilla Overrides** — Enchanting removed, Locked Gear, Salvage, enchanted books in loot replaced by Rune Caches.
+- **Vanilla Overrides** — Enchanting removed, Locked Gear, enchanted books in loot replaced by Rune Caches.
 
 ### 4. Content
 Java definitions (plus a few Effect classes): one package per Job with its Runes, Rune Tools, Rune Armor and Quest Types.

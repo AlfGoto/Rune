@@ -11,5 +11,6 @@ public final class EffectsModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         ctx.provide(EffectRegistry.class, new EffectRegistry());
+        ctx.provide(ScaleRegistry.class, new ScaleRegistry());
     }
 }
