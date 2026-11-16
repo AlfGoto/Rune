@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Leaves;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -64,31 +63,18 @@ final class LeafListener implements Listener {
         if (radius < 1) {
             return;
         }
-        // The Silk Touch Rune is not an enchantment, so the leaves that fall get a Silk Touch copy of the tool.
-        ItemStack breaker = null;
-        if (Stacking.total(Stacking.SILK_TOUCH, sources) > 0) {
-            breaker = tool.clone();
-            breaker.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 1);
-        }
         for (Offset offset : LeafRules.offsets(radius)) {
             Block leaves = log.getRelative(offset.x(), offset.y(), offset.z());
             // Leaves a player placed do not decay in vanilla, so they do not fall either.
             if (leaves.getBlockData() instanceof Leaves data && !data.isPersistent()) {
                 orchard(player, tool, sources, leaves);
-                if (breaker == null) {
-                    leaves.breakNaturally();
-                } else {
-                    leaves.breakNaturally(breaker);
-                }
+                leaves.breakNaturally();
             }
         }
     }
 
     /** Rolls the vanilla loot of {@code leaves} again for each Orchard roll, and drops only apples and saplings. */
     private void orchard(Player player, ItemStack tool, List<Stacking.Source> sources, Block leaves) {
-        if (Stacking.total(Stacking.SILK_TOUCH, sources) > 0) {
-            return; // Silk Touch drops the leaves themselves
-        }
         int rolls = Stacking.rolls(Stacking.total(LeafRules.ORCHARD, sources), random);
         for (int i = 0; i < rolls; i++) {
             for (ItemStack drop : leaves.getDrops(tool, player)) {
