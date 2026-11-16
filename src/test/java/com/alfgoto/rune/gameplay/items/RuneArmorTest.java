@@ -175,6 +175,20 @@ class RuneArmorTest {
     }
 
     @Test
+    void aBrokenHelmetInHandDoesNotBlockMining() {
+        RuneItem helmet = piece("held_helmet", Rarity.COMMON, ArmorKind.HELMET);
+        ItemStack stack = items.create(helmet, 1);
+        stack.setData(DataComponentTypes.DAMAGE, stack.getData(DataComponentTypes.MAX_DAMAGE));
+        BrokenToolListener listener = new BrokenToolListener(items);
+        org.bukkit.entity.Player player = MockBukkit.getMock().addPlayer();
+        player.getInventory().setItemInMainHand(stack);
+        org.bukkit.block.Block block = player.getWorld().getBlockAt(0, 64, 0);
+        org.bukkit.event.block.BlockBreakEvent event = new org.bukkit.event.block.BlockBreakEvent(block, player);
+        listener.onBlockBreak(event);
+        assertFalse(event.isCancelled());
+    }
+
+    @Test
     void theTestHelmetIsRegistered() {
         assertTrue(plugin.getServer().getPluginManager().isPluginEnabled(plugin));
         ItemRegistry registry = plugin.context().get(ItemRegistry.class);

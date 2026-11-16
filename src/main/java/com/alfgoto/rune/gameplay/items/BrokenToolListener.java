@@ -32,6 +32,11 @@ public final class BrokenToolListener implements Listener {
         return items.of(stack).filter(item -> item.toolSpec().isPresent() || item.armorSpec().isPresent()).isPresent();
     }
 
+    /** Tools only: a Broken armor piece held in the hand must not block mining or attacking. */
+    private boolean isBrokenTool(ItemStack stack) {
+        return stack != null && items.of(stack).flatMap(RuneItem::toolSpec).isPresent() && isBroken(stack);
+    }
+
     private boolean isRuneArmor(ItemStack stack) {
         return items.of(stack).flatMap(RuneItem::armorSpec).isPresent();
     }
@@ -91,28 +96,28 @@ public final class BrokenToolListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockDamage(BlockDamageEvent event) {
-        if (isBroken(event.getItemInHand())) {
+        if (isBrokenTool(event.getItemInHand())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (isBroken(event.getPlayer().getInventory().getItemInMainHand())) {
+        if (isBrokenTool(event.getPlayer().getInventory().getItemInMainHand())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player player && isBroken(player.getInventory().getItemInMainHand())) {
+        if (event.getDamager() instanceof Player player && isBrokenTool(player.getInventory().getItemInMainHand())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (isBroken(event.getItem())) {
+        if (isBrokenTool(event.getItem())) {
             event.setUseItemInHand(Event.Result.DENY);
         }
     }
