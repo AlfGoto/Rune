@@ -87,7 +87,24 @@ class RuneConfigTest {
                     pickaxe-actions: 100
                     axe-actions: 200
                     max-bonus: 0.5
+                runes:
+                  speed:
+                    haste:
+                      per-rank: 9
+                      max-rank: 4
+                    specialist:
+                      per-rank: 25
+                      max-rank: 2
+                    affinity:
+                      per-rank: 12.5
+                      max-rank: 6
                 """);
+        assertEquals(9, c.speedRunes().hastePerRank());
+        assertEquals(4, c.speedRunes().hasteMaxRank());
+        assertEquals(25, c.speedRunes().specialistPerRank());
+        assertEquals(2, c.speedRunes().specialistMaxRank());
+        assertEquals(12.5, c.speedRunes().affinityPerRank());
+        assertEquals(6, c.speedRunes().affinityMaxRank());
         assertEquals(100, c.tools().pickaxeMasteryActions());
         assertEquals(200, c.tools().axeMasteryActions());
         assertEquals(0.5, c.tools().masteryMaxBonus());
@@ -173,6 +190,17 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                runes:
+                  speed:
+                    haste:
+                      per-rank: 8
+                      max-rank: 5
+                    specialist:
+                      per-rank: 20
+                      max-rank: 3
+                    affinity:
+                      per-rank: 10
+                      max-rank: 3
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -186,7 +214,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(28, errors.size());
+        assertEquals(34, errors.size());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -270,6 +298,17 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                runes:
+                  speed:
+                    haste:
+                      per-rank: 8
+                      max-rank: 5
+                    specialist:
+                      per-rank: 20
+                      max-rank: 3
+                    affinity:
+                      per-rank: 10
+                      max-rank: 3
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());

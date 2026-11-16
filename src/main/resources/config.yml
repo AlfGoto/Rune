@@ -264,6 +264,19 @@ runes:
     base: 1
     per-rank: 0
     max-rank: 1
+  speed:
+    # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
+    haste:
+      per-rank: 8
+      max-rank: 5
+    # One Rune per ore
+    specialist:
+      per-rank: 20
+      max-rank: 3
+    # One Rune per Place
+    affinity:
+      per-rank: 10
+      max-rank: 3
 tools:
   # Mining speed by Harvest Tier: stone, iron, diamond (vanilla values)
   speed-by-tier: [4, 6, 8]
