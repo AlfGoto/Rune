@@ -4,6 +4,7 @@ import com.alfgoto.rune.command.Subcommand;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -88,6 +89,142 @@ final class LoadoutSubcommands {
                     }
                 }
                 return ids;
+            }
+        };
+    }
+
+    /** {@code /rune debug install_player <rune> [rank]}: installs a Rune on the player. Does not consume a Rune item yet. */
+    static Subcommand installPlayer(PlayerLoadout loadout, RuneRegistry runes) {
+        return new Subcommand() {
+            @Override
+            public String name() {
+                return "install_player";
+            }
+
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                Player player = player(sender);
+                if (player == null) {
+                    return;
+                }
+                if (args.isEmpty() || args.size() > 2) {
+                    player.sendMessage(error(
+                            "rune.command.install_player.usage",
+                            "Usage: /rune debug install_player <rune> [rank]"));
+                    return;
+                }
+                Rune rune = runes.find(args.get(0).toLowerCase(Locale.ROOT)).orElse(null);
+                if (rune == null) {
+                    player.sendMessage(
+                            error("rune.command.install.unknown", "Unknown Rune: %s", Component.text(args.get(0))));
+                    return;
+                }
+                int rank = 1;
+                if (args.size() == 2) {
+                    try {
+                        rank = Integer.parseInt(args.get(1));
+                    } catch (NumberFormatException e) {
+                        rank = 0;
+                    }
+                }
+                UUID id = player.getUniqueId();
+                ToolLoadout.Result result = loadout.install(id, rune, rank);
+                player.sendMessage(switch (result) {
+                    case INSTALLED -> Component.translatable(
+                            "rune.command.install.done",
+                            "Installed %s, Rank %s. Capacity: %s / %s.",
+                            runeName(rune),
+                            Component.text(rank),
+                            Component.text(loadout.used(id)),
+                            Component.text(loadout.capacity(id)));
+                    case DOES_NOT_FIT, NOT_A_TOOL -> error(
+                            "rune.command.install_player.no_fit",
+                            "%s is not a passive Rune: it can't go on the player.",
+                            runeName(rune));
+                    case BAD_RANK -> rune.maxRank().isPresent()
+                            ? error(
+                                    "rune.command.give_rune.bad_rank",
+                                    "The Rank must be a number from 1 to %s.",
+                                    Component.text(rune.maxRank().getAsInt()))
+                            : error("rune.command.give_rune.bad_rank_min", "The Rank must be 1 or more.");
+                    case NO_FREE_SLOT -> error(
+                            "rune.command.install_player.no_slot",
+                            "All %s Player Rune slots are used.",
+                            Component.text(PlayerLoadout.SLOTS));
+                    case OVER_CAPACITY -> error(
+                            "rune.command.install.over_capacity",
+                            "Not enough Capacity: this Rune costs %s, %s left.",
+                            Component.text(runes.capacityCost(rune, rank)),
+                            Component.text(loadout.capacity(id) - loadout.used(id)));
+                });
+            }
+
+            @Override
+            public List<String> complete(CommandSender sender, List<String> args) {
+                if (args.size() != 1) {
+                    return List.of();
+                }
+                String typed = args.get(0).toLowerCase(Locale.ROOT);
+                List<String> ids = new ArrayList<>();
+                for (Rune rune : runes.all()) {
+                    if (rune.fits().contains(Fit.PLAYER) && rune.id().startsWith(typed)) {
+                        ids.add(rune.id());
+                    }
+                }
+                return ids;
+            }
+        };
+    }
+
+    /** {@code /rune loadout player}: lists the Runes installed on the player (slot, Rune, Rank), then Capacity. */
+    static Subcommand showPlayer(PlayerLoadout loadout) {
+        return new Subcommand() {
+            @Override
+            public String name() {
+                return "loadout";
+            }
+
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                Player player = player(sender);
+                if (player == null) {
+                    return;
+                }
+                if (args.size() != 1 || !args.get(0).equalsIgnoreCase("player")) {
+                    player.sendMessage(error("rune.command.loadout.usage", "Usage: /rune loadout player"));
+                    return;
+                }
+                UUID id = player.getUniqueId();
+                List<ToolLoadout.Installed> installed = loadout.installed(id);
+                player.sendMessage(Component.translatable(
+                        "rune.command.loadout.player.header", "Player Loadout:"));
+                if (installed.isEmpty()) {
+                    player.sendMessage(Component.translatable(
+                                    "rune.command.loadout.player.empty", "No Rune installed.")
+                            .color(NamedTextColor.GRAY));
+                }
+                for (int i = 0; i < installed.size(); i++) {
+                    ToolLoadout.Installed entry = installed.get(i);
+                    player.sendMessage(Component.translatable(
+                            "rune.command.loadout.player.line",
+                            "Slot %s: %s, Rank %s",
+                            Component.text(i + 1),
+                            runeName(entry.rune()),
+                            Component.text(entry.rank())));
+                }
+                player.sendMessage(Component.translatable(
+                        "rune.command.loadout.player.capacity",
+                        "Capacity: %s / %s",
+                        Component.text(loadout.used(id)),
+                        Component.text(loadout.capacity(id))));
+            }
+
+            @Override
+            public List<String> complete(CommandSender sender, List<String> args) {
+                if (args.size() == 1 && "player".startsWith(args.get(0).toLowerCase(Locale.ROOT))) {
+                    return List.of("player");
+                }
+                return List.of();
             }
         };
     }

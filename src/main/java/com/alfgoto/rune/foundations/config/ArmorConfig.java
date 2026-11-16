@@ -18,8 +18,12 @@ import org.bukkit.configuration.ConfigurationSection;
 public record ArmorConfig(
         Map<String, List<Integer>> defenseByRarity,
         Map<String, List<Integer>> durabilityByRarity,
-        List<Double> toughnessByRarity) {
+        List<Double> toughnessByRarity,
+        int depthTopY,
+        int depthBottomY) {
 
+    public static final String DEPTH_TOP_Y = "armor.depth.top-y";
+    public static final String DEPTH_BOTTOM_Y = "armor.depth.bottom-y";
     public static final String DEFENSE = "armor.defense";
     public static final String DURABILITY = "armor.durability";
     public static final String TOUGHNESS = "armor.toughness-by-rarity";
@@ -31,6 +35,10 @@ public record ArmorConfig(
         defenseByRarity = Map.copyOf(defenseByRarity);
         durabilityByRarity = Map.copyOf(durabilityByRarity);
         toughnessByRarity = List.copyOf(toughnessByRarity);
+        if (depthTopY <= depthBottomY) {
+            throw new IllegalArgumentException(
+                    "Depth top Y (" + depthTopY + ") must be above bottom Y (" + depthBottomY + ")");
+        }
     }
 
     /** Vanilla values: leather, chainmail, iron, diamond, netherite (docs/design-decisions.md, Tools & armor). */
@@ -46,16 +54,41 @@ public record ArmorConfig(
                         "chestplate", List.of(80, 240, 240, 528, 592),
                         "leggings", List.of(75, 225, 225, 495, 555),
                         "boots", List.of(65, 195, 195, 429, 481)),
-                List.of(0.0, 0.0, 0.0, 2.0, 3.0));
+                List.of(0.0, 0.0, 0.0, 2.0, 3.0),
+                64,
+                -64);
     }
 
     /** Reads the {@code armor} section. Bad or missing values are logged and replaced by defaults. */
     public static ArmorConfig load(ConfigurationSection section, Logger logger) {
         ArmorConfig d = defaults();
+        int top = readY(section, logger, DEPTH_TOP_Y, d.depthTopY);
+        int bottom = readY(section, logger, DEPTH_BOTTOM_Y, d.depthBottomY);
+        if (top <= bottom) {
+            logger.severe("Config '" + DEPTH_TOP_Y + "' (" + top + ") must be above '" + DEPTH_BOTTOM_Y + "' ("
+                    + bottom + "). Using defaults " + d.depthTopY + " and " + d.depthBottomY + ".");
+            top = d.depthTopY;
+            bottom = d.depthBottomY;
+        }
         return new ArmorConfig(
                 readPieces(section, logger, DEFENSE, d.defenseByRarity),
                 readPieces(section, logger, DURABILITY, d.durabilityByRarity),
-                readList(section, logger, TOUGHNESS, d.toughnessByRarity));
+                readList(section, logger, TOUGHNESS, d.toughnessByRarity),
+                top,
+                bottom);
+    }
+
+    private static int readY(ConfigurationSection s, Logger log, String path, int fallback) {
+        if (!s.contains(path)) {
+            log.severe("Config '" + path + "' is missing. Using default " + fallback + ".");
+            return fallback;
+        }
+        if (!(s.get(path) instanceof Number n) || n.doubleValue() != Math.rint(n.doubleValue())) {
+            log.severe("Config '" + path + "' must be a whole number, got '" + s.get(path) + "'. Using default "
+                    + fallback + ".");
+            return fallback;
+        }
+        return n.intValue();
     }
 
     private static Map<String, List<Integer>> readPieces(

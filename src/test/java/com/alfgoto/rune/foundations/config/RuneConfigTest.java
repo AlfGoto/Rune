@@ -101,7 +101,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 1, 2, 4]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 9
@@ -222,7 +227,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -246,7 +256,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(45, errors.size());
+        assertEquals(48, errors.size());
+        assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -344,7 +355,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -370,12 +386,16 @@ class RuneConfigTest {
                   durability:
                     helmet: [55, 165, 165, 363, 0]
                   toughness-by-rarity: [0, 0, 0, 2, banana]
+                  depth:
+                    top-y: -64
+                    bottom-y: 64
                 """);
         assertEquals(ArmorConfig.defaults(), c.armor());
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.chestplate")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.durability.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.toughness-by-rarity")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.depth.top-y")));
     }
 
     @Test

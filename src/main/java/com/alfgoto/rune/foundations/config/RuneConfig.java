@@ -29,6 +29,8 @@ public final class RuneConfig {
     public static final String QUEST_REWARD_JOB_XP = "quests.reward-job-xp";
     public static final String QUEST_REWARD_ACCOUNT_XP = "quests.reward-account-xp";
     public static final String RUNE_COST_BASE = "capacity.rune-cost.base";
+    public static final String RANK_UP_COST_MULTIPLIER = "runes.rank-up.cost-multiplier";
+    public static final double DEFAULT_RANK_UP_COST_MULTIPLIER = 3;
     public static final String RUNE_COST_PER_RANK = "capacity.rune-cost.per-rank";
     public static final String PLAYER_CAPACITY_BASE = "capacity.player.base";
     public static final String PLAYER_CAPACITY_PER_LEVEL = "capacity.player.per-account-level";
@@ -85,6 +87,7 @@ public final class RuneConfig {
     private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
+    private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
 
     private RuneConfig(
             double base,
@@ -232,7 +235,14 @@ public final class RuneConfig {
                 ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
+        loaded.rankUpCostMultiplier =
+                readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         return loaded;
+    }
+
+    /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */
+    public double rankUpCostMultiplier() {
+        return rankUpCostMultiplier;
     }
 
     /** Mining speed Runes balancing: Haste, Specialist and Affinity. */
