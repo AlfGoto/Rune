@@ -167,7 +167,7 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 | Magnet | Uncommon | 3 | Pull radius +2 blocks | pickaxe, axe, shovel |
 | Ore Sense | Uncommon | 3 | +5% chance to outline nearby ores | pickaxe |
 | Affinity: <place> | Uncommon | 3 | +10% speed in one place (Lush Caves, Dripstone, Deep Dark, Mineshaft, Mountains…; forest places for axes) | pickaxe (cave / mining places) or axe (forest places) |
-| Deepstride | Uncommon | none | Move faster below Y 0, +16 Y per Rank | pickaxe |
+| Deepstride | Uncommon | none | Mine faster (+20% mining speed) below Y 0, +16 Y per Rank | pickaxe |
 | Smelt | Rare | 3 | +25% smelt chance | pickaxe, axe, shovel |
 | Cache Hunter | Rare | 3 | +15% Rune Cache chance | pickaxe, axe, shovel |
 | Ore Dash *(Active)* | Rare | 3 | Dash to nearest visible ore, range 8/12/16, cooldown 20 s | pickaxe |
@@ -180,6 +180,12 @@ Generic effects fit pickaxe, axe and shovel; cave/ore effects are pickaxe-only.
 - Each variant (Affinity: Lush Caves, Specialist: Iron…) is a separate Rune. Affinity Runes can appear in their place's chest loot.
 - Speed Runes (Haste, Specialist, Affinity; `gameplay.runes.SpeedBonuses`, `content.runes.SpeedRunesModule`): each variant is its own Rune and its own effect id (`haste`, `specialist_iron`, `affinity_taiga`…). The speed of all installed Runes that apply is summed (Stacking), then applied to the player's block break speed (× 1 + total/100) when a block starts to break, so it follows the tool in hand, the block and the Place. Per-Rank values and Max Ranks are in config (`runes.speed.*`). Affinity fits pickaxes in cave and mining Places (Lush Caves, Mineshaft) and axes only in forest Places (Taiga). Specialist ores: coal, copper, iron, gold, redstone, lapis, diamond, emerald (with deepslate variants). Specialist: <wood> is not built.
 - Ore Bloom: bloomed ores give full XP and can bloom again. Does not work with Silk Touch.
+- Ore Runes (decided by Alfred, built in #68; numbers in config under `runes.deepstride`, `runes.ore_sense`, `runes.ore_bloom`, all starting values):
+  - **Stone family** (`gameplay.runes.StoneFamily`): stone, deepslate, granite, diorite, andesite, tuff, netherrack.
+  - **Deepstride**: the Rune's value is the depth line. Rank 1 works below Y 0, each Rank moves the line up 16. Below the line the player gets +20% mining speed (through `SpeedBonuses.registerByValue`, so each installed Deepstride adds its 20% when the player is under its own line). Pickaxe only. Not built: move speed (the docs say "move faster", Alfred decided mining speed).
+  - **Ore Sense**: each stone-family block broken rolls the chance (5% per Rank). On success, every ore in a cube of 8 blocks each way around the broken block (17×17×17) is outlined with Block Reveal (aqua) for 5 s. Effect id `ore_sense`; the Bone Pickaxe Trait will reuse it. It lives in `visuals.reveal` (it only shows things), so Content and Gameplay never depend on Visuals.
+  - **Ore Bloom**: each ore mined rolls the chance (8% per Rank, stacking above 100% gives several blooms). One random neighbour among the 6 faces that is stone-family becomes the same ore: deepslate variant for deepslate, Nether ore for netherrack. An ore has no variant in the wrong stone (iron never grows in netherrack, Nether gold never in stone, ancient debris never blooms). Neighbours that Block Tracking remembers (placed, fluid, grown) are skipped so placed stone cannot be farmed. A bloomed ore is not tagged, so it gives full XP and can bloom again. A small particle burst shows the bloom. Silk Touch turns it off (`Stacking`).
+  - Runes use the `test_rune` model until Rune art exists.
 - Silk-touched ore gives normal XP when first broken; once placed it gives 0.
 
 ## Mining armor ("deeper = stronger")
