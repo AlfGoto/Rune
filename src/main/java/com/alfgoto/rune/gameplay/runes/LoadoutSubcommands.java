@@ -176,6 +176,59 @@ final class LoadoutSubcommands {
         };
     }
 
+    /** {@code /rune loadout player}: lists the Runes installed on the player (slot, Rune, Rank), then Capacity. */
+    static Subcommand showPlayer(PlayerLoadout loadout) {
+        return new Subcommand() {
+            @Override
+            public String name() {
+                return "loadout";
+            }
+
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                Player player = player(sender);
+                if (player == null) {
+                    return;
+                }
+                if (args.size() != 1 || !args.get(0).equalsIgnoreCase("player")) {
+                    player.sendMessage(error("rune.command.loadout.usage", "Usage: /rune loadout player"));
+                    return;
+                }
+                UUID id = player.getUniqueId();
+                List<ToolLoadout.Installed> installed = loadout.installed(id);
+                player.sendMessage(Component.translatable(
+                        "rune.command.loadout.player.header", "Player Loadout:"));
+                if (installed.isEmpty()) {
+                    player.sendMessage(Component.translatable(
+                                    "rune.command.loadout.player.empty", "No Rune installed.")
+                            .color(NamedTextColor.GRAY));
+                }
+                for (int i = 0; i < installed.size(); i++) {
+                    ToolLoadout.Installed entry = installed.get(i);
+                    player.sendMessage(Component.translatable(
+                            "rune.command.loadout.player.line",
+                            "Slot %s: %s, Rank %s",
+                            Component.text(i + 1),
+                            runeName(entry.rune()),
+                            Component.text(entry.rank())));
+                }
+                player.sendMessage(Component.translatable(
+                        "rune.command.loadout.player.capacity",
+                        "Capacity: %s / %s",
+                        Component.text(loadout.used(id)),
+                        Component.text(loadout.capacity(id))));
+            }
+
+            @Override
+            public List<String> complete(CommandSender sender, List<String> args) {
+                if (args.size() == 1 && "player".startsWith(args.get(0).toLowerCase(Locale.ROOT))) {
+                    return List.of("player");
+                }
+                return List.of();
+            }
+        };
+    }
+
     static Subcommand uninstall(ToolLoadout loadout) {
         return new Subcommand() {
             @Override

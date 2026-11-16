@@ -35,5 +35,6 @@ public final class RunesModule implements RuneModule {
         ctx.debug(LoadoutSubcommands.install(loadout, registry));
         ctx.debug(LoadoutSubcommands.uninstall(loadout));
         ctx.debug(LoadoutSubcommands.installPlayer(playerLoadout, registry));
+        ctx.subcommand(LoadoutSubcommands.showPlayer(playerLoadout));
     }
 }
