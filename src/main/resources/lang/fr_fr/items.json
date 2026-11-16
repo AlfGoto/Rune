@@ -9,6 +9,8 @@
   "rune.item.test_pickaxe": "Pioche de test",
   "rune.item.test_axe": "Hache de test",
   "rune.item.test_helmet": "Casque de test",
+  "rune.item.test_trait_pickaxe": "Pioche de test à Trait",
+  "rune.trait.test_trait": "Trait de test (Fusion, plus lent)",
   "rune.item.miners_helmet": "Casque de mineur",
   "rune.item.miners_vest": "Gilet de mineur",
   "rune.item.miners_trousers": "Pantalon de mineur",

@@ -14,7 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -26,11 +29,13 @@ import org.bukkit.plugin.Plugin;
  */
 final class CanopyListener implements Listener {
 
+    private final Plugin plugin;
     private final ItemRegistry items;
     private final ToolLoadout loadout;
     private final NamespacedKey key;
 
     CanopyListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout) {
+        this.plugin = plugin;
         this.items = items;
         this.loadout = loadout;
         this.key = new NamespacedKey(plugin, "canopy_stride");
@@ -49,6 +54,32 @@ final class CanopyListener implements Listener {
     public void onHeld(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
         refresh(player, player.getInventory().getItem(event.getNewSlot()), player.getLocation());
+    }
+
+    // The axe can leave the main hand without a held-slot change. Refresh one tick later, once the item moved.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDrop(PlayerDropItemEvent event) {
+        later(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSwap(PlayerSwapHandItemsEvent event) {
+        later(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player) {
+            later(player);
+        }
+    }
+
+    private void later(Player player) {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (player.isOnline()) {
+                refresh(player, player.getInventory().getItemInMainHand(), player.getLocation());
+            }
+        });
     }
 
     private void refresh(Player player, ItemStack tool, Location at) {

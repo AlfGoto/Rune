@@ -11,6 +11,7 @@ import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
 /** Crafting framework: an empty RecipeBook, locked recipes and recipe book sync. Content adds recipes. */
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 public final class CraftingModule implements RuneModule {
 
     private RecipeBook book;
+    private RankUpListener rankUpListener;
 
     @Override
     public void enable(RuneContext ctx) {
@@ -27,6 +29,16 @@ public final class CraftingModule implements RuneModule {
         book = recipeBook;
         ctx.listen(new CraftingListener(
                 recipeBook, items, ctx.get(ToolLoadout.class), ctx.get(RuneRegistry.class)));
+        // Rank-up at the smithing table. The hidden recipe is registered one tick later, once every module
+        // has registered its Runes.
+        RuneRegistry runeRegistry = ctx.get(RuneRegistry.class);
+        RankUp rankUp = ctx.provide(RankUp.class, new RankUp(runeRegistry, ctx.config()));
+        rankUpListener = new RankUpListener(
+                ctx.plugin(),
+                rankUp,
+                () -> runeRegistry.all().stream().map(rune -> rune.item().material()).collect(Collectors.toSet()));
+        ctx.listen(rankUpListener);
+        ctx.plugin().getServer().getScheduler().runTask(ctx.plugin(), rankUpListener::registerRecipe);
         // Unlock on level-up, and lock again when a level goes down.
         progress.addLevelListener((uuid, job, before, after) -> {
             Player player = ctx.plugin().getServer().getPlayer(uuid);
@@ -38,6 +50,9 @@ public final class CraftingModule implements RuneModule {
 
     @Override
     public void disable() {
+        if (rankUpListener != null) {
+            rankUpListener.unregisterRecipe();
+        }
         if (book != null) {
             book.unregisterAll();
         }

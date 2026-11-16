@@ -103,6 +103,8 @@ class RuneConfigTest {
                     top-y: 64
                     bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 9
@@ -223,6 +225,8 @@ class RuneConfigTest {
                     top-y: 64
                     bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -246,7 +250,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(45, errors.size());
+        assertEquals(46, errors.size());
+        assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -346,6 +351,8 @@ class RuneConfigTest {
                     top-y: 64
                     bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8

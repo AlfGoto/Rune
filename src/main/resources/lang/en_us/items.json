@@ -9,6 +9,8 @@
   "rune.item.test_pickaxe": "Test Pickaxe",
   "rune.item.test_axe": "Test Axe",
   "rune.item.test_helmet": "Test Helmet",
+  "rune.item.test_trait_pickaxe": "Test Trait Pickaxe",
+  "rune.trait.test_trait": "Test Trait (Smelt, slower)",
   "rune.item.miners_helmet": "Miner's Helmet",
   "rune.item.miners_vest": "Miner's Vest",
   "rune.item.miners_trousers": "Miner's Trousers",

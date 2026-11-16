@@ -2,18 +2,24 @@ package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ArmorKind;
+import com.alfgoto.rune.gameplay.items.ArmorSpec;
 import com.alfgoto.rune.gameplay.items.ArmorStats;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
+import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolStats;
+import com.alfgoto.rune.gameplay.items.TraitBinding;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The Loadout of a Rune Tool or a Rune Armor piece: which Runes are installed, the Capacity check and
@@ -24,7 +30,7 @@ import org.bukkit.plugin.Plugin;
  * uninstalling a Rune moves the next ones up. Installing and uninstalling are free and possible anytime.
  *
  * <p>Capacity is the base Capacity ({@link ToolStats#capacity()} or {@link ArmorStats#capacity()}).
- * Mastery (Rune Tools only) and Traits that change Capacity are not built yet.
+ * It already includes the Trait's Capacity modifier. Mastery (Rune Tools only) is not counted here yet.
  *
  * <p>Rune Armor takes the passive Runes that fit the player (Armor Runes), or that list its own piece
  * ({@link Fit#HELMET}…) as a Fit.
@@ -204,16 +210,64 @@ public final class ToolLoadout {
         return overflow;
     }
 
+    /** The Trait bindings of {@code tool} (a Rune Tool or Rune Armor), empty for anything else. */
+    private List<TraitBinding> traitBindings(ItemStack tool) {
+        Optional<RuneItem> item = items.of(tool);
+        if (item.isEmpty()) {
+            return List.of();
+        }
+        if (item.get().toolSpec().isPresent()) {
+            return item.get().toolSpec().get().traitBindings();
+        }
+        return item.get().armorSpec().map(ArmorSpec::traitBindings).orElse(List.of());
+    }
+
     /**
-     * Every installed Rune as an effect source, ready for {@link Stacking}. This is what feeds the Effect
-     * system. The tool's Trait is not built yet, so it is not in the list.
+     * Every effect source of {@code tool}, ready for {@link Stacking}: first its Trait bindings (value x scale),
+     * then the installed Runes. This is what feeds the Effect system. A Scale that needs a player gives 0 here;
+     * use {@link #sources(ItemStack, Player)} when a player is at hand.
      */
     public List<Stacking.Source> sources(ItemStack tool) {
+        return sources(tool, null);
+    }
+
+    /** Same as {@link #sources(ItemStack)}, with the player the Scales are read for. */
+    public List<Stacking.Source> sources(ItemStack tool, @Nullable Player player) {
         List<Stacking.Source> sources = new ArrayList<>();
+        for (TraitBinding binding : traitBindings(tool)) {
+            sources.add(binding.source(player, tool));
+        }
         for (Installed installed : installed(tool)) {
             sources.add(new Stacking.Source(installed.rune().effect(), installed.rank()));
         }
         return sources;
+    }
+
+    /**
+     * The Trait sources of the armor pieces in {@code worn} (installed Runes are not counted). They count towards
+     * the player's totals for the effects that read the player.
+     */
+    public List<Stacking.Source> wornSources(Iterable<ItemStack> worn, @Nullable Player player) {
+        List<Stacking.Source> sources = new ArrayList<>();
+        for (ItemStack piece : worn) {
+            if (piece == null || armorStats(piece).isEmpty()) {
+                continue;
+            }
+            for (TraitBinding binding : traitBindings(piece)) {
+                sources.add(binding.source(player, piece));
+            }
+        }
+        return sources;
+    }
+
+    /** The Trait sources of the armor {@code player} wears. */
+    public List<Stacking.Source> wornSources(Player player) {
+        return wornSources(Arrays.asList(player.getInventory().getArmorContents()), player);
+    }
+
+    /** The stacked value of {@code effectId} from the armor {@code player} wears. */
+    public double wornTotal(Player player, String effectId) {
+        return Stacking.total(effectId, wornSources(player));
     }
 
     /** The stacked value of the effect {@code effectId} on {@code tool} (see {@link Stacking#total}). */

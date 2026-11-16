@@ -20,15 +20,15 @@ public final class Stacking {
 
     private Stacking() {}
 
-    /** One source of an effect: a Trait or an installed Rune, with its Rank. */
-    public record Source(EffectBinding<?> binding, int rank) {
+    /**
+     * One source of an effect with its final value: an installed Rune (value at its Rank) or a Trait binding
+     * (value x scale).
+     */
+    public record Source(String effectId, double value) {
 
-        public String effectId() {
-            return binding.effect().id();
-        }
-
-        public double value() {
-            return binding.valueAt(rank);
+        /** A Rune's binding at {@code rank}. */
+        public Source(EffectBinding<?> binding, int rank) {
+            this(binding.effect().id(), binding.valueAt(rank));
         }
     }
 
