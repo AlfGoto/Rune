@@ -49,7 +49,10 @@ final class LeafListener implements Listener {
         List<Stacking.Source> sources = loadout.sources(tool);
         Block block = event.getBlock();
         if (Tag.LEAVES.isTagged(block.getType())) {
-            orchard(player, tool, sources, block);
+            // Leaves a player placed give no bonus, same as for Leaf Fall.
+            if (block.getBlockData() instanceof Leaves data && !data.isPersistent()) {
+                orchard(player, tool, sources, block);
+            }
         } else if (Tag.LOGS.isTagged(block.getType())) {
             leafFall(player, tool, sources, block);
         }
