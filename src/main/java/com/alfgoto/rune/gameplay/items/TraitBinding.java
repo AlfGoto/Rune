@@ -13,6 +13,11 @@ import org.jspecify.annotations.Nullable;
  */
 public record TraitBinding(String effectId, double value, Scale scale) {
 
+    /** Capacity = base + the Trait's modifier, never below 0. */
+    static int adjustedCapacity(int base, int modifier) {
+        return Math.max(0, base + modifier);
+    }
+
     public TraitBinding {
         Objects.requireNonNull(effectId, "effectId");
         Objects.requireNonNull(scale, "scale");

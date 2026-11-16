@@ -34,10 +34,9 @@ public record ArmorStats(
                 spec.durability() != null ? spec.durability() : armor.durabilityByRarity().get(piece).get(rarity),
                 spec.slots() != null ? spec.slots() : tools.slotsByRarity().get(rarity),
                 // Capacity = base (or override) + the Trait's modifier, never below 0.
-                Math.max(
-                        0,
-                        (spec.capacity() != null ? spec.capacity() : tools.capacityByRarity().get(rarity))
-                                + spec.capacityModifier()),
+                TraitBinding.adjustedCapacity(
+                        spec.capacity() != null ? spec.capacity() : tools.capacityByRarity().get(rarity),
+                        spec.capacityModifier()),
                 spec.traitId());
     }
 }
