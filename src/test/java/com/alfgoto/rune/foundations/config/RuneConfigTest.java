@@ -87,6 +87,18 @@ class RuneConfigTest {
                     pickaxe-actions: 100
                     axe-actions: 200
                     max-bonus: 0.5
+                armor:
+                  defense:
+                    helmet: [1, 1, 1, 1, 9]
+                    chestplate: [3, 5, 6, 8, 8]
+                    leggings: [2, 4, 5, 6, 6]
+                    boots: [1, 1, 2, 3, 3]
+                  durability:
+                    helmet: [55, 165, 165, 363, 407]
+                    chestplate: [80, 240, 240, 528, 592]
+                    leggings: [75, 225, 225, 495, 555]
+                    boots: [65, 195, 195, 429, 481]
+                  toughness-by-rarity: [0, 0, 1, 2, 4]
                 runes:
                   speed:
                     haste:
@@ -105,6 +117,8 @@ class RuneConfigTest {
         assertEquals(2, c.speedRunes().specialistMaxRank());
         assertEquals(12.5, c.speedRunes().affinityPerRank());
         assertEquals(6, c.speedRunes().affinityMaxRank());
+        assertEquals(List.of(1, 1, 1, 1, 9), c.armor().defenseByRarity().get("helmet"));
+        assertEquals(List.of(0.0, 0.0, 1.0, 2.0, 4.0), c.armor().toughnessByRarity());
         assertEquals(100, c.tools().pickaxeMasteryActions());
         assertEquals(200, c.tools().axeMasteryActions());
         assertEquals(0.5, c.tools().masteryMaxBonus());
@@ -190,6 +204,18 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                armor:
+                  defense:
+                    helmet: [1, 2, 2, 3, 3]
+                    chestplate: [3, 5, 6, 8, 8]
+                    leggings: [2, 4, 5, 6, 6]
+                    boots: [1, 1, 2, 3, 3]
+                  durability:
+                    helmet: [55, 165, 165, 363, 407]
+                    chestplate: [80, 240, 240, 528, 592]
+                    leggings: [75, 225, 225, 495, 555]
+                    boots: [65, 195, 195, 429, 481]
+                  toughness-by-rarity: [0, 0, 0, 2, 3]
                 runes:
                   speed:
                     haste:
@@ -214,7 +240,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(34, errors.size());
+        assertEquals(43, errors.size());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -298,6 +324,18 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                armor:
+                  defense:
+                    helmet: [1, 2, 2, 3, 3]
+                    chestplate: [3, 5, 6, 8, 8]
+                    leggings: [2, 4, 5, 6, 6]
+                    boots: [1, 1, 2, 3, 3]
+                  durability:
+                    helmet: [55, 165, 165, 363, 407]
+                    chestplate: [80, 240, 240, 528, 592]
+                    leggings: [75, 225, 225, 495, 555]
+                    boots: [65, 195, 195, 429, 481]
+                  toughness-by-rarity: [0, 0, 0, 2, 3]
                 runes:
                   speed:
                     haste:
@@ -312,6 +350,24 @@ class RuneConfigTest {
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
+    }
+
+    @Test
+    void badArmorValuesLogAndFallBack() throws Exception {
+        RuneConfig c = load("""
+                armor:
+                  defense:
+                    helmet: [1, 2, 2, 3]
+                    chestplate: [3, 5, 6, 8, -1]
+                  durability:
+                    helmet: [55, 165, 165, 363, 0]
+                  toughness-by-rarity: [0, 0, 0, 2, banana]
+                """);
+        assertEquals(ArmorConfig.defaults(), c.armor());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.helmet")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.chestplate")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.durability.helmet")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.toughness-by-rarity")));
     }
 
     @Test

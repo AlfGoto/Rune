@@ -76,6 +76,7 @@ public final class RuneConfig {
     private final List<Integer> rewardsRollsByRarity;
     private final double rewardsJobBias;
     private final ToolConfig tools;
+    private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
 
@@ -100,6 +101,7 @@ public final class RuneConfig {
             List<Double> rewardsRollsByRarity,
             double rewardsJobBias,
             ToolConfig tools,
+            ArmorConfig armor,
             SpeedRuneConfig speedRunes) {
         this.rewardsRarityBoost = List.copyOf(rewardsRarityBoost);
         this.rewardsRollsByRarity = rewardsRollsByRarity.stream()
@@ -112,6 +114,7 @@ public final class RuneConfig {
         this.runeCostBase = List.copyOf(runeCostBase);
         this.runeCostPerRank = runeCostPerRank;
         this.tools = tools;
+        this.armor = armor;
         this.speedRunes = speedRunes;
         this.questMaxRerollTokens = maxRerollTokens;
         this.questTierMinLevels = List.copyOf(minLevels);
@@ -149,6 +152,7 @@ public final class RuneConfig {
                 DEFAULT_REWARDS_ROLLS_BY_RARITY,
                 DEFAULT_REWARDS_JOB_BIAS,
                 ToolConfig.defaults(),
+                ArmorConfig.defaults(),
                 SpeedRuneConfig.defaults());
     }
 
@@ -208,6 +212,7 @@ public final class RuneConfig {
                 rollsByRarity,
                 jobBias,
                 ToolConfig.load(section, logger),
+                ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
         return loaded;
@@ -234,6 +239,11 @@ public final class RuneConfig {
     /** Rune Tool balancing: speed, durability, slots and Capacity. */
     public ToolConfig tools() {
         return tools;
+    }
+
+    /** Rune Armor balancing: protection, durability, toughness. */
+    public ArmorConfig armor() {
+        return armor;
     }
 
     /** XP to reach the next level: base x level^exponent. */

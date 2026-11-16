@@ -1,26 +1,33 @@
 package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.gameplay.effects.Stacking;
+import com.alfgoto.rune.gameplay.items.ArmorKind;
+import com.alfgoto.rune.gameplay.items.ArmorStats;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolStats;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 /**
- * The Loadout of a Rune Tool: which Runes are installed, the Capacity check and the effect totals.
+ * The Loadout of a Rune Tool or a Rune Armor piece: which Runes are installed, the Capacity check and
+ * the effect totals. In the method names, "tool" means either one.
  *
- * <p>The installed Runes are stored on the tool's PersistentDataContainer under {@code rune:loadout}, as
- * {@code id:rank;id:rank}, so they travel with the tool. Slots are the positions in that list, from 1;
+ * <p>The installed Runes are stored on the item's PersistentDataContainer under {@code rune:loadout}, as
+ * {@code id:rank;id:rank}, so they travel with it. Slots are the positions in that list, from 1;
  * uninstalling a Rune moves the next ones up. Installing and uninstalling are free and possible anytime.
  *
- * <p>Capacity is the tool's base Capacity ({@link ToolStats#capacity()}). Mastery and Traits that change
- * Capacity are not built yet.
+ * <p>Capacity is the base Capacity ({@link ToolStats#capacity()} or {@link ArmorStats#capacity()}).
+ * Mastery (Rune Tools only) and Traits that change Capacity are not built yet.
+ *
+ * <p>Rune Armor takes the passive Runes that fit the player (Armor Runes), or that list its own piece
+ * ({@link Fit#HELMET}…) as a Fit.
  */
 public final class ToolLoadout {
 
@@ -30,9 +37,9 @@ public final class ToolLoadout {
     /** The result of {@link #install}. */
     public enum Result {
         INSTALLED,
-        /** The stack is not a Rune Tool. */
+        /** The stack is not a Rune Tool or Rune Armor. */
         NOT_A_TOOL,
-        /** The Rune cannot go in this kind of tool. */
+        /** The Rune cannot go in this kind of tool or armor piece. */
         DOES_NOT_FIT,
         /** The Rank is not allowed by the Rune's Max Rank (or is below 1). */
         BAD_RANK,
@@ -61,15 +68,49 @@ public final class ToolLoadout {
         };
     }
 
+    /** The {@link Fit} of a kind of armor piece. */
+    public static Fit fitOf(ArmorKind kind) {
+        return switch (kind) {
+            case HELMET -> Fit.HELMET;
+            case CHESTPLATE -> Fit.CHESTPLATE;
+            case LEGGINGS -> Fit.LEGGINGS;
+            case BOOTS -> Fit.BOOTS;
+        };
+    }
+
     /** The final stats of {@code tool} if it is a Rune Tool. */
     public Optional<ToolStats> stats(ItemStack tool) {
         return items.of(tool).flatMap(items::toolStats);
     }
 
-    /** The installed Runes, in slot order. Empty for anything that is not a Rune Tool. */
+    /** The final stats of {@code armor} if it is a Rune Armor piece. */
+    public Optional<ArmorStats> armorStats(ItemStack armor) {
+        return items.of(armor).flatMap(items::armorStats);
+    }
+
+    /** What a Loadout allows on one item: slots, Capacity and which Runes fit. */
+    private record Limits(int slots, int capacity, Predicate<Rune> fits) {}
+
+    private Optional<Limits> limits(ItemStack stack) {
+        Optional<ToolStats> tool = stats(stack);
+        if (tool.isPresent()) {
+            ToolStats s = tool.get();
+            Fit fit = fitOf(s.kind());
+            return Optional.of(new Limits(s.slots(), s.capacity(), rune -> rune.fits().contains(fit)));
+        }
+        return armorStats(stack).map(s -> {
+            Fit fit = fitOf(s.kind());
+            return new Limits(
+                    s.slots(),
+                    s.capacity(),
+                    rune -> rune.fits().contains(Fit.PLAYER) || rune.fits().contains(fit));
+        });
+    }
+
+    /** The installed Runes, in slot order. Empty for anything that is not a Rune Tool or Rune Armor. */
     public List<Installed> installed(ItemStack tool) {
         List<Installed> list = new ArrayList<>();
-        if (stats(tool).isEmpty()) {
+        if (limits(tool).isEmpty()) {
             return list;
         }
         String raw = tool.getItemMeta().getPersistentDataContainer().get(loadoutKey, PersistentDataType.STRING);
@@ -103,28 +144,28 @@ public final class ToolLoadout {
         return sum;
     }
 
-    /** The Capacity of the tool, or 0 if it is not a Rune Tool. */
+    /** The Capacity of the tool or armor piece, or 0 if it is neither. */
     public int capacity(ItemStack tool) {
-        return stats(tool).map(ToolStats::capacity).orElse(0);
+        return limits(tool).map(Limits::capacity).orElse(0);
     }
 
-    /** Installs {@code rune} at {@code rank} on {@code tool}. The tool is changed only when it succeeds. */
+    /** Installs {@code rune} at {@code rank} on {@code tool}. The item is changed only when it succeeds. */
     public Result install(ItemStack tool, Rune rune, int rank) {
-        Optional<ToolStats> stats = stats(tool);
-        if (stats.isEmpty()) {
+        Optional<Limits> limits = limits(tool);
+        if (limits.isEmpty()) {
             return Result.NOT_A_TOOL;
         }
-        if (!rune.fits().contains(fitOf(stats.get().kind()))) {
+        if (!limits.get().fits().test(rune)) {
             return Result.DOES_NOT_FIT;
         }
         if (!rune.allowsRank(rank)) {
             return Result.BAD_RANK;
         }
         List<Installed> list = installed(tool);
-        if (list.size() >= stats.get().slots()) {
+        if (list.size() >= limits.get().slots()) {
             return Result.NO_FREE_SLOT;
         }
-        if (used(tool) + runes.capacityCost(rune, rank) > stats.get().capacity()) {
+        if (used(tool) + runes.capacityCost(rune, rank) > limits.get().capacity()) {
             return Result.OVER_CAPACITY;
         }
         list.add(new Installed(rune, rank));

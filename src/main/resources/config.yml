@@ -297,6 +297,24 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
+armor:
+  # Rune Armor follows vanilla by Rarity: Common = leather, Uncommon = chainmail, Rare = iron,
+  # Epic = diamond, Legendary = netherite. Each list is lowest Rarity first.
+  # Slots and Capacity are the ones of tools.slots-by-rarity and tools.capacity-by-rarity.
+  # Protection (armor points) by piece
+  defense:
+    helmet: [1, 2, 2, 3, 3]
+    chestplate: [3, 5, 6, 8, 8]
+    leggings: [2, 4, 5, 6, 6]
+    boots: [1, 1, 2, 3, 3]
+  # Durability by piece
+  durability:
+    helmet: [55, 165, 165, 363, 407]
+    chestplate: [80, 240, 240, 528, 592]
+    leggings: [75, 225, 225, 495, 555]
+    boots: [65, 195, 195, 429, 481]
+  # Armor toughness of each piece
+  toughness-by-rarity: [0, 0, 0, 2, 3]
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

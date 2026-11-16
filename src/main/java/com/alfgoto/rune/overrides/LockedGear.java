@@ -2,7 +2,9 @@ package com.alfgoto.rune.overrides;
 
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Decides what counts as Locked Gear: vanilla stone, iron, gold, diamond and netherite tools and
@@ -18,8 +20,16 @@ public final class LockedGear {
 
     private LockedGear() {}
 
+    /** Marks a Rune item: it is never Locked Gear, even on a vanilla leather base (Rune Armor). */
+    private static final NamespacedKey RUNE_ITEM_ID = new NamespacedKey("rune", "item_id");
+
     public static boolean isLocked(ItemStack item) {
-        return item != null && isLocked(item.getType());
+        return item != null && isLocked(item.getType()) && !isRuneItem(item);
+    }
+
+    private static boolean isRuneItem(ItemStack item) {
+        return item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(RUNE_ITEM_ID, PersistentDataType.STRING);
     }
 
     public static boolean isLocked(Material material) {

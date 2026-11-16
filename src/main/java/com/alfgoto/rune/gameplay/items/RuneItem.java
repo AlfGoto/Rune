@@ -19,7 +19,13 @@ import org.jspecify.annotations.Nullable;
  * <p>{@code tool} is set for a Rune Tool (see {@link #tool(String, Rarity, ToolKind, String, ToolSpec)}),
  * and {@code null} for any other item.
  */
-public record RuneItem(String id, Rarity rarity, Material material, String model, @Nullable ToolSpec tool)
+public record RuneItem(
+        String id,
+        Rarity rarity,
+        Material material,
+        String model,
+        @Nullable ToolSpec tool,
+        @Nullable ArmorSpec armor)
         implements Identified {
 
     public RuneItem {
@@ -33,16 +39,38 @@ public record RuneItem(String id, Rarity rarity, Material material, String model
         if (tool != null && ToolKind.of(material).isEmpty()) {
             throw new IllegalArgumentException("A Rune Tool must use a vanilla wooden tool as base: " + material);
         }
+        if (armor != null && tool != null) {
+            throw new IllegalArgumentException("An item cannot be both a Rune Tool and Rune Armor: " + id);
+        }
+        if (armor != null && ArmorKind.of(material).isEmpty()) {
+            throw new IllegalArgumentException("Rune Armor must use a vanilla leather piece as base: " + material);
+        }
     }
 
     /** A plain item (no tool stats). */
     public RuneItem(String id, Rarity rarity, Material material, String model) {
-        this(id, rarity, material, model, null);
+        this(id, rarity, material, model, null, null);
+    }
+
+    /** An item with optional Rune Tool data. */
+    public RuneItem(String id, Rarity rarity, Material material, String model, @Nullable ToolSpec tool) {
+        this(id, rarity, material, model, tool, null);
     }
 
     /** A Rune Tool of {@code kind}. */
     public static RuneItem tool(String id, Rarity rarity, ToolKind kind, String model, ToolSpec spec) {
         return new RuneItem(id, rarity, kind.material(), model, Objects.requireNonNull(spec, "spec"));
+    }
+
+    /** A Rune Armor piece (its kind is in {@code spec}). */
+    public static RuneItem armor(String id, Rarity rarity, String model, ArmorSpec spec) {
+        Objects.requireNonNull(spec, "spec");
+        return new RuneItem(id, rarity, spec.kind().material(), model, null, spec);
+    }
+
+    /** The Rune Armor data, or empty when this item is not Rune Armor. */
+    public Optional<ArmorSpec> armorSpec() {
+        return Optional.ofNullable(armor);
     }
 
     /** The Rune Tool data, or empty when this item is not a Rune Tool. */

@@ -1,5 +1,6 @@
 package com.alfgoto.rune.gameplay.items;
 
+import com.alfgoto.rune.foundations.config.ArmorConfig;
 import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.text.Text;
@@ -27,14 +28,25 @@ public final class ItemRegistry {
     private final List<ItemRedrawer> redrawers = new ArrayList<>();
 
     private final ToolConfig toolConfig;
+    private final ArmorConfig armorConfig;
 
     public ItemRegistry(Plugin plugin) {
         this(plugin, ToolConfig.defaults());
     }
 
     public ItemRegistry(Plugin plugin, ToolConfig toolConfig) {
+        this(plugin, toolConfig, ArmorConfig.defaults());
+    }
+
+    public ItemRegistry(Plugin plugin, ToolConfig toolConfig, ArmorConfig armorConfig) {
         this.idKey = new NamespacedKey(plugin, "item_id");
         this.toolConfig = toolConfig;
+        this.armorConfig = armorConfig;
+    }
+
+    /** The final stats of {@code item} when it is Rune Armor, or empty. */
+    public Optional<ArmorStats> armorStats(RuneItem item) {
+        return ArmorStats.of(item, armorConfig, toolConfig);
     }
 
     /** The final stats of {@code item} when it is a Rune Tool, or empty. */
@@ -73,6 +85,7 @@ public final class ItemRegistry {
         meta.setItemModel(new NamespacedKey(Text.NAMESPACE, item.model()));
         stack.setItemMeta(meta);
         toolStats(item).ifPresent(stats -> ToolComponents.apply(stack, stats));
+        armorStats(item).ifPresent(stats -> ArmorComponents.apply(stack, stats));
         redraw(stack);
         return stack;
     }

@@ -19,6 +19,8 @@
   "rune.fit.leggings": "Leggings",
   "rune.fit.boots": "Boots",
   "rune.item.lore.harvest_tier": "Harvest Tier: %s",
+  "rune.item.lore.defense": "Protection: %s",
+  "rune.item.lore.toughness": "Toughness: %s",
   "rune.item.lore.slots": "Rune slots: %s",
   "rune.item.lore.capacity": "Capacity: %s",
   "rune.item.lore.trait": "Trait: %s",

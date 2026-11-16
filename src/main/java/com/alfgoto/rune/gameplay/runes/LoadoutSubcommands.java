@@ -56,16 +56,17 @@ final class LoadoutSubcommands {
                             Component.text(rank),
                             Component.text(loadout.used(tool)),
                             Component.text(loadout.capacity(tool)));
-                    case NOT_A_TOOL -> error("rune.command.loadout.not_a_tool", "Hold a Rune Tool in your main hand.");
+                    case NOT_A_TOOL -> error(
+                            "rune.command.loadout.not_a_tool", "Hold a Rune Tool or Rune Armor in your main hand.");
                     case DOES_NOT_FIT -> error(
-                            "rune.command.install.no_fit", "%s does not fit in this tool.", runeName(rune));
+                            "rune.command.install.no_fit", "%s does not fit in this item.", runeName(rune));
                     case BAD_RANK -> rune.maxRank().isPresent()
                             ? error(
                                     "rune.command.give_rune.bad_rank",
                                     "The Rank must be a number from 1 to %s.",
                                     Component.text(rune.maxRank().getAsInt()))
                             : error("rune.command.give_rune.bad_rank_min", "The Rank must be 1 or more.");
-                    case NO_FREE_SLOT -> error("rune.command.install.no_slot", "No free Rune slot on this tool.");
+                    case NO_FREE_SLOT -> error("rune.command.install.no_slot", "No free Rune slot on this item.");
                     case OVER_CAPACITY -> error(
                             "rune.command.install.over_capacity",
                             "Not enough Capacity: this Rune costs %s, %s left.",
@@ -105,9 +106,9 @@ final class LoadoutSubcommands {
                     return;
                 }
                 ItemStack tool = player.getInventory().getItemInMainHand();
-                if (loadout.stats(tool).isEmpty()) {
-                    player.sendMessage(
-                            error("rune.command.loadout.not_a_tool", "Hold a Rune Tool in your main hand."));
+                if (loadout.stats(tool).isEmpty() && loadout.armorStats(tool).isEmpty()) {
+                    player.sendMessage(error(
+                            "rune.command.loadout.not_a_tool", "Hold a Rune Tool or Rune Armor in your main hand."));
                     return;
                 }
                 int slot = 0;

@@ -1,5 +1,6 @@
 package com.alfgoto.rune.visuals.itemrendering;
 
+import com.alfgoto.rune.gameplay.items.ArmorStats;
 import com.alfgoto.rune.gameplay.items.ItemRedrawer;
 import com.alfgoto.rune.gameplay.items.MasteryStatus;
 import com.alfgoto.rune.gameplay.items.RuneItem;
@@ -28,6 +29,13 @@ public final class ItemRenderer implements ItemRedrawer {
     private final RuneRegistry runes;
     private final Function<RuneItem, Optional<ToolStats>> toolStats;
     private final Function<ItemStack, Optional<MasteryStatus>> mastery;
+    private Function<RuneItem, Optional<ArmorStats>> armorStats = item -> Optional.empty();
+
+    /** {@code armorStats} gives the final stats of a Rune Armor piece (empty for other items). */
+    public ItemRenderer withArmor(Function<RuneItem, Optional<ArmorStats>> armorStats) {
+        this.armorStats = armorStats;
+        return this;
+    }
 
     /** {@code toolStats} gives the final stats of a Rune Tool (empty for other items). No Mastery shown. */
     public ItemRenderer(RuneRegistry runes, Function<RuneItem, Optional<ToolStats>> toolStats) {
@@ -52,8 +60,27 @@ public final class ItemRenderer implements ItemRedrawer {
                     .decoration(TextDecoration.ITALIC, false));
             meta.lore(runes.find(item.id())
                     .map(rune -> runeLore(rune, runes.rankOf(stack)))
-                    .orElseGet(() -> lore(item, toolStats.apply(item), mastery.apply(stack))));
+                    .orElseGet(() -> armorStats.apply(item)
+                            .map(armor -> armorLore(item, armor))
+                            .orElseGet(() -> lore(item, toolStats.apply(item), mastery.apply(stack)))));
         });
+    }
+
+    /** Rarity, protection, slots, Capacity and Trait of a Rune Armor piece. */
+    static List<Component> armorLore(RuneItem item, ArmorStats s) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Text.rarityName(item.rarity()).decoration(TextDecoration.ITALIC, false));
+        lore.add(stat("rune.item.lore.defense", "Protection: %s", Component.text(s.defense())));
+        if (s.toughness() > 0) {
+            lore.add(stat("rune.item.lore.toughness", "Toughness: %s", Component.text(s.toughness())));
+        }
+        lore.add(stat("rune.item.lore.slots", "Rune slots: %s", Component.text(s.slots())));
+        lore.add(stat("rune.item.lore.capacity", "Capacity: %s", Component.text(s.capacity())));
+        s.trait().ifPresent(trait -> lore.add(stat(
+                "rune.item.lore.trait",
+                "Trait: %s",
+                Text.translatable(Text.key("trait", trait), capitalise(trait.replace('_', ' '))))));
+        return lore;
     }
 
     static List<Component> lore(RuneItem item, Optional<ToolStats> stats) {
