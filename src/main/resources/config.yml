@@ -270,7 +270,7 @@ runes:
     base: 0
     per-rank: 16
     speed: 20
-  # Ore Sense: chance (%) that breaking a stone-family block outlines ores within radius blocks for seconds.
+  # Ore Sense: chance (%) that breaking a stone-family block outlines ores in a cube of radius blocks each way (so 8 = 17x17x17) for seconds.
   ore_sense:
     base: 5
     per-rank: 5
