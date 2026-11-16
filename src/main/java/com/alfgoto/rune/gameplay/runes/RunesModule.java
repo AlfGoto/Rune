@@ -29,11 +29,11 @@ public final class RunesModule implements RuneModule {
         PlayerLoadout playerLoadout = ctx.provide(
                 PlayerLoadout.class,
                 new PlayerLoadout(ctx.get(PlayerStorage.class), registry, playerCapacity, ctx.get(JobProgress.class)));
-        ctx.subcommand(LoadoutSubcommands.installPlayer(playerLoadout, registry));
         ctx.get(GiveSubcommand.class).addVariant(new GiveRuneVariant(registry));
         ToolLoadout loadout =
                 ctx.provide(ToolLoadout.class, new ToolLoadout(ctx.plugin(), ctx.get(ItemRegistry.class), registry));
         ctx.debug(LoadoutSubcommands.install(loadout, registry));
         ctx.debug(LoadoutSubcommands.uninstall(loadout));
+        ctx.debug(LoadoutSubcommands.installPlayer(playerLoadout, registry));
     }
 }

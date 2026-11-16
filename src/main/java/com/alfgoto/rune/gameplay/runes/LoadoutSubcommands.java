@@ -93,12 +93,12 @@ final class LoadoutSubcommands {
         };
     }
 
-    /** {@code /rune install player <rune> [rank]}: installs a Rune on the player. Does not consume a Rune item yet. */
+    /** {@code /rune debug install_player <rune> [rank]}: installs a Rune on the player. Does not consume a Rune item yet. */
     static Subcommand installPlayer(PlayerLoadout loadout, RuneRegistry runes) {
         return new Subcommand() {
             @Override
             public String name() {
-                return "install";
+                return "install_player";
             }
 
             @Override
@@ -107,21 +107,22 @@ final class LoadoutSubcommands {
                 if (player == null) {
                     return;
                 }
-                if (args.size() < 2 || args.size() > 3 || !args.get(0).equalsIgnoreCase("player")) {
+                if (args.isEmpty() || args.size() > 2) {
                     player.sendMessage(error(
-                            "rune.command.install_player.usage", "Usage: /rune install player <rune> [rank]"));
+                            "rune.command.install_player.usage",
+                            "Usage: /rune debug install_player <rune> [rank]"));
                     return;
                 }
-                Rune rune = runes.find(args.get(1).toLowerCase(Locale.ROOT)).orElse(null);
+                Rune rune = runes.find(args.get(0).toLowerCase(Locale.ROOT)).orElse(null);
                 if (rune == null) {
                     player.sendMessage(
-                            error("rune.command.install.unknown", "Unknown Rune: %s", Component.text(args.get(1))));
+                            error("rune.command.install.unknown", "Unknown Rune: %s", Component.text(args.get(0))));
                     return;
                 }
                 int rank = 1;
-                if (args.size() == 3) {
+                if (args.size() == 2) {
                     try {
-                        rank = Integer.parseInt(args.get(2));
+                        rank = Integer.parseInt(args.get(1));
                     } catch (NumberFormatException e) {
                         rank = 0;
                     }
@@ -160,13 +161,10 @@ final class LoadoutSubcommands {
 
             @Override
             public List<String> complete(CommandSender sender, List<String> args) {
-                if (args.size() == 1) {
-                    return "player".startsWith(args.get(0).toLowerCase(Locale.ROOT)) ? List.of("player") : List.of();
-                }
-                if (args.size() != 2) {
+                if (args.size() != 1) {
                     return List.of();
                 }
-                String typed = args.get(1).toLowerCase(Locale.ROOT);
+                String typed = args.get(0).toLowerCase(Locale.ROOT);
                 List<String> ids = new ArrayList<>();
                 for (Rune rune : runes.all()) {
                     if (rune.fits().contains(Fit.PLAYER) && rune.id().startsWith(typed)) {

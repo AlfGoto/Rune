@@ -6,7 +6,7 @@
   "rune.command.install.no_slot": "Aucun emplacement de rune libre sur cet objet.",
   "rune.command.install.over_capacity": "Capacité insuffisante : cette rune coûte %s, il en reste %s.",
   "rune.command.install.done": "%s installée, rang %s. Capacité : %s / %s.",
-  "rune.command.install_player.usage": "Utilisation : /rune install player <rune> [rang]",
+  "rune.command.install_player.usage": "Utilisation : /rune debug install_player <rune> [rang]",
   "rune.command.install_player.no_fit": "%s n'est pas une rune passive : elle ne peut pas aller sur le joueur.",
   "rune.command.install_player.no_slot": "Les %s emplacements de runes du joueur sont utilisés.",
   "rune.command.uninstall.usage": "Utilisation : /rune debug uninstall <emplacement>",
