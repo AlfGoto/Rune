@@ -20,6 +20,16 @@ public final class SpeedBonuses {
 
     private final ToolLoadout loadout;
     private final Map<String, BiPredicate<Player, Block>> rules = new LinkedHashMap<>();
+    private final Map<String, ValueRule> valueRules = new LinkedHashMap<>();
+
+    /**
+     * A speed effect whose bonus depends on the value of each installed source (its Rank): Deepstride.
+     * Gives the speed in percent for one source, or 0 when it does not apply.
+     */
+    @FunctionalInterface
+    public interface ValueRule {
+        double percent(Player player, Block block, double value);
+    }
 
     public SpeedBonuses(ToolLoadout loadout) {
         this.loadout = loadout;
@@ -27,7 +37,17 @@ public final class SpeedBonuses {
 
     /** Declares {@code effectId} as a speed effect that applies when {@code applies} is true. */
     public void register(String effectId, BiPredicate<Player, Block> applies) {
-        if (rules.putIfAbsent(effectId, applies) != null) {
+        if (valueRules.containsKey(effectId) || rules.putIfAbsent(effectId, applies) != null) {
+            throw new IllegalArgumentException("Speed effect already registered: " + effectId);
+        }
+    }
+
+    /**
+     * Declares {@code effectId} as a speed effect decided for each source by its value. Each source adds
+     * what {@code rule} gives (Stacking).
+     */
+    public void registerByValue(String effectId, ValueRule rule) {
+        if (rules.containsKey(effectId) || valueRules.putIfAbsent(effectId, rule) != null) {
             throw new IllegalArgumentException("Speed effect already registered: " + effectId);
         }
     }
@@ -40,6 +60,12 @@ public final class SpeedBonuses {
             ids.add(source.effectId());
         }
         double total = 0;
+        for (Stacking.Source source : sources) {
+            ValueRule valueRule = valueRules.get(source.effectId());
+            if (valueRule != null) {
+                total += valueRule.percent(player, block, source.value());
+            }
+        }
         for (String id : ids) {
             BiPredicate<Player, Block> rule = rules.get(id);
             if (rule != null && rule.test(player, block)) {

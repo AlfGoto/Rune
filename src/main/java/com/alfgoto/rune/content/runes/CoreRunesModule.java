@@ -57,6 +57,11 @@ public final class CoreRunesModule implements RuneModule {
         dropRune(ctx, "fortune", Rarity.UNCOMMON, diggers);
         dropRune(ctx, "smelt", Rarity.RARE, diggers);
         dropRune(ctx, "silk_touch", Rarity.EPIC, diggers);
+
+        // Ore Runes (docs/jobs/mining.md), pickaxe only. Ore Sense is shown by visuals.reveal.OreSenseListener
+        // and Ore Bloom is done by OreBloomListener.
+        dropRune(ctx, "ore_sense", Rarity.UNCOMMON, Set.of(Fit.PICKAXE));
+        dropRune(ctx, "ore_bloom", Rarity.EPIC, Set.of(Fit.PICKAXE));
     }
 
     /**
