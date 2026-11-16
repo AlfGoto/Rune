@@ -319,6 +319,11 @@ armor:
     boots: [65, 195, 195, 429, 481]
   # Armor toughness of each piece
   toughness-by-rarity: [0, 0, 0, 2, 3]
+  # Mining armor ("deeper = stronger", docs/jobs/mining.md): a Trait is 0% at top-y and 100% at
+  # bottom-y, linear in between, and stays at 0% above / 100% below.
+  depth:
+    top-y: 64
+    bottom-y: -64
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123
