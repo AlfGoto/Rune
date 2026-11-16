@@ -72,6 +72,44 @@ public final class CoreCraftingModule implements RuneModule {
                 'I', Ingredient.vanilla(Material.NETHERITE_INGOT),
                 'D', Ingredient.vanilla(Material.DIAMOND_BLOCK),
                 'E', Ingredient.vanilla(Material.ECHO_SHARD)));
+
+        miningArmor(book, mining);
+    }
+
+    /**
+     * Common (Mining 3) and Uncommon (Mining 7) Mining armor. The ingredients are the documented ones; the grid
+     * layouts are not in docs. Each Uncommon piece consumes its Common piece (an Upgrade).
+     */
+    private static void miningArmor(RecipeBook book, Job mining) {
+        Ingredient leather = Ingredient.vanilla(Material.LEATHER);
+        Ingredient copper = Ingredient.vanilla(Material.COPPER_INGOT);
+        Ingredient iron = Ingredient.vanilla(Material.IRON_INGOT);
+        Ingredient lining = Ingredient.rune("reinforced_lining");
+
+        armor(book, mining, 3, "miners_helmet", List.of(" C ", "LLL", "L  "), Map.of(
+                'L', leather, 'C', Ingredient.vanilla(Material.CANDLE)));
+        armor(book, mining, 3, "miners_vest", List.of("LCL", "LLL", "LCL"), Map.of('L', leather, 'C', copper));
+        armor(book, mining, 3, "miners_trousers", List.of("LLL", "S S", "L L"), Map.of(
+                'L', leather, 'S', Ingredient.vanilla(Material.STRING)));
+        armor(book, mining, 3, "miners_boots", List.of("L L", "LWL"), Map.of(
+                'L', leather, 'W', Ingredient.vanilla(Material.WHITE_WOOL)));
+
+        armor(book, mining, 7, "cavers_helmet", List.of("CLC", "CHR"), Map.of(
+                'C', copper, 'L', Ingredient.vanilla(Material.LANTERN),
+                'H', Ingredient.rune("miners_helmet"), 'R', lining));
+        armor(book, mining, 7, "reinforced_chestplate", List.of("IVI", "IRI"), Map.of(
+                'I', iron, 'V', Ingredient.rune("miners_vest"), 'R', lining));
+        armor(book, mining, 7, "cavers_leggings", List.of("IPI", "TRI"), Map.of(
+                'I', iron, 'P', Ingredient.vanilla(Material.PISTON),
+                'T', Ingredient.rune("miners_trousers"), 'R', lining));
+        armor(book, mining, 7, "cavers_boots", List.of("IBI", "SR "), Map.of(
+                'I', iron, 'B', Ingredient.rune("miners_boots"),
+                'S', Ingredient.vanilla(Material.SLIME_BLOCK), 'R', lining));
+    }
+
+    private static void armor(
+            RecipeBook book, Job mining, int level, String id, List<String> shape, Map<Character, Ingredient> ing) {
+        book.register(new CraftingRecipe(id, mining, level, id, 1, shape, ing));
     }
 
     /** Components are shared by every Job; the recipe is attached to Mining, whose doc defines it. */
