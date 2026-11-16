@@ -54,7 +54,7 @@ class CachesTest {
         plugin = MockBukkit.load(RunePlugin.class);
         player = server.addPlayer();
         items = new ItemRegistry(plugin);
-        Caches.itemsToRegister().forEach(items::register);
+        com.alfgoto.rune.content.caches.CoreCachesModule.items().forEach(items::register);
         runes = new RuneRegistry(plugin, items, new CapacityCost(config));
         rune("general", null);
         rune("mining_rune", MINING);

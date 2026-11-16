@@ -14,7 +14,7 @@ import com.google.auto.service.AutoService;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** Rune Caches: registers one Cache item per Rarity, opens them on right-click and adds {@code /rune give cache}. */
+/** Rune Caches: opens Caches (the items are in {@code CoreCachesModule}) on right-click and adds {@code /rune give cache}. */
 @AutoService(RuneModule.class)
 public final class CachesModule implements RuneModule {
 
@@ -26,7 +26,6 @@ public final class CachesModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         ItemRegistry items = ctx.get(ItemRegistry.class);
-        Caches.itemsToRegister().forEach(items::register);
         Caches caches = ctx.provide(
                 Caches.class,
                 new Caches(

@@ -1,7 +1,6 @@
 package com.alfgoto.rune.gameplay.caches;
 
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
-import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.rewards.Drop;
 import com.alfgoto.rune.gameplay.rewards.LootRoller;
 import com.alfgoto.rune.gameplay.rewards.LootTable;
@@ -14,7 +13,6 @@ import java.util.Optional;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -51,13 +49,6 @@ public final class Caches {
     /** The item id of the Cache of this Rarity, e.g. {@code rune_cache_rare}. */
     public static String itemId(Rarity rarity) {
         return "rune_cache_" + rarity.id();
-    }
-
-    /** One {@link RuneItem} per Rarity. The model is a placeholder: no Cache texture exists yet. */
-    public static List<RuneItem> itemsToRegister() {
-        return Arrays.stream(Rarity.values())
-                .map(rarity -> new RuneItem(itemId(rarity), rarity, Material.PAPER, "test_rune"))
-                .toList();
     }
 
     /** A new Cache of {@code rarity}, for {@code jobId} (null = no Job). */

@@ -49,7 +49,7 @@ final class GiveCacheVariant implements GiveVariant {
         player.sendMessage(Component.translatable(
                 "rune.command.give_cache.done",
                 "Gave a %s Cache.",
-                Component.text(rarity.englishName()).color(rarity.color())));
+                Component.translatable(rarity.translationKey(), rarity.englishName()).color(rarity.color())));
     }
 
     @Override
