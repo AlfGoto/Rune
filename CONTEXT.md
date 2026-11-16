@@ -107,10 +107,8 @@ _Avoid_: skill tree (Job Levels never give passive stats)
 
 **Broken** — State of a Rune Tool at 0 durability: unusable but keeps its Runes. Repaired at an anvil.
 
-**Locked Gear** — Any vanilla stone, iron, gold, diamond or netherite tool or weapon, and all vanilla armor (leather included). Can't be crafted or used, only salvaged. Vanilla wooden tools remain craftable and usable but have no Capacity.
+**Locked Gear** — Any vanilla stone, iron, gold, diamond or netherite tool or weapon, and all vanilla armor (leather included). Can't be crafted or used. Vanilla wooden tools remain craftable and usable but have no Capacity.
 _Avoid_: Locked Tool (old name, too narrow now that armor is included)
-
-**Salvage** — Turning Locked Gear into materials.
 
 ## Quests
 

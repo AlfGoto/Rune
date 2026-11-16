@@ -15,7 +15,7 @@ import com.google.auto.service.AutoService;
 import java.util.Set;
 import org.bukkit.Material;
 
-/** Registers the core items into the ItemRegistry. For now only the test item, the test pickaxe and the test axe. */
+/** Registers the core items into the ItemRegistry: test items (with the test axe), the Components and the first Mining armor. */
 @AutoService(RuneModule.class)
 public final class CoreItemsModule implements RuneModule {
 
@@ -37,6 +37,7 @@ public final class CoreItemsModule implements RuneModule {
         // Common helmet: leather protection, 1 slot, Capacity 3. No armor texture exists yet, so it uses the
         // test model (placeholder).
         items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
+        miningArmor(items);
         // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
         items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, "test_rune"));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
@@ -48,6 +49,27 @@ public final class CoreItemsModule implements RuneModule {
         component(items, "deep_core", Rarity.EPIC);
         component(items, "abyssal_plate", Rarity.EPIC);
         component(items, "legendary_core", Rarity.LEGENDARY);
+    }
+
+    /**
+     * The Common and Uncommon Mining armor (docs/jobs/mining.md). Stats follow the Rarity. The Trait ids name
+     * the effect each slot gets, scaled by depth; the effects are not built yet. No armor texture exists yet:
+     * they use the test model (placeholder).
+     */
+    private static void miningArmor(ItemRegistry items) {
+        armor(items, "miners_helmet", Rarity.COMMON, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "miners_vest", Rarity.COMMON, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "miners_trousers", Rarity.COMMON, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "miners_boots", Rarity.COMMON, ArmorKind.BOOTS, "mining_fall_reduction");
+        armor(items, "cavers_helmet", Rarity.UNCOMMON, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "reinforced_chestplate", Rarity.UNCOMMON, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "cavers_leggings", Rarity.UNCOMMON, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "cavers_boots", Rarity.UNCOMMON, ArmorKind.BOOTS, "mining_fall_reduction");
+    }
+
+    private static void armor(ItemRegistry items, String id, Rarity rarity, ArmorKind kind, String trait) {
+        items.register(RuneItem.armor(
+                id, rarity, "test_rune", new ArmorSpec(kind, null, null, null, null, null, trait)));
     }
 
     private static void component(ItemRegistry items, String id, Rarity rarity) {
