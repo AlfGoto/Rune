@@ -47,7 +47,10 @@ public final class QuestSubcommand implements Subcommand {
                 .color(NamedTextColor.GOLD));
         List<Quest> quests = book.active(player.getUniqueId());
         for (int i = 0; i < quests.size(); i++) {
-            player.sendMessage(describe("rune.command.quest.entry", "%s. %s - %s (%s): %s", i + 1, quests.get(i)));
+            int done = book.progress(player.getUniqueId(), i + 1);
+            player.sendMessage(describe("rune.command.quest.entry", "%s. %s - %s (%s): %s", i + 1, quests.get(i))
+                    .append(Component.translatable(
+                            "rune.command.quest.progress", " (%s done)", Component.text(done))));
         }
         if (quests.isEmpty()) {
             player.sendMessage(error("rune.command.quest.none", "No Quest is available yet."));

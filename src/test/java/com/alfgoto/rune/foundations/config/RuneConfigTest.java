@@ -72,6 +72,8 @@ class RuneConfigTest {
                     base: [1, 2, 3, 4, 5]
                     per-level: [-1, 0, 1, 2, 3]
                   max-reroll-tokens: 5
+                  reward-job-xp: [1, 2, 3, 4, 5]
+                  reward-account-xp: [5, 4, 3, 2, 1]
                 rewards:
                   rarity-boost: [1, 2, 3, 4, 5]
                   rolls-by-rarity: [1, 2, 3, 4, 5.4]
@@ -129,6 +131,8 @@ class RuneConfigTest {
         assertEquals(List.of(2, 3, 4, 5, 6), c.tools().slotsByRarity());
         assertEquals(List.of(1, 2, 3, 4, 5), c.tools().capacityByRarity());
         assertEquals(5, c.questMaxRerollTokens());
+        assertEquals(java.util.List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questRewardJobXp());
+        assertEquals(java.util.List.of(5.0, 4.0, 3.0, 2.0, 1.0), c.questRewardAccountXp());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.rewardsRarityBoost());
         assertEquals(List.of(1, 2, 3, 4, 5), c.rewardsRollsByRarity());
         assertEquals(0.25, c.rewardsJobBias());
@@ -189,6 +193,8 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                  reward-job-xp: [50, 75, 100, 150, 250]
+                  reward-account-xp: [25, 40, 50, 75, 125]
                 rewards:
                   rarity-boost: [1, 1.5, 2, 3, 4]
                   rolls-by-rarity: [1, 1, 2, 2, 3]
@@ -240,7 +246,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(43, errors.size());
+        assertEquals(45, errors.size());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -309,6 +315,8 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                  reward-job-xp: [50, 75, 100, 150, 250]
+                  reward-account-xp: [25, 40, 50, 75, 125]
                 rewards:
                   rarity-boost: [1, 1.5, 2, 3, 4]
                   rolls-by-rarity: [1, 1, 2, 2, 3]

@@ -241,6 +241,10 @@ quests:
     per-level: [-1.2, 0, 0.6, 0.5, 0.2]
   # Most Reroll Tokens a player can hold (one is earned per world day)
   max-reroll-tokens: 3
+  # Job XP (in the Quest's Job) and Account XP bonus a completed Quest gives, lowest Tier first.
+  # A completed Quest also rolls the 'cache' loot table (see rewards below).
+  reward-job-xp: [50, 75, 100, 150, 250]
+  reward-account-xp: [25, 40, 50, 75, 125]
 rewards:
   # Loot odds boost per source Rarity (Rune Cache Rarity or Quest Tier), lowest first.
   # An entry weighs base weight x boost ^ (its own Rarity index), Common = 0 ... Legendary = 4.
