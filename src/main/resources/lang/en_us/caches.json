@@ -1,0 +1,12 @@
+{
+  "rune.item.rune_cache_common": "Rune Cache",
+  "rune.item.rune_cache_uncommon": "Rune Cache",
+  "rune.item.rune_cache_rare": "Rune Cache",
+  "rune.item.rune_cache_epic": "Rune Cache",
+  "rune.item.rune_cache_legendary": "Rune Cache",
+  "rune.cache.opened": "You open a Cache: %s result(s)",
+  "rune.cache.entry": "- %s",
+  "rune.command.give_cache.usage": "Usage: /rune give cache [job] <rarity>",
+  "rune.command.give_cache.unknown_rarity": "Unknown Rarity: %s",
+  "rune.command.give_cache.done": "Gave a %s Cache."
+}
