@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -76,6 +77,7 @@ public final class RuneConfig {
     private final double rewardsJobBias;
     private final ToolConfig tools;
     private final ArmorConfig armor;
+    private ConfigurationSection runes; // the 'runes' section, null when there is none
 
     private RuneConfig(
             double base,
@@ -185,7 +187,7 @@ public final class RuneConfig {
                     + ". Using default " + DEFAULT_REWARDS_JOB_BIAS + ".");
             jobBias = DEFAULT_REWARDS_JOB_BIAS;
         }
-        return new RuneConfig(
+        RuneConfig loaded = new RuneConfig(
                 base,
                 exponent,
                 accountBase,
@@ -207,6 +209,21 @@ public final class RuneConfig {
                 jobBias,
                 ToolConfig.load(section, logger),
                 ArmorConfig.load(section, logger));
+        loaded.runes = section.getConfigurationSection("runes");
+        return loaded;
+    }
+
+    /**
+     * A number of a Rune from {@code runes.<runeId>.<key>} (e.g. {@code runes.fortune.base}). Empty when the
+     * value is missing or not a finite number.
+     */
+    public OptionalDouble runeNumber(String runeId, String key) {
+        if (runes == null
+                || !(runes.get(runeId + "." + key) instanceof Number n)
+                || !Double.isFinite(n.doubleValue())) {
+            return OptionalDouble.empty();
+        }
+        return OptionalDouble.of(n.doubleValue());
     }
 
     /** Rune Tool balancing: speed, durability, slots and Capacity. */
