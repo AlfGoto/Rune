@@ -214,7 +214,7 @@ public final class RuneConfig {
         return tools;
     }
 
-    /** Rune Armor balancing: protection, durability, toughness, knockback resistance. */
+    /** Rune Armor balancing: protection, durability, toughness. */
     public ArmorConfig armor() {
         return armor;
     }

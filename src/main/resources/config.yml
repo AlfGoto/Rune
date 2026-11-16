@@ -287,8 +287,6 @@ armor:
     boots: [65, 195, 195, 429, 481]
   # Armor toughness of each piece
   toughness-by-rarity: [0, 0, 0, 2, 3]
-  # Knockback resistance of each piece (0.1 = 10%)
-  knockback-resistance-by-rarity: [0, 0, 0, 0, 0.1]
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

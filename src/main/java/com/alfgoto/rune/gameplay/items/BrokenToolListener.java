@@ -8,10 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -28,7 +27,7 @@ public final class BrokenToolListener implements Listener {
         this.items = items;
     }
 
-    private boolean isRuneTool(ItemStack stack) {
+    private boolean isRuneGear(ItemStack stack) {
         return items.of(stack).filter(item -> item.toolSpec().isPresent() || item.armorSpec().isPresent()).isPresent();
     }
 
@@ -43,7 +42,7 @@ public final class BrokenToolListener implements Listener {
 
     /** True when {@code stack} is a Rune Tool or Rune Armor piece with no durability left. */
     public boolean isBroken(ItemStack stack) {
-        if (stack == null || !isRuneTool(stack)) {
+        if (stack == null || !isRuneGear(stack)) {
             return false;
         }
         if (!(stack.getItemMeta() instanceof Damageable meta) || !meta.hasMaxDamage()) {
@@ -56,7 +55,7 @@ public final class BrokenToolListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemDamage(PlayerItemDamageEvent event) {
         ItemStack stack = event.getItem();
-        if (!isRuneTool(stack) || !(stack.getItemMeta() instanceof Damageable meta) || !meta.hasMaxDamage()) {
+        if (!isRuneGear(stack) || !(stack.getItemMeta() instanceof Damageable meta) || !meta.hasMaxDamage()) {
             return;
         }
         if (meta.getDamage() + event.getDamage() < meta.getMaxDamage()) {
@@ -78,15 +77,6 @@ public final class BrokenToolListener implements Listener {
         if (result != null && isRuneArmor(result) && !isBroken(result)) {
             restoreProtection(result);
             event.setResult(result);
-        }
-    }
-
-    /** Mending: a repaired armor piece gets its protection back. */
-    @EventHandler(ignoreCancelled = true)
-    public void onMend(PlayerItemMendEvent event) {
-        ItemStack stack = event.getItem();
-        if (isRuneArmor(stack) && event.getRepairAmount() > 0) {
-            restoreProtection(stack);
         }
     }
 

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * Puts a Rune Armor piece's stats on its stack with vanilla components, so the game itself gives the
- * protection: the {@code attribute_modifiers} component (armor, toughness, knockback resistance, in the
+ * protection: the {@code attribute_modifiers} component (armor, toughness, in the
  * piece's slot) replaces the leather defaults, and {@code max_damage} sets the durability.
  */
 final class ArmorComponents {
@@ -20,7 +20,6 @@ final class ArmorComponents {
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.itemAttributes();
         add(builder, Attribute.ARMOR, "armor", stats.defense(), stats);
         add(builder, Attribute.ARMOR_TOUGHNESS, "armor_toughness", stats.toughness(), stats);
-        add(builder, Attribute.KNOCKBACK_RESISTANCE, "knockback_resistance", stats.knockbackResistance(), stats);
         stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder.build());
         stack.setData(DataComponentTypes.MAX_DAMAGE, stats.durability());
     }

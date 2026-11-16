@@ -99,11 +99,9 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 1, 2, 4]
-                  knockback-resistance-by-rarity: [0, 0, 0, 0.5, 0.1]
                 """);
         assertEquals(List.of(1, 1, 1, 1, 9), c.armor().defenseByRarity().get("helmet"));
         assertEquals(List.of(0.0, 0.0, 1.0, 2.0, 4.0), c.armor().toughnessByRarity());
-        assertEquals(0.5, c.armor().knockbackResistanceByRarity().get(3));
         assertEquals(100, c.tools().pickaxeMasteryActions());
         assertEquals(200, c.tools().axeMasteryActions());
         assertEquals(0.5, c.tools().masteryMaxBonus());
@@ -201,7 +199,6 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
-                  knockback-resistance-by-rarity: [0, 0, 0, 0, 0.1]
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -215,7 +212,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(38, errors.size());
+        assertEquals(37, errors.size());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -311,7 +308,6 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
-                  knockback-resistance-by-rarity: [0, 0, 0, 0, 0.1]
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
@@ -327,14 +323,12 @@ class RuneConfigTest {
                   durability:
                     helmet: [55, 165, 165, 363, 0]
                   toughness-by-rarity: [0, 0, 0, 2, banana]
-                  knockback-resistance-by-rarity: [0, 0, 0, 0, 2]
                 """);
         assertEquals(ArmorConfig.defaults(), c.armor());
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.chestplate")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.durability.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.toughness-by-rarity")));
-        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.knockback-resistance-by-rarity")));
     }
 
     @Test

@@ -71,7 +71,6 @@ class RuneArmorTest {
                 items.armorStats(piece("l_chest", Rarity.LEGENDARY, ArmorKind.CHESTPLATE)).orElseThrow();
         assertEquals(8, netheriteChest.defense());
         assertEquals(3.0, netheriteChest.toughness());
-        assertEquals(0.1, netheriteChest.knockbackResistance());
         assertEquals(592, netheriteChest.durability());
         assertEquals(5, netheriteChest.slots());
         assertEquals(18, netheriteChest.capacity());
@@ -94,7 +93,7 @@ class RuneArmorTest {
         ItemStack boots = items.create(piece("e_boots", Rarity.EPIC, ArmorKind.BOOTS), 1);
         assertEquals(429, boots.getData(DataComponentTypes.MAX_DAMAGE));
         var modifiers = boots.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers();
-        assertEquals(2, modifiers.size()); // armor + toughness (no knockback resistance for Epic)
+        assertEquals(2, modifiers.size()); // armor + toughness
         assertTrue(modifiers.stream().anyMatch(e -> e.modifier().getAmount() == 3.0));
     }
 
