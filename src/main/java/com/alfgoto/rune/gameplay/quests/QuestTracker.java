@@ -64,13 +64,12 @@ public final class QuestTracker implements Listener {
     public void onJobAction(JobActionEvent event) {
         Player player = event.player();
         UUID id = player.getUniqueId();
-        List<Quest> quests = book.active(id);
-        for (int i = 0; i < quests.size(); i++) {
-            Quest quest = quests.get(i);
+        for (var entry : book.slots(id).entrySet()) {
+            int slot = entry.getKey();
+            Quest quest = entry.getValue();
             if (!quest.type().job().equals(event.job())) {
                 continue;
             }
-            int slot = i + 1;
             int done = book.advance(id, slot);
             if (done >= quest.target()) {
                 complete(player, slot, quest);

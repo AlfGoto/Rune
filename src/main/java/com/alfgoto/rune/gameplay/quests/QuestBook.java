@@ -51,7 +51,12 @@ public final class QuestBook {
 
     /** The active Quests, slot 1 first. Fills empty slots with a new Quest first. */
     public List<Quest> active(UUID player) {
-        List<Quest> out = new ArrayList<>();
+        return new ArrayList<>(slots(player).values());
+    }
+
+    /** The active Quests by slot number (1..3), slot 1 first. A slot with no Quest is missing. */
+    public Map<Integer, Quest> slots(UUID player) {
+        Map<Integer, Quest> out = new LinkedHashMap<>();
         for (int slot = 1; slot <= SLOTS; slot++) {
             Quest quest = read(player, slot);
             if (quest == null) {
@@ -61,7 +66,7 @@ public final class QuestBook {
                 }
                 write(player, slot, quest);
             }
-            out.add(quest);
+            out.put(slot, quest);
         }
         return out;
     }
