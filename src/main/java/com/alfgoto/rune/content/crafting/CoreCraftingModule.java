@@ -41,6 +41,18 @@ public final class CoreCraftingModule implements RuneModule {
                 List.of("CC", "CC"),
                 Map.of('C', Ingredient.vanilla(Material.COBBLESTONE))));
 
+        // Flint and Coal pickaxes: first Rune pickaxes, unlocked at Mining 2 (docs/jobs/mining.md).
+        // Ingredients are the documented ones; the grid layout is proposed (not in docs).
+        book.register(new CraftingRecipe("flint_pickaxe", mining, 2, "flint_pickaxe", 1,
+                List.of("FFF", " S ", " S "), Map.of(
+                        'F', Ingredient.vanilla(Material.FLINT),
+                        'S', Ingredient.vanilla(Material.STICK))));
+        book.register(new CraftingRecipe("coal_pickaxe", mining, 2, "coal_pickaxe", 1,
+                List.of("CCB", " S ", " S "), Map.of(
+                        'C', Ingredient.vanilla(Material.COAL),
+                        'B', Ingredient.vanilla(Material.COBBLESTONE),
+                        'S', Ingredient.vanilla(Material.STICK))));
+
         // The 7 Components (docs/jobs/mining.md). The ingredients are the documented ones;
         // the grid layout and the unlock level (COMPONENT_LEVEL) are not in docs yet.
         component(book, mining, "reinforced_handle", List.of("IL", "SS"), Map.of(
