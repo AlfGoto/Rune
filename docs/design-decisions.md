@@ -132,7 +132,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 
 ## Rune Caches (gacha)
 - Rune drops and quest loot come as sealed Rune Caches, never opened automatically.
-- Right-click a Cache to open it: spinning reel menu, slows down, rarity-coloured flash, sounds (firework for Legendary).
+- Right-click a Cache to open it. Target: spinning reel menu (instant open for now, see the Cache item line below), slows down, rarity-coloured flash, sounds (firework for Legendary).
 - Every Cache rolls the same loot table; its Rarity (shown by its colour) only shifts the odds and the quantity. A Legendary Cache does not guarantee a Legendary Rune (it may give several Epics instead).
 - Job Caches lean towards that Job's Runes (60% that Job's Runes, 40% general passive Runes).
 - Cache item (2026-11-16, issue #42, `gameplay.caches`): one item per Rarity, `rune_cache_<rarity>`, named in the Rarity colour. A Job Cache stores the Job id in its data (`rune:cache_job`). Right-click (air or block, main hand) opens it **instantly**, takes one Cache and gives the loot of the `cache` table rolled with the Cache Rarity and Job (the 60/40 bias is `RuneReward`'s, see `rewards.md`). The reel menu comes later. Test: `/rune give cache [job] <rarity>`, e.g. `/rune give cache mining rare`. No Cache texture exists yet, so the items use the placeholder model `test_rune`. The Job is not shown in the lore yet (not decided).

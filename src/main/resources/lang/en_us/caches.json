@@ -8,5 +8,6 @@
   "rune.cache.entry": "- %s",
   "rune.command.give_cache.usage": "Usage: /rune give cache [job] <rarity>",
   "rune.command.give_cache.unknown_rarity": "Unknown Rarity: %s",
+  "rune.command.give_cache.unknown_job": "Unknown Job: %s",
   "rune.command.give_cache.done": "Gave a %s Cache."
 }

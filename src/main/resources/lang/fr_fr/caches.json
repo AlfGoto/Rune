@@ -8,5 +8,6 @@
   "rune.cache.entry": "- %s",
   "rune.command.give_cache.usage": "Utilisation : /rune give cache [métier] <rareté>",
   "rune.command.give_cache.unknown_rarity": "Rareté inconnue : %s",
+  "rune.command.give_cache.unknown_job": "Métier inconnu : %s",
   "rune.command.give_cache.done": "Vous avez reçu un Cache %s."
 }
