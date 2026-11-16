@@ -6,6 +6,9 @@
   "rune.command.install.no_slot": "No free Rune slot on this item.",
   "rune.command.install.over_capacity": "Not enough Capacity: this Rune costs %s, %s left.",
   "rune.command.install.done": "Installed %s, Rank %s. Capacity: %s / %s.",
+  "rune.command.install_player.usage": "Usage: /rune install player <rune> [rank]",
+  "rune.command.install_player.no_fit": "%s is not a passive Rune: it can't go on the player.",
+  "rune.command.install_player.no_slot": "All %s Player Rune slots are used.",
   "rune.command.uninstall.usage": "Usage: /rune debug uninstall <slot>",
   "rune.command.uninstall.empty": "Slot %s has no Rune.",
   "rune.command.uninstall.done": "Removed %s, Rank %s. Capacity: %s / %s."
