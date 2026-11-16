@@ -15,7 +15,7 @@ import com.google.auto.service.AutoService;
 import java.util.Set;
 import org.bukkit.Material;
 
-/** Registers the core items into the ItemRegistry. For now only the test item and the test pickaxe. */
+/** Registers the core items into the ItemRegistry. For now only the test item, the test pickaxe and the test axe. */
 @AutoService(RuneModule.class)
 public final class CoreItemsModule implements RuneModule {
 
@@ -32,6 +32,8 @@ public final class CoreItemsModule implements RuneModule {
         // Common = stone Harvest Tier: it mines iron ore but gives no drops on diamond ore.
         // Shows the Flint Pickaxe texture so the pack can be checked in game.
         items.register(RuneItem.tool("test_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe", ToolSpec.DEFAULT));
+        // Common axe, same as the test pickaxe. Shows the Flint Hatchet texture.
+        items.register(RuneItem.tool("test_axe", Rarity.COMMON, ToolKind.AXE, "flint_hatchet", ToolSpec.DEFAULT));
         // Common helmet: leather protection, 1 slot, Capacity 3. No armor texture exists yet, so it uses the
         // test model (placeholder).
         items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
