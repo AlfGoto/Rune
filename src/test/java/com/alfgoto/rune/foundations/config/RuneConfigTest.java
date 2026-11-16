@@ -100,6 +100,8 @@ class RuneConfigTest {
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 1, 2, 4]
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 9
@@ -217,6 +219,8 @@ class RuneConfigTest {
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -240,7 +244,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(43, errors.size());
+        assertEquals(44, errors.size());
+        assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -337,6 +342,8 @@ class RuneConfigTest {
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
