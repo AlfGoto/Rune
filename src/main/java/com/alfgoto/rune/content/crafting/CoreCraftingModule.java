@@ -88,7 +88,7 @@ public final class CoreCraftingModule implements RuneModule {
 
         armor(book, mining, 3, "miners_helmet", List.of(" C ", "LLL", "L  "), Map.of(
                 'L', leather, 'C', Ingredient.vanilla(Material.CANDLE)));
-        armor(book, mining, 3, "miners_vest", List.of("LCL", "LLL", "LCL"), Map.of('L', leather, 'C', copper));
+        armor(book, mining, 3, "miners_vest", List.of("LCL", "L L", "LCL"), Map.of('L', leather, 'C', copper));
         armor(book, mining, 3, "miners_trousers", List.of("LLL", "S S", "L L"), Map.of(
                 'L', leather, 'S', Ingredient.vanilla(Material.STRING)));
         armor(book, mining, 3, "miners_boots", List.of("L L", "LWL"), Map.of(
