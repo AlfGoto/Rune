@@ -43,8 +43,7 @@ public final class CoreItemsModule implements RuneModule {
                 "flint_pickaxe",
                 ToolSpec.DEFAULT.withTrait(
                         "test_trait", -1, TraitBinding.always("smelt", 100), TraitBinding.always("haste", -20))));
-        // Common helmet: leather protection, 1 slot, Capacity 3. No armor texture exists yet, so it uses the
-        // test model (placeholder).
+        // Common helmet: leather protection, 1 slot, Capacity 3. Test item: keeps the test model.
         items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
         miningArmor(items);
         // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
@@ -62,8 +61,8 @@ public final class CoreItemsModule implements RuneModule {
 
     /**
      * The Common and Uncommon Mining armor (docs/jobs/mining.md). Stats follow the Rarity. The Trait ids name
-     * the effect each slot gets, scaled by depth; the effects are not built yet. No armor texture exists yet:
-     * they use the test model (placeholder).
+     * the effect each slot gets, scaled by depth; the effects are not built yet. Each piece
+     * uses its own icon (textures v3).
      */
     private static void miningArmor(ItemRegistry items) {
         armor(items, "miners_helmet", Rarity.COMMON, ArmorKind.HELMET, "mining_light_radius");
@@ -78,7 +77,7 @@ public final class CoreItemsModule implements RuneModule {
 
     private static void armor(ItemRegistry items, String id, Rarity rarity, ArmorKind kind, String trait) {
         items.register(RuneItem.armor(
-                id, rarity, "test_rune", new ArmorSpec(kind, null, null, null, null, null, trait)));
+                id, rarity, id, new ArmorSpec(kind, null, null, null, null, null, trait)));
     }
 
     private static void component(ItemRegistry items, String id, Rarity rarity) {

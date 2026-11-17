@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "rune:mining_uncommon"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "rune:mining_uncommon"
+      }
+    ]
+  }
+}
