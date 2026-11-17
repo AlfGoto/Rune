@@ -10,5 +10,10 @@
   "rune.command.quest.changed": "La quête %s est maintenant %s - %s (%s) : %s",
   "rune.command.quest.invalid_slot": "L'emplacement doit être de 1 à %s : %s",
   "rune.command.quest.unknown_type": "Type de quête inconnu : %s",
-  "rune.command.quest.unknown_tier": "Palier de quête inconnu : %s"
+  "rune.command.quest.unknown_tier": "Palier de quête inconnu : %s",
+  "rune.command.quest.progress": " (%s faits)",
+  "rune.quest.progress": "%s : %s/%s",
+  "rune.quest.complete": "Quête terminée : %s - %s (%s)",
+  "rune.quest.reward": "Récompenses : +%s XP %s, +%s XP de compte",
+  "rune.quest.new": "Nouvelle quête %s : %s - %s (%s) : %s"
 }
