@@ -17,7 +17,8 @@ public record ArmorStats(
         int durability,
         int slots,
         int capacity,
-        Optional<String> trait) {
+        Optional<String> trait,
+        Optional<String> equipment) {
 
     /** Resolves the stats of {@code item}, or empty when it is not Rune Armor. */
     public static Optional<ArmorStats> of(RuneItem item, ArmorConfig armor, ToolConfig tools) {
@@ -37,6 +38,7 @@ public record ArmorStats(
                 TraitBinding.adjustedCapacity(
                         spec.capacity() != null ? spec.capacity() : tools.capacityByRarity().get(rarity),
                         spec.capacityModifier()),
-                spec.traitId());
+                spec.traitId(),
+                spec.equipmentId());
     }
 }

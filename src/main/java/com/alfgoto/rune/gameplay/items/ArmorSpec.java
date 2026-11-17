@@ -17,6 +17,8 @@ import org.jspecify.annotations.Nullable;
  * @param trait id of the piece's Trait (shown in the lore), or {@code null} for none
  * @param traitBindings the Trait bindings: what the Trait does (empty for none)
  * @param capacityModifier added to the Capacity (negative = drawback)
+ * @param equipment id of the worn-layer equipment asset (e.g. {@code rune:mining_common}), or {@code null}
+ *     for the vanilla look
  */
 public record ArmorSpec(
         ArmorKind kind,
@@ -27,7 +29,8 @@ public record ArmorSpec(
         @Nullable Integer capacity,
         @Nullable String trait,
         List<TraitBinding> traitBindings,
-        int capacityModifier) {
+        int capacityModifier,
+        @Nullable String equipment) {
 
     /** A piece with a Trait id only (no bindings, no Capacity change). */
     public ArmorSpec(
@@ -38,7 +41,7 @@ public record ArmorSpec(
             @Nullable Integer slots,
             @Nullable Integer capacity,
             @Nullable String trait) {
-        this(kind, defense, toughness, durability, slots, capacity, trait, List.of(), 0);
+        this(kind, defense, toughness, durability, slots, capacity, trait, List.of(), 0, null);
     }
 
     public ArmorSpec {
@@ -69,7 +72,17 @@ public record ArmorSpec(
     /** The same piece with a Trait: its id, its Capacity modifier and its bindings. */
     public ArmorSpec withTrait(String id, int capacityModifier, TraitBinding... bindings) {
         return new ArmorSpec(
-                kind, defense, toughness, durability, slots, capacity, id, List.of(bindings), capacityModifier);
+                kind, defense, toughness, durability, slots, capacity, id, List.of(bindings), capacityModifier, equipment);
+    }
+
+    /** The same piece with the worn-layer equipment asset {@code assetId} (e.g. {@code rune:mining_common}). */
+    public ArmorSpec withEquipment(String assetId) {
+        return new ArmorSpec(
+                kind, defense, toughness, durability, slots, capacity, trait, traitBindings, capacityModifier, assetId);
+    }
+
+    public Optional<String> equipmentId() {
+        return Optional.ofNullable(equipment);
     }
 
     public Optional<String> traitId() {

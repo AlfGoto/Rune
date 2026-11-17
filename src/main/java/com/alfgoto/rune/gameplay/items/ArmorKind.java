@@ -3,6 +3,7 @@ package com.alfgoto.rune.gameplay.items;
 import java.util.Locale;
 import java.util.Optional;
 import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 
 /**
@@ -11,17 +12,24 @@ import org.bukkit.inventory.EquipmentSlotGroup;
  * Rune item is never Locked Gear (see {@code LockedGear}).
  */
 public enum ArmorKind {
-    HELMET(Material.LEATHER_HELMET, EquipmentSlotGroup.HEAD),
-    CHESTPLATE(Material.LEATHER_CHESTPLATE, EquipmentSlotGroup.CHEST),
-    LEGGINGS(Material.LEATHER_LEGGINGS, EquipmentSlotGroup.LEGS),
-    BOOTS(Material.LEATHER_BOOTS, EquipmentSlotGroup.FEET);
+    HELMET(Material.LEATHER_HELMET, EquipmentSlotGroup.HEAD, EquipmentSlot.HEAD),
+    CHESTPLATE(Material.LEATHER_CHESTPLATE, EquipmentSlotGroup.CHEST, EquipmentSlot.CHEST),
+    LEGGINGS(Material.LEATHER_LEGGINGS, EquipmentSlotGroup.LEGS, EquipmentSlot.LEGS),
+    BOOTS(Material.LEATHER_BOOTS, EquipmentSlotGroup.FEET, EquipmentSlot.FEET);
 
     private final Material material;
     private final EquipmentSlotGroup slot;
+    private final EquipmentSlot equipmentSlot;
 
-    ArmorKind(Material material, EquipmentSlotGroup slot) {
+    ArmorKind(Material material, EquipmentSlotGroup slot, EquipmentSlot equipmentSlot) {
         this.material = material;
         this.slot = slot;
+        this.equipmentSlot = equipmentSlot;
+    }
+
+    /** The slot the piece is worn in (for the {@code equippable} component). */
+    public EquipmentSlot equipmentSlot() {
+        return equipmentSlot;
     }
 
     /** The vanilla material a Rune Armor piece of this kind is made on. */
