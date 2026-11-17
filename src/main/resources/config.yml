@@ -268,12 +268,27 @@ runes:
     base: 1
     per-rank: 0
     max-rank: 1
+  # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
+  # Leaf Fall: radius in blocks (2 / 4 / 6)
+  leaf_fall:
+    base: 2
+    per-rank: 2
+    max-rank: 3
+  # Orchard: % extra apple and sapling rolls from leaves
+  orchard:
+    base: 10
+    per-rank: 10
+    max-rank: 3
+  # Canopy Stride: % move speed on leaves and logs. No Max Rank.
+  canopy_stride:
+    base: 10
+    per-rank: 10
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
       per-rank: 8
       max-rank: 5
-    # One Rune per ore
+    # One Rune per ore and one per wood type
     specialist:
       per-rank: 20
       max-rank: 3
