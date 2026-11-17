@@ -1,7 +1,9 @@
 package com.alfgoto.rune.gameplay.items;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.Equippable;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -10,7 +12,8 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Puts a Rune Armor piece's stats on its stack with vanilla components, so the game itself gives the
  * protection: the {@code attribute_modifiers} component (armor, toughness, in the
- * piece's slot) replaces the leather defaults, and {@code max_damage} sets the durability.
+ * piece's slot) replaces the leather defaults, {@code max_damage} sets the durability, and {@code equippable}
+ * gives the worn layer (kept while Broken: {@link #clear} only removes the protection).
  */
 final class ArmorComponents {
 
@@ -22,6 +25,13 @@ final class ArmorComponents {
         add(builder, Attribute.ARMOR_TOUGHNESS, "armor_toughness", stats.toughness(), stats);
         stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder.build());
         stack.setData(DataComponentTypes.MAX_DAMAGE, stats.durability());
+        // The worn layer. Vanilla equip behaviour (sound, dispensable, swappable, damage on hurt) is the default.
+        // No asset id: no component, the piece keeps the vanilla look of its base item.
+        stats.equipment().ifPresent(asset -> stack.setData(
+                DataComponentTypes.EQUIPPABLE,
+                Equippable.equippable(stats.kind().equipmentSlot())
+                        .assetId(Key.key(asset))
+                        .build()));
     }
 
     /** Removes the protection (used while a piece is Broken). */
