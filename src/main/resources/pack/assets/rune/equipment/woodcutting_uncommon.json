@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "rune:woodcutting_uncommon"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "rune:woodcutting_uncommon"
+      }
+    ]
+  }
+}
