@@ -2,8 +2,6 @@ package com.alfgoto.rune.overrides;
 
 import com.alfgoto.rune.gameplay.caches.Caches;
 import com.alfgoto.rune.text.Rarity;
-import com.destroystokyo.paper.event.entity.EntityZapEvent;
-import io.papermc.paper.event.player.PlayerTradeEvent;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
