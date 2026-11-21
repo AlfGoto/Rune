@@ -85,6 +85,7 @@ public final class RuneConfig {
     private final double rewardsJobBias;
     private final ToolConfig tools;
     private final ArmorConfig armor;
+    private RhythmConfig rhythm = RhythmConfig.defaults();
     private final SpeedRuneConfig speedRunes;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
@@ -235,6 +236,7 @@ public final class RuneConfig {
                 ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
+        loaded.rhythm = RhythmConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         return loaded;
@@ -266,6 +268,11 @@ public final class RuneConfig {
     /** Rune Tool balancing: speed, durability, slots and Capacity. */
     public ToolConfig tools() {
         return tools;
+    }
+
+    /** Woodcutting armor balancing: Rhythm charges and Trait values. */
+    public RhythmConfig rhythm() {
+        return rhythm;
     }
 
     /** Rune Armor balancing: protection, durability, toughness. */

@@ -104,6 +104,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -230,6 +238,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -256,7 +272,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(48, errors.size());
+        assertEquals(49, errors.size()); // the last one is the missing armor.rhythm section
+        assertEquals(RhythmConfig.defaults(), c.rhythm());
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
@@ -358,6 +375,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 runes:
                   rank-up:
                     cost-multiplier: 3
