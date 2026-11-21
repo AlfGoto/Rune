@@ -2,6 +2,7 @@ package com.alfgoto.rune.foundations.config;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.alfgoto.rune.text.Rarity;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -283,9 +284,9 @@ class RuneConfigTest {
 
     @Test
     void bookCacheRarityDefaultsToUncommonAndRejectsUnknownValues() throws Exception {
-        assertEquals(com.alfgoto.rune.text.Rarity.UNCOMMON, RuneConfig.defaults().bookCacheRarity());
+        assertEquals(Rarity.UNCOMMON, RuneConfig.defaults().bookCacheRarity());
         assertEquals(
-                com.alfgoto.rune.text.Rarity.EPIC,
+                Rarity.EPIC,
                 load("""
                 vanilla-overrides:
                   book-cache-rarity: epic
@@ -294,7 +295,7 @@ class RuneConfigTest {
                 vanilla-overrides:
                   book-cache-rarity: shiny
                 """);
-        assertEquals(com.alfgoto.rune.text.Rarity.UNCOMMON, bad.bookCacheRarity());
+        assertEquals(Rarity.UNCOMMON, bad.bookCacheRarity());
         assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
     }
 
