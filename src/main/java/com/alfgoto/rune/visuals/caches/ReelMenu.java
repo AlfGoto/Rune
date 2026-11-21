@@ -50,7 +50,7 @@ final class ReelMenu extends Menu {
         for (int i = 0; i < strip.length; i++) {
             strip[i] = all[random.nextInt(all.length)];
         }
-        strip[STEPS - 1 + CENTER - ROW] = rarity; // the pane under the pointer on the last step
+        strip[STEPS + CENTER - ROW] = rarity; // the pane under the pointer on the last step
         set(POINTER, Button.of(Material.HOPPER, Component.empty(), p -> {}));
         draw();
     }
@@ -82,7 +82,7 @@ final class ReelMenu extends Menu {
         step++;
         draw();
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 0.6f, 1.0f + step * 0.03f);
-        if (step < STEPS - 1) {
+        if (step < STEPS) {
             schedule();
         } else {
             task = null;

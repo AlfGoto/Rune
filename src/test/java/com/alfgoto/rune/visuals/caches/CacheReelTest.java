@@ -68,6 +68,9 @@ class CacheReelTest {
 
     @Test
     void theReelSlowsDown() {
+        for (int step = 1; step < ReelMenu.STEPS; step++) {
+            assertTrue(ReelMenu.delay(step - 1) <= ReelMenu.delay(step), "never speeds up at " + step);
+        }
         assertTrue(ReelMenu.delay(0) < ReelMenu.delay(ReelMenu.STEPS - 1));
     }
 }
