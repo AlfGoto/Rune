@@ -1,5 +1,7 @@
 package com.alfgoto.rune.visuals.reveal;
 
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
@@ -14,7 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 /**
- * Ore Sense (docs/jobs/mining.md): each stone-family block the player breaks has a chance to outline the ores
+ * Ore Sense (docs/jobs/mining.md): each natural (not placed) stone-family block the player breaks has a chance to outline the ores
  * within a radius, with Block Reveal. The effect id {@code ore_sense} is shared, so a Trait (Bone Pickaxe) stacks
  * with the Rune. It only shows things: nothing in the world changes.
  */
@@ -26,6 +28,7 @@ final class OreSenseListener implements Listener {
     private final ItemRegistry items;
     private final ToolLoadout loadout;
     private final BlockReveal reveal;
+    private final BlockTracker tracker;
     private final DoubleSupplier random;
     private final int radius;
     private final int ticks;
@@ -34,12 +37,14 @@ final class OreSenseListener implements Listener {
             ItemRegistry items,
             ToolLoadout loadout,
             BlockReveal reveal,
+            BlockTracker tracker,
             DoubleSupplier random,
             int radius,
             int seconds) {
         this.items = items;
         this.loadout = loadout;
         this.reveal = reveal;
+        this.tracker = tracker;
         this.random = random;
         this.radius = radius;
         this.ticks = seconds * 20;
@@ -47,7 +52,9 @@ final class OreSenseListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(RuneBlockBreakEvent event) {
-        if (!StoneFamily.isStone(event.block().getType()) || items.of(event.item()).isEmpty()) {
+        if (!StoneFamily.isStone(event.block().getType())
+                || tracker.has(event.block(), BlockTag.PLACED)
+                || items.of(event.item()).isEmpty()) {
             return;
         }
         // One roll is enough: a second outline of the same ores would add nothing.

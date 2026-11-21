@@ -10,6 +10,7 @@ import com.alfgoto.rune.gameplay.crafting.RecipeBook;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.places.PlaceRegistry;
+import com.alfgoto.rune.gameplay.runes.StoneFamily;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.text.Rarity;
 import org.bukkit.Material;
@@ -77,11 +78,11 @@ class DetectionPickaxesTest {
 
     @Test
     void stoneFamilyAndOres() {
-        assertTrue(OreScan.isStoneFamily(Material.TUFF));
-        assertTrue(OreScan.isStoneFamily(Material.DEEPSLATE));
-        assertFalse(OreScan.isStoneFamily(Material.COBBLESTONE));
-        assertTrue(OreScan.isOre(Material.DEEPSLATE_IRON_ORE));
-        assertTrue(OreScan.isOre(Material.ANCIENT_DEBRIS));
-        assertFalse(OreScan.isOre(Material.STONE));
+        assertTrue(StoneFamily.isStone(Material.TUFF));
+        assertTrue(StoneFamily.isStone(Material.NETHERRACK));
+        assertFalse(StoneFamily.isStone(Material.COBBLESTONE));
+        assertTrue(StoneFamily.isOre(Material.DEEPSLATE_IRON_ORE));
+        assertTrue(StoneFamily.isOre(Material.ANCIENT_DEBRIS));
+        assertFalse(StoneFamily.isOre(Material.STONE));
     }
 }
