@@ -8,7 +8,6 @@ import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
-import com.alfgoto.rune.gameplay.places.Place;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.quests.QuestObjective;
@@ -52,14 +51,8 @@ public final class CoreQuestsModule implements RuneModule {
         types.register(new QuestType("collect", CoreJobs.MINING, 20, event -> isCollectBlock(event.block())));
         types.register(new QuestType("depth", CoreJobs.MINING, 10, event -> isDeepOre(event.block())));
         types.register(new QuestType("tool", CoreJobs.MINING, 100, event -> isHeldItem(items, event.tool())));
-        QuestObjective inPlace = event -> {
-            for (Place place : places.placesOf(event.player())) {
-                if (place.id().equals(PLACE_ID)) {
-                    return true;
-                }
-            }
-            return false;
-        };
+        QuestObjective inPlace = event -> event.block() != null
+                && places.placesAt(event.block().getLocation()).stream().anyMatch(p -> p.id().equals(PLACE_ID));
         types.register(new QuestType("place", CoreJobs.MINING, 50, inPlace));
     }
 
