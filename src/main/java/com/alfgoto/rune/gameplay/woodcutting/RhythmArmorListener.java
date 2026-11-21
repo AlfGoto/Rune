@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -92,6 +93,11 @@ final class RhythmArmorListener implements Listener {
         if (event.getAction().isRightClick()) {
             later(event.getPlayer());
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onItemBreak(PlayerItemBreakEvent event) {
+        later(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

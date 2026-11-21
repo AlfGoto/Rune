@@ -6,5 +6,5 @@
   "rune.feedback.active_used": "%s utilisée. Recharge : %s s",
   "rune.feedback.rhythm": "Cadence : %s/%s",
   "rune.feedback.rhythm_lost": "Cadence perdue",
-  "rune.feedback.active_cooldown":"%s se recharge : %s s"
+  "rune.feedback.active_cooldown": "%s se recharge : %s s"
 }
