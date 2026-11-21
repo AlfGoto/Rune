@@ -5,6 +5,7 @@ import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.gameplay.jobs.JobActionEvent;
 import com.alfgoto.rune.gameplay.jobs.JobLevelListener;
 import com.alfgoto.rune.text.Rarity;
+import com.alfgoto.rune.text.Text;
 import java.util.UUID;
 import java.util.function.DoubleSupplier;
 import net.kyori.adventure.text.Component;
@@ -54,9 +55,9 @@ final class CacheDropListener implements Listener, JobLevelListener {
             GiveSubcommand.give(player, caches.create(rarity, job.id()));
             player.sendMessage(Component.translatable(
                     "rune.cache.milestone",
-                    "Level %s reached: you earn a %s Cache.",
+                    "Level %s reached: %s Cache earned.",
                     Component.text(level),
-                    Component.translatable(rarity.translationKey(), rarity.englishName()).color(rarity.color())));
+                    Text.rarityName(rarity)));
         }
     }
 }

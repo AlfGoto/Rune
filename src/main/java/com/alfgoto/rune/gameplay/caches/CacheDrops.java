@@ -29,7 +29,7 @@ public final class CacheDrops {
      * the first levels; above it, every Legendary step gives Legendary, else every Epic step gives Epic.
      */
     public Optional<Rarity> milestone(int level) {
-        if (level < 1) {
+        if (level < 1 || config.milestones().isEmpty()) {
             return Optional.empty();
         }
         int tableEnd = config.milestones().keySet().stream().mapToInt(Integer::intValue).max().orElse(0);

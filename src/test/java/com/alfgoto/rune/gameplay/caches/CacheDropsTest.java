@@ -27,6 +27,13 @@ class CacheDropsTest {
     }
 
     @Test
+    void emptyTableMeansNoMilestones() {
+        CacheDrops none = new CacheDrops(new CacheConfig(0.05, java.util.Map.of(), 5, 25));
+        assertTrue(none.milestone(5).isEmpty());
+        assertTrue(none.milestone(50).isEmpty());
+    }
+
+    @Test
     void tableLevels() {
         assertEquals(Optional.of(Rarity.COMMON), drops.milestone(5));
         assertEquals(Optional.of(Rarity.UNCOMMON), drops.milestone(10));
