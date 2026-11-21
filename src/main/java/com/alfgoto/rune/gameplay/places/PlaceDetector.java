@@ -47,6 +47,11 @@ public final class PlaceDetector {
         return result;
     }
 
+    /** True when the player is in the Place with this id. */
+    public boolean isIn(Player player, String placeId) {
+        return placesOf(player).stream().anyMatch(place -> place.id().equals(placeId));
+    }
+
     /** Drops the cache entry of a player (on quit). */
     public void forget(UUID player) {
         cache.remove(player);

@@ -92,8 +92,7 @@ public final class SpeedRunesModule implements RuneModule {
             String id = "affinity_" + place;
             speed.register(
                     id,
-                    (player, block) ->
-                            detector.placesOf(player).stream().anyMatch(p -> p.id().equals(place)));
+                    (player, block) -> detector.isIn(player, place));
             register(
                     runes,
                     effects,

@@ -10,7 +10,6 @@ import com.alfgoto.rune.gameplay.runes.SpeedBonuses;
 import com.alfgoto.rune.gameplay.runes.SpeedModule;
 import com.google.auto.service.AutoService;
 import java.util.Set;
-import org.bukkit.entity.Player;
 
 /**
  * Says where the biome pickaxe Traits apply: Affinity speed in Nether, Mountains and Ocean, and the Emerald
@@ -30,13 +29,9 @@ public final class BiomePickaxeRulesModule implements RuneModule {
         HeldTraits held = ctx.get(HeldTraits.class);
         PlaceDetector detector = ctx.get(PlaceDetector.class);
 
-        speed.register(BiomePickaxeTraits.AFFINITY_NETHER, (player, block) -> in(detector, player, "nether"));
-        speed.register(BiomePickaxeTraits.AFFINITY_MOUNTAINS, (player, block) -> in(detector, player, "mountains"));
-        speed.register(BiomePickaxeTraits.AFFINITY_OCEAN, (player, block) -> in(detector, player, "ocean"));
-        held.registerMoveSpeed(BiomePickaxeTraits.MOUNTAIN_MOVE_SPEED, player -> in(detector, player, "mountains"));
-    }
-
-    private static boolean in(PlaceDetector detector, Player player, String placeId) {
-        return detector.placesOf(player).stream().anyMatch(place -> place.id().equals(placeId));
+        speed.register(BiomePickaxeTraits.AFFINITY_NETHER, (player, block) -> detector.isIn(player, "nether"));
+        speed.register(BiomePickaxeTraits.AFFINITY_MOUNTAINS, (player, block) -> detector.isIn(player, "mountains"));
+        speed.register(BiomePickaxeTraits.AFFINITY_OCEAN, (player, block) -> detector.isIn(player, "ocean"));
+        held.registerMoveSpeed(BiomePickaxeTraits.MOUNTAIN_MOVE_SPEED, player -> detector.isIn(player, "mountains"));
     }
 }
