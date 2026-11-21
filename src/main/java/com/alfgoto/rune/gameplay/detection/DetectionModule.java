@@ -6,6 +6,7 @@ import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.foundations.triggers.TriggersModule;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
@@ -37,7 +38,8 @@ public final class DetectionModule implements RuneModule {
                 ctx.get(ToolLoadout.class),
                 ctx.get(BlockTracker.class),
                 settings,
-                () -> ThreadLocalRandom.current().nextDouble());
+                () -> ThreadLocalRandom.current().nextDouble(),
+                ctx.get(BrokenToolListener.class)::isBroken);
         ctx.listen(listener);
         task = ctx.plugin()
                 .getServer()

@@ -9,6 +9,7 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.Predicate;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,18 +35,21 @@ public final class DetectionListener implements Listener {
     private final BlockTracker tracker;
     private final DetectionSettings settings;
     private final DoubleSupplier random;
+    private final Predicate<ItemStack> isBroken;
 
     public DetectionListener(
             ItemRegistry items,
             ToolLoadout loadout,
             BlockTracker tracker,
             DetectionSettings settings,
-            DoubleSupplier random) {
+            DoubleSupplier random,
+            Predicate<ItemStack> isBroken) {
         this.items = items;
         this.loadout = loadout;
         this.tracker = tracker;
         this.settings = settings;
         this.random = random;
+        this.isBroken = isBroken;
     }
 
     @EventHandler
@@ -67,6 +71,7 @@ public final class DetectionListener implements Listener {
     public void ping(Player player) {
         ItemStack tool = player.getInventory().getItemInMainHand();
         if (items.of(tool).isEmpty()
+                || isBroken.test(tool)
                 || Stacking.total(ECHO_PING, loadout.sources(tool, player)) <= 0) {
             return;
         }
