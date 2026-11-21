@@ -53,7 +53,14 @@ final class FelledTreeTraitListener implements Listener {
         double seconds = Stacking.total(AxeTraits.FELLED_TREE_SPEED, sources);
         if (seconds > 0) {
             int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, speedLevel - 1));
+            PotionEffect current = player.getPotionEffect(PotionEffectType.SPEED);
+            // Never replace a stronger Speed (potion, beacon) or a longer one of the same level.
+            boolean weaker = current != null
+                    && (current.getAmplifier() > speedLevel - 1
+                            || (current.getAmplifier() == speedLevel - 1 && current.getDuration() >= ticks));
+            if (!weaker) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, speedLevel - 1));
+            }
         }
         if (Stacking.total(AxeTraits.FELLED_TREE_LEAF_FALL, sources) >= 1) {
             leavesFall(event.lastLog());

@@ -10,14 +10,8 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -40,22 +34,19 @@ final class PowderSnowListener implements Listener {
         this.key = new NamespacedKey(plugin, "powder_snow_immunity");
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        if (player.getFreezeTicks() > 0 && immune(player, tool)) {
-            player.setFreezeTicks(0);
-        }
-        if (event.hasChangedBlock()) {
-            refresh(player, tool, event.getTo());
-        }
+    /** Starts the repeating check (every 5 ticks), so frost never shows, even when the player stands still. */
+    void start() {
+        plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 5L, 5L);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onHeld(PlayerItemHeldEvent event) {
-        Player player = event.getPlayer();
-        refresh(player, player.getInventory().getItem(event.getNewSlot()), player.getLocation());
+    private void tick() {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            ItemStack tool = player.getInventory().getItemInMainHand();
+            if (player.getFreezeTicks() > 0 && immune(player, tool)) {
+                player.setFreezeTicks(0);
+            }
+            refresh(player, tool, player.getLocation());
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -66,32 +57,6 @@ final class PowderSnowListener implements Listener {
             event.setCancelled(true);
             player.setFreezeTicks(0);
         }
-    }
-
-    // The axe can leave the main hand without a held-slot change. Refresh one tick later, once the item moved.
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onDrop(PlayerDropItemEvent event) {
-        later(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSwap(PlayerSwapHandItemsEvent event) {
-        later(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onClick(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player player) {
-            later(player);
-        }
-    }
-
-    private void later(Player player) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            if (player.isOnline()) {
-                refresh(player, player.getInventory().getItemInMainHand(), player.getLocation());
-            }
-        });
     }
 
     private boolean immune(Player player, ItemStack tool) {
