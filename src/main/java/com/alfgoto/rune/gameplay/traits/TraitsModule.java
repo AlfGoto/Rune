@@ -48,7 +48,6 @@ public final class TraitsModule implements RuneModule {
         waxKey = new NamespacedKey(plugin, WaxListener.RECIPE_KEY);
         plugin.getServer().addRecipe(WaxListener.recipe(waxKey));
         ctx.listen(new WaxListener(waxKey, copper));
-        ctx.debug(new CopperDebug(copper));
     }
 
     @Override

@@ -65,13 +65,14 @@ public final class SpeedToolsModule implements RuneModule {
         items.register(RuneItem.tool("copper_axe", Rarity.UNCOMMON, ToolKind.AXE, "copper_axe",
                 copper.withTrait("copper_axe", 0, new TraitBinding("haste", config.copperSpeed(), copperStage))));
 
-        // Rare, diamond tier, Capacity 10 - 2 = 8.
+        // Rare, diamond tier, Capacity 10 plus the modifier (tools.momentum.capacity-modifier, -2 by default).
+        int capacityModifier = config.momentumCapacityModifier();
         items.register(RuneItem.tool("redstone_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "redstone_pickaxe",
-                ToolSpec.DEFAULT.withTrait(
-                        "redstone_pickaxe", -2, new TraitBinding("haste", config.momentumSpeed(), momentum))));
+                ToolSpec.DEFAULT.withTrait("redstone_pickaxe", capacityModifier,
+                        new TraitBinding("haste", config.momentumSpeed(), momentum))));
         items.register(RuneItem.tool("breeze_axe", Rarity.RARE, ToolKind.AXE, "breeze_axe",
-                ToolSpec.DEFAULT.withTrait(
-                        "breeze_axe", -2, new TraitBinding("haste", config.momentumSpeed(), momentum))));
+                ToolSpec.DEFAULT.withTrait("breeze_axe", capacityModifier,
+                        new TraitBinding("haste", config.momentumSpeed(), momentum))));
 
         recipes(ctx);
     }

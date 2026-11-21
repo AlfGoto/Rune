@@ -335,6 +335,8 @@ tools:
     max-blocks: 10
     # Seconds between two breaks before Momentum resets
     reset-seconds: 2
+    # Capacity added to the Redstone Pickaxe and Breeze Axe (negative: a drawback)
+    capacity-modifier: -2
 armor:
   # Rune Armor follows vanilla by Rarity: Common = leather, Uncommon = chainmail, Rare = iron,
   # Epic = diamond, Legendary = netherite. Each list is lowest Rarity first.
