@@ -4,6 +4,7 @@ import com.alfgoto.rune.foundations.triggers.TreeFelled;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
+import java.util.Iterator;
 import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,8 +14,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * The Trait extras that fire when the player fells a tree with the axe in hand:
@@ -31,12 +34,17 @@ final class FelledTreeTraitListener implements Listener {
         BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
     };
 
+    /** Leaves broken per tick (the canopy falls over a few ticks, not all at once). */
+    private static final int LEAVES_PER_TICK = 40;
+
+    private final Plugin plugin;
     private final ItemRegistry items;
     private final ToolLoadout loadout;
     private final int speedLevel;
 
     /** @param speedLevel the Speed level of the Birch boost (1 = Speed I) */
-    FelledTreeTraitListener(ItemRegistry items, ToolLoadout loadout, int speedLevel) {
+    FelledTreeTraitListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, int speedLevel) {
+        this.plugin = plugin;
         this.items = items;
         this.loadout = loadout;
         this.speedLevel = Math.max(1, speedLevel);
@@ -67,7 +75,7 @@ final class FelledTreeTraitListener implements Listener {
         }
     }
 
-    private static void leavesFall(Block lastLog) {
+    private void leavesFall(Block lastLog) {
         List<Block> leaves = AxeTraits.connectedLeaves(
                 lastLog,
                 block -> java.util.Arrays.stream(SIDES).map(block::getRelative).toList(),
@@ -75,8 +83,22 @@ final class FelledTreeTraitListener implements Listener {
                 block -> block.getBlockData() instanceof Leaves data && !data.isPersistent(),
                 AxeTraits.LEAF_REACH,
                 AxeTraits.MAX_FALLING_LEAVES);
-        for (Block block : leaves) {
-            block.breakNaturally();
-        }
+        // Break them a few per tick, so a big canopy does not freeze the server.
+        Iterator<Block> pending = leaves.iterator();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < LEAVES_PER_TICK && pending.hasNext(); i++) {
+                    Block block = pending.next();
+                    // Vanilla decay may have removed it already.
+                    if (block.getBlockData() instanceof Leaves) {
+                        block.breakNaturally();
+                    }
+                }
+                if (!pending.hasNext()) {
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 1L, 1L);
     }
 }

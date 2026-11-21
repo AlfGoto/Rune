@@ -30,7 +30,7 @@ public final class WoodcuttingModule implements RuneModule {
         ctx.listen(new CanopyListener(ctx.plugin(), items, loadout));
         // Trait extras of the Birch, Spruce, Poplar and Jungle axes.
         int speedLevel = (int) ctx.config().traitNumber(AxeTraits.FELLED_TREE_SPEED, "level", 1);
-        ctx.listen(new FelledTreeTraitListener(items, loadout, speedLevel));
+        ctx.listen(new FelledTreeTraitListener(ctx.plugin(), items, loadout, speedLevel));
         PowderSnowListener powderSnow = new PowderSnowListener(ctx.plugin(), items, loadout);
         ctx.listen(powderSnow);
         powderSnow.start();
