@@ -260,6 +260,17 @@ runes:
     cost-multiplier: 3
   # Value of a Rune = base + per-rank * (Rank - 1), from docs/jobs/mining.md. Chances are in percent
   # (100 = guaranteed). Silk Touch is on/off. max-rank is the highest Rank when ranking up.
+  # Detection (Bone Pickaxe now, Ore Sense Rune later). base = % chance per stone-family block broken
+  # (a Trait or Rune value). Ores within radius blocks are outlined for seconds.
+  ore_sense:
+    base: 5
+    radius: 8
+    seconds: 5
+  # Echo Pickaxe: pings by itself while held in the main hand.
+  echo_ping:
+    interval-seconds: 10
+    radius: 12
+    seconds: 5
   fortune:
     base: 15
     per-rank: 15

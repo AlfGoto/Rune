@@ -55,6 +55,15 @@ public final class CoreItemsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
+        // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
+        // Numbers are in config: runes.ore_sense.base (Bone's chance), runes.speed.affinity.per-rank (Deep Dark).
+        double oreSense = ctx.config().runeNumber("ore_sense", "base").orElse(5);
+        items.register(RuneItem.tool("bone_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "bone_pickaxe",
+                ToolSpec.DEFAULT.withTrait("bone_pickaxe", 0, TraitBinding.always("ore_sense", oreSense))));
+        items.register(RuneItem.tool("echo_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "echo_pickaxe",
+                ToolSpec.DEFAULT.withTierOffset(-1).withTrait("echo_pickaxe", 2,
+                        TraitBinding.always("affinity_deep_dark", ctx.config().speedRunes().affinityPerRank()),
+                        TraitBinding.always("echo_ping", 100))));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
