@@ -44,8 +44,8 @@ final class ReplantListener implements Listener {
         if (bases.isEmpty()) {
             return;
         }
-        // The wood type of the tree, read now: the logs are gone next tick.
-        Optional<Material> sapling = ReplantRules.saplingFor(bases.get(0).getType());
+        // The wood type comes from the last log: it is the only log still in the world (the bases may be air).
+        Optional<Material> sapling = ReplantRules.saplingFor(event.lastLog().getType());
         if (sapling.isEmpty()) {
             return;
         }
