@@ -282,6 +282,23 @@ class RuneConfigTest {
     }
 
     @Test
+    void bookCacheRarityDefaultsToUncommonAndRejectsUnknownValues() throws Exception {
+        assertEquals(com.alfgoto.rune.text.Rarity.UNCOMMON, RuneConfig.defaults().bookCacheRarity());
+        assertEquals(
+                com.alfgoto.rune.text.Rarity.EPIC,
+                load("""
+                vanilla-overrides:
+                  book-cache-rarity: epic
+                """).bookCacheRarity());
+        RuneConfig bad = load("""
+                vanilla-overrides:
+                  book-cache-rarity: shiny
+                """);
+        assertEquals(com.alfgoto.rune.text.Rarity.UNCOMMON, bad.bookCacheRarity());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
+    }
+
+    @Test
     void badBlockXpEntriesAreSkippedAndLogged() throws Exception {
         RuneConfig c = load("""
                 jobs:
