@@ -27,7 +27,8 @@ import org.bukkit.event.Listener;
 /**
  * Counts Quest progress and completes Quests. Each {@link JobActionEvent} adds 1 to every active Quest of
  * that Job (a Quest Type's {@link QuestObjective} can ignore some, e.g. wrong block or wrong tool). A
- * finished Quest gives Job XP and an Account XP bonus (config {@code quests.reward-*}) and the Drops of a roll of the {@value #LOOT_TABLE} loot table at the Quest Tier, leaning to the Quest's Job.
+ * finished Quest gives Job XP and an Account XP bonus (config {@code quests.reward-*}) and the Drops of a
+ * roll of the {@value #LOOT_TABLE} loot table at the Quest Tier, leaning to the Quest's Job.
  * Then the slot gets a new Quest.
  */
 public final class QuestTracker implements Listener {
