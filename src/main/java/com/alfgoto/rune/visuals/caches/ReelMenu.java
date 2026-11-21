@@ -65,6 +65,10 @@ final class ReelMenu extends Menu {
         schedule();
     }
 
+    boolean isFor(Player other) {
+        return player.getUniqueId().equals(other.getUniqueId());
+    }
+
     /** Ticks to wait before the next move: starts fast, slows down. */
     static int delay(int step) {
         return 1 + step * step / 80;

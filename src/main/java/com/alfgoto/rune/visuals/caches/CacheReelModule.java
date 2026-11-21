@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * The Cache reel: plugs a spinning reel menu into {@link Caches}. Closing the menu early (or leaving,
@@ -50,6 +51,17 @@ public final class CacheReelModule implements RuneModule, Listener {
         if (event.getInventory().getHolder() instanceof ReelMenu menu) {
             menu.complete();
             active.remove(menu);
+        }
+    }
+
+    /** Explicit quit path: do not rely on the server firing a close event on disconnect. */
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        for (ReelMenu menu : Set.copyOf(active)) {
+            if (menu.isFor(event.getPlayer())) {
+                menu.complete();
+                active.remove(menu);
+            }
         }
     }
 }
