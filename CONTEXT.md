@@ -91,6 +91,10 @@ _Avoid_: skill tree (Job Levels never give passive stats)
 
 **Scale** — A number from 0 to 1 for a player and an item (e.g. `always` = 1). A Trait binding's final value = value × Scale. Registered by id, like Effects.
 
+**Oxidation** — The Copper Trait: a Copper tool goes through 4 stages (Copper, Exposed, Weathered, Oxidized) as it breaks blocks, and is faster at each. **Wax** (a honeycomb and the tool in the crafting grid) locks the stage for good.
+
+**Momentum** — A Trait: the more blocks (logs, for an axe) the player breaks in a row, the faster the tool, up to a cap. A pause of 2 seconds resets it.
+
 **Harvest Tier** — Which blocks a Rune Tool can harvest (vanilla's stone / iron / diamond tiers). Defaults from the tool's Rarity (Common = stone-tier, Uncommon = iron-tier, Rare and above = diamond-tier); a tool can be one tier above or below its default as a bonus or drawback.
 
 **Upgrade** — Crafting a new, better-named Rune Tool or Rune Armor piece whose recipe consumes one or more existing pieces (e.g. Miner's Helmet → Caver's Helmet; every biome pickaxe → one Worldpick). The result keeps the installed Runes that fit its slots and Capacity; the rest go to the player's inventory, or drop on the ground if it is full. The result usually looks like a more advanced version of its ingredients. Pieces can also stand alone, outside any Upgrade line. Combining every biome piece (Worldpick, Yggdrasil) gives a craftable Legendary, not a Relic.
