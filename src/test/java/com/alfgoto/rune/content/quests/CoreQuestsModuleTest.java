@@ -99,6 +99,7 @@ class CoreQuestsModuleTest {
     void placeDoesNotCountOutsideAMineshaft() {
         var types = plugin.context().get(QuestTypeRegistry.class);
         QuestType place = types.registry().get("place");
-        assertFalse(place.objective().counts(new JobActionEvent(player, CoreJobs.MINING, block(Material.STONE, 60), null)));
+        Block stone = block(Material.STONE, 60);
+        assertFalse(place.objective().counts(new JobActionEvent(player, CoreJobs.MINING, stone, null)));
     }
 }
