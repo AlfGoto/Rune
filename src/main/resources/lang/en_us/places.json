@@ -3,5 +3,8 @@
   "rune.command.where.header": "You are in:",
   "rune.place.lush_caves": "Lush Caves",
   "rune.place.taiga": "Taiga",
-  "rune.place.mineshaft": "Mineshaft"
+  "rune.place.mineshaft": "Mineshaft",
+  "rune.place.mountains": "Mountains",
+  "rune.place.ocean": "Ocean",
+  "rune.place.nether": "Nether"
 }

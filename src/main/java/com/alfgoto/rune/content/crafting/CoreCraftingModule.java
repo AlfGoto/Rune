@@ -53,6 +53,8 @@ public final class CoreCraftingModule implements RuneModule {
                         'B', Ingredient.vanilla(Material.COBBLESTONE),
                         'S', Ingredient.vanilla(Material.STICK))));
 
+        biomePickaxes(book, mining);
+
         // The 7 Components (docs/jobs/mining.md). The ingredients are the documented ones;
         // the grid layout and the unlock level (COMPONENT_LEVEL) are not in docs yet.
         component(book, mining, "reinforced_handle", List.of("IL", "SS"), Map.of(
@@ -86,6 +88,41 @@ public final class CoreCraftingModule implements RuneModule {
                 'E', Ingredient.vanilla(Material.ECHO_SHARD)));
 
         miningArmor(book, mining);
+    }
+
+    /**
+     * Lichen (Mining 6), Fiery (10), Emerald (13) and Prismarine (14). The ingredients and levels are the
+     * documented ones; the grid layouts are not in docs.
+     */
+    private static void biomePickaxes(RecipeBook book, Job mining) {
+        Ingredient handle = Ingredient.rune("reinforced_handle");
+        Ingredient setting = Ingredient.rune("gem_setting");
+        Ingredient diamond = Ingredient.vanilla(Material.DIAMOND);
+
+        book.register(new CraftingRecipe("lichen_pickaxe", mining, 6, "lichen_pickaxe", 1,
+                List.of("MLM", "BHB"), Map.of(
+                        'M', Ingredient.vanilla(Material.MOSS_BLOCK),
+                        'L', Ingredient.vanilla(Material.GLOW_LICHEN),
+                        'B', Ingredient.vanilla(Material.GLOW_BERRIES),
+                        'H', handle)));
+        book.register(new CraftingRecipe("fiery_pickaxe", mining, 10, "fiery_pickaxe", 1,
+                List.of("MMM", "RDR", " G "), Map.of(
+                        'M', Ingredient.vanilla(Material.MAGMA_BLOCK),
+                        'R', Ingredient.vanilla(Material.BLAZE_ROD),
+                        'D', diamond,
+                        'G', setting)));
+        book.register(new CraftingRecipe("emerald_pickaxe", mining, 13, "emerald_pickaxe", 1,
+                List.of("EEE", "HDG"), Map.of(
+                        'E', Ingredient.vanilla(Material.EMERALD),
+                        'H', Ingredient.vanilla(Material.GOAT_HORN),
+                        'D', diamond,
+                        'G', setting)));
+        book.register(new CraftingRecipe("prismarine_pickaxe", mining, 14, "prismarine_pickaxe", 1,
+                List.of("PNP", "DGD"), Map.of(
+                        'P', Ingredient.vanilla(Material.PRISMARINE),
+                        'N', Ingredient.vanilla(Material.NAUTILUS_SHELL),
+                        'D', diamond,
+                        'G', setting)));
     }
 
     /**
