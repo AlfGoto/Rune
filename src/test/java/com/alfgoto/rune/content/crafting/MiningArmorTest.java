@@ -83,6 +83,27 @@ class MiningArmorTest {
         }
     }
 
+    @Test
+    void rareAndEpicPiecesUpgradeFromThePreviousRarity() {
+        List<String> rareIds = List.of("drillers_helm", "drillers_cuirass", "drillers_leggings", "drillers_boots");
+        List<String> epicIds = List.of("abyssal_helm", "abyssal_cuirass", "abyssal_leggings", "abyssal_boots");
+        for (int i = 0; i < 4; i++) {
+            String uncommon = UNCOMMON.get(i);
+            String rare = rareIds.get(i);
+            String epic = epicIds.get(i);
+            assertEquals(Rarity.RARE, items.get(rare).rarity());
+            assertEquals(Rarity.EPIC, items.get(epic).rarity());
+            assertNotNull(server.getRecipe(book.key(rare)));
+            assertNotNull(server.getRecipe(book.key(epic)));
+            assertEquals(12, book.find(rare).orElseThrow().level());
+            assertEquals(18, book.find(epic).orElseThrow().level());
+            assertTrue(book.find(rare).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> uncommon.equals(ing.itemId())));
+            assertTrue(book.find(epic).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> rare.equals(ing.itemId())));
+        }
+    }
+
     private static List<String> concat(List<String> a, List<String> b) {
         return java.util.stream.Stream.concat(a.stream(), b.stream()).toList();
     }
