@@ -1,6 +1,7 @@
 package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -21,7 +22,8 @@ public final class HeldTraitsModule implements RuneModule {
 
     @Override
     public void enable(RuneContext ctx) {
-        held = ctx.provide(HeldTraits.class, new HeldTraits(ctx.plugin(), ctx.get(ToolLoadout.class)));
+        held = ctx.provide(HeldTraits.class, new HeldTraits(ctx.plugin(), ctx.get(ToolLoadout.class),
+                ctx.get(BrokenToolListener.class)::isBroken));
         ctx.listen(held);
         ctx.plugin().getServer().getScheduler().runTaskTimer(ctx.plugin(), held, PERIOD_TICKS, PERIOD_TICKS);
     }

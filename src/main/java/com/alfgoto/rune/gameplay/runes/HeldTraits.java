@@ -63,6 +63,7 @@ public final class HeldTraits implements Runnable, Listener {
     }
 
     private final ToolLoadout loadout;
+    private final Predicate<ItemStack> isBroken;
     private final Plugin plugin;
     private final NamespacedKey moveKey;
     private final NamespacedKey waterKey;
@@ -70,9 +71,10 @@ public final class HeldTraits implements Runnable, Listener {
     private final Map<String, Predicate<Player>> moveRules = new LinkedHashMap<>();
     private final Map<UUID, Glow> glows = new HashMap<>();
 
-    public HeldTraits(Plugin plugin, ToolLoadout loadout) {
+    public HeldTraits(Plugin plugin, ToolLoadout loadout, Predicate<ItemStack> isBroken) {
         this.plugin = plugin;
         this.loadout = loadout;
+        this.isBroken = isBroken;
         this.moveKey = new NamespacedKey(plugin, "held_move_speed");
         this.waterKey = new NamespacedKey(plugin, "held_no_water_penalty");
         this.airKey = new NamespacedKey(plugin, "held_no_air_penalty");
@@ -90,12 +92,10 @@ public final class HeldTraits implements Runnable, Listener {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             ItemStack hand = player.getInventory().getItemInMainHand();
             List<Stacking.Source> sources =
-                    hand.getType().isAir() ? List.of() : loadout.sources(hand, player);
+                    hand.getType().isAir() || isBroken.test(hand) ? List.of() : loadout.sources(hand, player);
             glow(player, (int) Math.min(15, Math.max(0, Stacking.total(GLOW, sources))));
             moveSpeed(player, sources);
-            if (!sources.isEmpty() || hasModifiers(player)) {
-                penalties(player, sources);
-            }
+            penalties(player, sources);
         }
     }
 
@@ -118,13 +118,6 @@ public final class HeldTraits implements Runnable, Listener {
         if (glow != null) {
             restore(glow);
         }
-    }
-
-    private boolean hasModifiers(Player player) {
-        AttributeInstance water = player.getAttribute(Attribute.SUBMERGED_MINING_SPEED);
-        AttributeInstance air = player.getAttribute(Attribute.BLOCK_BREAK_SPEED);
-        return (water != null && water.getModifier(waterKey) != null)
-                || (air != null && air.getModifier(airKey) != null);
     }
 
     private void penalties(Player player, List<Stacking.Source> sources) {
