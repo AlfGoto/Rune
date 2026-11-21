@@ -283,6 +283,24 @@ runes:
     base: 1
     per-rank: 0
     max-rank: 1
+  # Deepstride: no Max Rank. The value is the depth line (Y): Rank 1 = below Y 0, each Rank moves it up by
+  # per-rank. speed = % mining speed below the line.
+  deepstride:
+    base: 0
+    per-rank: 16
+    speed: 20
+  # Ore Sense: chance (%) that breaking a stone-family block outlines ores in a cube of radius blocks each way (so 8 = 17x17x17) for seconds.
+  ore_sense:
+    base: 5
+    per-rank: 5
+    max-rank: 3
+    radius: 8
+    seconds: 5
+  # Ore Bloom: chance (%) that mining an ore turns a neighbouring stone-family block into that ore.
+  ore_bloom:
+    base: 8
+    per-rank: 8
+    max-rank: 5
   # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # Leaf Fall: radius in blocks (2 / 4 / 6)
   leaf_fall:
