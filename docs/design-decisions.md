@@ -211,6 +211,8 @@ The first milestone the issues aim at:
   - Leaf Fall (radius 2 / 4 / 6): breaking a log breaks the non-persistent leaves in a sphere around it at once, with normal drops. They are broken without a break event, so they give 0 XP. Leaves a player placed (persistent) do not fall.
   - Orchard (+10% per Rank): each leaf the player breaks or makes fall can roll its vanilla loot again and keep only apples and saplings. Natural decay is not by the player, so it gets no bonus.
   - Canopy Stride (+10% move speed per Rank, no Max Rank): a transient `MOVEMENT_SPEED` modifier while the player holds the axe and stands on leaves or logs.
+  - Replant (Rare, Max Rank 1, #86): when a Felled Tree falls, a sapling of its wood type is planted on every log of the tree's lowest layer (four for a 2x2 dark oak), one tick later. Mangrove gives a propagule, crimson and warped a fungus. It is **free** (no sapling taken from the inventory) and skipped where the sapling cannot stand. Not a player-placed block. Config `runes.replant`.
+  - Tree Dash (Rare, Max Rank 3, Active, #86): the click finds the nearest log in range 8 / 12 / 16 with a clear line of sight from the eyes and pushes the player towards it (velocity, not a teleport; `speed-per-block` and `max-speed` in config). No visible log: nothing happens and no cooldown. Cooldown 20 s. Config `runes.tree_dash`.
 
 ## Later (not at launch)
 - Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.

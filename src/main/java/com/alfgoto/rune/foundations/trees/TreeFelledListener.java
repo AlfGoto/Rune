@@ -27,7 +27,7 @@ public final class TreeFelledListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(RuneBlockBreakEvent event) {
         if (sessions.onLogBroken(event.block())) {
-            server.getPluginManager().callEvent(new TreeFelled(event.player(), event.block(), event.item()));
+            server.getPluginManager().callEvent(new TreeFelled(event.player(), event.block(), event.item(), sessions.lastBases()));
         }
     }
 }

@@ -2,6 +2,7 @@ package com.alfgoto.rune.foundations.trees;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -26,11 +27,15 @@ public final class FellingSessions {
         final String wood;
         final long startedAt;
         final Set<Block> logs;
+        final List<Block> bases;
 
         Session(String wood, long startedAt, Set<Block> logs) {
             this.wood = wood;
             this.startedAt = startedAt;
             this.logs = logs;
+            // Where the trunk stood: every log of the lowest layer (a 2x2 dark oak has four).
+            int lowest = logs.stream().mapToInt(Block::getY).min().orElse(0);
+            this.bases = logs.stream().filter(log -> log.getY() == lowest).toList();
         }
     }
 
@@ -38,6 +43,7 @@ public final class FellingSessions {
     private final LongSupplier clock;
     private final Set<Session> sessions = new HashSet<>();
     private final Map<Block, Session> byLog = new HashMap<>();
+    private List<Block> lastBases = List.of();
 
     public FellingSessions(TreeScan scan, LongSupplier clock) {
         this.scan = scan;
@@ -77,9 +83,18 @@ public final class FellingSessions {
         }
         if (session.logs.isEmpty()) {
             sessions.remove(session);
+            lastBases = session.bases;
             return true;
         }
         return false;
+    }
+
+    /**
+     * The lowest logs of the tree that the last {@link #onLogBroken} call felled (where it stood). Only
+     * meaningful right after that call returned true.
+     */
+    public List<Block> lastBases() {
+        return lastBases;
     }
 
     /** Number of live sessions. */

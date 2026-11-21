@@ -287,6 +287,20 @@ runes:
   canopy_stride:
     base: 10
     per-rank: 10
+  # Replant: on/off (Max Rank 1). Plants a sapling where a Felled Tree stood.
+  replant:
+    base: 1
+    per-rank: 0
+    max-rank: 1
+  # Tree Dash (Active): range in blocks (8 / 12 / 16), cooldown in seconds. The dash pushes the player
+  # speed-per-block per block of distance, up to max-speed.
+  tree_dash:
+    base: 8
+    per-rank: 4
+    max-rank: 3
+    cooldown: 20
+    speed-per-block: 0.15
+    max-speed: 1.8
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
