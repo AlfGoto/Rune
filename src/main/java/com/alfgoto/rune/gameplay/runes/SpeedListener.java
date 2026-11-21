@@ -17,6 +17,9 @@ import org.bukkit.plugin.Plugin;
  */
 final class SpeedListener implements Listener {
 
+    /** The lowest speed change: -95%. */
+    private static final double MIN_FACTOR = -0.95;
+
     private final SpeedBonuses bonuses;
     private final NamespacedKey key;
 
@@ -34,9 +37,11 @@ final class SpeedListener implements Listener {
         }
         speed.removeModifier(key);
         double percent = bonuses.percent(event.getItemInHand(), player, event.getBlock());
-        if (percent > 0) {
+        if (percent != 0) {
+            // A Trait drawback can slow mining down, but never to a full stop.
+            double factor = Math.max(percent / 100, MIN_FACTOR);
             speed.addTransientModifier(
-                    new AttributeModifier(key, percent / 100, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+                    new AttributeModifier(key, factor, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         }
     }
 }

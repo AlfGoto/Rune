@@ -4,6 +4,9 @@ import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
+import com.alfgoto.rune.gameplay.rewards.LootRoller;
+import com.alfgoto.rune.gameplay.rewards.LootTableRegistry;
+import com.alfgoto.rune.gameplay.rewards.RewardsModule;
 import com.alfgoto.rune.storage.PlayerStorage;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -27,6 +30,13 @@ public final class QuestsModule implements RuneModule {
         ctx.provide(QuestTypeRegistry.class, types);
         ctx.provide(QuestBook.class, book);
         ctx.listen(new QuestJoinListener(book));
+        ctx.listen(new QuestTracker(
+                book,
+                ctx.get(JobProgress.class),
+                ctx.config(),
+                ctx.get(LootTableRegistry.class),
+                ctx.get(LootRoller.class),
+                ThreadLocalRandom.current()));
         ctx.subcommand(new QuestSubcommand(book));
         ctx.debug(new QuestDebug(types.registry(), book));
     }
@@ -38,6 +48,6 @@ public final class QuestsModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(JobsModule.class);
+        return Set.of(JobsModule.class, RewardsModule.class);
     }
 }

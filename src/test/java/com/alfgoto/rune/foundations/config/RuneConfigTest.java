@@ -72,6 +72,8 @@ class RuneConfigTest {
                     base: [1, 2, 3, 4, 5]
                     per-level: [-1, 0, 1, 2, 3]
                   max-reroll-tokens: 5
+                  reward-job-xp: [1, 2, 3, 4, 5]
+                  reward-account-xp: [5, 4, 3, 2, 1]
                 rewards:
                   rarity-boost: [1, 2, 3, 4, 5]
                   rolls-by-rarity: [1, 2, 3, 4, 5.4]
@@ -99,7 +101,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 1, 2, 4]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 9
@@ -129,6 +136,8 @@ class RuneConfigTest {
         assertEquals(List.of(2, 3, 4, 5, 6), c.tools().slotsByRarity());
         assertEquals(List.of(1, 2, 3, 4, 5), c.tools().capacityByRarity());
         assertEquals(5, c.questMaxRerollTokens());
+        assertEquals(java.util.List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.questRewardJobXp());
+        assertEquals(java.util.List.of(5.0, 4.0, 3.0, 2.0, 1.0), c.questRewardAccountXp());
         assertEquals(List.of(1.0, 2.0, 3.0, 4.0, 5.0), c.rewardsRarityBoost());
         assertEquals(List.of(1, 2, 3, 4, 5), c.rewardsRollsByRarity());
         assertEquals(0.25, c.rewardsJobBias());
@@ -189,6 +198,8 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                  reward-job-xp: [50, 75, 100, 150, 250]
+                  reward-account-xp: [25, 40, 50, 75, 125]
                 rewards:
                   rarity-boost: [1, 1.5, 2, 3, 4]
                   rolls-by-rarity: [1, 1, 2, 2, 3]
@@ -216,7 +227,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -240,7 +256,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(43, errors.size());
+        assertEquals(48, errors.size());
+        assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
         assertEquals(40, c.playerCapacityMax());
@@ -309,6 +326,8 @@ class RuneConfigTest {
                     base: [100, 60, 30, 10, 5]
                     per-level: [-2, 0, 1, 1.5, 1.5]
                   max-reroll-tokens: 3
+                  reward-job-xp: [50, 75, 100, 150, 250]
+                  reward-account-xp: [25, 40, 50, 75, 125]
                 rewards:
                   rarity-boost: [1, 1.5, 2, 3, 4]
                   rolls-by-rarity: [1, 1, 2, 2, 3]
@@ -336,7 +355,12 @@ class RuneConfigTest {
                     leggings: [75, 225, 225, 495, 555]
                     boots: [65, 195, 195, 429, 481]
                   toughness-by-rarity: [0, 0, 0, 2, 3]
+                  depth:
+                    top-y: 64
+                    bottom-y: -64
                 runes:
+                  rank-up:
+                    cost-multiplier: 3
                   speed:
                     haste:
                       per-rank: 8
@@ -362,12 +386,16 @@ class RuneConfigTest {
                   durability:
                     helmet: [55, 165, 165, 363, 0]
                   toughness-by-rarity: [0, 0, 0, 2, banana]
+                  depth:
+                    top-y: -64
+                    bottom-y: 64
                 """);
         assertEquals(ArmorConfig.defaults(), c.armor());
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.defense.chestplate")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.durability.helmet")));
         assertTrue(errors.stream().anyMatch(e -> e.contains("armor.toughness-by-rarity")));
+        assertTrue(errors.stream().anyMatch(e -> e.contains("armor.depth.top-y")));
     }
 
     @Test

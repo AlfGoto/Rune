@@ -54,7 +54,7 @@ public final class SpeedBonuses {
 
     /** The total speed bonus in percent (0 = none) of the Runes installed on {@code tool}, for this block. */
     public double percent(ItemStack tool, Player player, Block block) {
-        List<Stacking.Source> sources = loadout.sources(tool);
+        List<Stacking.Source> sources = loadout.sources(tool, player);
         Set<String> ids = new LinkedHashSet<>();
         for (Stacking.Source source : sources) {
             ids.add(source.effectId());

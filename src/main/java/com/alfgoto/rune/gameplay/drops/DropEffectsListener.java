@@ -43,7 +43,7 @@ public final class DropEffectsListener implements Listener {
         if (items.of(tool).isEmpty()) {
             return;
         }
-        List<Stacking.Source> sources = loadout.sources(tool);
+        List<Stacking.Source> sources = loadout.sources(tool, event.getPlayer());
         switch (DropRules.mode(sources)) {
             case UNCHANGED -> {}
             case SILK -> {} // handled in onBreak
@@ -59,7 +59,7 @@ public final class DropEffectsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
-        if (items.of(tool).isEmpty() || DropRules.mode(loadout.sources(tool)) != Mode.SILK) {
+        if (items.of(tool).isEmpty() || DropRules.mode(loadout.sources(tool, event.getPlayer())) != Mode.SILK) {
             return;
         }
         ItemStack silkTool = tool.clone();

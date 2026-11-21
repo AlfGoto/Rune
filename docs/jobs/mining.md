@@ -193,6 +193,8 @@ Each piece's Trait scales with depth; each piece has its own scale, default line
 
 Unlock levels: Common 3, Uncommon 7, Rare 12, Epic 18, Legendary by Blueprint.
 
+**Built so far (Common + Uncommon):** the 8 pieces (`miners_helmet`, `miners_vest`, `miners_trousers`, `miners_boots`, `cavers_helmet`, `reinforced_chestplate`, `cavers_leggings`, `cavers_boots`) with their recipes. Each Uncommon piece consumes its Common piece (an Upgrade). Grid layouts are not decided in docs; the ones in `CoreCraftingModule` are placeholders. The depth scale is `gameplay.items.DepthScale`, with `armor.depth.top-y` / `bottom-y` in config (64 / −64). **The Trait effects (light, damage reduction, sneak speed, fall damage) and their maximum values are not built:** the pieces only carry a Trait id (`mining_light_radius`, `mining_damage_reduction`, `mining_sneak_speed`, `mining_fall_reduction`). Each piece has its inventory icon (textures v3). The worn look (`equipment/mining_<rarity>.json`) exists in the pack but is not wired: pieces still show as leather when worn. Woodcutting armor icons exist but the pieces are not registered yet.
+
 | Slot | Trait | Common | Uncommon | Rare | Epic | Legendary |
 |---|---|---|---|---|---|---|
 | Helmet | Light radius | Miner's Helmet | Caver's Helmet | Driller's Helm | Abyssal Helm | Crown of the Depths |

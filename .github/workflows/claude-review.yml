@@ -26,6 +26,7 @@ jobs:
     outputs:
       mode: ${{ steps.loop.outputs.mode }}
       verdict: ${{ steps.review.outputs.structured_output && fromJSON(steps.review.outputs.structured_output).verdict || '' }}
+      confidence: ${{ steps.review.outputs.structured_output && fromJSON(steps.review.outputs.structured_output).confidence || '' }}
     # Room for long reviews (GitHub's default is 6 h; this just stops a stuck run).
     timeout-minutes: 30
     permissions:
@@ -100,6 +101,10 @@ jobs:
             6. Simplicity: is there a simpler way to do what this PR does?
                List files or changes not needed for the PR's goal, and code that could be shorter.
                Suggest the smaller version.
+            7. PR body "How to test": step-by-step checkboxes, every command written out in full,
+               each with the result to expect. Check each step works on this branch (item id exists,
+               Rune fits the tool, Capacity Cost and slots fit, Harvest Tier can mine the block).
+               A wrong or missing step, or a vague one ("mine some ores"), = "fix first".
 
             How to write:
             - Alfred, who reads your review, has ADHD. Write for that:
@@ -122,10 +127,21 @@ jobs:
             - "fix" only if something really must change before merge (⚠️ fix first).
             - "good" if it is fine or only small nits remain (✅ good to merge).
 
+            Confidence (also your structured output, 0 to 5): how sure you are that Alfred can merge
+            WITHOUT testing in game. The workflow puts it in the PR title as a prefix ("4/5 ...").
+            - 5: nothing changes in game (docs, comments, lang typo), or a trivial change.
+            - 4: small and isolated, covered by tests; the worst case is minor (a message, a recipe, a lore line).
+            - 3: tests pass, but the result depends on how it feels in game (speed, particles, menus)
+                 or it touches a shared system (Effects, Stacking, Loadout, Job XP). Quick test advised.
+            - 2: core gameplay loop, many event edge cases, or a possible exploit. Test it.
+            - 1: big or risky change.
+            - 0: CI fails or it can't work as is.
+            Verdict "fix" → confidence 2 at most. Write the score and one line why at the top of your summary.
+
           claude_args: |
             --model claude-haiku-5-5
             --max-turns 60
-            --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["good","fix"]}},"required":["verdict"]}'
+            --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["good","fix"]},"confidence":{"type":"integer","minimum":0,"maximum":5}},"required":["verdict","confidence"]}'
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments:*),Bash(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews:*),Bash(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments:*)"
 
       # Fix loop, step 2. The WORKFLOW decides from the verdict (not the model).
@@ -169,7 +185,15 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           VERDICT: ${{ needs.review.outputs.verdict }}
           MODE: ${{ needs.review.outputs.mode }}
+          CONFIDENCE: ${{ needs.review.outputs.confidence }}
         run: |
+          # Title prefix "N/5 ": how safe it is to merge without testing in game (set by the review).
+          if [ -n "$CONFIDENCE" ]; then
+            title=$(gh pr view "$PR" -R "$REPO" --json title --jq '.title')
+            base=$(sed -E 's#^[0-5]/5 ##' <<< "$title")
+            new="$CONFIDENCE/5 $base"
+            if [ "$new" != "$title" ]; then gh pr edit "$PR" -R "$REPO" --title "$new"; fi
+          fi
           is_draft=$(gh pr view "$PR" -R "$REPO" --json isDraft --jq '.isDraft')
           echo "verdict=$VERDICT mode=$MODE draft=$is_draft"
           if [ "$VERDICT" = "fix" ] && [ "$MODE" = "on" ]; then

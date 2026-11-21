@@ -34,8 +34,10 @@ public record ToolStats(
                 ? spec.durability()
                 : (epicPlus ? config.epicDurability() : config.durabilityByTier().get(tier.ordinal()));
         int slots = spec.slots() != null ? spec.slots() : config.slotsByRarity().get(item.rarity().ordinal());
-        int capacity =
-                spec.capacity() != null ? spec.capacity() : config.capacityByRarity().get(item.rarity().ordinal());
+        // Capacity = base (or override) + the Trait's modifier, never below 0.
+        int capacity = TraitBinding.adjustedCapacity(
+                spec.capacity() != null ? spec.capacity() : config.capacityByRarity().get(item.rarity().ordinal()),
+                spec.capacityModifier());
         return new ToolStats(kind, tier, speed, durability, slots, capacity, spec.traitId());
     }
 }

@@ -17,7 +17,7 @@ import java.util.random.RandomGenerator;
 
 /**
  * The 3 active Quests of each player, stored in {@link PlayerStorage} as {@code <type id>:<tier id>}
- * under {@code quest/slot/1..3}. An empty slot is filled when the Quests are read, so a player always
+ * under {@code quest/slot/1..3}, with their progress under {@code quest/progress/1..3}. An empty slot is filled when the Quests are read, so a player always
  * has 3 as long as at least one Quest Type is eligible.
  */
 public final class QuestBook {
@@ -51,7 +51,12 @@ public final class QuestBook {
 
     /** The active Quests, slot 1 first. Fills empty slots with a new Quest first. */
     public List<Quest> active(UUID player) {
-        List<Quest> out = new ArrayList<>();
+        return new ArrayList<>(slots(player).values());
+    }
+
+    /** The active Quests by slot number (1..3), slot 1 first. A slot with no Quest is missing. */
+    public Map<Integer, Quest> slots(UUID player) {
+        Map<Integer, Quest> out = new LinkedHashMap<>();
         for (int slot = 1; slot <= SLOTS; slot++) {
             Quest quest = read(player, slot);
             if (quest == null) {
@@ -61,7 +66,7 @@ public final class QuestBook {
                 }
                 write(player, slot, quest);
             }
-            out.add(quest);
+            out.put(slot, quest);
         }
         return out;
     }
@@ -72,6 +77,39 @@ public final class QuestBook {
         Quest quest = quest(type, tier);
         write(player, slot, quest);
         return quest;
+    }
+
+    /** Progress of the Quest in {@code slot} (1..3): how much of its objective is done. */
+    public int progress(UUID player, int slot) {
+        requireSlot(slot);
+        try {
+            return Math.max(0, Integer.parseInt(storage.get(player, progressKey(slot)).orElse("0")));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** Adds 1 to the progress of the Quest in {@code slot} (1..3) and returns the new progress. */
+    public int advance(UUID player, int slot) {
+        int now = progress(player, slot) + 1;
+        storage.set(player, progressKey(slot), Integer.toString(now));
+        return now;
+    }
+
+    /**
+     * Replaces the Quest in {@code slot} (1..3) with a new draw and resets its progress. Used when the
+     * Quest is completed. Returns the new Quest, or empty (slot left empty) if none can be drawn.
+     */
+    public Optional<Quest> replace(UUID player, int slot) {
+        requireSlot(slot);
+        Quest quest = draw(player);
+        if (quest == null) {
+            storage.remove(player, key(slot));
+            storage.remove(player, progressKey(slot));
+            return Optional.empty();
+        }
+        write(player, slot, quest);
+        return Optional.of(quest);
     }
 
     /** The player's Reroll Tokens. */
@@ -142,10 +180,15 @@ public final class QuestBook {
 
     private void write(UUID player, int slot, Quest quest) {
         storage.set(player, key(slot), quest.type().id() + ":" + quest.tier().id());
+        storage.remove(player, progressKey(slot)); // a new Quest starts at 0
     }
 
     private static String key(int slot) {
         return "quest/slot/" + slot;
+    }
+
+    private static String progressKey(int slot) {
+        return "quest/progress/" + slot;
     }
 
     private static void requireSlot(int slot) {

@@ -26,7 +26,11 @@ public final class RuneConfig {
     public static final String QUEST_TIER_WEIGHT_BASE = "quests.tier-weights.base";
     public static final String QUEST_TIER_WEIGHT_PER_LEVEL = "quests.tier-weights.per-level";
     public static final String QUEST_MAX_REROLL_TOKENS = "quests.max-reroll-tokens";
+    public static final String QUEST_REWARD_JOB_XP = "quests.reward-job-xp";
+    public static final String QUEST_REWARD_ACCOUNT_XP = "quests.reward-account-xp";
     public static final String RUNE_COST_BASE = "capacity.rune-cost.base";
+    public static final String RANK_UP_COST_MULTIPLIER = "runes.rank-up.cost-multiplier";
+    public static final double DEFAULT_RANK_UP_COST_MULTIPLIER = 3;
     public static final String RUNE_COST_PER_RANK = "capacity.rune-cost.per-rank";
     public static final String PLAYER_CAPACITY_BASE = "capacity.player.base";
     public static final String PLAYER_CAPACITY_PER_LEVEL = "capacity.player.per-account-level";
@@ -45,6 +49,8 @@ public final class RuneConfig {
     static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_BASE = List.of(100.0, 60.0, 30.0, 10.0, 5.0);
     static final List<Double> DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL = List.of(-1.2, 0.0, 0.6, 0.5, 0.2);
     static final int DEFAULT_QUEST_MAX_REROLL_TOKENS = 3;
+    static final List<Double> DEFAULT_QUEST_REWARD_JOB_XP = List.of(50.0, 75.0, 100.0, 150.0, 250.0);
+    static final List<Double> DEFAULT_QUEST_REWARD_ACCOUNT_XP = List.of(25.0, 40.0, 50.0, 75.0, 125.0);
     static final List<Double> DEFAULT_RUNE_COST_BASE = List.of(1.0, 2.0, 3.0, 5.0, 8.0);
     static final double DEFAULT_RUNE_COST_PER_RANK = 1;
     static final int DEFAULT_PLAYER_CAPACITY_BASE = 5;
@@ -67,6 +73,8 @@ public final class RuneConfig {
     private final List<Double> questTierWeightBase;
     private final List<Double> questTierWeightPerLevel;
     private final int questMaxRerollTokens;
+    private final List<Double> questRewardJobXp;
+    private final List<Double> questRewardAccountXp;
     private final List<Double> runeCostBase;
     private final double runeCostPerRank;
     private final int playerCapacityBase;
@@ -79,6 +87,7 @@ public final class RuneConfig {
     private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
+    private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
 
     private RuneConfig(
             double base,
@@ -92,6 +101,8 @@ public final class RuneConfig {
             List<Double> weightBase,
             List<Double> weightPerLevel,
             int maxRerollTokens,
+            List<Double> questRewardJobXp,
+            List<Double> questRewardAccountXp,
             List<Double> runeCostBase,
             double runeCostPerRank,
             int playerCapacityBase,
@@ -117,6 +128,8 @@ public final class RuneConfig {
         this.armor = armor;
         this.speedRunes = speedRunes;
         this.questMaxRerollTokens = maxRerollTokens;
+        this.questRewardJobXp = List.copyOf(questRewardJobXp);
+        this.questRewardAccountXp = List.copyOf(questRewardAccountXp);
         this.questTierMinLevels = List.copyOf(minLevels);
         this.questTierWeightBase = List.copyOf(weightBase);
         this.questTierWeightPerLevel = List.copyOf(weightPerLevel);
@@ -143,6 +156,8 @@ public final class RuneConfig {
                 DEFAULT_QUEST_TIER_WEIGHT_BASE,
                 DEFAULT_QUEST_TIER_WEIGHT_PER_LEVEL,
                 DEFAULT_QUEST_MAX_REROLL_TOKENS,
+                DEFAULT_QUEST_REWARD_JOB_XP,
+                DEFAULT_QUEST_REWARD_ACCOUNT_XP,
                 DEFAULT_RUNE_COST_BASE,
                 DEFAULT_RUNE_COST_PER_RANK,
                 DEFAULT_PLAYER_CAPACITY_BASE,
@@ -175,6 +190,9 @@ public final class RuneConfig {
         int maxTokens = (int) Math.min(
                 1_000_000,
                 readPositive(section, logger, QUEST_MAX_REROLL_TOKENS, DEFAULT_QUEST_MAX_REROLL_TOKENS));
+        List<Double> rewardJobXp = readList(section, logger, QUEST_REWARD_JOB_XP, DEFAULT_QUEST_REWARD_JOB_XP, true);
+        List<Double> rewardAccountXp =
+                readList(section, logger, QUEST_REWARD_ACCOUNT_XP, DEFAULT_QUEST_REWARD_ACCOUNT_XP, true);
         List<Double> costBase = readList(section, logger, RUNE_COST_BASE, DEFAULT_RUNE_COST_BASE, true);
         double costPerRank = readPositive(section, logger, RUNE_COST_PER_RANK, DEFAULT_RUNE_COST_PER_RANK);
         int capacityBase = readCount(section, logger, PLAYER_CAPACITY_BASE, DEFAULT_PLAYER_CAPACITY_BASE);
@@ -203,6 +221,8 @@ public final class RuneConfig {
                 weightBase,
                 weightPerLevel,
                 maxTokens,
+                rewardJobXp,
+                rewardAccountXp,
                 costBase,
                 costPerRank,
                 capacityBase,
@@ -215,7 +235,14 @@ public final class RuneConfig {
                 ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
+        loaded.rankUpCostMultiplier =
+                readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         return loaded;
+    }
+
+    /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */
+    public double rankUpCostMultiplier() {
+        return rankUpCostMultiplier;
     }
 
     /** Mining speed Runes balancing: Haste, Specialist and Affinity. */
@@ -335,6 +362,16 @@ public final class RuneConfig {
     /** Most Reroll Tokens a player can hold. */
     public int questMaxRerollTokens() {
         return questMaxRerollTokens;
+    }
+
+    /** Job XP a completed Quest gives, lowest Tier first. */
+    public List<Double> questRewardJobXp() {
+        return questRewardJobXp;
+    }
+
+    /** Account XP bonus a completed Quest gives, lowest Tier first. */
+    public List<Double> questRewardAccountXp() {
+        return questRewardAccountXp;
     }
 
     /** Quest Tier draw weight gained per Job Level (can be negative), lowest Tier first. */

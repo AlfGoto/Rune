@@ -4,7 +4,7 @@ Shown in game with the usual title-font trick: a bitmap glyph of this image in t
 shifted left with negative space so it covers the chest. Slots stay real chest slots.
 """
 from PIL import Image, ImageDraw
-from kit import Book
+from legacy_kit import Book
 
 import os
 ASSETS = os.environ.get('MC_ASSETS', os.path.join(os.path.dirname(__file__), 'mc-assets'))

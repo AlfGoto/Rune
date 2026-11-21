@@ -8,7 +8,7 @@ Fanciness ladder (same for every Job):
   Legendary + crest/finial, gold filigree, gem pommel, bespoke silhouette
   Relic     + unique silhouette built around its motif
 """
-from pix import render, STICK
+from legacy_pix import render, STICK
 
 PICK = [
     "................",
