@@ -45,6 +45,6 @@
   "rune.item.breeze_axe": "Breeze Axe",
   "rune.trait.copper_pickaxe": "Faster as it oxidizes · wax locks the stage",
   "rune.trait.copper_axe": "Faster as it oxidizes · wax locks the stage",
-  "rune.trait.redstone_pickaxe": "Momentum: faster per block in a row, resets after 2 s",
-  "rune.trait.breeze_axe": "Momentum: faster per log in a row, resets after 2 s"
+  "rune.trait.redstone_pickaxe": "Momentum: faster per block in a row, resets after a short pause",
+  "rune.trait.breeze_axe": "Momentum: faster per log in a row, resets after a short pause"
 }
