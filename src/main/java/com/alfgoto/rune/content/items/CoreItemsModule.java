@@ -83,8 +83,10 @@ public final class CoreItemsModule implements RuneModule {
     }
 
     private static void armor(ItemRegistry items, String id, Rarity rarity, ArmorKind kind, String trait) {
+        // The worn layer is one per set: rune:<job>_<rarity>. All armor here is Mining.
+        String equipment = "rune:mining_" + rarity.name().toLowerCase(java.util.Locale.ROOT);
         items.register(RuneItem.armor(
-                id, rarity, id, new ArmorSpec(kind, null, null, null, null, null, trait)));
+                id, rarity, id, new ArmorSpec(kind, null, null, null, null, null, trait).withEquipment(equipment)));
     }
 
     private static void component(ItemRegistry items, String id, Rarity rarity) {

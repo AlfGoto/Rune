@@ -174,6 +174,39 @@ class RuneArmorTest {
     }
 
     @Test
+    void thePieceWearsItsEquipmentAssetEvenWhenBrokenThenRepaired() {
+        RuneItem item = items.register(RuneItem.armor(
+                "worn_vest",
+                Rarity.COMMON,
+                "test_rune",
+                ArmorSpec.of(ArmorKind.CHESTPLATE).withEquipment("rune:mining_common")));
+        ItemStack stack = items.create(item, 1);
+        var equippable = stack.getData(DataComponentTypes.EQUIPPABLE);
+        assertEquals(org.bukkit.inventory.EquipmentSlot.CHEST, equippable.slot());
+        assertEquals("rune:mining_common", equippable.assetId().asString());
+
+        BrokenToolListener listener = new BrokenToolListener(items);
+        org.bukkit.entity.Player player = MockBukkit.getMock().addPlayer();
+        org.bukkit.inventory.meta.Damageable meta = (org.bukkit.inventory.meta.Damageable) stack.getItemMeta();
+        meta.setDamage(meta.getMaxDamage() - 1);
+        stack.setItemMeta(meta);
+        listener.onItemDamage(new org.bukkit.event.player.PlayerItemDamageEvent(player, stack, 1));
+        assertTrue(listener.isBroken(stack));
+        assertEquals("rune:mining_common", stack.getData(DataComponentTypes.EQUIPPABLE).assetId().asString());
+
+        // Repaired: the protection comes back and the worn layer is still there.
+        ArmorComponents.apply(stack, items.armorStats(item).orElseThrow());
+        assertEquals("rune:mining_common", stack.getData(DataComponentTypes.EQUIPPABLE).assetId().asString());
+        assertFalse(stack.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers().isEmpty());
+    }
+
+    @Test
+    void aPieceWithoutEquipmentAssetKeepsTheVanillaLook() {
+        ItemStack stack = items.create(piece("plain_helmet", Rarity.COMMON, ArmorKind.HELMET), 1);
+        assertFalse(stack.hasData(DataComponentTypes.EQUIPPABLE));
+    }
+
+    @Test
     void aBrokenHelmetInHandDoesNotBlockMining() {
         RuneItem helmet = piece("held_helmet", Rarity.COMMON, ArmorKind.HELMET);
         ItemStack stack = items.create(helmet, 1);
