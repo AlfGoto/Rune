@@ -48,6 +48,13 @@ public final class CoreItemsModule implements RuneModule {
         miningArmor(items);
         // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
         items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, "test_rune"));
+        // Mining pickaxes (docs/jobs/mining.md). Common = stone tier, Capacity 3. The Trait is an id plus a
+        // Capacity modifier for now: the "mines slower / faster" and durability numbers are not decided, so
+        // speed and durability stay at the stone-tier default. Coal's Trait has Capacity -1 (3 - 1 = 2).
+        items.register(RuneItem.tool("flint_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe",
+                ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
+        items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
+                ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
