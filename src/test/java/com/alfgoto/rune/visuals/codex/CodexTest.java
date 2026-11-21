@@ -3,6 +3,7 @@ package com.alfgoto.rune.visuals.codex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.alfgoto.rune.RunePlugin;
@@ -120,7 +121,9 @@ class CodexTest {
         CodexMenus menus = new CodexMenus(
                 jobs.registry(),
                 progress,
-                plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerCapacity.class));
+                plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerCapacity.class),
+                plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class),
+                plugin.context().get(com.alfgoto.rune.gameplay.runes.RuneRegistry.class));
 
         Menu page = menus.jobsPage(player, menus.main(player));
 
@@ -136,6 +139,80 @@ class CodexTest {
         assertTrue(PlainTextComponentSerializer.plainText()
                 .serialize(jobIcon.lore().get(0))
                 .contains(String.valueOf(level)));
+    }
+
+    private Menu openRunesPage() {
+        click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+        click(15, ClickType.LEFT, InventoryAction.PICKUP_ALL); // the Runes button of the main menu
+        Menu menu = assertInstanceOf(Menu.class, player.getOpenInventory().getTopInventory().getHolder());
+        assertEquals(6 * 9, menu.size());
+        return menu;
+    }
+
+    private void give(int count) {
+        var runes = plugin.context().get(com.alfgoto.rune.gameplay.runes.RuneRegistry.class);
+        ItemStack stack = runes.create(runes.get("test_rune"), 1);
+        stack.setAmount(count);
+        player.getInventory().addItem(stack);
+    }
+
+    private int testRuneCount() {
+        int total = 0;
+        for (ItemStack stack : player.getInventory().getStorageContents()) {
+            if (stack != null && stack.getType() == Material.PAPER) {
+                total += stack.getAmount();
+            }
+        }
+        return total;
+    }
+
+    @Test
+    void clickingARuneInTheInventoryInstallsItAndShowsCapacity() {
+        var loadout = plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class);
+        give(1);
+        Menu menu = openRunesPage();
+
+        click(RunesMenu.INVENTORY_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+
+        assertEquals(1, loadout.installed(player.getUniqueId()).size());
+        assertEquals(0, testRuneCount());
+        String capacity = PlainTextComponentSerializer.plainText()
+                .serialize(menu.getInventory().getItem(RunesMenu.CAPACITY_SLOT).displayName());
+        assertTrue(capacity.contains("3 / " + loadout.capacity(player.getUniqueId())), capacity);
+        assertEquals(Material.PAPER, menu.getInventory().getItem(RunesMenu.INSTALLED_FIRST_SLOT).getType());
+        assertNull(menu.getInventory().getItem(RunesMenu.INVENTORY_FIRST_SLOT));
+    }
+
+    @Test
+    void installRespectsCapacityAndKeepsTheItem() {
+        var loadout = plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class);
+        long capacity = loadout.capacity(player.getUniqueId());
+        int fits = (int) (capacity / 3); // each test_rune costs 3
+        give(fits + 1);
+        openRunesPage();
+
+        for (int i = 0; i < fits + 1; i++) {
+            click(RunesMenu.INVENTORY_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+        }
+
+        assertEquals(Math.min(fits, com.alfgoto.rune.gameplay.runes.PlayerLoadout.SLOTS),
+                loadout.installed(player.getUniqueId()).size());
+        assertTrue(loadout.used(player.getUniqueId()) <= capacity);
+        assertEquals(1, testRuneCount()); // the Rune that did not fit stays in the inventory
+    }
+
+    @Test
+    void clickingAnInstalledRuneRemovesItAndGivesTheItemBack() {
+        var loadout = plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class);
+        give(1);
+        openRunesPage();
+        click(RunesMenu.INVENTORY_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+
+        click(RunesMenu.INSTALLED_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+
+        assertTrue(loadout.installed(player.getUniqueId()).isEmpty());
+        assertEquals(1, testRuneCount());
+        assertEquals(0, loadout.used(player.getUniqueId()));
     }
 
     @Test
