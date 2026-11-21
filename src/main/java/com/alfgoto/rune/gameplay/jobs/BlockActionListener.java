@@ -3,6 +3,7 @@ package com.alfgoto.rune.gameplay.jobs;
 import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
 import java.util.Optional;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -39,6 +40,9 @@ public final class BlockActionListener implements Listener {
         double xp = action.get().xp() * multiplier;
         if (xp > 0) {
             progress.addJobXp(event.player().getUniqueId(), action.get().job(), xp);
+            if (multiplier >= 1) { // Quests count natural blocks only (no bone-meal growth loops)
+                Bukkit.getPluginManager().callEvent(new JobActionEvent(event.player(), action.get().job()));
+            }
         }
     }
 }

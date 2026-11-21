@@ -10,5 +10,10 @@
   "rune.command.quest.changed": "Quest %s is now %s - %s (%s): %s",
   "rune.command.quest.invalid_slot": "Slot must be 1 to %s: %s",
   "rune.command.quest.unknown_type": "Unknown Quest Type: %s",
-  "rune.command.quest.unknown_tier": "Unknown Quest Tier: %s"
+  "rune.command.quest.unknown_tier": "Unknown Quest Tier: %s",
+  "rune.command.quest.progress": " (%s done)",
+  "rune.quest.progress": "%s: %s/%s",
+  "rune.quest.complete": "Quest complete: %s - %s (%s)",
+  "rune.quest.reward": "Rewards: +%s %s XP, +%s Account XP",
+  "rune.quest.new": "New Quest %s: %s - %s (%s): %s"
 }
