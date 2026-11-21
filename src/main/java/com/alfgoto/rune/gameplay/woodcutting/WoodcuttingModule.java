@@ -10,7 +10,10 @@ import com.google.auto.service.AutoService;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** Woodcutting Runes that act on leaves and movement: Leaf Fall, Orchard and Canopy Stride. */
+/**
+ * Woodcutting Runes that act on leaves and movement (Leaf Fall, Orchard, Canopy Stride) and the Trait extras of
+ * the Birch, Spruce, Poplar and Jungle axes.
+ */
 @AutoService(RuneModule.class)
 public final class WoodcuttingModule implements RuneModule {
 
@@ -25,5 +28,10 @@ public final class WoodcuttingModule implements RuneModule {
         ToolLoadout loadout = ctx.get(ToolLoadout.class);
         ctx.listen(new LeafListener(items, loadout, () -> ThreadLocalRandom.current().nextDouble()));
         ctx.listen(new CanopyListener(ctx.plugin(), items, loadout));
+        // Trait extras of the Birch, Spruce, Poplar and Jungle axes.
+        int speedLevel = (int) ctx.config().traitNumber(AxeTraits.FELLED_TREE_SPEED, "level", 1);
+        ctx.listen(new FelledTreeTraitListener(items, loadout, speedLevel));
+        ctx.listen(new PowderSnowListener(ctx.plugin(), items, loadout));
+        ctx.listen(new ClimbListener(items, loadout));
     }
 }

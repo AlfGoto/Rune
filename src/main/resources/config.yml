@@ -300,6 +300,16 @@ runes:
     affinity:
       per-rank: 10
       max-rank: 3
+traits:
+  # Trait extras of the Woodcutting axes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
+  # The Affinity Trait of every axe uses the Rank 1 value of runes.speed.affinity (per-rank).
+  # Birch Axe: Speed boost after each Felled Tree. level 1 = Speed I.
+  felled_tree_speed:
+    seconds: 5
+    level: 1
+  # Jungle Axe: % climbing speed on vines, ladders and scaffolding
+  climb_speed:
+    percent: 50
 tools:
   # Mining speed by Harvest Tier: stone, iron, diamond (vanilla values)
   speed-by-tier: [4, 6, 8]

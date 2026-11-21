@@ -1,5 +1,6 @@
 package com.alfgoto.rune.content.items;
 
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ArmorKind;
@@ -11,6 +12,7 @@ import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.items.TraitBinding;
+import com.alfgoto.rune.gameplay.woodcutting.AxeTraits;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -55,6 +57,7 @@ public final class CoreItemsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
+        woodcuttingAxes(items, ctx.config());
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
@@ -64,6 +67,32 @@ public final class CoreItemsModule implements RuneModule {
         component(items, "deep_core", Rarity.EPIC);
         component(items, "abyssal_plate", Rarity.EPIC);
         component(items, "legendary_core", Rarity.LEGENDARY);
+    }
+
+    /**
+     * The Birch, Spruce, Poplar and Jungle axes (docs/jobs/woodcutting.md). Each has the Affinity Trait of its
+     * Place (the value of an Affinity Rune at Rank 1) and one extra. Tier and Capacity follow the Rarity.
+     */
+    private static void woodcuttingAxes(ItemRegistry items, RuneConfig config) {
+        double affinity = config.speedRunes().affinityPerRank();
+        double birchSeconds = config.traitNumber(AxeTraits.FELLED_TREE_SPEED, "seconds", 5);
+        double climbPercent = config.traitNumber(AxeTraits.CLIMB_SPEED, "percent", 50);
+        axe(items, "birch_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_birch_forest", affinity),
+                TraitBinding.always(AxeTraits.FELLED_TREE_SPEED, birchSeconds));
+        axe(items, "spruce_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_taiga", affinity),
+                TraitBinding.always(AxeTraits.POWDER_SNOW_IMMUNITY, 1));
+        axe(items, "poplar_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_dappled_forest", affinity),
+                TraitBinding.always(AxeTraits.FELLED_TREE_LEAF_FALL, 1));
+        axe(items, "jungle_axe", Rarity.RARE,
+                TraitBinding.always("affinity_jungle", affinity),
+                TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+    }
+
+    private static void axe(ItemRegistry items, String id, Rarity rarity, TraitBinding... bindings) {
+        items.register(RuneItem.tool(id, rarity, ToolKind.AXE, id, ToolSpec.DEFAULT.withTrait(id, 0, bindings)));
     }
 
     /**
