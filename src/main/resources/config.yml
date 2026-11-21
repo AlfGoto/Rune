@@ -287,6 +287,16 @@ runes:
   canopy_stride:
     base: 10
     per-rank: 10
+  # Sanctuary: <biome> (docs/jobs/woodcutting.md). Value = Rank (base 1, +1 per Rank). Total value 1 gives
+  # Regeneration I, resistance-from adds Resistance I, regeneration-2-from makes it Regeneration II.
+  # effect-seconds: how long each refresh lasts (the effect ends this long after leaving the biome).
+  sanctuary:
+    base: 1
+    per-rank: 1
+    max-rank: 3
+    resistance-from: 2
+    regeneration-2-from: 3
+    effect-seconds: 3
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
