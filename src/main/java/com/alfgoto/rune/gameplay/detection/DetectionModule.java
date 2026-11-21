@@ -13,8 +13,8 @@ import java.util.Set;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * The Echo ping. Numbers come from config: runes.ore_sense (radius, seconds: shared with Bone and the Rune, whose
- * chance is in visuals.reveal) and runes.echo_ping (interval-seconds, radius, seconds).
+ * The Echo ping. Numbers come from config: runes.echo_ping (interval-seconds, radius, seconds). Bone and the
+ * Ore Sense Rune use runes.ore_sense, read in visuals.reveal.
  */
 @AutoService(RuneModule.class)
 public final class DetectionModule implements RuneModule {
@@ -53,8 +53,6 @@ public final class DetectionModule implements RuneModule {
 
     static DetectionSettings settings(RuneConfig config) {
         return new DetectionSettings(
-                (int) config.runeNumber("ore_sense", "radius").orElse(8),
-                (int) (config.runeNumber("ore_sense", "seconds").orElse(5) * 20),
                 (int) config.runeNumber("echo_ping", "radius").orElse(12),
                 (int) (config.runeNumber("echo_ping", "seconds").orElse(5) * 20),
                 (int) (config.runeNumber("echo_ping", "interval-seconds").orElse(10) * 20));
