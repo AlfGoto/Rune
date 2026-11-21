@@ -1,5 +1,9 @@
 {
   "rune.quest.test": "Quête de test",
+  "rune.quest.collect": "Collecte : miner du minerai de fer",
+  "rune.quest.depth": "Profondeur : miner des minerais sous Y -32",
+  "rune.quest.tool": "Outil : miner avec une Pioche de Charbon",
+  "rune.quest.place": "Lieu : miner dans une mine abandonnée",
   "rune.command.quest.usage": "Utilisation : /rune quest list | reroll <emplacement>",
   "rune.command.quest.no_tokens": "Vous n'avez aucun jeton de relance.",
   "rune.command.quest.tokens_left": "Jetons de relance restants : %s",

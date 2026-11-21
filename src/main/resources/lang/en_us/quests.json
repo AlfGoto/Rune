@@ -1,5 +1,9 @@
 {
   "rune.quest.test": "Test Quest",
+  "rune.quest.collect": "Collect: mine iron ore",
+  "rune.quest.depth": "Depth: mine ores below Y -32",
+  "rune.quest.tool": "Tool: mine with a Coal Pickaxe",
+  "rune.quest.place": "Place: mine in a Mineshaft",
   "rune.command.quest.usage": "Usage: /rune quest list | reroll <slot>",
   "rune.command.quest.no_tokens": "You have no Reroll Token.",
   "rune.command.quest.tokens_left": "Reroll Tokens left: %s",
