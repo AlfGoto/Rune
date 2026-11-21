@@ -213,7 +213,7 @@ The first milestone the issues aim at:
   - Canopy Stride (+10% move speed per Rank, no Max Rank): a transient `MOVEMENT_SPEED` modifier while the player holds the axe and stands on leaves or logs.
 
 ## Later (not at launch)
-- Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. Nothing registers or uses them yet.
+- Planned UI items (2026-11-15, textures ship now, Java and menu code later): `back_button`, `locked_slot`, `capacity_free`, `capacity_full`, `capacity_over` and the menu backgrounds `codex_main` and `rune_loadout`. Layouts are in `docs/art-direction.md`. They are for the Codex and Rune loadout menus. The Runes menu now uses `capacity_free` (used < max), `capacity_full` (used == max) and `capacity_over` (used > max) on its Capacity button; the other items are not used yet.
 - Transmuting at a Rune Altar (custom block).
 - Full content lists for the other Jobs (tools, armor, Runes, quests, Evolution conditions) — one `docs/jobs/<job>.md` each.
 - Challenge-type Quests (conditions like "without placing torches"; timed).

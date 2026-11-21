@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -93,11 +94,9 @@ final class RunesMenu extends Menu {
     private Button capacityButton(UUID id) {
         long used = loadout.used(id);
         int max = loadout.capacity(id);
-        Material material = used > max
-                ? Material.RED_STAINED_GLASS_PANE
-                : used == max ? Material.ORANGE_STAINED_GLASS_PANE : Material.LIME_STAINED_GLASS_PANE;
-        return Button.of(
-                material,
+        String model = used > max ? "capacity_over" : used == max ? "capacity_full" : "capacity_free";
+        Button button = Button.of(
+                Material.PAPER,
                 Text.translatable(
                                 "rune.menu.runes.capacity",
                                 "Capacity: %s / %s",
@@ -105,6 +104,8 @@ final class RunesMenu extends Menu {
                                 Component.text(max))
                         .color(NamedTextColor.GREEN),
                 p -> {});
+        button.icon().editMeta(meta -> meta.setItemModel(new NamespacedKey(Text.NAMESPACE, model)));
+        return button;
     }
 
     private void install(Rune rune, int rank) {
