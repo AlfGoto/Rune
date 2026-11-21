@@ -18,6 +18,9 @@ public final class TreeDash {
     /** Effect id of Tree Dash: the range in blocks. */
     public static final String TREE_DASH = "tree_dash";
 
+    /** At most this many of the nearest logs are ray traced per click, to keep the main thread cheap. */
+    private static final int MAX_RAY_TRACES = 10;
+
     private TreeDash() {}
 
     /** The nearest log within {@code range} blocks of the player's eyes that nothing hides from them. */
@@ -41,7 +44,11 @@ public final class TreeDash {
         }
         Vector from = eye.toVector();
         logs.sort(Comparator.comparingDouble(log -> centerOf(log).distanceSquared(from)));
+        int traces = 0;
         for (Block log : logs) {
+            if (traces++ >= MAX_RAY_TRACES) {
+                break;
+            }
             Vector to = centerOf(log);
             double distance = to.distance(from);
             if (distance > range) {

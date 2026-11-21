@@ -4,11 +4,13 @@ import com.alfgoto.rune.foundations.config.SpeedRuneConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
+import com.alfgoto.rune.foundations.triggers.RuneClickEvent;
 import com.alfgoto.rune.gameplay.effects.Effect;
 import com.alfgoto.rune.gameplay.effects.EffectBinding;
 import com.alfgoto.rune.gameplay.effects.EffectRegistry;
 import com.alfgoto.rune.gameplay.effects.EffectTriggers;
 import com.alfgoto.rune.gameplay.effects.EffectsModule;
+import com.alfgoto.rune.gameplay.effects.RankValues;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.runes.Fit;
 import com.alfgoto.rune.gameplay.runes.Rune;
@@ -16,8 +18,6 @@ import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.gameplay.runes.SpeedBonuses;
 import com.alfgoto.rune.gameplay.runes.SpeedModule;
-import com.alfgoto.rune.foundations.triggers.RuneClickEvent;
-import com.alfgoto.rune.gameplay.effects.RankValues;
 import com.alfgoto.rune.gameplay.woodcutting.LeafRules;
 import com.alfgoto.rune.gameplay.woodcutting.ReplantRules;
 import com.alfgoto.rune.gameplay.woodcutting.TreeDash;
@@ -25,10 +25,13 @@ import com.alfgoto.rune.gameplay.woodcutting.WoodcuttingModule;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 /**
  * The passive axe Runes of docs/jobs/woodcutting.md: Specialist: &lt;wood&gt;, Leaf Fall, Orchard and Canopy
@@ -104,13 +107,26 @@ public final class WoodcuttingRunesModule implements RuneModule {
                     + " and max-speed numbers. Rune '" + id + "' is not registered.");
             return;
         }
+        // One scan per click: `when` finds the log, `does` (same tick, same click) uses it.
+        Map<UUID, Block> found = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(id, EffectTriggers.CLICK)
-                        .when(context -> TreeDash.nearestVisibleLog(context.player(), context.value())
-                                .isPresent())
-                        .does(context -> TreeDash.nearestVisibleLog(context.player(), context.value())
-                                .ifPresent(log -> TreeDash.dash(
-                                        context.player(), log, speedPerBlock.getAsDouble(), maxSpeed.getAsDouble()))));
+                        .when(context -> {
+                            var log = TreeDash.nearestVisibleLog(context.player(), context.value());
+                            if (log.isPresent()) {
+                                found.put(context.player().getUniqueId(), log.get());
+                            } else {
+                                found.remove(context.player().getUniqueId());
+                            }
+                            return log.isPresent();
+                        })
+                        .does(context -> {
+                            Block log = found.remove(context.player().getUniqueId());
+                            if (log != null) {
+                                TreeDash.dash(
+                                        context.player(), log, speedPerBlock.getAsDouble(), maxSpeed.getAsDouble());
+                            }
+                        }));
         // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
         ctx.get(RuneRegistry.class)
                 .register(Rune.active(
