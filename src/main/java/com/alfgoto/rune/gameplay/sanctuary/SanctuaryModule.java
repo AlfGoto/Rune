@@ -26,18 +26,26 @@ public final class SanctuaryModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         var config = ctx.config();
-        double resistanceFrom = config.runeNumber("sanctuary", "resistance-from").orElse(2);
-        double regeneration2From =
-                config.runeNumber("sanctuary", "regeneration-2-from").orElse(3);
-        double seconds = config.runeNumber("sanctuary", "effect-seconds").orElse(3);
-        Sanctuaries sanctuaries = ctx.provide(Sanctuaries.class, new Sanctuaries(resistanceFrom, regeneration2From));
+        var resistanceFrom = config.runeNumber("sanctuary", "resistance-from");
+        var regeneration2From = config.runeNumber("sanctuary", "regeneration-2-from");
+        var seconds = config.runeNumber("sanctuary", "effect-seconds");
+        if (resistanceFrom.isEmpty() || regeneration2From.isEmpty() || seconds.isEmpty()) {
+            ctx.logger()
+                    .severe("Config 'runes.sanctuary' needs resistance-from, regeneration-2-from and "
+                            + "effect-seconds numbers. Sanctuary effects are off.");
+            // Still provided (never reached) so the Sanctuary Runes module can load.
+            ctx.provide(Sanctuaries.class, new Sanctuaries(Double.MAX_VALUE, Double.MAX_VALUE));
+            return;
+        }
+        Sanctuaries sanctuaries = ctx.provide(
+                Sanctuaries.class, new Sanctuaries(resistanceFrom.getAsDouble(), regeneration2From.getAsDouble()));
         SanctuaryTask task = new SanctuaryTask(
                 ctx.plugin().getServer(),
                 sanctuaries,
                 ctx.get(PlayerLoadout.class),
                 ctx.get(ToolLoadout.class),
                 ctx.get(PlaceDetector.class),
-                (int) Math.max(20, Math.round(seconds * 20)));
+                (int) Math.max(20, Math.round(seconds.getAsDouble() * 20)));
         ctx.plugin()
                 .getServer()
                 .getScheduler()
