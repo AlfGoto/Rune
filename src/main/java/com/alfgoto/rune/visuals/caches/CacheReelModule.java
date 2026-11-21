@@ -33,7 +33,12 @@ public final class CacheReelModule implements RuneModule, Listener {
             ReelMenu menu =
                     new ReelMenu(ctx.plugin(), player, rarity, drops, finish, ThreadLocalRandom.current());
             active.add(menu);
-            menu.start();
+            try {
+                menu.start();
+            } catch (RuntimeException e) {
+                active.remove(menu);
+                throw e;
+            }
         });
         ctx.listen(this);
     }
