@@ -105,22 +105,13 @@ public final class CoreCraftingModule implements RuneModule {
                         'L', Ingredient.vanilla(Material.SPRUCE_LOG),
                         'B', Ingredient.vanilla(Material.POWDER_SNOW_BUCKET),
                         'H', handle)));
-        // Poplar blocks come with Minecraft 26.3: skip the recipe (and say so) if the server does not have them.
-        Material poplarLog = Material.getMaterial("POPLAR_LOG");
-        Material red = Material.getMaterial("RED_POPLAR_LEAVES");
-        Material orange = Material.getMaterial("ORANGE_POPLAR_LEAVES");
-        Material yellow = Material.getMaterial("YELLOW_POPLAR_LEAVES");
-        if (poplarLog == null || red == null || orange == null || yellow == null) {
-            ctx.logger().severe("Poplar blocks are missing on this server: the Poplar Axe recipe is not registered.");
-        } else {
-            book.register(new CraftingRecipe("poplar_axe", woodcutting, 7, "poplar_axe", 1,
-                    List.of("LRO", "LHY", "LL "), Map.of(
-                            'L', Ingredient.vanilla(poplarLog),
-                            'R', Ingredient.vanilla(red),
-                            'O', Ingredient.vanilla(orange),
-                            'Y', Ingredient.vanilla(yellow),
-                            'H', handle)));
-        }
+        book.register(new CraftingRecipe("poplar_axe", woodcutting, 7, "poplar_axe", 1,
+                List.of("LRO", "LHY", "LL "), Map.of(
+                        'L', Ingredient.vanilla(Material.POPLAR_LOG),
+                        'R', Ingredient.vanilla(Material.RED_POPLAR_LEAVES),
+                        'O', Ingredient.vanilla(Material.ORANGE_POPLAR_LEAVES),
+                        'Y', Ingredient.vanilla(Material.YELLOW_POPLAR_LEAVES),
+                        'H', handle)));
         book.register(new CraftingRecipe("jungle_axe", woodcutting, 10, "jungle_axe", 1,
                 List.of("LLC", "LGD", "LC "), Map.of(
                         'L', Ingredient.vanilla(Material.JUNGLE_LOG),
