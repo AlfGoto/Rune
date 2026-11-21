@@ -86,7 +86,6 @@ public final class RuneConfig {
     private final ToolConfig tools;
     private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
-    private final TraitConfig traits;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
 
@@ -114,8 +113,7 @@ public final class RuneConfig {
             double rewardsJobBias,
             ToolConfig tools,
             ArmorConfig armor,
-            SpeedRuneConfig speedRunes,
-            TraitConfig traits) {
+            SpeedRuneConfig speedRunes) {
         this.rewardsRarityBoost = List.copyOf(rewardsRarityBoost);
         this.rewardsRollsByRarity = rewardsRollsByRarity.stream()
                 .map(rolls -> (int) Math.min(1000, Math.max(1, Math.round(rolls))))
@@ -129,7 +127,6 @@ public final class RuneConfig {
         this.tools = tools;
         this.armor = armor;
         this.speedRunes = speedRunes;
-        this.traits = traits;
         this.questMaxRerollTokens = maxRerollTokens;
         this.questRewardJobXp = List.copyOf(questRewardJobXp);
         this.questRewardAccountXp = List.copyOf(questRewardAccountXp);
@@ -171,8 +168,7 @@ public final class RuneConfig {
                 DEFAULT_REWARDS_JOB_BIAS,
                 ToolConfig.defaults(),
                 ArmorConfig.defaults(),
-                SpeedRuneConfig.defaults(),
-                TraitConfig.defaults());
+                SpeedRuneConfig.defaults());
     }
 
     /** Reads the config. Bad or missing values are logged as errors and replaced by defaults. */
@@ -237,8 +233,7 @@ public final class RuneConfig {
                 jobBias,
                 ToolConfig.load(section, logger),
                 ArmorConfig.load(section, logger),
-                SpeedRuneConfig.load(section, logger),
-                TraitConfig.load(section, logger));
+                SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
@@ -248,11 +243,6 @@ public final class RuneConfig {
     /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */
     public double rankUpCostMultiplier() {
         return rankUpCostMultiplier;
-    }
-
-    /** Biome pickaxe Traits balancing ({@code tools.traits}). */
-    public TraitConfig traits() {
-        return traits;
     }
 
     /** Mining speed Runes balancing: Haste, Specialist and Affinity. */

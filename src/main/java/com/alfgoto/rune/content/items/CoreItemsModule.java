@@ -1,6 +1,6 @@
 package com.alfgoto.rune.content.items;
 
-import com.alfgoto.rune.foundations.config.TraitConfig;
+import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.gameplay.runes.HeldTraits;
 import com.alfgoto.rune.foundations.module.RuneModule;
@@ -57,7 +57,7 @@ public final class CoreItemsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
-        biomePickaxes(items, ctx.config().traits());
+        biomePickaxes(items, ctx.config().tools());
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
@@ -73,22 +73,22 @@ public final class CoreItemsModule implements RuneModule {
      * The biome pickaxes (docs/jobs/mining.md): an Affinity Trait in their Place plus one extra. The numbers
      * come from {@code tools.traits} in the config. Lichen is Uncommon at stone tier (-1) with Capacity +1.
      */
-    private static void biomePickaxes(ItemRegistry items, TraitConfig traits) {
+    private static void biomePickaxes(ItemRegistry items, ToolConfig tools) {
         items.register(RuneItem.tool("lichen_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "lichen_pickaxe",
                 ToolSpec.DEFAULT.withTierOffset(-1).withTrait("lichen_pickaxe", 1,
-                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_LUSH_CAVES, traits.affinity()),
-                        TraitBinding.always(HeldTraits.GLOW, traits.glowLight()))));
+                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_LUSH_CAVES, tools.traitAffinity()),
+                        TraitBinding.always(HeldTraits.GLOW, tools.traitGlowLight()))));
         items.register(RuneItem.tool("fiery_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "fiery_pickaxe",
                 ToolSpec.DEFAULT.withTrait("fiery_pickaxe", 0,
-                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_NETHER, traits.affinity()),
-                        TraitBinding.always("smelt", traits.fierySmelt()))));
+                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_NETHER, tools.traitAffinity()),
+                        TraitBinding.always("smelt", tools.traitFierySmelt()))));
         items.register(RuneItem.tool("emerald_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "emerald_pickaxe",
                 ToolSpec.DEFAULT.withTrait("emerald_pickaxe", 0,
-                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_MOUNTAINS, traits.affinity()),
-                        TraitBinding.always(BiomePickaxeTraits.MOUNTAIN_MOVE_SPEED, traits.mountainMoveSpeed()))));
+                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_MOUNTAINS, tools.traitAffinity()),
+                        TraitBinding.always(BiomePickaxeTraits.MOUNTAIN_MOVE_SPEED, tools.traitMountainMoveSpeed()))));
         items.register(RuneItem.tool("prismarine_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "prismarine_pickaxe",
                 ToolSpec.DEFAULT.withTrait("prismarine_pickaxe", 0,
-                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_OCEAN, traits.affinity()),
+                        TraitBinding.always(BiomePickaxeTraits.AFFINITY_OCEAN, tools.traitAffinity()),
                         TraitBinding.always(HeldTraits.NO_WATER_PENALTY, 1),
                         TraitBinding.always(HeldTraits.NO_AIR_PENALTY, 1))));
     }

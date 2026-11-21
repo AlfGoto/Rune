@@ -129,10 +129,10 @@ class RuneConfigTest {
         assertEquals(2, c.speedRunes().specialistMaxRank());
         assertEquals(12.5, c.speedRunes().affinityPerRank());
         assertEquals(6, c.speedRunes().affinityMaxRank());
-        assertEquals(12, c.traits().affinity());
-        assertEquals(9, c.traits().glowLight());
-        assertEquals(30, c.traits().fierySmelt());
-        assertEquals(15, c.traits().mountainMoveSpeed());
+        assertEquals(12, c.tools().traitAffinity());
+        assertEquals(9, c.tools().traitGlowLight());
+        assertEquals(30, c.tools().traitFierySmelt());
+        assertEquals(15, c.tools().traitMountainMoveSpeed());
         assertEquals(List.of(1, 1, 1, 1, 9), c.armor().defenseByRarity().get("helmet"));
         assertEquals(List.of(0.0, 0.0, 1.0, 2.0, 4.0), c.armor().toughnessByRarity());
         assertEquals(100, c.tools().pickaxeMasteryActions());
