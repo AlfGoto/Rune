@@ -5,6 +5,7 @@ import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.GiveSubcommand;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
+import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
 import com.alfgoto.rune.gameplay.rewards.LootRoller;
@@ -36,5 +37,9 @@ public final class CachesModule implements RuneModule {
                         ThreadLocalRandom.current()));
         ctx.get(GiveSubcommand.class).addVariant(new GiveCacheVariant(caches, ctx.get(JobRegistry.class)));
         ctx.listen(new CacheListener(caches));
+        CacheDropListener drops = new CacheDropListener(
+                caches, new CacheDrops(ctx.config().caches()), () -> ThreadLocalRandom.current().nextDouble());
+        ctx.listen(drops);
+        ctx.get(JobProgress.class).addLevelListener(drops);
     }
 }

@@ -1,5 +1,6 @@
 package com.alfgoto.rune.gameplay.jobs;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,10 +15,29 @@ public final class JobActionEvent extends Event {
 
     private final Player player;
     private final Job job;
+    private final double xp;
+    private final Location location;
 
     public JobActionEvent(Player player, Job job) {
+        this(player, job, 0, null);
+    }
+
+    /** {@code xp} is the Job XP the action gave; {@code location} is where it happened (the block), or null. */
+    public JobActionEvent(Player player, Job job, double xp, Location location) {
         this.player = player;
         this.job = job;
+        this.xp = xp;
+        this.location = location;
+    }
+
+    /** Job XP the action gave (0 when unknown). */
+    public double xp() {
+        return xp;
+    }
+
+    /** Where the action happened (the block's center), or null when unknown. */
+    public Location location() {
+        return location;
     }
 
     public Player player() {

@@ -117,6 +117,12 @@ class RuneConfigTest {
                     affinity:
                       per-rank: 12.5
                       max-rank: 6
+                caches:
+                  drop-percent-per-xp: 0.05
+                  milestones:
+                    5: common
+                  epic-every: 5
+                  legendary-every: 25
                 """);
         assertEquals(9, c.speedRunes().hastePerRank());
         assertEquals(4, c.speedRunes().hasteMaxRank());
@@ -166,7 +172,26 @@ class RuneConfigTest {
             assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
             assertEquals(50 * Math.pow(10, 1.3), c.xpToNextLevel(10), 1e-9);
             assertEquals(0.25, c.bonemealXpMultiplier());
+            assertEquals(CacheConfig.defaults(), c.caches());
         }
+    }
+
+    @Test
+    void badCacheValuesLogAndFallBack() throws Exception {
+        RuneConfig c = load("""
+                caches:
+                  drop-percent-per-xp: -1
+                  milestones:
+                    5: mythic
+                    x: rare
+                    10: uncommon
+                  epic-every: 2.5
+                """);
+        assertEquals(0.05, c.caches().dropPercentPerXp());
+        assertEquals(java.util.Map.of(10, "uncommon"), c.caches().milestones());
+        assertEquals(5, c.caches().epicEvery());
+        assertEquals(25, c.caches().legendaryEvery());
+        assertFalse(errors.isEmpty());
     }
 
     @Test
@@ -243,6 +268,12 @@ class RuneConfigTest {
                     affinity:
                       per-rank: 10
                       max-rank: 3
+                caches:
+                  drop-percent-per-xp: 0.05
+                  milestones:
+                    5: common
+                  epic-every: 5
+                  legendary-every: 25
                 """);
         assertEquals(50, c.levelCurveBase());
         assertEquals(1.3, c.levelCurveExponent());
@@ -256,7 +287,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(48, errors.size());
+        assertEquals(52, errors.size());
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
@@ -371,6 +402,12 @@ class RuneConfigTest {
                     affinity:
                       per-rank: 10
                       max-rank: 3
+                caches:
+                  drop-percent-per-xp: 0.05
+                  milestones:
+                    5: common
+                  epic-every: 5
+                  legendary-every: 25
                 """);
         assertEquals(1, errors.size());
         assertEquals(RuneConfig.defaults().questTierMultipliers(), c.questTierMultipliers());
