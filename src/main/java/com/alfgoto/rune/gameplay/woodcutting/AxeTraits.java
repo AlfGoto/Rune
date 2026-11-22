@@ -30,12 +30,6 @@ public final class AxeTraits {
     /** Vanilla horizontal slowdown in powder snow: the player keeps 90% of their speed. */
     static final double POWDER_SNOW_FACTOR = 0.9;
 
-    /** Most leaves a Felled Tree can make fall (a safety cap for huge canopies). */
-    static final int MAX_FALLING_LEAVES = 600;
-
-    /** Leaves are at most this far from a log in vanilla (distance 7 decays). */
-    static final int LEAF_REACH = 7;
-
     private AxeTraits() {}
 
     /** Upward speed while climbing with {@code percent} extra climbing speed. */

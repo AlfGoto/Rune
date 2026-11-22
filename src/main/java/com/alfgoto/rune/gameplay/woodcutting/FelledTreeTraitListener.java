@@ -40,14 +40,19 @@ final class FelledTreeTraitListener implements Listener {
     private final Plugin plugin;
     private final ItemRegistry items;
     private final ToolLoadout loadout;
-    private final int speedLevel;
+    private final int maxLeaves;
+    private final int leafReach;
 
-    /** @param speedLevel the Speed level of the Birch boost (1 = Speed I) */
-    FelledTreeTraitListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, int speedLevel) {
+    /**
+     * @param maxLeaves most leaves one Felled Tree can make fall
+     * @param leafReach how far from the last log (in blocks) a leaf can still fall
+     */
+    FelledTreeTraitListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, int maxLeaves, int leafReach) {
         this.plugin = plugin;
         this.items = items;
         this.loadout = loadout;
-        this.speedLevel = Math.max(1, speedLevel);
+        this.maxLeaves = maxLeaves;
+        this.leafReach = leafReach;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -64,10 +69,9 @@ final class FelledTreeTraitListener implements Listener {
             PotionEffect current = player.getPotionEffect(PotionEffectType.SPEED);
             // Never replace a stronger Speed (potion, beacon) or a longer one of the same level.
             boolean weaker = current != null
-                    && (current.getAmplifier() > speedLevel - 1
-                            || (current.getAmplifier() == speedLevel - 1 && current.getDuration() >= ticks));
+                    && (current.getAmplifier() > 0 || (current.getAmplifier() == 0 && current.getDuration() >= ticks));
             if (!weaker) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, speedLevel - 1));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, 0));
             }
         }
         if (Stacking.total(AxeTraits.FELLED_TREE_LEAF_FALL, sources) >= 1) {
@@ -81,8 +85,8 @@ final class FelledTreeTraitListener implements Listener {
                 block -> java.util.Arrays.stream(SIDES).map(block::getRelative).toList(),
                 // Leaves a player placed do not decay in vanilla, so they do not fall either.
                 block -> block.getBlockData() instanceof Leaves data && !data.isPersistent(),
-                AxeTraits.LEAF_REACH,
-                AxeTraits.MAX_FALLING_LEAVES);
+                leafReach,
+                maxLeaves);
         // Break them a few per tick, so a big canopy does not freeze the server.
         Iterator<Block> pending = leaves.iterator();
         new BukkitRunnable() {

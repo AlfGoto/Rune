@@ -2,6 +2,7 @@ package com.alfgoto.rune.gameplay.woodcutting;
 
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,12 +26,14 @@ final class PowderSnowListener implements Listener {
     private final Plugin plugin;
     private final ItemRegistry items;
     private final ToolLoadout loadout;
+    private final Predicate<ItemStack> isBroken;
     private final NamespacedKey key;
 
-    PowderSnowListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout) {
+    PowderSnowListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, Predicate<ItemStack> isBroken) {
         this.plugin = plugin;
         this.items = items;
         this.loadout = loadout;
+        this.isBroken = isBroken;
         this.key = new NamespacedKey(plugin, "powder_snow_immunity");
     }
 
@@ -62,6 +65,7 @@ final class PowderSnowListener implements Listener {
     private boolean immune(Player player, ItemStack tool) {
         return tool != null
                 && items.of(tool).isPresent()
+                && !isBroken.test(tool)
                 && loadout.total(tool, AxeTraits.POWDER_SNOW_IMMUNITY) > 0;
     }
 

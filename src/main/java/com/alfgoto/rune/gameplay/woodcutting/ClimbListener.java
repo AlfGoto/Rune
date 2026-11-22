@@ -3,6 +3,7 @@ package com.alfgoto.rune.gameplay.woodcutting;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
+import java.util.function.Predicate;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,10 +22,12 @@ final class ClimbListener implements Listener {
 
     private final ItemRegistry items;
     private final ToolLoadout loadout;
+    private final Predicate<ItemStack> isBroken;
 
-    ClimbListener(ItemRegistry items, ToolLoadout loadout) {
+    ClimbListener(ItemRegistry items, ToolLoadout loadout, Predicate<ItemStack> isBroken) {
         this.items = items;
         this.loadout = loadout;
+        this.isBroken = isBroken;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -37,7 +40,7 @@ final class ClimbListener implements Listener {
             return;
         }
         ItemStack tool = player.getInventory().getItemInMainHand();
-        if (items.of(tool).isEmpty()) {
+        if (items.of(tool).isEmpty() || isBroken.test(tool)) {
             return;
         }
         double percent = Stacking.total(AxeTraits.CLIMB_SPEED, loadout.sources(tool, player));
