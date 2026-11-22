@@ -86,7 +86,7 @@ FUSED      Timberfall + Evoker's Hatchet ─► Worldfeller
 | 5 | Woodsman's Axe / Hache de forestier | Uncommon | iron | 6 +2 | Plain, very durable |
 | 6 | Birch Axe / Hache de bouleau | Uncommon | iron | 6 | Affinity: Birch Forest; move speed boost after each Felled Tree |
 | 6 | Spruce Axe / Hache de sapin | Uncommon | iron | 6 | Affinity: Taiga; no slowdown or freezing in powder snow |
-| 7 | Poplar Axe / Hache de peuplier | Uncommon | iron | 6 | Affinity: Dappled Forest; a Felled Tree's leaves fall instantly (0 XP) |
+| 7 | Poplar Axe / Hache de peuplier | Uncommon | iron | 6 | Affinity: Dappled Forest; a Felled Tree's leaves fall within about a second (0 XP) |
 | 8 | Orchard Axe / Hache du verger | Uncommon | iron | 6 | More apples and saplings from leaves |
 | 10 | Jungle Axe / Hache de jungle | Rare | diamond | 10 | Affinity: Jungle; climb faster |
 | 10 | Crimson Axe / Hache écarlate | Rare | diamond | 10 | Affinity: Crimson Forest; short fire resistance after each stem |

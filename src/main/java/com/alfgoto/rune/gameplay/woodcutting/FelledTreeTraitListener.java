@@ -6,6 +6,7 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Leaves;
@@ -42,12 +43,14 @@ final class FelledTreeTraitListener implements Listener {
     private final ToolLoadout loadout;
     private final int maxLeaves;
     private final int leafReach;
+    private final DoubleSupplier random;
 
     /**
      * @param maxLeaves most leaves one Felled Tree can make fall
      * @param leafReach how far from the last log (in blocks) a leaf can still fall
      */
-    FelledTreeTraitListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, int maxLeaves, int leafReach) {
+    FelledTreeTraitListener(Plugin plugin, ItemRegistry items, ToolLoadout loadout, int maxLeaves, int leafReach, DoubleSupplier random) {
+        this.random = random;
         this.plugin = plugin;
         this.items = items;
         this.loadout = loadout;
@@ -68,18 +71,16 @@ final class FelledTreeTraitListener implements Listener {
             int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
             PotionEffect current = player.getPotionEffect(PotionEffectType.SPEED);
             // Never replace a stronger Speed (potion, beacon) or a longer one of the same level.
-            boolean weaker = current != null
-                    && (current.getAmplifier() > 0 || (current.getAmplifier() == 0 && current.getDuration() >= ticks));
-            if (!weaker) {
+            if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, 0));
             }
         }
         if (Stacking.total(AxeTraits.FELLED_TREE_LEAF_FALL, sources) >= 1) {
-            leavesFall(event.lastLog());
+            leavesFall(event.lastLog(), player, tool.clone(), sources);
         }
     }
 
-    private void leavesFall(Block lastLog) {
+    private void leavesFall(Block lastLog, Player player, ItemStack tool, List<Stacking.Source> sources) {
         List<Block> leaves = AxeTraits.connectedLeaves(
                 lastLog,
                 block -> java.util.Arrays.stream(SIDES).map(block::getRelative).toList(),
@@ -96,6 +97,7 @@ final class FelledTreeTraitListener implements Listener {
                     Block block = pending.next();
                     // Vanilla decay may have removed it already.
                     if (block.getBlockData() instanceof Leaves) {
+                        LeafListener.orchard(random, player, tool, sources, block);
                         block.breakNaturally();
                     }
                 }

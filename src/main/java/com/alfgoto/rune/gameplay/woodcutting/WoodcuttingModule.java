@@ -34,10 +34,9 @@ public final class WoodcuttingModule implements RuneModule {
         // Trait extras of the Birch, Spruce, Poplar and Jungle axes.
         int maxLeaves = (int) ctx.config().traitNumber(AxeTraits.FELLED_TREE_LEAF_FALL, "max_leaves", 600);
         int leafReach = (int) ctx.config().traitNumber(AxeTraits.FELLED_TREE_LEAF_FALL, "reach", 7);
-        ctx.listen(new FelledTreeTraitListener(ctx.plugin(), items, loadout, maxLeaves, leafReach));
+        ctx.listen(new FelledTreeTraitListener(ctx.plugin(), items, loadout, maxLeaves, leafReach, () -> ThreadLocalRandom.current().nextDouble()));
         Predicate<ItemStack> isBroken = ctx.get(BrokenToolListener.class)::isBroken;
         PowderSnowListener powderSnow = new PowderSnowListener(ctx.plugin(), items, loadout, isBroken);
-        ctx.listen(powderSnow);
         powderSnow.start();
         ctx.listen(new ClimbListener(items, loadout, isBroken));
     }

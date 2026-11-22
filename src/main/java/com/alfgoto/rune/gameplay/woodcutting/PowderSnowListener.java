@@ -10,9 +10,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -21,7 +18,7 @@ import org.bukkit.plugin.Plugin;
  * down by it. Freezing is cleared (no frost, no freeze damage). The slowdown is cancelled by a temporary
  * move speed bonus that is on only while the player stands in powder snow.
  */
-final class PowderSnowListener implements Listener {
+final class PowderSnowListener {
 
     private final Plugin plugin;
     private final ItemRegistry items;
@@ -49,16 +46,6 @@ final class PowderSnowListener implements Listener {
                 player.setFreezeTicks(0);
             }
             refresh(player, tool, player.getLocation());
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onFreezeDamage(EntityDamageEvent event) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.FREEZE
-                && event.getEntity() instanceof Player player
-                && immune(player, player.getInventory().getItemInMainHand())) {
-            event.setCancelled(true);
-            player.setFreezeTicks(0);
         }
     }
 
