@@ -257,6 +257,8 @@ caches:
   # Rune Cache drop chance per Job Action = Job XP x this, in percent (0.05: iron ore, 8 XP = 0.4%).
   # Raise it to test (10000 = every natural block drops a Cache). The Cache drops at the block.
   drop-percent-per-xp: 0.05
+  # Rarity of a Cache dropped by a Job Action (common, uncommon, rare, epic, legendary). No drops in Creative.
+  drop-rarity: common
   # Milestone Cache (given on Job Level up): Rarity by Job Level, then the rule above the table
   milestones:
     5: common

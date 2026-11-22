@@ -16,14 +16,20 @@ import org.bukkit.configuration.ConfigurationSection;
  * @param milestones Rarity id by Job Level for the first milestones (5 common ... 30 epic)
  * @param epicEvery above the table, an Epic Cache every this many levels
  * @param legendaryEvery above the table, a Legendary Cache every this many levels (wins over Epic)
+ * @param dropRarity Rarity id of a Cache dropped by a Job Action (common)
  */
 public record CacheConfig(
-        double dropPercentPerXp, Map<Integer, String> milestones, int epicEvery, int legendaryEvery) {
+        double dropPercentPerXp,
+        Map<Integer, String> milestones,
+        int epicEvery,
+        int legendaryEvery,
+        String dropRarity) {
 
     public static final String DROP_PERCENT_PER_XP = "caches.drop-percent-per-xp";
     public static final String MILESTONES = "caches.milestones";
     public static final String EPIC_EVERY = "caches.epic-every";
     public static final String LEGENDARY_EVERY = "caches.legendary-every";
+    public static final String DROP_RARITY = "caches.drop-rarity";
 
     private static final List<String> RARITIES = List.of("common", "uncommon", "rare", "epic", "legendary");
 
@@ -36,7 +42,8 @@ public record CacheConfig(
                 0.05,
                 Map.of(5, "common", 10, "uncommon", 15, "rare", 20, "rare", 25, "epic", 30, "epic"),
                 5,
-                25);
+                25,
+                "common");
     }
 
     /** Reads the {@code caches} section. Bad or missing values are logged and replaced by defaults. */
@@ -46,7 +53,23 @@ public record CacheConfig(
                 number(section, logger, DROP_PERCENT_PER_XP, d.dropPercentPerXp, false),
                 readMilestones(section, logger, d.milestones),
                 (int) number(section, logger, EPIC_EVERY, d.epicEvery, true),
-                (int) number(section, logger, LEGENDARY_EVERY, d.legendaryEvery, true));
+                (int) number(section, logger, LEGENDARY_EVERY, d.legendaryEvery, true),
+                readRarity(section, logger, d.dropRarity));
+    }
+
+    private static String readRarity(ConfigurationSection s, Logger log, String fallback) {
+        if (!s.contains(DROP_RARITY)) {
+            log.severe("Config '" + DROP_RARITY + "' is missing. Using default " + fallback + ".");
+            return fallback;
+        }
+        Object raw = s.get(DROP_RARITY);
+        String rarity = raw == null ? "" : raw.toString().toLowerCase(Locale.ROOT);
+        if (!RARITIES.contains(rarity)) {
+            log.severe("Config '" + DROP_RARITY + "' must be a Rarity (" + String.join(", ", RARITIES) + "), got '"
+                    + raw + "'. Using default " + fallback + ".");
+            return fallback;
+        }
+        return rarity;
     }
 
     private static Map<Integer, String> readMilestones(

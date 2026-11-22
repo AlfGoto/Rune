@@ -23,14 +23,22 @@ class CacheDropsTest {
     void noXpMeansNoChanceAndChanceIsCapped() {
         assertEquals(0, drops.chance(0));
         assertEquals(0, drops.chance(-3));
-        assertEquals(1, new CacheDrops(new CacheConfig(100, CacheConfig.defaults().milestones(), 5, 25)).chance(8));
+        assertEquals(1, new CacheDrops(new CacheConfig(100, CacheConfig.defaults().milestones(), 5, 25, "common")).chance(8));
     }
 
     @Test
     void emptyTableMeansNoMilestones() {
-        CacheDrops none = new CacheDrops(new CacheConfig(0.05, java.util.Map.of(), 5, 25));
+        CacheDrops none = new CacheDrops(new CacheConfig(0.05, java.util.Map.of(), 5, 25, "common"));
         assertTrue(none.milestone(5).isEmpty());
         assertTrue(none.milestone(50).isEmpty());
+    }
+
+    @Test
+    void dropRarityComesFromConfig() {
+        assertEquals(Rarity.COMMON, drops.dropRarity());
+        assertEquals(
+                Rarity.RARE,
+                new CacheDrops(new CacheConfig(0.05, java.util.Map.of(), 5, 25, "rare")).dropRarity());
     }
 
     @Test

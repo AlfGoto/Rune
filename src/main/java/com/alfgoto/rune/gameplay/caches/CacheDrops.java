@@ -24,6 +24,11 @@ public final class CacheDrops {
         return Math.min(1, xp * config.dropPercentPerXp() / 100);
     }
 
+    /** The Rarity of a Cache dropped by a Job Action (config {@code caches.drop-rarity}). */
+    public Rarity dropRarity() {
+        return Rarity.fromId(config.dropRarity());
+    }
+
     /**
      * The Rarity of the Milestone Cache of {@code level}, or empty when the level has none. The table decides
      * the first levels; above it, every Legendary step gives Legendary, else every Epic step gives Epic.

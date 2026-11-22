@@ -10,13 +10,14 @@ import java.util.UUID;
 import java.util.function.DoubleSupplier;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 /**
- * Gives Caches for Jobs: a chance of a Cache at the block on every Job Action (Cache Rarity: Common for now),
+ * Gives Caches for Jobs: a chance of a Cache at the block on every Job Action (Rarity from config, none in Creative),
  * and the Milestone Cache when a Job Level goes up. Both Caches are for the Job that earned them.
  */
 final class CacheDropListener implements Listener, JobLevelListener {
@@ -33,12 +34,15 @@ final class CacheDropListener implements Listener, JobLevelListener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJobAction(JobActionEvent event) {
-        if (event.location() == null || random.getAsDouble() >= rules.chance(event.xp())) {
+        if (event.location() == null || event.player().getGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+        if (random.getAsDouble() >= rules.chance(event.xp())) {
             return;
         }
         event.location()
                 .getWorld()
-                .dropItemNaturally(event.location(), caches.create(Rarity.COMMON, event.job().id()));
+                .dropItemNaturally(event.location(), caches.create(rules.dropRarity(), event.job().id()));
     }
 
     @Override

@@ -119,6 +119,7 @@ class RuneConfigTest {
                       max-rank: 6
                 caches:
                   drop-percent-per-xp: 0.05
+                  drop-rarity: common
                   milestones:
                     5: common
                   epic-every: 5
@@ -186,9 +187,11 @@ class RuneConfigTest {
                     x: rare
                     10: uncommon
                   epic-every: 2.5
+                  drop-rarity: mythic
                 """);
         assertEquals(0.05, c.caches().dropPercentPerXp());
         assertEquals(java.util.Map.of(10, "uncommon"), c.caches().milestones());
+        assertEquals("common", c.caches().dropRarity());
         assertEquals(5, c.caches().epicEvery());
         assertEquals(25, c.caches().legendaryEvery());
         assertFalse(errors.isEmpty());
@@ -270,6 +273,7 @@ class RuneConfigTest {
                       max-rank: 3
                 caches:
                   drop-percent-per-xp: 0.05
+                  drop-rarity: common
                   milestones:
                     5: common
                   epic-every: 5
@@ -287,7 +291,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(52, errors.size());
+        assertEquals(53, errors.size());
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
@@ -404,6 +408,7 @@ class RuneConfigTest {
                       max-rank: 3
                 caches:
                   drop-percent-per-xp: 0.05
+                  drop-rarity: common
                   milestones:
                     5: common
                   epic-every: 5
