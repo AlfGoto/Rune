@@ -8,6 +8,8 @@ import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
+import com.alfgoto.rune.gameplay.jobs.JobActionEvent;
+import com.alfgoto.rune.gameplay.places.Place;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.quests.QuestObjective;
@@ -15,6 +17,7 @@ import com.alfgoto.rune.gameplay.quests.QuestType;
 import com.alfgoto.rune.gameplay.quests.QuestTypeRegistry;
 import com.alfgoto.rune.gameplay.quests.QuestsModule;
 import com.google.auto.service.AutoService;
+import java.util.List;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -51,9 +54,24 @@ public final class CoreQuestsModule implements RuneModule {
         types.register(new QuestType("collect", CoreJobs.MINING, 20, event -> isCollectBlock(event.block())));
         types.register(new QuestType("depth", CoreJobs.MINING, 10, event -> isDeepOre(event.block())));
         types.register(new QuestType("tool", CoreJobs.MINING, 100, event -> isHeldItem(items, event.tool())));
-        QuestObjective inPlace = event -> event.block() != null
-                && places.placesAt(event.block().getLocation()).stream().anyMatch(p -> p.id().equals(PLACE_ID));
+        QuestObjective inPlace = event -> isInPlace(places, event);
         types.register(new QuestType("place", CoreJobs.MINING, 50, inPlace));
+    }
+
+    /**
+     * Place: the broken block OR the player is in a Mineshaft. A Mineshaft's pieces are only the tunnel
+     * space, so the stone around a tunnel is outside every piece; the player standing in the tunnel
+     * must count too.
+     */
+    static boolean isInPlace(PlaceDetector places, JobActionEvent event) {
+        if (event.block() != null && hasMineshaft(places.placesAt(event.block().getLocation()))) {
+            return true;
+        }
+        return event.player() != null && hasMineshaft(places.placesOf(event.player()));
+    }
+
+    private static boolean hasMineshaft(List<Place> found) {
+        return found.stream().anyMatch(p -> p.id().equals(PLACE_ID));
     }
 
     static boolean isCollectBlock(Block block) {

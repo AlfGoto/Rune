@@ -11,9 +11,15 @@ import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.jobs.JobActionEvent;
+import com.alfgoto.rune.gameplay.places.Place;
+import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.gameplay.places.PlaceRegistry;
+import com.alfgoto.rune.gameplay.places.WorldProbe;
 import com.alfgoto.rune.gameplay.quests.QuestType;
 import com.alfgoto.rune.gameplay.quests.QuestTypeRegistry;
 import com.alfgoto.rune.text.Rarity;
+import java.util.Set;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -101,5 +107,43 @@ class CoreQuestsModuleTest {
         QuestType place = types.registry().get("place");
         Block stone = block(Material.STONE, 60);
         assertFalse(place.objective().counts(new JobActionEvent(player, CoreJobs.MINING, stone, null)));
+    }
+
+    /** Probe that reports a structure only at one block (x, y, z) of the test world. */
+    private PlaceDetector detector(String structure, int x, int y, int z) {
+        PlaceRegistry registry = new PlaceRegistry();
+        registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
+        WorldProbe probe = new WorldProbe() {
+            @Override
+            public String biomeAt(Location l) {
+                return "minecraft:plains";
+            }
+
+            @Override
+            public Set<String> structuresAt(Location l) {
+                boolean here = l.getBlockX() == x && l.getBlockY() == y && l.getBlockZ() == z;
+                return here ? Set.of(structure) : Set.of();
+            }
+        };
+        return new PlaceDetector(registry, probe);
+    }
+
+    @Test
+    void placeCountsBothMineshaftTypesByBrokenBlock() {
+        Block stone = block(Material.STONE, 40);
+        JobActionEvent event = new JobActionEvent(player, CoreJobs.MINING, stone, null);
+        assertTrue(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft", 0, 40, 0), event));
+        assertTrue(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft_mesa", 0, 40, 0), event));
+        assertFalse(CoreQuestsModule.isInPlace(detector("minecraft:fortress", 0, 40, 0), event));
+    }
+
+    @Test
+    void placeCountsWhenThePlayerStandsInTheMineshaftTunnel() {
+        // The mined wall block is outside every piece; the player's own block is inside.
+        player.teleport(new Location(world, 5, 40, 5));
+        Block wall = block(Material.STONE, 40);
+        JobActionEvent event = new JobActionEvent(player, CoreJobs.MINING, wall, null);
+        assertTrue(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft", 5, 40, 5), event));
+        assertFalse(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft", 9, 40, 9), event));
     }
 }
