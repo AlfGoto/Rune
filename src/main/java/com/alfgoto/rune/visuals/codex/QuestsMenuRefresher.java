@@ -9,7 +9,9 @@ final class QuestsMenuRefresher implements Listener {
 
     @EventHandler
     public void onProgress(QuestProgressEvent event) {
-        if (event.player().getOpenInventory().getTopInventory().getHolder() instanceof QuestsMenu menu
+        var top = event.player().getOpenInventory().getTopInventory();
+        if (top != null
+                && top.getHolder() instanceof QuestsMenu menu
                 && menu.owner().equals(event.player().getUniqueId())) {
             menu.refresh();
         }
