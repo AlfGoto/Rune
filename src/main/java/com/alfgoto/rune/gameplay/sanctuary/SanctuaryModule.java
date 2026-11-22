@@ -2,7 +2,6 @@ package com.alfgoto.rune.gameplay.sanctuary;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
-import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.runes.PlayerLoadout;
@@ -20,7 +19,7 @@ public final class SanctuaryModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(RunesModule.class, PlacesModule.class, ItemsModule.class);
+        return Set.of(RunesModule.class, PlacesModule.class);
     }
 
     @Override
@@ -33,7 +32,7 @@ public final class SanctuaryModule implements RuneModule {
             ctx.logger()
                     .severe("Config 'runes.sanctuary' needs resistance-from, regeneration-2-from and "
                             + "effect-seconds numbers. Sanctuary effects are off.");
-            // Still provided (never reached) so the Sanctuary Runes module can load.
+            // Provided so the Sanctuary Runes module can load. No task is scheduled below, so nothing applies.
             ctx.provide(Sanctuaries.class, new Sanctuaries(Double.MAX_VALUE, Double.MAX_VALUE));
             return;
         }

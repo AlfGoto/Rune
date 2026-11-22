@@ -8,7 +8,6 @@ import com.alfgoto.rune.gameplay.effects.EffectRegistry;
 import com.alfgoto.rune.gameplay.effects.EffectTriggers;
 import com.alfgoto.rune.gameplay.effects.EffectsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
-import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.runes.Fit;
 import com.alfgoto.rune.gameplay.runes.Rune;
 import com.alfgoto.rune.gameplay.runes.RuneRegistry;
@@ -37,7 +36,7 @@ public final class SanctuaryRunesModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(RunesModule.class, EffectsModule.class, PlacesModule.class, SanctuaryModule.class);
+        return Set.of(RunesModule.class, EffectsModule.class, SanctuaryModule.class);
     }
 
     @Override
