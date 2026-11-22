@@ -61,7 +61,7 @@ public final class ToolMastery {
     }
 
     /** Logs: logs, wood, Nether stems, giant mushroom stems, chorus plants. Leaves do not count. */
-    static boolean isLog(Material block) {
+    public static boolean isLog(Material block) {
         return Tag.LOGS.isTagged(block) || block == Material.MUSHROOM_STEM || block == Material.CHORUS_PLANT;
     }
 

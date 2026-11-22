@@ -88,7 +88,7 @@ final class RunesMenu extends Menu {
     }
 
     private Button inventoryButton(Stored stored) {
-        ItemStack icon = runes.create(stored.rune(), stored.rank());
+        ItemStack icon = runes.create(stored.rune(), shownRank(stored.rune(), stored.rank()));
         icon.setAmount(Math.min(stored.count(), 64));
         withHint(
                 icon,
