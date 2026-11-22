@@ -73,7 +73,7 @@ public record ToolConfig(
     public static ToolConfig load(ConfigurationSection section, Logger logger) {
         ToolConfig d = defaults();
         double light = readNumber(section, logger, TRAIT_GLOW_LIGHT, d.traitGlowLight);
-        if (light != Math.rint(light) || light > 15) {
+        if (light != Math.rint(light) || light < 1 || light > 15) {
             logger.severe("Config '" + TRAIT_GLOW_LIGHT + "' must be a whole number from 1 to 15, got '" + light
                     + "'. Using default " + d.traitGlowLight + ".");
             light = d.traitGlowLight;
