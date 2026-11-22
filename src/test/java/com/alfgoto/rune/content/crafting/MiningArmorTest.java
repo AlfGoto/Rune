@@ -1,6 +1,7 @@
 package com.alfgoto.rune.content.crafting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,6 +13,8 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.text.Rarity;
 import java.util.List;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,6 +105,18 @@ class MiningArmorTest {
             assertTrue(book.find(epic).orElseThrow().ingredients().values().stream()
                     .anyMatch(ing -> rare.equals(ing.itemId())));
         }
+    }
+
+    @Test
+    void runeIngredientsMatchByRuneIdNotByVanillaMaterial() {
+        CraftingRecipe recipe = book.find("drillers_helm").orElseThrow();
+        ItemStack setting = items.create(items.get("gem_setting"), 1);
+        ItemStack caversHelmet = items.create(items.get("cavers_helmet"), 1);
+        ItemStack vanillaLeather = new ItemStack(Material.LEATHER_HELMET);
+        ItemStack diamond = new ItemStack(Material.DIAMOND);
+
+        assertTrue(book.hasRuneIngredients(recipe, new ItemStack[] {diamond, caversHelmet, setting}));
+        assertFalse(book.hasRuneIngredients(recipe, new ItemStack[] {diamond, vanillaLeather, setting}));
     }
 
     private static List<String> concat(List<String> a, List<String> b) {
