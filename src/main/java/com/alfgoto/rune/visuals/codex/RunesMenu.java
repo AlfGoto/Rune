@@ -77,9 +77,14 @@ final class RunesMenu extends Menu {
 
     private Button installedButton(ToolLoadout.Installed entry, int slot) {
         ItemStack icon = withHint(
-                runes.create(entry.rune(), entry.rank()),
+                runes.create(entry.rune(), shownRank(entry.rune(), entry.rank())),
                 Text.translatable("rune.menu.runes.click_remove", "Click to remove").color(NamedTextColor.YELLOW));
         return new Button(icon, p -> remove(slot));
+    }
+
+    /** A stored Rank above the Max Rank (changed in code later) is shown as the Max Rank. */
+    private static int shownRank(Rune rune, int rank) {
+        return rune.maxRank().isPresent() ? Math.min(rank, rune.maxRank().getAsInt()) : rank;
     }
 
     private Button inventoryButton(Stored stored) {
@@ -133,7 +138,7 @@ final class RunesMenu extends Menu {
 
     private void remove(int slot) {
         loadout.uninstall(player.getUniqueId(), slot).ifPresent(removed -> {
-            ItemStack stack = runes.create(removed.rune(), removed.rank());
+            ItemStack stack = runes.create(removed.rune(), shownRank(removed.rune(), removed.rank()));
             player.getInventory()
                     .addItem(stack)
                     .values()
@@ -152,7 +157,7 @@ final class RunesMenu extends Menu {
                     "rune.menu.runes.over_capacity",
                     "Not enough Capacity: this Rune costs %s, %s left.",
                     Component.text(runes.capacityCost(rune, rank)),
-                    Component.text(loadout.capacity(id) - loadout.used(id)));
+                    Component.text(Math.max(0, loadout.capacity(id) - loadout.used(id))));
             default -> error("rune.menu.runes.cannot", "This Rune can't be installed on the player.");
         };
     }
