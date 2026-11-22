@@ -50,7 +50,9 @@ public final class RecipeBook {
 
     private RecipeChoice choice(Ingredient ingredient) {
         if (ingredient.isRune()) {
-            return new RecipeChoice.ExactChoice(items.create(items.get(ingredient.itemId()), 1));
+            // Base material only: the server cannot match the Rune id. CraftingListener checks the id
+            // (an exact stack would also compare name and lore, which change with Runes and Ranks).
+            return new RecipeChoice.MaterialChoice(items.get(ingredient.itemId()).material());
         }
         return new RecipeChoice.MaterialChoice(ingredient.material());
     }
@@ -71,6 +73,27 @@ public final class RecipeBook {
             return recipes.find(keyed.getKey().getKey().substring(KEY_PREFIX.length()));
         }
         return Optional.empty();
+    }
+
+    /** True when the Rune items in {@code matrix} are exactly the Rune ingredients of {@code recipe} (by id). */
+    public boolean hasRuneIngredients(CraftingRecipe recipe, org.bukkit.inventory.ItemStack[] matrix) {
+        java.util.Map<String, Integer> need = new java.util.HashMap<>();
+        for (String row : recipe.shape()) {
+            for (char c : row.toCharArray()) {
+                Ingredient ingredient = recipe.ingredients().get(c);
+                if (ingredient != null && ingredient.isRune()) {
+                    need.merge(ingredient.itemId(), 1, Integer::sum);
+                }
+            }
+        }
+        java.util.Map<String, Integer> have = new java.util.HashMap<>();
+        for (org.bukkit.inventory.ItemStack stack : matrix) {
+            if (stack == null || stack.getType().isAir()) {
+                continue;
+            }
+            items.of(stack).ifPresent(item -> have.merge(item.id(), 1, Integer::sum));
+        }
+        return need.equals(have);
     }
 
     public boolean isUnlocked(UUID player, CraftingRecipe recipe) {
