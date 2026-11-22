@@ -39,7 +39,7 @@ class SanctuariesTest {
 
     @Test
     void ranksGiveRegenerationThenResistanceThenRegenerationTwo() {
-        assertFalse(sanctuaries.levels(0).any());
+        assertEquals(Sanctuaries.Levels.NONE, sanctuaries.levels(0));
         Sanctuaries.Levels rank1 = sanctuaries.levels(1);
         assertEquals(0, rank1.regeneration());
         assertFalse(rank1.resistance());

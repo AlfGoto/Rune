@@ -17,10 +17,6 @@ public final class Sanctuaries {
     /** What a total value gives. {@code regeneration} is the amplifier (0 = I, 1 = II), -1 = none. */
     public record Levels(int regeneration, boolean resistance) {
         public static final Levels NONE = new Levels(-1, false);
-
-        public boolean any() {
-            return regeneration >= 0 || resistance;
-        }
     }
 
     private final double resistanceFrom;
