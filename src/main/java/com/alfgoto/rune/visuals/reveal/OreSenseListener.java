@@ -3,15 +3,13 @@ package com.alfgoto.rune.visuals.reveal;
 import com.alfgoto.rune.foundations.blocktracking.BlockTag;
 import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
+import com.alfgoto.rune.gameplay.detection.OreScan;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.runes.StoneFamily;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.DoubleSupplier;
 import org.bukkit.Color;
-import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -61,18 +59,6 @@ final class OreSenseListener implements Listener {
         if (Stacking.rolls(Stacking.total(EFFECT_ID, loadout.sources(event.item())), random) < 1) {
             return;
         }
-        List<Block> ores = new ArrayList<>();
-        Block center = event.block();
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    Block block = center.getRelative(x, y, z);
-                    if (StoneFamily.isOre(block.getType())) {
-                        ores.add(block);
-                    }
-                }
-            }
-        }
-        reveal.reveal(event.player(), ores, ticks, COLOR);
+        reveal.reveal(event.player(), OreScan.find(event.block(), radius), ticks, COLOR);
     }
 }

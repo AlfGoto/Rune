@@ -10,6 +10,7 @@ import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
@@ -28,7 +29,7 @@ public final class DetectionModule implements RuneModule {
 
     @Override
     public void enable(RuneContext ctx) {
-        DetectionSettings settings = settings(ctx.config());
+        DetectionSettings settings = settings(ctx.config(), ctx.logger());
         DetectionListener listener = new DetectionListener(
                 ctx.get(ItemRegistry.class),
                 ctx.get(ToolLoadout.class),
@@ -51,10 +52,21 @@ public final class DetectionModule implements RuneModule {
         }
     }
 
-    static DetectionSettings settings(RuneConfig config) {
+    static DetectionSettings settings(RuneConfig config, Logger logger) {
         return new DetectionSettings(
-                (int) config.runeNumber("echo_ping", "radius").orElse(12),
-                (int) (config.runeNumber("echo_ping", "seconds").orElse(5) * 20),
-                (int) (config.runeNumber("echo_ping", "interval-seconds").orElse(10) * 20));
+                whole(config, logger, "radius", 12, DetectionSettings.MAX_RADIUS),
+                whole(config, logger, "seconds", 5, 600) * 20,
+                whole(config, logger, "interval-seconds", 10, 3600) * 20);
+    }
+
+    private static int whole(RuneConfig config, Logger logger, String key, int fallback, int max) {
+        var value = config.runeNumber("echo_ping", key);
+        if (value.isEmpty() || value.getAsDouble() < 1 || value.getAsDouble() > max
+                || value.getAsDouble() != Math.rint(value.getAsDouble())) {
+            logger.severe("Config 'runes.echo_ping." + key + "' must be a whole number from 1 to " + max
+                    + ". Using default " + fallback + ".");
+            return fallback;
+        }
+        return (int) value.getAsDouble();
     }
 }
