@@ -242,7 +242,10 @@ public final class RuneConfig {
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         String bookRarity = section.getString(BOOK_CACHE_RARITY);
-        if (bookRarity != null) {
+        if (bookRarity == null) {
+            logger.severe("Config '" + BOOK_CACHE_RARITY + "' is missing. Using default "
+                    + DEFAULT_BOOK_CACHE_RARITY.id() + ".");
+        } else {
             Rarity parsed = Rarity.fromId(bookRarity);
             if (parsed == null) {
                 logger.severe("Config '" + BOOK_CACHE_RARITY + "' must be a Rarity (common, uncommon, rare, epic,"

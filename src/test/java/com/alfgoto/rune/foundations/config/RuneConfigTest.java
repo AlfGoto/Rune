@@ -105,6 +105,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -231,6 +233,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -257,7 +261,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(48, errors.size());
+        assertEquals(49, errors.size());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
@@ -376,6 +381,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3
