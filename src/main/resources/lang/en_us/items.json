@@ -46,5 +46,13 @@
   "rune.command.give_rune.unknown": "Unknown Rune: %s",
   "rune.command.give_rune.bad_rank": "The Rank must be a number from 1 to %s.",
   "rune.command.give_rune.bad_rank_min": "The Rank must be 1 or more.",
-  "rune.command.give_rune.done": "Gave %s, Rank %s."
+  "rune.command.give_rune.done": "Gave %s, Rank %s.",
+  "rune.item.copper_pickaxe": "Copper Pickaxe",
+  "rune.item.copper_axe": "Copper Axe",
+  "rune.item.redstone_pickaxe": "Redstone Pickaxe",
+  "rune.item.breeze_axe": "Breeze Axe",
+  "rune.trait.copper_pickaxe": "Faster as it oxidizes · wax locks the stage",
+  "rune.trait.copper_axe": "Faster as it oxidizes · wax locks the stage",
+  "rune.trait.redstone_pickaxe": "Momentum: faster per block in a row, resets after a short pause",
+  "rune.trait.breeze_axe": "Momentum: faster per log in a row, resets after a short pause"
 }

@@ -87,8 +87,9 @@ public final class RuneConfig {
     private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
     private ConfigurationSection runes; // the 'runes' section, null when there is none
-    private ConfigurationSection traits; // the 'traits' section, null when there is none
+    private ConfigurationSection traitSection; // the 'traits' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
+    private TraitConfig traits = TraitConfig.defaults();
 
     private RuneConfig(
             double base,
@@ -236,7 +237,8 @@ public final class RuneConfig {
                 ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
-        loaded.traits = section.getConfigurationSection("traits");
+        loaded.traitSection = section.getConfigurationSection("traits");
+        loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         return loaded;
@@ -245,6 +247,11 @@ public final class RuneConfig {
     /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */
     public double rankUpCostMultiplier() {
         return rankUpCostMultiplier;
+    }
+
+    /** Copper and Momentum Trait balancing. */
+    public TraitConfig traits() {
+        return traits;
     }
 
     /** Mining speed Runes balancing: Haste, Specialist and Affinity. */
@@ -271,8 +278,8 @@ public final class RuneConfig {
      * the defaults match config.yml).
      */
     public double traitNumber(String traitId, String key, double fallback) {
-        if (traits == null
-                || !(traits.get(traitId + "." + key) instanceof Number n)
+        if (traitSection == null
+                || !(traitSection.get(traitId + "." + key) instanceof Number n)
                 || !Double.isFinite(n.doubleValue())
                 || n.doubleValue() <= 0) {
             return fallback;
