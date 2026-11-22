@@ -31,5 +31,9 @@ final class CodexClickListener implements Listener {
         }
         event.setCancelled(true);
         menus.main(player).open(player);
+        // The client already "picked up" the Codex on click. Cancelling does not clear that cursor
+        // on the client once a menu opens, so the Codex shows in hand after closing. Resync it.
+        player.setItemOnCursor(null);
+        player.updateInventory();
     }
 }
