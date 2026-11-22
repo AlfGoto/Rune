@@ -22,7 +22,7 @@ public final class RuneModelRenderer implements ItemRedrawer {
 
     @Override
     public void redraw(ItemStack stack, RuneItem item) {
-        if (runes.find(item.id()).isEmpty()) {
+        if (runes.of(stack).isEmpty()) {
             return;
         }
         stack.setData(
