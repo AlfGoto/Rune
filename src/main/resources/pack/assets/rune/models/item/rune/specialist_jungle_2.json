@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "rune:item/rune/base/common",
+    "layer1": "rune:item/rune/logo/specialist",
+    "layer2": "rune:item/rune/socket/specialist_jungle",
+    "layer3": "rune:item/rune/rank/2"
+  }
+}

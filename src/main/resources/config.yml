@@ -272,6 +272,24 @@ runes:
     base: 1
     per-rank: 0
     max-rank: 1
+  # Deepstride: no Max Rank. The value is the depth line (Y): Rank 1 = below Y 0, each Rank moves it up by
+  # per-rank. speed = % mining speed below the line.
+  deepstride:
+    base: 0
+    per-rank: 16
+    speed: 20
+  # Ore Sense: chance (%) that breaking a stone-family block outlines ores in a cube of radius blocks each way (so 8 = 17x17x17) for seconds.
+  ore_sense:
+    base: 5
+    per-rank: 5
+    max-rank: 3
+    radius: 8
+    seconds: 5
+  # Ore Bloom: chance (%) that mining an ore turns a neighbouring stone-family block into that ore.
+  ore_bloom:
+    base: 8
+    per-rank: 8
+    max-rank: 5
   # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # Leaf Fall: radius in blocks (2 / 4 / 6)
   leaf_fall:
@@ -320,6 +338,23 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
+  # Copper Pickaxe and Copper Axe (docs/jobs/mining.md): the tool oxidizes as blocks are broken.
+  # 4 stages (Copper, Exposed, Weathered, Oxidized). Starting values, tuned after playtests.
+  copper:
+    # Blocks broken for one stage
+    blocks-per-stage: 300
+    # Haste in % at the last stage: 0, +10, +20, +30% across the stages
+    speed: 30
+  # Redstone Pickaxe and Breeze Axe: faster per block in a row (a log for the axe)
+  momentum:
+    # Haste in % at full Momentum (+5% per block with 10 blocks)
+    speed: 50
+    # Blocks in a row at full Momentum
+    max-blocks: 10
+    # Seconds between two breaks before Momentum resets
+    reset-seconds: 2
+    # Capacity added to the Redstone Pickaxe and Breeze Axe (negative: a drawback)
+    capacity-modifier: -2
 armor:
   # Rune Armor follows vanilla by Rarity: Common = leather, Uncommon = chainmail, Rare = iron,
   # Epic = diamond, Legendary = netherite. Each list is lowest Rarity first.
