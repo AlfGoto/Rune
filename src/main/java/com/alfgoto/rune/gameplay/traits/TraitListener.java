@@ -51,13 +51,13 @@ final class TraitListener implements Listener {
             return;
         }
         Material type = event.block().getType();
-        if (CopperOxidation.isCopper(item)) {
+        if (CopperOxidation.hasScale(item, CopperOxidation.SCALE_ID)) {
             double weight = rules.multiplier(type, tracker.tags(event.block()));
             if (weight > 0) {
                 copper.add(tool, weight);
             }
         }
-        if (Momentum.isMomentum(item) && countsForMomentum(item, type)) {
+        if (CopperOxidation.hasScale(item, Momentum.SCALE_ID) && countsForMomentum(item, type)) {
             momentum.hit(event.player().getUniqueId());
         }
     }

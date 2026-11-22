@@ -60,16 +60,16 @@ public final class CopperOxidation {
         };
     }
 
-    /** Whether this item is a Copper tool: a Rune Tool whose Trait uses the {@code copper_stage} Scale. */
-    public static boolean isCopper(RuneItem item) {
+    /** Whether this item is a Rune Tool with a Trait on the Scale {@code scaleId} (Copper or Momentum). */
+    static boolean hasScale(RuneItem item, String scaleId) {
         return item.toolSpec()
-                .map(spec -> spec.traitBindings().stream().anyMatch(b -> b.scale().id().equals(SCALE_ID)))
+                .map(spec -> spec.traitBindings().stream().anyMatch(b -> b.scale().id().equals(scaleId)))
                 .orElse(false);
     }
 
     /** The Copper tool this stack is, or empty. */
     public Optional<RuneItem> copperTool(@Nullable ItemStack stack) {
-        return items.of(stack).filter(CopperOxidation::isCopper);
+        return items.of(stack).filter(item -> hasScale(item, SCALE_ID));
     }
 
     /** Blocks counted on the stack (0 if none). Bone-meal-grown blocks count less, so it is a decimal. */

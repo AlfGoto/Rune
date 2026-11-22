@@ -41,13 +41,6 @@ public final class Momentum {
         this.clock = clock;
     }
 
-    /** Whether this item has a Trait on the {@code momentum} Scale. */
-    public static boolean isMomentum(RuneItem item) {
-        return item.toolSpec()
-                .map(spec -> spec.traitBindings().stream().anyMatch(b -> b.scale().id().equals(SCALE_ID)))
-                .orElse(false);
-    }
-
     /** The Scale {@code momentum}: blocks in a row / max blocks, for the player (0 with no player). */
     public Scale scale() {
         return new Scale() {

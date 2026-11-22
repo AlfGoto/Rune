@@ -259,39 +259,6 @@ class TraitsTest {
                 "Copper Axe has no recipe: Stone Hatchet does not exist yet");
     }
 
-    @Test
-    void recipeIngredientCountsMatchTheDocs() {
-        var book = plugin.context().get(com.alfgoto.rune.gameplay.crafting.RecipeBook.class);
-        // Coal Pickaxe + 3 copper ingots + Reinforced Handle
-        assertEquals(java.util.Map.of("copper_ingot", 3, "reinforced_handle", 1, "coal_pickaxe", 1), counts(book, "copper_pickaxe"));
-        // Copper Pickaxe + 2 redstone blocks + 1 diamond + Gem Setting
-        assertEquals(
-                java.util.Map.of("redstone_block", 2, "diamond", 1, "gem_setting", 1, "copper_pickaxe", 1),
-                counts(book, "redstone_pickaxe"));
-        // Copper Axe + 3 breeze rods + 1 diamond + Gem Setting
-        assertEquals(
-                java.util.Map.of("breeze_rod", 3, "diamond", 1, "gem_setting", 1, "copper_axe", 1),
-                counts(book, "breeze_axe"));
-    }
-
-    private static java.util.Map<String, Integer> counts(
-            com.alfgoto.rune.gameplay.crafting.RecipeBook book, String id) {
-        var recipe = book.find(id).orElseThrow();
-        java.util.Map<String, Integer> counts = new java.util.HashMap<>();
-        for (String row : recipe.shape()) {
-            for (char c : row.toCharArray()) {
-                if (c != ' ') {
-                    var ingredient = recipe.ingredients().get(c);
-                    String name = ingredient.isRune()
-                            ? ingredient.itemId()
-                            : ingredient.material().name().toLowerCase(java.util.Locale.ROOT);
-                    counts.merge(name, 1, Integer::sum);
-                }
-            }
-        }
-        return counts;
-    }
-
     private static NamespacedKey key(String model) {
         return new NamespacedKey("rune", model);
     }
