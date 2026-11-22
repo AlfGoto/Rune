@@ -27,10 +27,10 @@ public final class CoreCachesModule implements RuneModule {
         items().forEach(ctx.get(ItemRegistry.class)::register);
     }
 
-    /** One {@link RuneItem} per Rarity. The model is a placeholder: no Cache texture exists yet. */
+    /** One {@link RuneItem} per Rarity. Model: {@code assets/rune/items/rune_cache_<rarity>.json}. */
     public static List<RuneItem> items() {
         return Arrays.stream(Rarity.values())
-                .map(rarity -> new RuneItem(Caches.itemId(rarity), rarity, Material.PAPER, "test_rune"))
+                .map(rarity -> new RuneItem(Caches.itemId(rarity), rarity, Material.PAPER, Caches.itemId(rarity)))
                 .toList();
     }
 }

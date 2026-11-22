@@ -10,6 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -96,6 +97,8 @@ public final class BlockReveal {
             display.setVisibleByDefault(false);
             display.setPersistent(false);
             display.setBlock(block.getBlockData());
+            // The display sits inside a solid block (light 0), so force full light or the ore looks black.
+            display.setBrightness(new Display.Brightness(15, 15));
             display.setGlowing(true);
             display.setGlowColorOverride(color);
             display.setTransformation(new Transformation(
