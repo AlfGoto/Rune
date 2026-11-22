@@ -107,6 +107,14 @@ public final class CoreItemsModule implements RuneModule {
         armor(items, "reinforced_chestplate", Rarity.UNCOMMON, ArmorKind.CHESTPLATE, "mining_damage_reduction");
         armor(items, "cavers_leggings", Rarity.UNCOMMON, ArmorKind.LEGGINGS, "mining_sneak_speed");
         armor(items, "cavers_boots", Rarity.UNCOMMON, ArmorKind.BOOTS, "mining_fall_reduction");
+        armor(items, "drillers_helm", Rarity.RARE, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "drillers_cuirass", Rarity.RARE, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "drillers_leggings", Rarity.RARE, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "drillers_boots", Rarity.RARE, ArmorKind.BOOTS, "mining_fall_reduction");
+        armor(items, "abyssal_helm", Rarity.EPIC, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "abyssal_cuirass", Rarity.EPIC, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "abyssal_leggings", Rarity.EPIC, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "abyssal_boots", Rarity.EPIC, ArmorKind.BOOTS, "mining_fall_reduction");
     }
 
     private static void armor(ItemRegistry items, String id, Rarity rarity, ArmorKind kind, String trait) {

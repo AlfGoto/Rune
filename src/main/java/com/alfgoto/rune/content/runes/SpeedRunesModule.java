@@ -127,7 +127,7 @@ public final class SpeedRunesModule implements RuneModule {
         Effect<RuneBlockBreakEvent> effect =
                 effects.register(Effect.builder("deepstride", EffectTriggers.BLOCK_BREAK).does(context -> {}));
         runes.register(new Rune(
-                new RuneItem("deepstride", Rarity.UNCOMMON, Material.PAPER, "test_rune"),
+                new RuneItem("deepstride", Rarity.UNCOMMON, Material.PAPER, "deepstride"),
                 effect.with(base.getAsDouble(), perRank.getAsDouble()),
                 Set.of(Fit.PICKAXE)));
     }
@@ -143,9 +143,9 @@ public final class SpeedRunesModule implements RuneModule {
         // The speed is applied by SpeedListener, so the Effect itself does nothing.
         Effect<RuneBlockBreakEvent> effect =
                 effects.register(Effect.builder(id, EffectTriggers.BLOCK_BREAK).does(context -> {}));
-        // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
+        // Model: assets/rune/items/<id>.json, layered with the Rank (docs/art-direction.md, "Runes").
         runes.register(new Rune(
-                new RuneItem(id, rarity, Material.PAPER, "test_rune"),
+                new RuneItem(id, rarity, Material.PAPER, id),
                 effect.with(perRank, perRank, maxRank),
                 fits));
     }
