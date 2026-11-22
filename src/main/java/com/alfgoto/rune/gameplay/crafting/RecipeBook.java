@@ -4,13 +4,16 @@ import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -76,8 +79,8 @@ public final class RecipeBook {
     }
 
     /** True when the Rune items in {@code matrix} are exactly the Rune ingredients of {@code recipe} (by id). */
-    public boolean hasRuneIngredients(CraftingRecipe recipe, org.bukkit.inventory.ItemStack[] matrix) {
-        java.util.Map<String, Integer> need = new java.util.HashMap<>();
+    public boolean hasRuneIngredients(CraftingRecipe recipe, ItemStack[] matrix) {
+        Map<String, Integer> need = new HashMap<>();
         for (String row : recipe.shape()) {
             for (char c : row.toCharArray()) {
                 Ingredient ingredient = recipe.ingredients().get(c);
@@ -86,8 +89,8 @@ public final class RecipeBook {
                 }
             }
         }
-        java.util.Map<String, Integer> have = new java.util.HashMap<>();
-        for (org.bukkit.inventory.ItemStack stack : matrix) {
+        Map<String, Integer> have = new HashMap<>();
+        for (ItemStack stack : matrix) {
             if (stack == null || stack.getType().isAir()) {
                 continue;
             }
