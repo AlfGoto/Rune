@@ -30,8 +30,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 /**
  * The passive axe Runes of docs/jobs/woodcutting.md: Specialist: &lt;wood&gt;, Leaf Fall, Orchard and Canopy
@@ -40,9 +43,6 @@ import org.bukkit.block.Block;
  */
 @AutoService(RuneModule.class)
 public final class WoodcuttingRunesModule implements RuneModule {
-
-    /** Tree Dash scans at most once per this many ticks per player. */
-    private static final int SCAN_THROTTLE_TICKS = 5;
 
     /** The wood types of Specialist: &lt;wood&gt; (overworld ids, then Nether ids). */
     static final Map<String, Set<Material>> WOODS = woods();
@@ -88,8 +88,8 @@ public final class WoodcuttingRunesModule implements RuneModule {
 
     /**
      * Tree Dash, an Active Rune: the value is the range in blocks (config runes.tree_dash: base, per-rank,
-     * max-rank, cooldown, speed-per-block, max-speed). It needs a visible log in range, or nothing happens and
-     * there is no cooldown.
+     * max-rank, cooldown, speed-per-block, max-speed). The player must look at a log in range. Not looking at a
+     * log: nothing happens. A log out of range: a message. Neither starts the cooldown.
      */
     private static void treeDash(RuneContext ctx) {
         String id = TreeDash.TREE_DASH;
@@ -100,38 +100,39 @@ public final class WoodcuttingRunesModule implements RuneModule {
         var cooldown = config.runeNumber(id, "cooldown");
         var speedPerBlock = config.runeNumber(id, "speed-per-block");
         var maxSpeed = config.runeNumber(id, "max-speed");
+        var lookReach = config.runeNumber(id, "look-reach");
         if (base.isEmpty()
                 || perRank.isEmpty()
                 || maxRank.isEmpty()
                 || cooldown.isEmpty()
                 || speedPerBlock.isEmpty()
-                || maxSpeed.isEmpty()) {
-            ctx.logger().severe("Config 'runes." + id + "' needs base, per-rank, max-rank, cooldown, speed-per-block"
-                    + " and max-speed numbers. Rune '" + id + "' is not registered.");
+                || maxSpeed.isEmpty()
+                || lookReach.isEmpty()) {
+            ctx.logger().severe("Config 'runes." + id + "' needs base, per-rank, max-rank, cooldown, speed-per-block,"
+                    + " max-speed and look-reach numbers. Rune '" + id + "' is not registered.");
             return;
         }
-        // One scan per click: `when` finds the log, `does` (same tick, same click) uses it.
+        // `when` finds the log the player looks at, `does` (same click) uses it.
         Map<UUID, Block> found = new HashMap<>();
-        // Click throttle: one scan per player every SCAN_THROTTLE_TICKS, so spam-clicking cannot lag the server.
-        Map<UUID, Integer> lastScan = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(id, EffectTriggers.CLICK)
                         .when(context -> {
-                            UUID uuid = context.player().getUniqueId();
-                            int now = org.bukkit.Bukkit.getCurrentTick();
-                            Integer previous = lastScan.get(uuid);
-                            if (previous != null && now - previous < SCAN_THROTTLE_TICKS) {
-                                found.remove(uuid);
+                            Player player = context.player();
+                            found.remove(player.getUniqueId());
+                            var target = TreeDash.lookedAtLog(player, lookReach.getAsDouble());
+                            if (target.isEmpty()) {
                                 return false;
                             }
-                            lastScan.put(uuid, now);
-                            var log = TreeDash.nearestVisibleLog(context.player(), context.value());
-                            if (log.isPresent()) {
-                                found.put(context.player().getUniqueId(), log.get());
-                            } else {
-                                found.remove(context.player().getUniqueId());
+                            if (target.get().distance() > context.value()) {
+                                player.sendActionBar(Component.translatable(
+                                                "rune.feedback.tree_dash_out_of_range",
+                                                "That log is out of range (%s blocks)",
+                                                Component.text((int) context.value()))
+                                        .color(NamedTextColor.RED));
+                                return false;
                             }
-                            return log.isPresent();
+                            found.put(player.getUniqueId(), target.get().log());
+                            return true;
                         })
                         .does(context -> {
                             Block log = found.remove(context.player().getUniqueId());
