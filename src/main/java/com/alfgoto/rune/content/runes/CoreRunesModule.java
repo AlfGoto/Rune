@@ -51,8 +51,8 @@ public final class CoreRunesModule implements RuneModule {
                         null,
                         RankValues.of(10, -2, 3)));
 
-        // Drop-changing Runes (docs/jobs/mining.md). Numbers come from config.yml ("runes"). No Rune texture is
-        // drawn yet, so they use the test Rune model.
+        // Drop-changing Runes (docs/jobs/mining.md). Numbers come from config.yml ("runes"). Model: assets/rune/items/<id>.json
+        // (docs/art-direction.md, "Runes").
         Set<Fit> diggers = Set.of(Fit.PICKAXE, Fit.AXE, Fit.SHOVEL);
         configuredRune(ctx, "fortune", Rarity.UNCOMMON, diggers);
         configuredRune(ctx, "smelt", Rarity.RARE, diggers);
@@ -85,7 +85,7 @@ public final class CoreRunesModule implements RuneModule {
         int max = (int) Math.max(1, maxRank.getAsDouble());
         ctx.get(RuneRegistry.class)
                 .register(new Rune(
-                        new RuneItem(id, rarity, Material.PAPER, "test_rune"),
+                        new RuneItem(id, rarity, Material.PAPER, id),
                         effect.with(base.getAsDouble(), perRank.getAsDouble(), max),
                         fits));
     }

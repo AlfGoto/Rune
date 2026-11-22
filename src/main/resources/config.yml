@@ -338,6 +338,23 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
+  # Copper Pickaxe and Copper Axe (docs/jobs/mining.md): the tool oxidizes as blocks are broken.
+  # 4 stages (Copper, Exposed, Weathered, Oxidized). Starting values, tuned after playtests.
+  copper:
+    # Blocks broken for one stage
+    blocks-per-stage: 300
+    # Haste in % at the last stage: 0, +10, +20, +30% across the stages
+    speed: 30
+  # Redstone Pickaxe and Breeze Axe: faster per block in a row (a log for the axe)
+  momentum:
+    # Haste in % at full Momentum (+5% per block with 10 blocks)
+    speed: 50
+    # Blocks in a row at full Momentum
+    max-blocks: 10
+    # Seconds between two breaks before Momentum resets
+    reset-seconds: 2
+    # Capacity added to the Redstone Pickaxe and Breeze Axe (negative: a drawback)
+    capacity-modifier: -2
 armor:
   # Rune Armor follows vanilla by Rarity: Common = leather, Uncommon = chainmail, Rare = iron,
   # Epic = diamond, Legendary = netherite. Each list is lowest Rarity first.

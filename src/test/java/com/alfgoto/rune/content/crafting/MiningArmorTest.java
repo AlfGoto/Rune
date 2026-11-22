@@ -1,6 +1,7 @@
 package com.alfgoto.rune.content.crafting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,6 +13,8 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.text.Rarity;
 import java.util.List;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,6 +84,43 @@ class MiningArmorTest {
             assertTrue(recipe.ingredients().values().stream()
                     .anyMatch(ing -> "reinforced_lining".equals(ing.itemId())));
         }
+    }
+
+    @Test
+    void rareAndEpicPiecesUpgradeFromThePreviousRarity() {
+        List<String> rareIds = List.of("drillers_helm", "drillers_cuirass", "drillers_leggings", "drillers_boots");
+        List<String> epicIds = List.of("abyssal_helm", "abyssal_cuirass", "abyssal_leggings", "abyssal_boots");
+        for (int i = 0; i < 4; i++) {
+            String uncommon = UNCOMMON.get(i);
+            String rare = rareIds.get(i);
+            String epic = epicIds.get(i);
+            assertEquals(Rarity.RARE, items.get(rare).rarity());
+            assertEquals(Rarity.EPIC, items.get(epic).rarity());
+            assertNotNull(server.getRecipe(book.key(rare)));
+            assertNotNull(server.getRecipe(book.key(epic)));
+            assertEquals(12, book.find(rare).orElseThrow().level());
+            assertEquals(18, book.find(epic).orElseThrow().level());
+            assertTrue(book.find(rare).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> uncommon.equals(ing.itemId())));
+            assertTrue(book.find(epic).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> rare.equals(ing.itemId())));
+        }
+    }
+
+    @Test
+    void runeIngredientsMatchByRuneIdNotByVanillaMaterial() {
+        ItemStack setting = items.create(items.get("gem_setting"), 1);
+        ItemStack caversHelmet = items.create(items.get("cavers_helmet"), 1);
+        ItemStack vanillaLeather = new ItemStack(Material.LEATHER_HELMET);
+        ItemStack diamond = new ItemStack(Material.DIAMOND);
+        ItemStack lantern = new ItemStack(Material.SOUL_LANTERN);
+
+        assertEquals("drillers_helm", book.match(
+                new ItemStack[] {diamond, lantern, diamond, caversHelmet, setting, null, null, null, null})
+                .orElseThrow().id());
+        assertTrue(book.match(
+                new ItemStack[] {diamond, lantern, diamond, vanillaLeather, setting, null, null, null, null})
+                .isEmpty());
     }
 
     private static List<String> concat(List<String> a, List<String> b) {
