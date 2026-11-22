@@ -32,6 +32,9 @@ public final class SanctuaryRunesModule implements RuneModule {
     /** The biome Places that exist today (see CorePlaces). More come with their Places. */
     static final List<String> BIOMES = List.of("lush_caves", "taiga");
 
+    /** Biomes that already have a real Rune texture (tools/texture-gen/v3/runes.py, VARIANTS). */
+    private static final Set<String> TEXTURED = Set.of("taiga");
+
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
         return Set.of(RunesModule.class, EffectsModule.class, PlacesModule.class, SanctuaryModule.class);
@@ -57,9 +60,10 @@ public final class SanctuaryRunesModule implements RuneModule {
             // The potion effects are given by gameplay.sanctuary, so the Effect itself does nothing.
             Effect<RuneBlockBreakEvent> effect =
                     effects.register(Effect.builder(id, EffectTriggers.BLOCK_BREAK).does(context -> {}));
-            // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
+            // Real texture when one exists, else the test model (see docs/design-decisions.md, Textures).
+            String model = TEXTURED.contains(biome) ? id : "test_rune";
             runes.register(new Rune(
-                    new RuneItem(id, Rarity.RARE, Material.PAPER, "test_rune"),
+                    new RuneItem(id, Rarity.RARE, Material.PAPER, model),
                     effect.with(base.getAsDouble(), perRank.getAsDouble(), (int) Math.max(1, maxRank.getAsDouble())),
                     Set.of(Fit.PLAYER)));
         }
