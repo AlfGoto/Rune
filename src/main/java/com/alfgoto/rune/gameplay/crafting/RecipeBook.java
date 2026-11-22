@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
@@ -32,9 +33,16 @@ public final class RecipeBook {
     private final Server server;
     private final ItemRegistry items;
     private final JobProgress progress;
+    private final Predicate<ItemStack> isBroken;
     private final Registry<CraftingRecipe> recipes = new Registry<>("recipes");
 
     public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress) {
+        this(plugin, items, progress, stack -> false);
+    }
+
+    /** {@code isBroken}: a Broken Rune item (0 durability) is refused as a Rune ingredient, it must be repaired first. */
+    public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress, Predicate<ItemStack> isBroken) {
+        this.isBroken = isBroken;
         this.plugin = plugin;
         this.server = plugin.getServer();
         this.items = items;
@@ -80,7 +88,7 @@ public final class RecipeBook {
 
     /**
      * The Rune recipe this crafting grid really makes, checking each cell: a Rune ingredient needs that Rune item
-     * (any durability, Runes or Mastery), a vanilla ingredient needs that material and not a Rune item. Like vanilla,
+     * (any durability but not Broken, any Runes or Mastery), a vanilla ingredient needs that material and not a Rune item. Like vanilla,
      * the pattern can sit anywhere in the grid and can be mirrored. Empty when no Rune recipe matches.
      *
      * <p>Many Rune items share a base material (every Rune pickaxe is a wooden pickaxe, every Component is paper),
@@ -121,7 +129,8 @@ public final class RecipeBook {
             return false;
         }
         if (ingredient.isRune()) {
-            return items.of(stack).map(item -> item.id().equals(ingredient.itemId())).orElse(false);
+            return items.of(stack).map(item -> item.id().equals(ingredient.itemId())).orElse(false)
+                    && !isBroken.test(stack);
         }
         return stack.getType() == ingredient.material() && items.of(stack).isEmpty();
     }

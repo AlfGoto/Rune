@@ -9,6 +9,7 @@ import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.gameplay.effects.Effect;
 import com.alfgoto.rune.gameplay.effects.EffectTriggers;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
@@ -76,7 +77,7 @@ class RecipeMatchTest {
         items.register(RuneItem.tool("stone_pick", Rarity.COMMON, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
         items.register(RuneItem.tool("lens_pick", Rarity.RARE, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
         items.register(RuneItem.tool("core_pick", Rarity.RARE, ToolKind.PICKAXE, "test_rune", ToolSpec.DEFAULT));
-        book = new RecipeBook(plugin, items, progress);
+        book = new RecipeBook(plugin, items, progress, new BrokenToolListener(items)::isBroken);
         // Same shape, same base materials (paper over wooden pickaxe): only the Rune ids differ.
         book.register(new CraftingRecipe("lens_pick", mining, 1, "lens_pick", 1, List.of("L", "P"),
                 Map.of('L', Ingredient.rune("lens"), 'P', Ingredient.rune("stone_pick"))));
@@ -116,6 +117,13 @@ class RecipeMatchTest {
     @Test
     void aUsedToolWithRunesStillMatches() {
         assertEquals("lens_pick", book.match(grid(null, item("lens"), null, null, usedPick())).orElseThrow().id());
+    }
+
+    @Test
+    void aBrokenToolIsRefusedUntilRepaired() {
+        ItemStack pick = usedPick();
+        pick.editMeta(meta -> ((Damageable) meta).setDamage(((Damageable) meta).getMaxDamage()));
+        assertTrue(book.match(grid(item("lens"), null, null, pick)).isEmpty());
     }
 
     @Test
