@@ -89,6 +89,7 @@ public final class RuneConfig {
     private CacheConfig caches = CacheConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
+    private TraitConfig traits = TraitConfig.defaults();
 
     private RuneConfig(
             double base,
@@ -237,6 +238,7 @@ public final class RuneConfig {
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
         loaded.caches = CacheConfig.load(section, logger);
+        loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
         return loaded;
@@ -250,6 +252,11 @@ public final class RuneConfig {
     /** Rune Cache drop chance and Milestone Cache table. */
     public CacheConfig caches() {
         return caches;
+    }
+
+    /** Copper and Momentum Trait balancing. */
+    public TraitConfig traits() {
+        return traits;
     }
 
     /** Mining speed Runes balancing: Haste, Specialist and Affinity. */

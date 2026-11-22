@@ -89,6 +89,14 @@ class RuneConfigTest {
                     pickaxe-actions: 100
                     axe-actions: 200
                     max-bonus: 0.5
+                  copper:
+                    blocks-per-stage: 150
+                    speed: 24
+                  momentum:
+                    speed: 40
+                    max-blocks: 8
+                    reset-seconds: 1.5
+                    capacity-modifier: -3
                 armor:
                   defense:
                     helmet: [1, 1, 1, 1, 9]
@@ -136,6 +144,7 @@ class RuneConfigTest {
         assertEquals(100, c.tools().pickaxeMasteryActions());
         assertEquals(200, c.tools().axeMasteryActions());
         assertEquals(0.5, c.tools().masteryMaxBonus());
+        assertEquals(new TraitConfig(150, 24, 40, 8, 1.5, -3), c.traits());
         assertEquals(List.of(1.0, 2.0, 3.5), c.tools().speedByTier());
         assertEquals(9, c.tools().epicSpeed());
         assertEquals(List.of(10, 20, 30), c.tools().durabilityByTier());
@@ -243,6 +252,14 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                  copper:
+                    blocks-per-stage: 300
+                    speed: 30
+                  momentum:
+                    speed: 50
+                    max-blocks: 10
+                    reset-seconds: 2
+                    capacity-modifier: -2
                 armor:
                   defense:
                     helmet: [1, 2, 2, 3, 3]
@@ -291,7 +308,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(53, errors.size());
+        assertEquals(59, errors.size());
+        assertEquals(TraitConfig.defaults(), c.traits());
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
         assertEquals(1, c.playerCapacityPerLevel());
@@ -378,6 +396,14 @@ class RuneConfigTest {
                     pickaxe-actions: 500
                     axe-actions: 1000
                     max-bonus: 0.75
+                  copper:
+                    blocks-per-stage: 300
+                    speed: 30
+                  momentum:
+                    speed: 50
+                    max-blocks: 10
+                    reset-seconds: 2
+                    capacity-modifier: -2
                 armor:
                   defense:
                     helmet: [1, 2, 2, 3, 3]

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "rune:item/rune/base/uncommon",
+    "layer1": "rune:item/rune/logo/affinity",
+    "layer2": "rune:item/rune/socket/affinity_crimson_forest",
+    "layer3": "rune:item/rune/rank/1"
+  }
+}
