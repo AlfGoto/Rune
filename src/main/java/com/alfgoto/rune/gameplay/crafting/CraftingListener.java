@@ -45,7 +45,9 @@ public final class CraftingListener implements Listener {
         if (recipe == null) {
             return;
         }
-        if (book.isUnlocked(event.getView().getPlayer().getUniqueId(), recipe)) {
+        if (!book.hasRuneIngredients(recipe, event.getInventory().getMatrix())) {
+            event.getInventory().setResult(null); // right material, wrong Rune item (e.g. a vanilla helmet)
+        } else if (book.isUnlocked(event.getView().getPlayer().getUniqueId(), recipe)) {
             ItemStack result = items.create(items.get(recipe.result()), recipe.amount());
             carryOver(event.getInventory(), result);
             event.getInventory().setResult(result);
@@ -61,7 +63,8 @@ public final class CraftingListener implements Listener {
             return;
         }
         HumanEntity who = event.getWhoClicked();
-        if (!book.isUnlocked(who.getUniqueId(), recipe)) {
+        if (!book.hasRuneIngredients(recipe, event.getInventory().getMatrix())
+                || !book.isUnlocked(who.getUniqueId(), recipe)) {
             event.setCancelled(true);
             return;
         }
