@@ -41,6 +41,9 @@ import org.bukkit.block.Block;
 @AutoService(RuneModule.class)
 public final class WoodcuttingRunesModule implements RuneModule {
 
+    /** Tree Dash scans at most once per this many ticks per player. */
+    private static final int SCAN_THROTTLE_TICKS = 5;
+
     /** The wood types of Specialist: &lt;wood&gt; (overworld ids, then Nether ids). */
     static final Map<String, Set<Material>> WOODS = woods();
 
@@ -109,9 +112,19 @@ public final class WoodcuttingRunesModule implements RuneModule {
         }
         // One scan per click: `when` finds the log, `does` (same tick, same click) uses it.
         Map<UUID, Block> found = new HashMap<>();
+        // Click throttle: one scan per player every SCAN_THROTTLE_TICKS, so spam-clicking cannot lag the server.
+        Map<UUID, Integer> lastScan = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(id, EffectTriggers.CLICK)
                         .when(context -> {
+                            UUID uuid = context.player().getUniqueId();
+                            int now = org.bukkit.Bukkit.getCurrentTick();
+                            Integer previous = lastScan.get(uuid);
+                            if (previous != null && now - previous < SCAN_THROTTLE_TICKS) {
+                                found.remove(uuid);
+                                return false;
+                            }
+                            lastScan.put(uuid, now);
                             var log = TreeDash.nearestVisibleLog(context.player(), context.value());
                             if (log.isPresent()) {
                                 found.put(context.player().getUniqueId(), log.get());
