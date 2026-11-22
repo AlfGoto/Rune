@@ -105,8 +105,8 @@ public final class WoodcuttingRunesModule implements RuneModule {
         // The effect is applied elsewhere (SpeedListener, gameplay.woodcutting), so the Effect itself does nothing.
         Effect<RuneBlockBreakEvent> effect =
                 effects.register(Effect.builder(id, EffectTriggers.BLOCK_BREAK).does(context -> {}));
-        // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
-        runes.register(new Rune(new RuneItem(id, rarity, Material.PAPER, "test_rune"), bind.apply(effect), AXE));
+        // Model: assets/rune/items/<id>.json, layered with the Rank (docs/art-direction.md, "Runes").
+        runes.register(new Rune(new RuneItem(id, rarity, Material.PAPER, id), bind.apply(effect), AXE));
     }
 
     private static Map<String, Set<Material>> woods() {
