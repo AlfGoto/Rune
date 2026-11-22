@@ -103,6 +103,34 @@ public final class SpeedRunesModule implements RuneModule {
                     config.affinityMaxRank(),
                     FOREST_PLACES.contains(place) ? Set.of(Fit.AXE) : Set.of(Fit.PICKAXE));
         }
+
+        deepstride(ctx, runes, effects, speed);
+    }
+
+    /**
+     * Deepstride (docs/jobs/mining.md): faster mining below a depth line. The Rune's value is the line: Rank 1
+     * works below Y 0 and each Rank moves the line up by {@code runes.deepstride.per-rank} (16). No Max Rank.
+     * Each installed Deepstride adds {@code runes.deepstride.speed} percent while the player is below its line.
+     */
+    private static void deepstride(RuneContext ctx, RuneRegistry runes, EffectRegistry effects, SpeedBonuses speed) {
+        var config = ctx.config();
+        var base = config.runeNumber("deepstride", "base");
+        var perRank = config.runeNumber("deepstride", "per-rank");
+        var percent = config.runeNumber("deepstride", "speed");
+        if (base.isEmpty() || perRank.isEmpty() || percent.isEmpty() || percent.getAsDouble() <= 0) {
+            ctx.logger()
+                    .severe("Config 'runes.deepstride' needs base, per-rank and speed (above 0) numbers. "
+                            + "Rune 'deepstride' is not registered.");
+            return;
+        }
+        double bonus = percent.getAsDouble();
+        speed.registerByValue("deepstride", (player, block, line) -> player.getLocation().getY() < line ? bonus : 0);
+        Effect<RuneBlockBreakEvent> effect =
+                effects.register(Effect.builder("deepstride", EffectTriggers.BLOCK_BREAK).does(context -> {}));
+        runes.register(new Rune(
+                new RuneItem("deepstride", Rarity.UNCOMMON, Material.PAPER, "deepstride"),
+                effect.with(base.getAsDouble(), perRank.getAsDouble()),
+                Set.of(Fit.PICKAXE)));
     }
 
     private static void register(
@@ -116,9 +144,9 @@ public final class SpeedRunesModule implements RuneModule {
         // The speed is applied by SpeedListener, so the Effect itself does nothing.
         Effect<RuneBlockBreakEvent> effect =
                 effects.register(Effect.builder(id, EffectTriggers.BLOCK_BREAK).does(context -> {}));
-        // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
+        // Model: assets/rune/items/<id>.json, layered with the Rank (docs/art-direction.md, "Runes").
         runes.register(new Rune(
-                new RuneItem(id, rarity, Material.PAPER, "test_rune"),
+                new RuneItem(id, rarity, Material.PAPER, id),
                 effect.with(perRank, perRank, maxRank),
                 fits));
     }

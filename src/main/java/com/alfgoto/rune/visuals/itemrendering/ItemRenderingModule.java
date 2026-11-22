@@ -20,6 +20,7 @@ public final class ItemRenderingModule implements RuneModule {
         items.addRedrawer(new ItemRenderer(
                         ctx.get(RuneRegistry.class), items::toolStats, ctx.get(ToolMastery.class)::status)
                 .withArmor(items::armorStats));
+        items.addRedrawer(new RuneModelRenderer(ctx.get(RuneRegistry.class)));
     }
 
     @Override

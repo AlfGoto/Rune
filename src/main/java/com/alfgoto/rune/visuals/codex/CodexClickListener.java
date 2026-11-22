@@ -31,5 +31,8 @@ final class CodexClickListener implements Listener {
         }
         event.setCancelled(true);
         menus.main(player).open(player);
+        // The client already "picked up" the Codex on click. Resync sends the real cursor back,
+        // so the Codex ghost goes away and any stack the player really holds stays.
+        player.updateInventory();
     }
 }
