@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 
 /**
  * A locked recipe cannot be crafted: the result is removed and the craft is cancelled.
@@ -44,11 +43,17 @@ public final class CraftingListener implements Listener {
 
     @EventHandler
     public void onPrepare(PrepareItemCraftEvent event) {
-        if (!isRuneCraft(event.getRecipe(), event.getInventory())) {
+        if (event.getRecipe() == null) {
             return;
         }
         CraftingRecipe recipe = book.match(event.getInventory().getMatrix()).orElse(null);
-        if (recipe != null && book.isUnlocked(event.getView().getPlayer().getUniqueId(), recipe)) {
+        if (recipe == null) {
+            if (book.of(event.getRecipe()).isPresent()) {
+                event.getInventory().setResult(null);
+            }
+            return;
+        }
+        if (book.isUnlocked(event.getView().getPlayer().getUniqueId(), recipe)) {
             ItemStack result = items.create(items.get(recipe.result()), recipe.amount());
             carryOver(event.getInventory(), result);
             event.getInventory().setResult(result);
@@ -59,10 +64,13 @@ public final class CraftingListener implements Listener {
 
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        if (!isRuneCraft(event.getRecipe(), event.getInventory())) {
+        if (event.getRecipe() == null) {
             return;
         }
         CraftingRecipe recipe = book.match(event.getInventory().getMatrix()).orElse(null);
+        if (recipe == null && book.of(event.getRecipe()).isEmpty()) {
+            return; // a vanilla craft
+        }
         HumanEntity who = event.getWhoClicked();
         if (recipe == null || !book.isUnlocked(who.getUniqueId(), recipe)) {
             event.setCancelled(true);
@@ -85,9 +93,9 @@ public final class CraftingListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftDone(CraftItemEvent event) {
-        CraftingRecipe recipe = isRuneCraft(event.getRecipe(), event.getInventory())
-                ? book.match(event.getInventory().getMatrix()).orElse(null)
-                : null;
+        CraftingRecipe recipe = event.getRecipe() == null
+                ? null
+                : book.match(event.getInventory().getMatrix()).orElse(null);
         if (recipe == null) {
             return;
         }
@@ -119,15 +127,6 @@ public final class CraftingListener implements Listener {
             return null;
         }
         return loadout.inherit(result, sources);
-    }
-
-    /**
-     * True when Crafting decides this craft: the server picked a Rune recipe, or the grid really makes one
-     * (the server may have picked a vanilla or another Rune recipe with the same base materials).
-     */
-    private boolean isRuneCraft(Recipe matched, CraftingInventory inventory) {
-        return matched != null
-                && (book.of(matched).isPresent() || book.match(inventory.getMatrix()).isPresent());
     }
 
     @EventHandler
