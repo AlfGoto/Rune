@@ -61,7 +61,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 - Movement abilities are contextual Tool Runes (Axe: dash to tree; Sword: lunge to monster; Pickaxe: dash to ore).
 - UI: dedicated loadout menus, Active Slots highlighted, rarity colours, custom icon glyphs in names.
 - Menus open from a Rune Codex item in the inventory (main menu: Jobs, Quests, Runes).
-- Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu. It is given on join and on respawn. Step 1: the Codex uses the test model and the main menu has Jobs and Runes; the Quests page comes with its own ticket.
+- Rune Codex: soulbound, fixed in the last inventory slot (not hotbar), can't be moved, dropped or lost on death. Clicking it in the inventory screen opens the main menu. It is given on join and on respawn. Step 1: the Codex uses the test model. The main menu has Jobs (slot 11), Quests (slot 13) and Runes (slot 15) (Quests page, 2026-11-21, #48: `visuals.codex.QuestsMenu`, 3 rows; the 3 active Quests in the middle row, each with its Tier colour in the name, Job, Tier, a progress bar and `done / target`; a paper shows Reroll Tokens held / max; clicking a Quest spends a Reroll Token to reroll it, same rules as `/rune quest reroll`; the menu redraws when a `QuestProgressEvent` fires for its owner. No Quest texture exists, so the icons are coloured dyes matching the Tier colour). The Runes page: see the Player Loadout entry.
 
 - No Salvage (2026-11-16, Alfred): Salvage was never decided by Alfred and is removed. For now a player has no way to delete, destroy or recycle a Rune.
 

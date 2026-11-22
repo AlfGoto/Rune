@@ -122,6 +122,8 @@ class CodexTest {
                 jobs.registry(),
                 progress,
                 plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerCapacity.class),
+                plugin.context().get(com.alfgoto.rune.gameplay.quests.QuestBook.class),
+                plugin.runeConfig(),
                 plugin.context().get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class),
                 plugin.context().get(com.alfgoto.rune.gameplay.runes.RuneRegistry.class));
 
@@ -213,6 +215,85 @@ class CodexTest {
         assertTrue(loadout.installed(player.getUniqueId()).isEmpty());
         assertEquals(1, testRuneCount());
         assertEquals(0, loadout.used(player.getUniqueId()));
+    }
+
+    private QuestsMenu questsPage() {
+        var ctx = plugin.context();
+        CodexMenus menus = new CodexMenus(
+                ctx.get(JobRegistry.class).registry(),
+                ctx.get(JobProgress.class),
+                ctx.get(com.alfgoto.rune.gameplay.runes.PlayerCapacity.class),
+                ctx.get(com.alfgoto.rune.gameplay.quests.QuestBook.class),
+                plugin.runeConfig(),
+                ctx.get(com.alfgoto.rune.gameplay.runes.PlayerLoadout.class),
+                ctx.get(com.alfgoto.rune.gameplay.runes.RuneRegistry.class));
+        return menus.questsPage(player, menus.main(player));
+    }
+
+    private void clickQuestSlot(int index) {
+        server.getPluginManager()
+                .callEvent(new InventoryClickEvent(
+                        player.getOpenInventory(),
+                        SlotType.CONTAINER,
+                        QuestsMenu.QUEST_SLOTS[index],
+                        ClickType.LEFT,
+                        InventoryAction.PICKUP_ALL));
+    }
+
+    @Test
+    void questsPageShowsTheThreeQuestsWithTierColourAndLiveProgress() {
+        var ctx = plugin.context();
+        var book = ctx.get(com.alfgoto.rune.gameplay.quests.QuestBook.class);
+        var type = ctx.get(com.alfgoto.rune.gameplay.quests.QuestTypeRegistry.class)
+                .registry()
+                .find("test")
+                .orElseThrow();
+        var epic = com.alfgoto.rune.text.Rarity.EPIC;
+        book.set(player.getUniqueId(), 1, type, epic);
+        book.advance(player.getUniqueId(), 1);
+        book.advance(player.getUniqueId(), 1);
+
+        QuestsMenu page = questsPage();
+
+        for (int slot : QuestsMenu.QUEST_SLOTS) {
+            assertNotNull(page.getInventory().getItem(slot));
+        }
+        ItemStack first = page.getInventory().getItem(QuestsMenu.QUEST_SLOTS[0]);
+        assertEquals(Material.MAGENTA_DYE, first.getType());
+        assertEquals(epic.color(), first.getItemMeta().displayName().color());
+        String progress = PlainTextComponentSerializer.plainText().serialize(first.lore().get(3));
+        assertEquals("2 / " + book.target(type, epic), progress);
+
+        book.advance(player.getUniqueId(), 1);
+        page.refresh();
+        String later = PlainTextComponentSerializer.plainText()
+                .serialize(page.getInventory().getItem(QuestsMenu.QUEST_SLOTS[0]).lore().get(3));
+        assertTrue(later.startsWith("3 / "), later);
+    }
+
+    @Test
+    void clickingAQuestRerollsItAndSpendsAToken() {
+        var book = plugin.context().get(com.alfgoto.rune.gameplay.quests.QuestBook.class);
+        var tokens = book.rerollTokens();
+        tokens.grant(player.getUniqueId(), 2);
+        book.advance(player.getUniqueId(), 2);
+        questsPage().open(player);
+
+        clickQuestSlot(1);
+
+        assertEquals(1, tokens.count(player.getUniqueId()));
+        assertEquals(0, book.progress(player.getUniqueId(), 2));
+    }
+
+    @Test
+    void clickingAQuestWithoutATokenChangesNothing() {
+        var book = plugin.context().get(com.alfgoto.rune.gameplay.quests.QuestBook.class);
+        book.advance(player.getUniqueId(), 1);
+        questsPage().open(player);
+
+        clickQuestSlot(0);
+
+        assertEquals(1, book.progress(player.getUniqueId(), 1));
     }
 
     @Test

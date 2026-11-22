@@ -28,5 +28,11 @@
   "rune.menu.jobs.capacity": "Player Capacity: %s",
   "rune.menu.jobs.account_xp": "%s / %s Account XP",
   "rune.menu.jobs.level": "Level %s",
-  "rune.menu.jobs.xp": "%s / %s XP"
+  "rune.menu.jobs.xp": "%s / %s XP",
+  "rune.menu.codex.quests": "Quests",
+  "rune.menu.quests.title": "Quests",
+  "rune.menu.quests.tokens": "Reroll Tokens: %s / %s",
+  "rune.menu.quests.tier": "Tier: %s",
+  "rune.menu.quests.progress": "%s / %s",
+  "rune.menu.quests.reroll": "Click to reroll (1 Reroll Token)"
 }
