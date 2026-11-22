@@ -15,7 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, 'v3'))
 import gui  # noqa: E402  (v2 kit/pix: menus)
-import tools, components, armor  # noqa: E402  (v3)
+import tools, components, armor, runes, caches  # noqa: E402  (v3)
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..', 'src', 'main', 'resources', 'pack'))
 PACK = os.path.join(ROOT, 'assets', 'rune')
@@ -35,6 +35,92 @@ def item_files(key, img, parent):
                {"parent": parent, "textures": {"layer0": "rune:item/" + key}})
     return ['assets/rune/items/%s.json' % key, 'assets/rune/models/item/%s.json' % key,
             'assets/rune/textures/item/%s.png' % key]
+
+
+def save_frames(frames, rel):
+    """One PNG; several frames = a vertical strip + .mcmeta (animated texture)."""
+    from pix import Pix
+    path = os.path.join(PACK, 'textures', rel + '.png')
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    strip = Pix(16, 16 * len(frames))
+    for i, f in enumerate(frames):
+        strip.blit(f, 0, 16 * i)
+    strip.save(path)
+    out = ['assets/rune/textures/%s.png' % rel]
+    if len(frames) > 1:
+        with open(path + '.mcmeta', 'w') as f:
+            f.write('{"animation": {"frametime": %d}}\n' % runes.FRAMETIME)
+        out.append('assets/rune/textures/%s.png.mcmeta' % rel)
+    return out
+
+
+def rune_files():
+    """Runes are layered (docs/art-direction.md, "Runes"): stone + logo (+ socket) + Rank numeral.
+    Item definition rune:<id> picks the Rank model from custom_model_data floats[0] (the Rank)."""
+    lines = []
+    for r in runes.RARITIES:
+        lines += save_frames(runes.legendary_frames() if r == 'legendary' else [runes.base(r)], 'item/rune/base/' + r)
+    for rid in runes.RUNES:
+        lines += save_frames([runes.logo(rid)], 'item/rune/logo/' + rid)
+    for rid, vs in runes.VARIANTS.items():
+        for v, mat in vs.items():
+            lines += save_frames([runes.socket(rid, mat)], 'item/rune/socket/%s_%s' % (rid, v))
+    for n in range(1, runes.MAX_NUMERAL + 1):
+        lines += save_frames([runes.numeral(n)], 'item/rune/rank/%d' % n)
+        lines += save_frames([runes.numeral(n, True)], 'item/rune/rank/%d_max' % n)
+
+    def one(item_id, rid, variant):
+        rarity, max_rank = runes.RUNES[rid][1], runes.RUNES[rid][2]
+        layers = ['rune:item/rune/base/' + rarity, 'rune:item/rune/logo/' + rid]
+        if variant:
+            layers.append('rune:item/rune/socket/%s_%s' % (rid, variant))
+        out = []
+
+        def model(name, extra):
+            tex = {'layer%d' % i: t for i, t in enumerate(layers + extra)}
+            write_json(os.path.join(PACK, 'models', 'item', 'rune', name + '.json'),
+                       {"parent": "minecraft:item/generated", "textures": tex})
+            out.append('assets/rune/models/item/rune/%s.json' % name)
+            return {"type": "minecraft:model", "model": "rune:item/rune/" + name}
+        if max_rank == 1:
+            definition = model(item_id, [])
+        else:
+            top = max_rank or runes.MAX_NUMERAL
+            ranks = {n: model('%s_%d' % (item_id, n), ['rune:item/rune/rank/%d%s' % (n, '_max' if n == max_rank else '')])
+                     for n in range(1, top + 1)}
+            definition = {"type": "minecraft:range_dispatch", "property": "minecraft:custom_model_data", "index": 0,
+                          "entries": [{"threshold": n, "model": m} for n, m in ranks.items() if n > 1],
+                          "fallback": ranks[1]}
+        write_json(os.path.join(PACK, 'items', item_id + '.json'), {"model": definition})
+        out.append('assets/rune/items/%s.json' % item_id)
+        return out
+
+    os.makedirs(os.path.join(PACK, 'models', 'item', 'rune'), exist_ok=True)
+    for rid in runes.RUNES:
+        if rid in runes.VARIANTS:
+            for v in runes.VARIANTS[rid]:
+                lines += one('%s_%s' % (rid, v), rid, v)
+        else:
+            lines += one(rid, rid, None)
+    # Rune Caches (legendary animated) and the Rune Codex
+    for r in runes.RARITIES:
+        key = 'rune_cache_' + r
+        lines += save_frames(caches.cache_frames(r), 'item/' + key)
+        write_json(os.path.join(PACK, 'items', key + '.json'), {"model": {"type": "minecraft:model", "model": "rune:item/" + key}})
+        write_json(os.path.join(PACK, 'models', 'item', key + '.json'), {"parent": "minecraft:item/generated", "textures": {"layer0": "rune:item/" + key}})
+        lines += ['assets/rune/items/%s.json' % key, 'assets/rune/models/item/%s.json' % key]
+    lines += item_files('rune_codex', caches.codex().im, 'minecraft:item/generated')
+    return lines
+
+
+def append_listed(lines):
+    listed = os.path.join(ROOT, 'files.txt')
+    have = set(open(listed).read().split())
+    missing = [l for l in dict.fromkeys(lines) if l not in have]
+    if missing:
+        with open(listed, 'a') as f:
+            f.write('\n'.join(missing) + '\n')
+    return missing
 
 
 def main():
@@ -65,6 +151,8 @@ def main():
             lines += ['assets/rune/equipment/%s.json' % set_key,
                       'assets/rune/textures/entity/equipment/humanoid/%s.png' % set_key,
                       'assets/rune/textures/entity/equipment/humanoid_leggings/%s.png' % set_key]
+    # Runes, Rune Caches, Rune Codex (v3 runes.py, caches.py)
+    lines += rune_files()
     # menu icons (v2 gui.py)
     for key, item in gui.P.items():
         lines += item_files(key, item['img'], 'minecraft:item/generated')

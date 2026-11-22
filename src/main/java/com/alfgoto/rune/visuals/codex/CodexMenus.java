@@ -1,10 +1,12 @@
 package com.alfgoto.rune.visuals.codex;
 
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import com.alfgoto.rune.gameplay.jobs.Numbers;
+import com.alfgoto.rune.gameplay.quests.QuestBook;
 import com.alfgoto.rune.gameplay.runes.PlayerCapacity;
 import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
@@ -20,7 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/** The Rune Codex menus: the main menu and the Jobs page. They only read Gameplay data. */
+/** The Rune Codex menus: the main menu, the Jobs page and the Quests page. */
 public final class CodexMenus {
 
     static final int BAR_LENGTH = 20;
@@ -28,14 +30,24 @@ public final class CodexMenus {
     private final Registry<Job> jobs;
     private final JobProgress progress;
     private final PlayerCapacity capacity;
+    private final QuestBook quests;
+    private final RuneConfig config;
 
-    public CodexMenus(Registry<Job> jobs, JobProgress progress, PlayerCapacity capacity) {
+    public CodexMenus(
+            Registry<Job> jobs, JobProgress progress, PlayerCapacity capacity, QuestBook quests, RuneConfig config) {
         this.jobs = jobs;
         this.progress = progress;
         this.capacity = capacity;
+        this.quests = quests;
+        this.config = config;
     }
 
-    /** The main menu. For now it only leads to the Jobs page. */
+    /** The Quests page: the 3 active Quests with Tier colour, live progress and a reroll click. */
+    public QuestsMenu questsPage(Player player, Menu parent) {
+        return new QuestsMenu(quests, config, player, parent);
+    }
+
+    /** The main menu: leads to the Jobs and Quests pages. */
     public Menu main(Player player) {
         Menu main = new Menu(Text.translatable("rune.menu.codex.title", "Rune Codex"), 3);
         main.set(
@@ -44,6 +56,12 @@ public final class CodexMenus {
                         Material.EXPERIENCE_BOTTLE,
                         Text.translatable("rune.menu.codex.jobs", "Jobs").color(NamedTextColor.GOLD),
                         p -> jobsPage(p, main).open(p)));
+        main.set(
+                15,
+                Button.of(
+                        Material.WRITABLE_BOOK,
+                        Text.translatable("rune.menu.codex.quests", "Quests").color(NamedTextColor.GOLD),
+                        p -> questsPage(p, main).open(p)));
         return main;
     }
 
