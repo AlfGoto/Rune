@@ -35,6 +35,9 @@ public final class CacheReelModule implements RuneModule, Listener {
             active.add(menu);
             try {
                 menu.start();
+                if (menu.isDone()) {
+                    active.remove(menu); // the menu did not open: the loot was already given
+                }
             } catch (RuntimeException e) {
                 active.remove(menu);
                 throw e;

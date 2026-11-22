@@ -65,6 +65,10 @@ final class ReelMenu extends Menu {
         schedule();
     }
 
+    boolean isDone() {
+        return done;
+    }
+
     boolean isFor(Player other) {
         return player.getUniqueId().equals(other.getUniqueId());
     }
