@@ -60,7 +60,8 @@ Job Levels give recipes, Blueprints and milestone Rune Caches — never passive 
 ## Rune Caches from mining
 - Drop chance per block = `XP × 0.05%` (stone ≈ 1/10,000, diamond 1.5%, emerald 2%).
 - Contents: 60% Mining Runes, 40% general passive Runes (Player/Armor Runes).
-- Rarity follows the shared rule (same loot table; Rarity shifts odds and quantity).
+- Rarity of the dropped Cache: Common (decided 2026-11-22, config `caches.drop-rarity`). Same loot table; Rarity shifts odds and quantity.
+- No Cache drops in Creative (decided 2026-11-22). Milestone Caches still work.
 
 ## Pickaxe base stats
 Default by Harvest Tier, overridable per pickaxe:
@@ -193,7 +194,7 @@ Each piece's Trait scales with depth; each piece has its own scale, default line
 
 Unlock levels: Common 3, Uncommon 7, Rare 12, Epic 18, Legendary by Blueprint.
 
-**Built so far (Common + Uncommon):** the 8 pieces (`miners_helmet`, `miners_vest`, `miners_trousers`, `miners_boots`, `cavers_helmet`, `reinforced_chestplate`, `cavers_leggings`, `cavers_boots`) with their recipes. Each Uncommon piece consumes its Common piece (an Upgrade). Grid layouts are not decided in docs; the ones in `CoreCraftingModule` are placeholders. The depth scale is `gameplay.items.DepthScale`, with `armor.depth.top-y` / `bottom-y` in config (64 / −64). **The Trait effects (light, damage reduction, sneak speed, fall damage) and their maximum values are not built:** the pieces only carry a Trait id (`mining_light_radius`, `mining_damage_reduction`, `mining_sneak_speed`, `mining_fall_reduction`). Each piece has its inventory icon (textures v3). The worn look (`equipment/mining_<rarity>.json`) exists in the pack but is not wired: pieces still show as leather when worn. Woodcutting armor icons exist but the pieces are not registered yet.
+**Built so far (Common to Epic):** the 16 pieces (`miners_*`, `cavers_*` / `reinforced_chestplate`, `drillers_helm` / `drillers_cuirass` / `drillers_leggings` / `drillers_boots`, `abyssal_helm` / `abyssal_cuirass` / `abyssal_leggings` / `abyssal_boots`) with their recipes (Mining 3, 7, 12, 18). Each piece consumes the piece of the previous Rarity (an Upgrade). Legendary pieces are not built. Grid layouts (decided by Alfred, 2026-11-22, final for now, can be tuned later): the ones in `CoreCraftingModule`. The unlock levels (3, 7, 12, 18) are literals there; moving them to config is a separate change. The depth scale is `gameplay.items.DepthScale`, with `armor.depth.top-y` / `bottom-y` in config (64 / −64). **The Trait effects (light, damage reduction, sneak speed, fall damage) and their maximum values are not built:** the pieces only carry a Trait id (`mining_light_radius`, `mining_damage_reduction`, `mining_sneak_speed`, `mining_fall_reduction`). Each piece has its inventory icon (textures v3). The worn look (`equipment/mining_<rarity>.json`) exists in the pack but is not wired: pieces still show as leather when worn. Woodcutting armor icons exist but the pieces are not registered yet.
 
 | Slot | Trait | Common | Uncommon | Rare | Epic | Legendary |
 |---|---|---|---|---|---|---|
