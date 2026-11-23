@@ -58,6 +58,17 @@ public final class CoreItemsModule implements RuneModule {
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
         woodcuttingAxes(items, ctx.config());
+        // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
+        // Numbers are in config: runes.ore_sense.base (Bone's chance), runes.speed.affinity.per-rank (Deep Dark).
+        double oreSense = ctx.config().runeNumber("ore_sense", "base").orElse(5);
+        items.register(RuneItem.tool("bone_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "bone_pickaxe",
+                ToolSpec.DEFAULT.withTrait("bone_pickaxe", 0, TraitBinding.always("ore_sense", oreSense))));
+        // The Echo's Capacity modifier is runes.echo_ping.capacity-modifier (default 2).
+        int echoCapacity = (int) ctx.config().runeNumber("echo_ping", "capacity-modifier").orElse(2);
+        items.register(RuneItem.tool("echo_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "echo_pickaxe",
+                ToolSpec.DEFAULT.withTierOffset(-1).withTrait("echo_pickaxe", echoCapacity,
+                        TraitBinding.always("affinity_deep_dark", ctx.config().speedRunes().affinityPerRank()),
+                        TraitBinding.always("echo_ping", 1) /* on/off flag: any value above 0 */)));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
