@@ -1,5 +1,6 @@
 package com.alfgoto.rune.foundations.triggers;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -15,11 +16,21 @@ public final class TreeFelled extends Event {
     private final Player player;
     private final Block lastLog;
     private final ItemStack item;
+    private final List<Block> bases;
 
-    public TreeFelled(Player player, Block lastLog, ItemStack item) {
+    public TreeFelled(Player player, Block lastLog, ItemStack item, List<Block> bases) {
         this.player = player;
         this.lastLog = lastLog;
         this.item = item;
+        this.bases = List.copyOf(bases);
+    }
+
+    /**
+     * Where the tree stood: the logs of its lowest layer (one for most trees, four for a 2x2 dark oak). The
+     * last log is still in the world while the event runs; the others are gone.
+     */
+    public List<Block> bases() {
+        return bases;
     }
 
     public Player player() {
