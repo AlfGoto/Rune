@@ -13,5 +13,7 @@
   "rune.item.specialist_warped": "Spécialiste : Biscornu",
   "rune.item.leaf_fall": "Défoliation",
   "rune.item.orchard": "Verger",
-  "rune.item.canopy_stride": "Canopée"
+  "rune.item.canopy_stride": "Canopée",
+  "rune.item.replant": "Replantation",
+  "rune.item.tree_dash": "Bond forestier"
 }
