@@ -25,12 +25,12 @@ public final class MenuCanvas {
     static final int TITLE_X = 8;
 
     /** First space glyph moving left 1, 2, 4 .. 256 px; the same + 0x20 moves right. */
-    static final char SHIFT_LEFT = '';
+    static final char SHIFT_LEFT = '\uf801';
 
-    static final char SHIFT_RIGHT = '';
+    static final char SHIFT_RIGHT = '\uf821';
 
     /** First bar piece: style k, width w (1..16) is {@code BAR_FIRST + 16 k + w - 1}. */
-    static final char BAR_FIRST = '';
+    static final char BAR_FIRST = '\ue600';
 
     static final int BAR_PIECE = 16;
 

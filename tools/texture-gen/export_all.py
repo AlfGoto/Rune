@@ -143,6 +143,8 @@ def menu_files():
     out += menufont.export(os.path.join(PACK, 'textures'), os.path.join(ROOT, '..', 'menu_font.json'))
     out += item_files('menu_blank', Image.new('RGBA', (16, 16), (0, 0, 0, 0)), 'minecraft:item/generated')
     out += item_files('menu_empty', menus.empty_item(), 'minecraft:item/generated')
+    for job in menus.LOCKED_ICONS:
+        out += item_files('menu_locked_' + job, menus.locked_icon(job), 'minecraft:item/generated')
     return out
 
 

@@ -40,5 +40,6 @@
   "rune.menu.jobs.card_level": "Lv %s",
   "rune.menu.jobs.soon": "Coming soon",
   "rune.menu.quests.reroll_button": "Reroll this Quest",
-  "rune.menu.quests.reroll_cost": "Costs 1 Reroll Token"
+  "rune.menu.quests.reroll_cost": "Costs 1 Reroll Token",
+  "rune.menu.jobs.locked": "Not playable yet"
 }

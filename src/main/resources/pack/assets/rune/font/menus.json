@@ -238,6 +238,51 @@
       "chars": [
         "\ue133"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_top.png",
+      "height": 36,
+      "ascent": -22,
+      "chars": [
+        "\ue140"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_top_locked.png",
+      "height": 36,
+      "ascent": -22,
+      "chars": [
+        "\ue141"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_bottom.png",
+      "height": 36,
+      "ascent": -58,
+      "chars": [
+        "\ue142"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_bottom_locked.png",
+      "height": 36,
+      "ascent": -58,
+      "chars": [
+        "\ue143"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reroll.png",
+      "height": 18,
+      "ascent": -94,
+      "chars": [
+        "\ue150"
+      ]
     }
   ]
 }

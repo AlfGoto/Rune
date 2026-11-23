@@ -26,7 +26,8 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * The Quests page of the Rune Codex: a notice board with the 3 active Quests as notes in their Tier colour
- * (goal, progress bar, Tier), a copper reroll button under each, and the Reroll Tokens. It only reads and acts
+ * (goal, progress bar, Tier), a copper reroll button under each while a Reroll Token can be spent, and the
+ * Reroll Tokens. It only reads and acts
  * through {@link QuestBook}. Layout positions match {@code tools/texture-gen/v3/menus.py} ("Quests").
  */
 public final class QuestsMenu extends Menu {
@@ -86,12 +87,12 @@ public final class QuestsMenu extends Menu {
             if (slot < 1 || slot > QUEST_SLOTS.length) {
                 continue;
             }
-            note(canvas, slot, entry.getValue());
+            note(canvas, slot, entry.getValue(), tokens > 0);
         }
         retitle(canvas.build());
     }
 
-    private void note(MenuCanvas canvas, int slot, Quest quest) {
+    private void note(MenuCanvas canvas, int slot, Quest quest, boolean canReroll) {
         int k = slot - 1;
         int x0 = NOTE_X[k];
         int done = Math.min(book.progress(owner, slot), quest.target());
@@ -133,6 +134,10 @@ public final class QuestsMenu extends Menu {
                 set(cell, cell == QUEST_SLOTS[k] ? new Button(icon, p -> {}) : Button.invisible(name, lore, p -> {}));
             }
         }
+        if (!canReroll) {
+            return; // no Reroll Token: the button is not shown at all
+        }
+        canvas.image(MenuImage.REROLL, 7 + 18 * (REROLL_SLOTS[k] % 9));
         set(REROLL_SLOTS[k], Button.invisible(
                 Text.translatable("rune.menu.quests.reroll_button", "Reroll this Quest").color(NamedTextColor.GOLD),
                 List.of(Text.translatable("rune.menu.quests.reroll_cost", "Costs 1 Reroll Token")

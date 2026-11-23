@@ -6,10 +6,10 @@ package com.alfgoto.rune.visuals.menu;
  * {@code tools/texture-gen/v3/menus.py}.
  */
 public enum MenuBackground {
-    CODEX(''),
-    RUNES(''),
-    QUESTS(''),
-    JOBS('');
+    CODEX('\ue100'),
+    RUNES('\ue101'),
+    QUESTS('\ue102'),
+    JOBS('\ue103');
 
     /** Every background is a full 6-row chest window. */
     public static final int ROWS = 6;

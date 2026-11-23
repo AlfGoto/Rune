@@ -187,10 +187,7 @@ def runes():
     for i in RUNES_SATCHEL:
         b.hole(i, 'leather')
     button(b, RUNES_BACK, arrow('back'), 'stone')
-    for i in (RUNES_PREV, RUNES_NEXT):                     # live arrows go here when there is another page
-        x, y = slot_xy(i)
-        d.rectangle((x, y, x + 17, y + 17), fill=st[0])
-    return b.done()
+    return b.done()                                       # Previous / Next: live arrows, only when they lead somewhere
 
 
 def orb_fill(step):
@@ -213,7 +210,7 @@ def orb_fill(step):
 # Notes are live images in the Tier colour. Live text per note: lines y 56 / 66 (centre x0+25, width 46),
 # bar fill (x0+5, 79) w 41, numbers small y 85, Tier small y 95. Token count small at (63, 113).
 QUEST_ICONS = [10, 13, 16]
-QUEST_REROLL = [46, 49, 52]
+QUEST_REROLL = [46, 49, 52]                         # live: shown only when a Reroll Token can be spent
 QUEST_TOKEN, QUEST_BACK = 47, 53                    # token count: small text at (63, 113)
 NOTE_X = [9 + 54 * k for k in range(3)]
 NOTE_Y, NOTE_W, NOTE_H = 13, 51, 92
@@ -230,37 +227,53 @@ def quests():
     d.rectangle((4, 106, 171, 127), fill=dk[1]); d.line((4, 106, 171, 106), fill=dk[3])
     for i in QUEST_ICONS:
         b.hole(i)
-    for i in QUEST_REROLL:
-        button(b, i, reroll_icon(), 'copper')
-    button(b, QUEST_TOKEN, item_png('paper'), 'copper')
+    tx, ty = slot_xy(QUEST_TOKEN)                         # Reroll Tokens: information, not a button
+    b.icon('paper', tx + 1, ty + 1)
     button(b, QUEST_BACK, arrow('back'), 'stone')
     return b.done()
 
 
 def note(tier):
-    """A parchment note: border and header in the Tier colour, pin, a ring around the icon slot, bar groove."""
+    """A Quest card: a frame in the Tier colour (bevelled, gem corners), a header band, a light inner panel,
+    a ring around the icon slot (cut out) and the bar groove."""
     par = ramp('parchment')
     c = rgba(hx(TIER_COLOURS[tier]))
-    dark = tuple(int(v * 0.55) for v in c[:3]) + (255,)
-    im = Image.new('RGBA', (NOTE_W + 1, NOTE_H + 1), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    d.rectangle((1, 1, NOTE_W, NOTE_H), fill=(60, 40, 20, 150))
-    d.rectangle((0, 0, NOTE_W - 1, NOTE_H - 1), fill=par[2], outline=dark)
-    d.rectangle((1, 1, NOTE_W - 2, NOTE_H - 2), outline=c)
-    d.rectangle((2, 2, NOTE_W - 3, 7), fill=c)
-    d.line((2, 8, NOTE_W - 3, 8), fill=dark)
-    d.ellipse((22, 0, 28, 6), fill=(170, 30, 30, 255)); d.point((24, 2), fill=(255, 140, 140, 255))
-    ix, iy = 15, 21                                   # 1px ring just outside the icon slot (cut out)
+    light = tuple(min(255, int(v + (255 - v) * 0.55)) for v in c[:3]) + (255,)
+    mid = tuple(int(v * 0.8) for v in c[:3]) + (255,)
+    dark = tuple(int(v * 0.45) for v in c[:3]) + (255,)
+    w, h = NOTE_W + 1, NOTE_H + 1
+    im = Image.new('RGBA', (w, h), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    d.rectangle((2, 2, w - 1, h - 1), fill=(20, 12, 6, 120))                     # soft shadow
+    d.rectangle((1, 0, w - 3, h - 2), fill=dark); d.rectangle((0, 1, w - 2, h - 3), fill=dark)  # rounded outline
+    d.rectangle((1, 1, w - 3, h - 3), fill=mid)                                   # frame
+    d.line((2, 1, w - 4, 1), fill=light); d.line((1, 2, 1, h - 4), fill=light)   # frame bevel
+    d.line((2, h - 3, w - 3, h - 3), fill=dark); d.line((w - 3, 2, w - 3, h - 3), fill=dark)
+    d.rectangle((3, 3, w - 5, 10), fill=c)                                        # header band
+    d.line((3, 3, w - 5, 3), fill=light)
+    d.line((3, 10, w - 5, 10), fill=mid)
+    d.rectangle((3, 11, w - 5, h - 5), fill=par[3])                               # inner panel
+    d.rectangle((3, 11, w - 5, h - 5), outline=par[1])
+    d.line((4, h - 6, w - 6, h - 6), fill=par[2])
+    for gx, gy in ((0, 0), (w - 6, 0), (0, h - 7), (w - 6, h - 7)):              # gem corners
+        d.rectangle((gx + 1, gy + 1, gx + 4, gy + 4), fill=dark)
+        d.rectangle((gx + 2, gy + 2, gx + 3, gy + 3), fill=light)
+    for cx in (w // 2 - 9, w // 2 + 7):                                           # band studs
+        d.point((cx, 6), fill=light); d.point((cx + 1, 7), fill=dark)
+    ix, iy = 15, 21                                                               # ring just outside the icon slot
+    d.rectangle((ix - 1, iy - 1, ix + 20, iy + 20), outline=par[1])
     d.rectangle((ix, iy, ix + 19, iy + 19), outline=c)
     d.rectangle((ix + 1, iy + 1, ix + 18, iy + 18), fill=(0, 0, 0, 0))
-    gx, gy = 4, 78 - NOTE_Y
+    gx, gy = 4, 78 - NOTE_Y                                                       # bar groove
     d.rectangle((gx, gy, gx + 42, gy + 4), fill=(30, 20, 10, 255))
     d.rectangle((gx + 1, gy + 1, gx + 41, gy + 3), fill=par[0])
+    d.line((8, 92 - NOTE_Y, w - 10, 92 - NOTE_Y), fill=par[1])                    # divider above the Tier
     return im
 
 
 # ================================================================= Jobs: job cards
-# Live: title y 6 centred (88); banner text (27, 21), bar fill (119, 23) w 46; per card (x0, y0 = card's top-left
-# slot frame): level (x0+21, y0+5), bar fill (x0+21, y0+16) w 31, name (x0+3, y0+23) width 49.
+# Live: title y 6 centred (88); banner text (27, 21), bar fill (119, 23) w 46; cards are live images (active or
+# locked); per card (x0, y0 = card's top-left slot frame): level (x0+21, y0+5), bar fill (x0+21, y0+16) w 31,
+# name (x0+3, y0+23) width 49; a locked card: "Soon" small (x0+21, y0+7).
 JOBS_BANNER_ICON = 0
 JOBS_CARDS = [(1 + (k // 3) * 2) * 9 + (k % 3) * 3 for k in range(6)]
 JOBS_PREV, JOBS_BACK, JOBS_NEXT = 48, 49, 50       # Back is drawn; Previous / Next are live arrows
@@ -273,18 +286,49 @@ def jobs():
     d.rectangle((7, 17, 168, 34), fill=(40, 70, 120, 255), outline=(20, 35, 70, 255))
     d.line((8, 18, 167, 18), fill=(90, 130, 190, 255))
     track(d, 118, 22, 46, (20, 35, 70, 255))
-    for first in JOBS_CARDS:
-        x0, y0 = slot_xy(first); x1, y1 = x0 + 53, y0 + 35
-        d.rectangle((x0 + 1, y0 + 1, x1 - 1, y1 - 1), fill=oak[1], outline=oak[0])
-        d.line((x0 + 2, y0 + 2, x1 - 2, y0 + 2), fill=oak[3])
-        track(d, x0 + 20, y0 + 15, 31, oak[0])
+    for first in JOBS_CARDS:                                # empty card spots: a faint recess
+        x0, y0 = slot_xy(first)
+        d.rectangle((x0 + 1, y0 + 1, x0 + 52, y0 + 34), outline=dk[0])
         b.hole(first)
     button(b, JOBS_BANNER_ICON, item_png('nether_star'), 'gold')
     button(b, JOBS_BACK, arrow('back'), 'stone')
-    for i in (JOBS_PREV, JOBS_NEXT):                       # live arrows go here when there is another page
-        x, y = slot_xy(i)
-        d.rectangle((x, y, x + 17, y + 17), fill=dk[0])
-    return b.done()
+    return b.done()                                         # Previous / Next: live arrows, only when they lead somewhere
+
+
+def job_card(locked):
+    """A Job card (3 x 2 slots); its top-left slot is cut out for the icon. Locked = grey stone, no XP groove."""
+    r_ = ramp('stone') if locked else ramp('oak')
+    im = Image.new('RGBA', (54, 36), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    d.rectangle((1, 1, 52, 34), fill=r_[1], outline=r_[0])
+    d.line((2, 2, 51, 2), fill=r_[3]); d.line((2, 2, 2, 33), fill=r_[3])
+    if locked:
+        lk = (80, 80, 80, 255)                                # small padlock, bottom right
+        d.rectangle((44, 8, 49, 12), fill=lk); d.rectangle((45, 5, 48, 7), outline=lk)
+        d.point((46, 10), fill=r_[3])
+    else:
+        d.rectangle((20, 15, 20 + 32, 15 + 4), fill=(30, 20, 10, 255))
+        d.rectangle((21, 16, 20 + 31, 15 + 3), fill=r_[0])
+    d.rectangle((0, 0, 18, 18), outline=r_[0])
+    d.rectangle((1, 1, 17, 17), fill=(0, 0, 0, 0))          # the icon slot (cut out in the background too)
+    return im
+
+
+LOCKED_ICONS = {'excavation': 'iron_shovel', 'farming': 'iron_hoe', 'ranching': 'lead', 'fishing': 'fishing_rod',
+                'combat': 'iron_sword', 'archery': 'bow', 'smithing': 'iron_ingot', 'alchemy': 'brewing_stand',
+                'adventuring': 'map', 'runesmithing': 'amethyst_shard'}
+
+
+def locked_icon(job):
+    """Item texture of a Job that is not playable yet: its tool in grey."""
+    it = item_png(LOCKED_ICONS[job])
+    out = Image.new('RGBA', it.size, (0, 0, 0, 0))
+    for y in range(it.height):
+        for x in range(it.width):
+            r, g, b_, a = it.getpixel((x, y))
+            if a:
+                v = int((0.3 * r + 0.59 * g + 0.11 * b_) * 0.6 + 40)
+                out.putpixel((x, y), (v, v, v, a))
+    return out
 
 
 def reroll_icon():
@@ -306,7 +350,7 @@ def reroll_icon():
 # ================================================================= font
 BACKGROUNDS = ['codex', 'runes', 'quests', 'jobs']
 BACKGROUND_DRAW = {'codex': codex, 'runes': runes, 'quests': quests, 'jobs': jobs}
-BG_FIRST, NOTE_FIRST, ORB_FIRST, NAV_FIRST = 0xE100, 0xE110, 0xE120, 0xE130
+BG_FIRST, NOTE_FIRST, ORB_FIRST, NAV_FIRST, CARD_FIRST, REROLL_CHAR = 0xE100, 0xE110, 0xE120, 0xE130, 0xE140, 0xE150
 NAV = [('runes_prev', RUNES_PREV, 'left'), ('runes_next', RUNES_NEXT, 'right'),
        ('jobs_prev', JOBS_PREV, 'left'), ('jobs_next', JOBS_NEXT, 'right')]
 
@@ -349,7 +393,25 @@ def images():
         out.append(('orb_%d' % s, orb_fill(s), ORB_CY - ORB_R, chr(ORB_FIRST + s)))
     for k, (name, slot, direction) in enumerate(NAV):
         out.append(('nav_' + name, nav_button(direction), slot_xy(slot)[1], chr(NAV_FIRST + k)))
+    k = 0
+    for row_name, first in (('top', JOBS_CARDS[0]), ('bottom', JOBS_CARDS[3])):
+        for locked in (False, True):
+            out.append(('job_card_%s%s' % (row_name, '_locked' if locked else ''), job_card(locked),
+                        slot_xy(first)[1], chr(CARD_FIRST + k)))
+            k += 1
+    out.append(('reroll', reroll_button(), slot_xy(QUEST_REROLL[0])[1], chr(REROLL_CHAR)))
     return out
+
+
+def reroll_button():
+    """The live reroll button (18x18), drawn under a Quest card when a Reroll Token can be spent."""
+    b = Board.__new__(Board)
+    b.im = Image.new('RGBA', (18, 18), (0, 0, 0, 0)); b.d = ImageDraw.Draw(b.im)
+    dk, m, l, h = ramp('copper')
+    b.d.rectangle((0, 0, 17, 17), fill=m, outline=dk)
+    b.d.line((1, 1, 16, 1), fill=h); b.d.line((1, 1, 1, 16), fill=h)
+    b.im.alpha_composite(reroll_icon(), (1, 1))
+    return b.im
 
 
 def font():

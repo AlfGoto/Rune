@@ -138,7 +138,7 @@ class CodexTest {
         assertNotNull(account);
         String capacity = PlainTextComponentSerializer.plainText().serialize(account.lore().get(0));
         assertTrue(capacity.contains(String.valueOf(5 + progress.accountLevel(player.getUniqueId()))), capacity);
-        ItemStack jobIcon = page.getInventory().getItem(JobsMenu.CARD_SLOTS[0]);
+        ItemStack jobIcon = page.getInventory().getItem(((JobsMenu) page).cardSlot(job));
         int level = progress.jobLevel(player.getUniqueId(), job);
         String xpLine = PlainTextComponentSerializer.plainText().serialize(jobIcon.lore().get(2));
         assertTrue(xpLine.contains("120"), xpLine);

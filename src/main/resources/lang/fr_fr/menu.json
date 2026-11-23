@@ -40,5 +40,6 @@
   "rune.menu.jobs.card_level": "Niv. %s",
   "rune.menu.jobs.soon": "Bientôt",
   "rune.menu.quests.reroll_button": "Relancer cette Quête",
-  "rune.menu.quests.reroll_cost": "Coûte 1 jeton de relance"
+  "rune.menu.quests.reroll_cost": "Coûte 1 jeton de relance",
+  "rune.menu.jobs.locked": "Pas encore jouable"
 }

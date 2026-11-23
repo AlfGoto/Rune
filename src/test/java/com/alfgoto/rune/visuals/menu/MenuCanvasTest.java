@@ -152,7 +152,21 @@ class MenuCanvasTest {
             assertEquals(13, p.get("ascent").getAsInt());
         }
         for (MenuImage image : MenuImage.values()) {
-            assertNotNull(glyphs.get(image.glyph()), image + " has no glyph");
+            JsonObject p = glyphs.get(image.glyph());
+            assertNotNull(p, image + " has no glyph");
+            // The cursor math needs the glyph's real width: the last column with a visible pixel.
+            String file = p.get("file").getAsString().replace("rune:", "/pack/assets/rune/textures/");
+            var png = javax.imageio.ImageIO.read(getClass().getResourceAsStream(file));
+            int used = 0;
+            for (int x = 0; x < png.getWidth(); x++) {
+                for (int y = 0; y < png.getHeight(); y++) {
+                    if ((png.getRGB(x, y) >>> 24) != 0) {
+                        used = x + 1;
+                        break;
+                    }
+                }
+            }
+            assertEquals(used, image.width(), image + " width");
         }
     }
 }
