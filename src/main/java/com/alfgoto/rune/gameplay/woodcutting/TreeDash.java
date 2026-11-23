@@ -36,16 +36,19 @@ public final class TreeDash {
 
     /**
      * Pushes the player towards {@code log}. The push grows with the distance ({@code speedPerBlock}) up to
-     * {@code maxSpeed}, so a close log is a short hop.
+     * {@code maxSpeed}, so a close log is a short hop. The push always has at least {@code lift} upwards, so the
+     * player leaves the ground: ground friction would stop a flat push after about 3 blocks.
      */
-    public static void dash(Player player, Block log, double speedPerBlock, double maxSpeed) {
+    public static void dash(Player player, Block log, double speedPerBlock, double maxSpeed, double lift) {
         Vector to = centerOf(log).subtract(player.getEyeLocation().toVector());
         double distance = to.length();
         if (distance < 1.0E-6) {
             return;
         }
         double speed = Math.min(maxSpeed, distance * speedPerBlock);
-        player.setVelocity(to.normalize().multiply(speed));
+        Vector push = to.normalize().multiply(speed);
+        push.setY(Math.max(push.getY(), lift));
+        player.setVelocity(push);
     }
 
     private static Vector centerOf(Block block) {

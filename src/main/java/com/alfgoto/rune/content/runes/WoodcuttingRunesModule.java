@@ -101,15 +101,17 @@ public final class WoodcuttingRunesModule implements RuneModule {
         var speedPerBlock = config.runeNumber(id, "speed-per-block");
         var maxSpeed = config.runeNumber(id, "max-speed");
         var lookReach = config.runeNumber(id, "look-reach");
+        var lift = config.runeNumber(id, "lift");
         if (base.isEmpty()
                 || perRank.isEmpty()
                 || maxRank.isEmpty()
                 || cooldown.isEmpty()
                 || speedPerBlock.isEmpty()
                 || maxSpeed.isEmpty()
-                || lookReach.isEmpty()) {
+                || lookReach.isEmpty()
+                || lift.isEmpty()) {
             ctx.logger().severe("Config 'runes." + id + "' needs base, per-rank, max-rank, cooldown, speed-per-block,"
-                    + " max-speed and look-reach numbers. Rune '" + id + "' is not registered.");
+                    + " max-speed, look-reach and lift numbers. Rune '" + id + "' is not registered.");
             return;
         }
         // `when` finds the log the player looks at, `does` (same click) uses it.
@@ -138,7 +140,11 @@ public final class WoodcuttingRunesModule implements RuneModule {
                             Block log = found.remove(context.player().getUniqueId());
                             if (log != null) {
                                 TreeDash.dash(
-                                        context.player(), log, speedPerBlock.getAsDouble(), maxSpeed.getAsDouble());
+                                        context.player(),
+                                        log,
+                                        speedPerBlock.getAsDouble(),
+                                        maxSpeed.getAsDouble(),
+                                        lift.getAsDouble());
                             }
                         }));
         // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).

@@ -298,9 +298,11 @@ runes:
     base: 8
     per-rank: 4
     max-rank: 3
-    cooldown: 20
-    speed-per-block: 0.15
-    max-speed: 1.8
+    cooldown: 10
+    speed-per-block: 0.2
+    max-speed: 2.5
+    # Minimum upward push: lifts the player off the ground so ground friction does not stop the dash short.
+    lift: 0.4
     # How far (blocks) the click looks for a log, to tell "out of range" from "not looking at a log".
     look-reach: 64
   speed:
