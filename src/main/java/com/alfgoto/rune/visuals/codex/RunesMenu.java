@@ -38,8 +38,6 @@ final class RunesMenu extends Menu {
     /** The 8 Player Rune sockets, in slot order (clockwise from the top left). */
     static final int[] SOCKETS = {3, 5, 15, 24, 32, 30, 20, 11};
 
-    static final int INSTALLED_FIRST_SLOT = SOCKETS[0];
-
     /** The orb: every slot of it shows the Capacity. */
     static final int[] ORB_SLOTS = {12, 13, 14, 21, 22, 23};
 

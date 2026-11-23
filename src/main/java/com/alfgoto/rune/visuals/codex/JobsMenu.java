@@ -28,9 +28,6 @@ import org.bukkit.inventory.ItemStack;
  */
 final class JobsMenu extends Menu {
 
-    /** The banner: every slot of the top row shows the Account Level tooltip (the star is drawn). */
-    static final int ACCOUNT_SLOT = 0;
-
     /** Top-left slot (the icon) of each card; a card is 3 columns x 2 rows. */
     static final int[] CARD_SLOTS = {9, 12, 15, 27, 30, 33};
 

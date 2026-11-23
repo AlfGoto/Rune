@@ -31,8 +31,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public final class QuestsMenu extends Menu {
 
-    static final int BAR_LENGTH = 20;
-
     /** The icon of each Quest (a dye in its Tier colour); the rest of the note shows the same tooltip. */
     static final int[] QUEST_SLOTS = {10, 13, 16};
 
@@ -177,8 +175,6 @@ public final class QuestsMenu extends Menu {
     }
 
     static Component bar(int done, int target) {
-        int filled = target <= 0 ? 0 : Math.min(BAR_LENGTH, (int) Math.floor((double) done / target * BAR_LENGTH));
-        return CodexMenus.plain(Component.text("|".repeat(filled), NamedTextColor.GREEN)
-                .append(Component.text("|".repeat(BAR_LENGTH - filled), NamedTextColor.DARK_GRAY)));
+        return CodexMenus.bar(target <= 0 ? 0 : Math.min(1, (double) done / target));
     }
 }

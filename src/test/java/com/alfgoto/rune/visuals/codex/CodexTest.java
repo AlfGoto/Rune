@@ -134,7 +134,7 @@ class CodexTest {
 
         Menu page = menus.jobsPage(player, menus.main(player));
 
-        ItemStack account = page.getInventory().getItem(JobsMenu.ACCOUNT_SLOT);
+        ItemStack account = page.getInventory().getItem(0);
         assertNotNull(account);
         String capacity = PlainTextComponentSerializer.plainText().serialize(account.lore().get(0));
         assertTrue(capacity.contains(String.valueOf(5 + progress.accountLevel(player.getUniqueId()))), capacity);
@@ -214,7 +214,7 @@ class CodexTest {
         String capacity = PlainTextComponentSerializer.plainText()
                 .serialize(menu.getInventory().getItem(RunesMenu.CAPACITY_SLOT).displayName());
         assertTrue(capacity.contains("3 / " + loadout.capacity(player.getUniqueId())), capacity);
-        assertEquals(Material.PAPER, menu.getInventory().getItem(RunesMenu.INSTALLED_FIRST_SLOT).getType());
+        assertEquals(Material.PAPER, menu.getInventory().getItem(RunesMenu.SOCKETS[0]).getType());
         assertNull(menu.getInventory().getItem(RunesMenu.INVENTORY_FIRST_SLOT));
     }
 
@@ -243,7 +243,7 @@ class CodexTest {
         openRunesPage();
         click(RunesMenu.INVENTORY_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
 
-        click(RunesMenu.INSTALLED_FIRST_SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+        click(RunesMenu.SOCKETS[0], ClickType.LEFT, InventoryAction.PICKUP_ALL);
 
         assertTrue(loadout.installed(player.getUniqueId()).isEmpty());
         assertEquals(1, testRuneCount());

@@ -222,7 +222,12 @@ public final class CodexMenus {
 
     /** A bar of {@link #BAR_LENGTH} squares: the share of the current level already earned (for tooltips). */
     static Component bar(double totalXp, LevelCurve curve, int level) {
-        int filled = (int) Math.floor(share(totalXp, curve, level) * BAR_LENGTH);
+        return bar(share(totalXp, curve, level));
+    }
+
+    /** A bar of {@link #BAR_LENGTH} squares filled by {@code fraction} (0 to 1). */
+    static Component bar(double fraction) {
+        int filled = (int) Math.floor(fraction * BAR_LENGTH);
         return plain(Component.text("|".repeat(filled), NamedTextColor.GREEN)
                 .append(Component.text("|".repeat(BAR_LENGTH - filled), NamedTextColor.DARK_GRAY)));
     }
