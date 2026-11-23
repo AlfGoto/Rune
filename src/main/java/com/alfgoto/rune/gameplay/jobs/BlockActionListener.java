@@ -42,10 +42,7 @@ public final class BlockActionListener implements Listener {
             progress.addJobXp(event.player().getUniqueId(), action.get().job(), xp);
             if (multiplier >= 1) { // Quests count natural blocks only (no bone-meal growth loops)
                 Bukkit.getPluginManager().callEvent(new JobActionEvent(
-                        event.player(),
-                        action.get().job(),
-                        xp,
-                        event.block().getLocation().add(0.5, 0.5, 0.5)));
+                        event.player(), action.get().job(), xp, event.block(), event.item()));
             }
         }
     }

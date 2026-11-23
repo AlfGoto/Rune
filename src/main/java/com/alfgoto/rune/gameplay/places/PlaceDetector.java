@@ -47,6 +47,11 @@ public final class PlaceDetector {
         return result;
     }
 
+    /** The Places at a location (not cached), e.g. where a block was broken. */
+    public List<Place> placesAt(Location at) {
+        return compute(at);
+    }
+
     /** Drops the cache entry of a player (on quit). */
     public void forget(UUID player) {
         cache.remove(player);
