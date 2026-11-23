@@ -26,9 +26,9 @@ import org.bukkit.event.Listener;
 
 /**
  * Counts Quest progress and completes Quests. Each {@link JobActionEvent} adds 1 to every active Quest of
- * that Job (for now every Quest Type counts one per Job Action; a Quest Type can declare its own objective
- * later). A finished Quest gives Job XP and an Account XP bonus (config {@code quests.reward-*}) and the
- * Drops of a roll of the {@value #LOOT_TABLE} loot table at the Quest Tier, leaning to the Quest's Job.
+ * that Job (a Quest Type's {@link QuestObjective} can ignore some, e.g. wrong block or wrong tool). A
+ * finished Quest gives Job XP and an Account XP bonus (config {@code quests.reward-*}) and the Drops of a
+ * roll of the {@value #LOOT_TABLE} loot table at the Quest Tier, leaning to the Quest's Job.
  * Then the slot gets a new Quest.
  */
 public final class QuestTracker implements Listener {
@@ -67,7 +67,7 @@ public final class QuestTracker implements Listener {
         for (var entry : book.slots(id).entrySet()) {
             int slot = entry.getKey();
             Quest quest = entry.getValue();
-            if (!quest.type().job().equals(event.job())) {
+            if (!quest.type().job().equals(event.job()) || !quest.type().objective().counts(event)) {
                 continue;
             }
             int done = book.advance(id, slot);
