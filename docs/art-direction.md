@@ -47,7 +47,7 @@ A Rune texture is never drawn whole: it is one `minecraft:item/generated` model 
 - **Rank = numeral.** 3-pixel font (I, V, X). I → XX fit (XVIII is the widest); higher Ranks show XX. Max Rank I Runes (Silk Touch, Replant) show no numeral. Runes with no Max Rank (Deepstride, Canopy Stride) go I → XX, never gold.
 - The logo area and the numeral strip stay clean on every stone: decoration (corners, frame, sparkles) stays on the rim or outside the stone.
 
-**In the pack**: item definition `rune:<rune id>` (`haste`, `specialist_diamond`, `affinity_lush_caves`…) is a `range_dispatch` on `custom_model_data` `floats[0]` = the Rank; it picks model `rune:item/rune/<id>_<rank>`. Missing value = Rank I. The Max Rank (gold numeral) is baked from `RUNES` in `runes.py` (= the Job docs): if a Max Rank changes in config, change it there and re-export. The plugin has to set the item model to the Rune id and write the Rank into `custom_model_data` (not done yet: Runes still use `test_rune`).
+**In the pack**: item definition `rune:<rune id>` (`haste`, `specialist_diamond`, `affinity_lush_caves`…) is a `range_dispatch` on `custom_model_data` `floats[0]` = the Rank; it picks model `rune:item/rune/<id>_<rank>`. Missing value = Rank I. The Max Rank (gold numeral) is baked from `RUNES` in `runes.py` (= the Job docs): if a Max Rank changes in config, change it there and re-export. The plugin sets the item model to the Rune id, and `visuals.itemrendering.RuneModelRenderer` writes the Rank into `custom_model_data` on every redraw (creation and Rank-up).
 
 | Rune | Rarity | Max Rank | Logo |
 |---|---|---|---|

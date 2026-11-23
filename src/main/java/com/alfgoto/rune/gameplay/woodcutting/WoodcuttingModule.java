@@ -14,8 +14,8 @@ import java.util.function.Predicate;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Woodcutting Runes that act on leaves and movement (Leaf Fall, Orchard, Canopy Stride) and the Trait extras of
- * the Birch, Spruce, Poplar and Jungle axes.
+ * Woodcutting Runes that act on leaves and movement (Leaf Fall, Orchard, Canopy Stride, Replant) and the Trait
+ * extras of the Birch, Spruce, Poplar and Jungle axes.
  */
 @AutoService(RuneModule.class)
 public final class WoodcuttingModule implements RuneModule {
@@ -39,5 +39,6 @@ public final class WoodcuttingModule implements RuneModule {
         PowderSnowListener powderSnow = new PowderSnowListener(ctx.plugin(), items, loadout, isBroken);
         powderSnow.start();
         ctx.listen(new ClimbListener(items, loadout, isBroken));
+        ctx.listen(new ReplantListener(ctx.plugin(), items, loadout));
     }
 }

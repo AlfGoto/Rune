@@ -149,6 +149,40 @@ public final class CoreCraftingModule implements RuneModule {
         armor(book, mining, 7, "cavers_boots", List.of("IBI", "SR "), Map.of(
                 'I', iron, 'B', Ingredient.rune("miners_boots"),
                 'S', Ingredient.vanilla(Material.SLIME_BLOCK), 'R', lining));
+
+        // Rare (Mining 12) and Epic (Mining 18): each piece consumes the previous one (an Upgrade).
+        Ingredient diamond = Ingredient.vanilla(Material.DIAMOND);
+        Ingredient diamondBlock = Ingredient.vanilla(Material.DIAMOND_BLOCK);
+        Ingredient gem = Ingredient.rune("gem_setting");
+        Ingredient plate = Ingredient.rune("abyssal_plate");
+        Ingredient deepCore = Ingredient.rune("deep_core");
+        Ingredient membrane = Ingredient.vanilla(Material.PHANTOM_MEMBRANE);
+
+        armor(book, mining, 12, "drillers_helm", List.of("DSD", "HG "), Map.of(
+                'D', diamond, 'S', Ingredient.vanilla(Material.SOUL_LANTERN),
+                'H', Ingredient.rune("cavers_helmet"), 'G', gem));
+        armor(book, mining, 12, "drillers_cuirass", List.of("DDD", "CSG"), Map.of(
+                'D', diamond, 'C', Ingredient.rune("reinforced_chestplate"),
+                'S', Ingredient.vanilla(Material.SHIELD), 'G', gem));
+        armor(book, mining, 12, "drillers_leggings", List.of("DRD", "LRG"), Map.of(
+                'D', diamond, 'R', Ingredient.vanilla(Material.REDSTONE_BLOCK),
+                'L', Ingredient.rune("cavers_leggings"), 'G', gem));
+        armor(book, mining, 12, "drillers_boots", List.of("DFD", "BFP", "G  "), Map.of(
+                'D', diamond, 'F', Ingredient.vanilla(Material.FEATHER),
+                'B', Ingredient.rune("cavers_boots"), 'P', membrane, 'G', gem));
+
+        armor(book, mining, 18, "abyssal_helm", List.of("DSD", "HPE"), Map.of(
+                'D', diamondBlock, 'S', Ingredient.vanilla(Material.SEA_LANTERN),
+                'H', Ingredient.rune("drillers_helm"), 'P', plate, 'E', Ingredient.rune("echo_lens")));
+        armor(book, mining, 18, "abyssal_cuirass", List.of("DPD", "CPK"), Map.of(
+                'D', diamondBlock, 'P', plate,
+                'C', Ingredient.rune("drillers_cuirass"), 'K', deepCore));
+        armor(book, mining, 18, "abyssal_leggings", List.of("DPD", "LK "), Map.of(
+                'D', diamondBlock, 'P', plate,
+                'L', Ingredient.rune("drillers_leggings"), 'K', deepCore));
+        armor(book, mining, 18, "abyssal_boots", List.of("DPD", "BMM"), Map.of(
+                'D', diamondBlock, 'P', plate,
+                'B', Ingredient.rune("drillers_boots"), 'M', membrane));
     }
 
     private static void armor(
