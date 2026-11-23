@@ -68,12 +68,16 @@ _Avoid_: enchantment
 
 **Rune Cache** — A sealed item containing a random reward (usually Runes). Dropped by Job Actions, found in loot where vanilla had enchanted books, and given by Quests; the player opens it whenever they choose. Every Cache rolls the same loot table; the Cache's Rarity only shifts the odds and the quantity of what it gives (a Legendary Cache may give several Epic Runes instead of a Legendary one). A Cache dropped by a Job leans towards that Job's Runes.
 
+**Cache reel** — The spinning menu shown when a Rune Cache is opened: coloured panes scroll and slow down, then it lands on the best Rarity among the loot, pulses in that colour and plays a sound. Closing it early still gives the loot. Display only: the loot is rolled before the reel.
+
 **Loot Table** — A named weighted list of rewards (Runes, items, Job XP, Account XP, Reroll Tokens). A Rarity (Cache Rarity or Quest Tier) shifts its odds and how many times it is rolled. Rolling gives nothing by itself: it returns the results, and the caller gives them. Details in `docs/rewards.md`. Test with `/rune loot roll <table> [rarity] [job]`.
 
 **Rune Codex** — The item every player carries that opens the Rune menus (Jobs, Quests, Runes).
 
 **Unlock Tree** — Rune's tab in the vanilla advancement screen (`L` key). One horizontal line per Job, one node per Job Level that unlocks something (recipe, Blueprint, Milestone Cache). Display only: Job Level is the source of truth.
 _Avoid_: skill tree (Job Levels never give passive stats)
+
+**Stone family** — The blocks Ore Sense and Ore Bloom treat as stone: stone, deepslate, granite, diorite, andesite, tuff and netherrack.
 
 **Block Reveal** — A visual that outlines chosen blocks through walls for one player, for a set time. Only that player sees it, and it is removed when the time ends, when the player leaves and when the plugin stops. Used by Ore Sense, Bone, Echo, Warden Pickaxe and Worldheart. Test it with `/rune debug reveal <radius>` (outlines ores for 10 seconds).
 
@@ -90,6 +94,10 @@ _Avoid_: skill tree (Job Levels never give passive stats)
 **Trait** — A Rune Tool's or Rune Armor's built-in effect, independent of installed Runes (e.g. Fiery Pickaxe has a chance to smelt). A Trait can share its effect with Runes; they stack (see Stacking). A Trait can be a bonus, a drawback, or both (e.g. faster but less durable), including more or less Capacity. A Trait is a list of **Trait bindings**: an effect id, a value (can be negative) and a **Scale**.
 
 **Scale** — A number from 0 to 1 for a player and an item (e.g. `always` = 1). A Trait binding's final value = value × Scale. Registered by id, like Effects.
+
+**Oxidation** — The Copper Trait: a Copper tool goes through 4 stages (Copper, Exposed, Weathered, Oxidized) as it breaks blocks, and is faster at each. **Wax** (a honeycomb and the tool in the crafting grid) locks the stage for good.
+
+**Momentum** — A Trait: the more blocks (logs, for an axe) the player breaks in a row, the faster the tool, up to a cap. A pause of 2 seconds resets it.
 
 **Harvest Tier** — Which blocks a Rune Tool can harvest (vanilla's stone / iron / diamond tiers). Defaults from the tool's Rarity (Common = stone-tier, Uncommon = iron-tier, Rare and above = diamond-tier); a tool can be one tier above or below its default as a bonus or drawback.
 

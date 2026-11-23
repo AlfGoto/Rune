@@ -14,6 +14,7 @@ public final class CorePlaces {
     public static void registerAll(PlaceRegistry registry) {
         registry.register(Place.biome("lush_caves", "minecraft:lush_caves"));
         registry.register(Place.biome("taiga", "minecraft:taiga", "minecraft:snowy_taiga"));
+        registry.register(Place.biome("deep_dark", "minecraft:deep_dark"));
         registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
     }
 }

@@ -1,11 +1,15 @@
 package com.alfgoto.rune.visuals.codex;
 
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.LevelCurve;
 import com.alfgoto.rune.gameplay.jobs.Numbers;
+import com.alfgoto.rune.gameplay.quests.QuestBook;
 import com.alfgoto.rune.gameplay.runes.PlayerCapacity;
+import com.alfgoto.rune.gameplay.runes.PlayerLoadout;
+import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
@@ -20,7 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/** The Rune Codex menus: the main menu and the Jobs page. They only read Gameplay data. */
+/** The Rune Codex menus: the main menu, the Jobs page and the Quests page. */
 public final class CodexMenus {
 
     static final int BAR_LENGTH = 20;
@@ -28,23 +32,60 @@ public final class CodexMenus {
     private final Registry<Job> jobs;
     private final JobProgress progress;
     private final PlayerCapacity capacity;
+    private final QuestBook quests;
+    private final RuneConfig config;
+    private final PlayerLoadout loadout;
+    private final RuneRegistry runes;
 
-    public CodexMenus(Registry<Job> jobs, JobProgress progress, PlayerCapacity capacity) {
+    public CodexMenus(
+            Registry<Job> jobs,
+            JobProgress progress,
+            PlayerCapacity capacity,
+            QuestBook quests,
+            RuneConfig config,
+            PlayerLoadout loadout,
+            RuneRegistry runes) {
         this.jobs = jobs;
         this.progress = progress;
         this.capacity = capacity;
+        this.quests = quests;
+        this.config = config;
+        this.loadout = loadout;
+        this.runes = runes;
     }
 
-    /** The main menu. For now it only leads to the Jobs page. */
+    /** The Quests page: the 3 active Quests with Tier colour, live progress and a reroll click. */
+    public QuestsMenu questsPage(Player player, Menu parent) {
+        return new QuestsMenu(quests, config, player, parent);
+    }
+
+    /** The main menu: leads to the Jobs, Quests and Runes pages. */
     public Menu main(Player player) {
         Menu main = new Menu(Text.translatable("rune.menu.codex.title", "Rune Codex"), 3);
         main.set(
-                13,
+                11,
                 Button.of(
                         Material.EXPERIENCE_BOTTLE,
                         Text.translatable("rune.menu.codex.jobs", "Jobs").color(NamedTextColor.GOLD),
                         p -> jobsPage(p, main).open(p)));
+        main.set(
+                13,
+                Button.of(
+                        Material.WRITABLE_BOOK,
+                        Text.translatable("rune.menu.codex.quests", "Quests").color(NamedTextColor.GOLD),
+                        p -> questsPage(p, main).open(p)));
+        main.set(
+                15,
+                Button.of(
+                        Material.AMETHYST_SHARD,
+                        Text.translatable("rune.menu.codex.runes", "Runes").color(NamedTextColor.LIGHT_PURPLE),
+                        p -> runesPage(p, main).open(p)));
         return main;
+    }
+
+    /** The Runes page: Player Rune slots, Capacity used / max, and the Runes in the inventory. */
+    public Menu runesPage(Player player, Menu parent) {
+        return new RunesMenu(player, parent, loadout, runes);
     }
 
     /** The Jobs page: Account Level and Player Capacity first, then each Job with its level and XP bar. */

@@ -17,6 +17,7 @@ public final class BlockRevealModule implements RuneModule {
     public void enable(RuneContext ctx) {
         reveal = ctx.provide(BlockReveal.class, new BlockReveal(ctx.plugin()));
         ctx.listen(new QuitListener(reveal));
+        ctx.listen(new OreRevealListener(reveal));
         ctx.debug(new RevealDebug(reveal));
     }
 

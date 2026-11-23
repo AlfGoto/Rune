@@ -46,8 +46,8 @@ public final class CoreItemsModule implements RuneModule {
         // Common helmet: leather protection, 1 slot, Capacity 3. Test item: keeps the test model.
         items.register(RuneItem.armor("test_helmet", Rarity.COMMON, "test_rune", ArmorSpec.of(ArmorKind.HELMET)));
         miningArmor(items);
-        // The Rune Codex (soulbound, opens the menus). Placeholder model until the visuals polish pass.
-        items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, "test_rune"));
+        // The Rune Codex (soulbound, opens the menus). Model: assets/rune/items/rune_codex.json.
+        items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, Codex.ID));
         // Mining pickaxes (docs/jobs/mining.md). Common = stone tier, Capacity 3. The Trait is an id plus a
         // Capacity modifier for now: the "mines slower / faster" and durability numbers are not decided, so
         // speed and durability stay at the stone-tier default. Coal's Trait has Capacity -1 (3 - 1 = 2).
@@ -55,6 +55,17 @@ public final class CoreItemsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
+        // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
+        // Numbers are in config: runes.ore_sense.base (Bone's chance), runes.speed.affinity.per-rank (Deep Dark).
+        double oreSense = ctx.config().runeNumber("ore_sense", "base").orElse(5);
+        items.register(RuneItem.tool("bone_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "bone_pickaxe",
+                ToolSpec.DEFAULT.withTrait("bone_pickaxe", 0, TraitBinding.always("ore_sense", oreSense))));
+        // The Echo's Capacity modifier is runes.echo_ping.capacity-modifier (default 2).
+        int echoCapacity = (int) ctx.config().runeNumber("echo_ping", "capacity-modifier").orElse(2);
+        items.register(RuneItem.tool("echo_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "echo_pickaxe",
+                ToolSpec.DEFAULT.withTierOffset(-1).withTrait("echo_pickaxe", echoCapacity,
+                        TraitBinding.always("affinity_deep_dark", ctx.config().speedRunes().affinityPerRank()),
+                        TraitBinding.always("echo_ping", 1) /* on/off flag: any value above 0 */)));
         // The 7 Components (docs/jobs/mining.md). Rarity follows what each one is used by.
         // Paper base: vanilla Map/Book recipes would accept it as paper (open, see design-decisions.md).
         component(items, "reinforced_handle", Rarity.UNCOMMON);
@@ -80,6 +91,14 @@ public final class CoreItemsModule implements RuneModule {
         armor(items, "reinforced_chestplate", Rarity.UNCOMMON, ArmorKind.CHESTPLATE, "mining_damage_reduction");
         armor(items, "cavers_leggings", Rarity.UNCOMMON, ArmorKind.LEGGINGS, "mining_sneak_speed");
         armor(items, "cavers_boots", Rarity.UNCOMMON, ArmorKind.BOOTS, "mining_fall_reduction");
+        armor(items, "drillers_helm", Rarity.RARE, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "drillers_cuirass", Rarity.RARE, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "drillers_leggings", Rarity.RARE, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "drillers_boots", Rarity.RARE, ArmorKind.BOOTS, "mining_fall_reduction");
+        armor(items, "abyssal_helm", Rarity.EPIC, ArmorKind.HELMET, "mining_light_radius");
+        armor(items, "abyssal_cuirass", Rarity.EPIC, ArmorKind.CHESTPLATE, "mining_damage_reduction");
+        armor(items, "abyssal_leggings", Rarity.EPIC, ArmorKind.LEGGINGS, "mining_sneak_speed");
+        armor(items, "abyssal_boots", Rarity.EPIC, ArmorKind.BOOTS, "mining_fall_reduction");
     }
 
     private static void armor(ItemRegistry items, String id, Rarity rarity, ArmorKind kind, String trait) {

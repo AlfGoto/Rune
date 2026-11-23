@@ -15,6 +15,9 @@ MC_ASSETS=/path/to/26.x/assets/minecraft/textures python3 tools/texture-gen/expo
 - `tools.py`: declarative list of pickaxes and axes (`PICKAXES`, `AXES`), relic post-effects.
 - `components.py`: the 7 shared components as ASCII grids.
 - `armor.py`: 2 Jobs × 5 Rarities × 4 slots of icons on the vanilla armor templates, plus one worn-layer pair per set.
+- `runes.py`: Runes as layers (stone per Rarity, logo per Rune, socket per variant, Roman Rank numeral), Legendary sparkles animation. Rules: `docs/art-direction.md`, "Runes".
+- `caches.py`: Rune Caches (one per Rarity, sealed coffer) and the Rune Codex (vanilla book).
+- `runes_boards.py`: Design-canvas artboards for the Runes.
 - `boards.py`, `preview.py`: contact sheets for the Design canvas / quick PNG previews (not used by the export).
 
 ## v2 (legacy) — menus

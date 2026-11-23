@@ -7,7 +7,11 @@ import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
+import com.alfgoto.rune.gameplay.quests.QuestBook;
+import com.alfgoto.rune.gameplay.quests.QuestsModule;
 import com.alfgoto.rune.gameplay.runes.PlayerCapacity;
+import com.alfgoto.rune.gameplay.runes.PlayerLoadout;
+import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.visuals.menu.MenuModule;
 import com.google.auto.service.AutoService;
@@ -20,12 +24,19 @@ public final class CodexModule implements RuneModule {
     @Override
     public void enable(RuneContext ctx) {
         CodexMenus menus = new CodexMenus(
-                ctx.get(JobRegistry.class).registry(), ctx.get(JobProgress.class), ctx.get(PlayerCapacity.class));
-        ctx.listen(new CodexClickListener(ctx.get(Codex.class), menus));
+                ctx.get(JobRegistry.class).registry(),
+                ctx.get(JobProgress.class),
+                ctx.get(PlayerCapacity.class),
+                ctx.get(QuestBook.class),
+                ctx.config(),
+                ctx.get(PlayerLoadout.class),
+                ctx.get(RuneRegistry.class));
+        ctx.listen(new CodexClickListener(ctx.plugin(), ctx.get(Codex.class), menus));
+        ctx.listen(new QuestsMenuRefresher());
     }
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, JobsModule.class, RunesModule.class, MenuModule.class);
+        return Set.of(ItemsModule.class, JobsModule.class, QuestsModule.class, RunesModule.class, MenuModule.class);
     }
 }

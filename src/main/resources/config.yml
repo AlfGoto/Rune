@@ -258,6 +258,14 @@ runes:
     # Rank-up at the smithing table costs vanilla XP levels: multiplier ^ N to go from Rank N to N+1
     # (3 gives 3, 9, 27... levels)
     cost-multiplier: 3
+  # Echo Pickaxe: pings by itself while held in the main hand. Ores in a cube of radius blocks are outlined for
+  # seconds. The Bone Pickaxe uses runes.ore_sense below (its base is the Bone's chance).
+  echo_ping:
+    interval-seconds: 10
+    radius: 12
+    seconds: 5
+    # Capacity added to the Echo Pickaxe's base Capacity of 10 (10 + 2 = 12)
+    capacity-modifier: 2
   # Value of a Rune = base + per-rank * (Rank - 1), from docs/jobs/mining.md. Chances are in percent
   # (100 = guaranteed). Silk Touch is on/off. max-rank is the highest Rank when ranking up.
   fortune:
@@ -272,6 +280,24 @@ runes:
     base: 1
     per-rank: 0
     max-rank: 1
+  # Deepstride: no Max Rank. The value is the depth line (Y): Rank 1 = below Y 0, each Rank moves it up by
+  # per-rank. speed = % mining speed below the line.
+  deepstride:
+    base: 0
+    per-rank: 16
+    speed: 20
+  # Ore Sense: chance (%) that breaking a stone-family block outlines ores in a cube of radius blocks each way (so 8 = 17x17x17) for seconds.
+  ore_sense:
+    base: 5
+    per-rank: 5
+    max-rank: 3
+    radius: 8
+    seconds: 5
+  # Ore Bloom: chance (%) that mining an ore turns a neighbouring stone-family block into that ore.
+  ore_bloom:
+    base: 8
+    per-rank: 8
+    max-rank: 5
   # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # Leaf Fall: radius in blocks (2 / 4 / 6)
   leaf_fall:
@@ -287,6 +313,24 @@ runes:
   canopy_stride:
     base: 10
     per-rank: 10
+  # Replant: on/off (Max Rank 1). Plants a sapling where a Felled Tree stood.
+  replant:
+    base: 1
+    per-rank: 0
+    max-rank: 1
+  # Tree Dash (Active): range in blocks (8 / 12 / 16), cooldown in seconds. The dash pushes the player
+  # speed-per-block per block of distance, up to max-speed.
+  tree_dash:
+    base: 8
+    per-rank: 4
+    max-rank: 3
+    cooldown: 10
+    speed-per-block: 0.2
+    max-speed: 2.5
+    # Minimum upward push: lifts the player off the ground so ground friction does not stop the dash short.
+    lift: 0.4
+    # How far (blocks) the click looks for a log, to tell "out of range" from "not looking at a log".
+    look-reach: 64
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
@@ -320,6 +364,23 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
+  # Copper Pickaxe and Copper Axe (docs/jobs/mining.md): the tool oxidizes as blocks are broken.
+  # 4 stages (Copper, Exposed, Weathered, Oxidized). Starting values, tuned after playtests.
+  copper:
+    # Blocks broken for one stage
+    blocks-per-stage: 300
+    # Haste in % at the last stage: 0, +10, +20, +30% across the stages
+    speed: 30
+  # Redstone Pickaxe and Breeze Axe: faster per block in a row (a log for the axe)
+  momentum:
+    # Haste in % at full Momentum (+5% per block with 10 blocks)
+    speed: 50
+    # Blocks in a row at full Momentum
+    max-blocks: 10
+    # Seconds between two breaks before Momentum resets
+    reset-seconds: 2
+    # Capacity added to the Redstone Pickaxe and Breeze Axe (negative: a drawback)
+    capacity-modifier: -2
 armor:
   # Rune Armor follows vanilla by Rarity: Common = leather, Uncommon = chainmail, Rare = iron,
   # Epic = diamond, Legendary = netherite. Each list is lowest Rarity first.
