@@ -55,6 +55,18 @@ public final class CoreCraftingModule implements RuneModule {
 
         biomePickaxes(book, mining);
 
+        // Bone (Mining 7) and Echo (Mining 15). Ingredients are the documented ones; the grid layouts are proposed.
+        book.register(new CraftingRecipe("bone_pickaxe", mining, 7, "bone_pickaxe", 1,
+                List.of("BBB", " K ", " H "), Map.of(
+                        'B', Ingredient.vanilla(Material.BONE_BLOCK),
+                        'K', Ingredient.vanilla(Material.SKELETON_SKULL),
+                        'H', Ingredient.rune("reinforced_handle"))));
+        book.register(new CraftingRecipe("echo_pickaxe", mining, 15, "echo_pickaxe", 1,
+                List.of("DLD", " P "), Map.of(
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'L', Ingredient.rune("echo_lens"),
+                        'P', Ingredient.rune("bone_pickaxe"))));
+
         // The 7 Components (docs/jobs/mining.md). The ingredients are the documented ones;
         // the grid layout and the unlock level (COMPONENT_LEVEL) are not in docs yet.
         component(book, mining, "reinforced_handle", List.of("IL", "SS"), Map.of(

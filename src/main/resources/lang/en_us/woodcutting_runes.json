@@ -13,5 +13,7 @@
   "rune.item.specialist_warped": "Specialist: Warped",
   "rune.item.leaf_fall": "Leaf Fall",
   "rune.item.orchard": "Orchard",
-  "rune.item.canopy_stride": "Canopy Stride"
+  "rune.item.canopy_stride": "Canopy Stride",
+  "rune.item.replant": "Replant",
+  "rune.item.tree_dash": "Tree Dash"
 }

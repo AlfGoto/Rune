@@ -31,7 +31,7 @@ public final class CodexModule implements RuneModule {
                 ctx.config(),
                 ctx.get(PlayerLoadout.class),
                 ctx.get(RuneRegistry.class));
-        ctx.listen(new CodexClickListener(ctx.get(Codex.class), menus));
+        ctx.listen(new CodexClickListener(ctx.plugin(), ctx.get(Codex.class), menus));
         ctx.listen(new QuestsMenuRefresher());
     }
 

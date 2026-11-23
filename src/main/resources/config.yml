@@ -258,6 +258,14 @@ runes:
     # Rank-up at the smithing table costs vanilla XP levels: multiplier ^ N to go from Rank N to N+1
     # (3 gives 3, 9, 27... levels)
     cost-multiplier: 3
+  # Echo Pickaxe: pings by itself while held in the main hand. Ores in a cube of radius blocks are outlined for
+  # seconds. The Bone Pickaxe uses runes.ore_sense below (its base is the Bone's chance).
+  echo_ping:
+    interval-seconds: 10
+    radius: 12
+    seconds: 5
+    # Capacity added to the Echo Pickaxe's base Capacity of 10 (10 + 2 = 12)
+    capacity-modifier: 2
   # Value of a Rune = base + per-rank * (Rank - 1), from docs/jobs/mining.md. Chances are in percent
   # (100 = guaranteed). Silk Touch is on/off. max-rank is the highest Rank when ranking up.
   fortune:
@@ -305,6 +313,24 @@ runes:
   canopy_stride:
     base: 10
     per-rank: 10
+  # Replant: on/off (Max Rank 1). Plants a sapling where a Felled Tree stood.
+  replant:
+    base: 1
+    per-rank: 0
+    max-rank: 1
+  # Tree Dash (Active): range in blocks (8 / 12 / 16), cooldown in seconds. The dash pushes the player
+  # speed-per-block per block of distance, up to max-speed.
+  tree_dash:
+    base: 8
+    per-rank: 4
+    max-rank: 3
+    cooldown: 10
+    speed-per-block: 0.2
+    max-speed: 2.5
+    # Minimum upward push: lifts the player off the ground so ground friction does not stop the dash short.
+    lift: 0.4
+    # How far (blocks) the click looks for a log, to tell "out of range" from "not looking at a log".
+    look-reach: 64
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
