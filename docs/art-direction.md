@@ -25,10 +25,19 @@ Validated on texture batch v2: pickaxes, axes, components, menu icons, first two
 | Legendary | + gold finial above the head, gold filigree, gem pommel; double-bit axes |
 | Relic / Fused | unique silhouette built around its motif (Warden antennae, Starbreaker star, evoker-fang blade…) |
 
-## Menus (start)
-- Each menu background is a 176×222 PNG (same frame as `generic_54`), shown through a bitmap font glyph in the menu title shifted with negative space. Clickable things stay real chest slots, so `Menu` / `Button` don't change.
-- Rune Codex main menu: player head (Account level) on top, three 3×3 panels (Jobs = wood, Quests = parchment, Runes = amethyst); the gold-framed middle slot holds the icon, the 8 slots around it are invisible buttons doing the same. Back on `Menu.backSlot()`.
-- Rune loadout: tool on display, 5 Rune slots in a deepslate band (first 2 = Active Slots, gold brackets), capacity bar made of pip items (used / free / over) over a groove.
+## Menus (v3, 2026-11-23)
+- Each menu background is a PNG 176 × (114 + 18 × rows) px, the vanilla chest window (`generic_54`, stitched for the row count) with Rune panels painted over the menu area. It is a glyph of the `rune:menus` font (bitmap, `ascent` 13, `height` = image height) put in the menu title: a -8 px space glyph first (the title starts at x 8), then the background, then a -169 px space glyph so the title text is back in its usual place (`MenuBackground.title`). The glyph is white, or the dark title colour tints it.
+- **Every slot that can hold an item is cut out (transparent)**: the menu's used slots and the 36 player slots. The vanilla slot and the item always show, whatever the draw order. Unused menu slots are painted over. A used slot can get a 1px ring on its own edge (never outside it, so two framed slots side by side never overlap): gold = the main thing, copper = Reroll Tokens, deepslate = Back, amethyst = Player Rune slots, oak log = page arrows.
+- Generator `tools/texture-gen/v3/menus.py`; files `textures/gui/menu/<name>.png`; glyphs `\ue100`… in `font/menus.json`. A new menu = a function in `MENUS`, a value in `MenuBackground`, a re-export.
+
+| Menu | Rows | Look |
+|---|---|---|
+| Rune Codex (`codex_main`) | 3 | three 3×3 boards: Jobs (oak planks), Quests (parchment), Runes (amethyst crystals), rune marks in the corners; the icon in the gold-framed centre slot (10 / 13 / 16), the 8 slots around it are invisible buttons (`rune:menu_blank` model) doing the same |
+| Jobs (`jobs`) | 4 | oak board with the 27 Job slots (Account Level framed gold), dark oak band with Previous / Back / Next |
+| Quests (`quests`) | 3 | parchment: Reroll Tokens (4, copper), the 3 Quests (11 / 13 / 15, gold, underlined), Back (22) |
+| Runes (`runes`) | 6 | deepslate band with the 8 Player Rune slots (amethyst) + Capacity (8, gold), engraved stone divider, amethyst board for the Runes in the inventory (18–44), deepslate band with Back (49) |
+
+The v2 `gui/codex_main.png` and `gui/rune_loadout.png` are not used; `rune_loadout` stays as the idea for the future tool loadout menu.
 
 ## Runes (layered, 2026-11-22)
 A Rune texture is never drawn whole: it is one `minecraft:item/generated` model with stacked layers, all 16×16 on the same canvas. Generator: `tools/texture-gen/v3/runes.py`; contact sheets on the Design canvas "Rune textures — Runes (layered)" (https://claude.ai/artifact/A7xpaMRtAFm31sr1MMZNzH).

@@ -15,7 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, 'v3'))
 import gui  # noqa: E402  (v2 kit/pix: menus)
-import tools, components, armor, runes, caches, icons  # noqa: E402  (v3)
+import tools, components, armor, runes, caches, icons, menus  # noqa: E402  (v3)
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..', 'src', 'main', 'resources', 'pack'))
 PACK = os.path.join(ROOT, 'assets', 'rune')
@@ -125,6 +125,20 @@ def icon_files():
     return ['assets/rune/textures/font/rarity.png', 'assets/rune/font/glyphs.json']
 
 
+def menu_files():
+    """Menu backgrounds v3 (font rune:menus) and the invisible item used for panel buttons."""
+    from PIL import Image
+    out = []
+    os.makedirs(os.path.join(PACK, 'textures', 'gui', 'menu'), exist_ok=True)
+    for name, (draw, _rows) in menus.MENUS.items():
+        draw().save(os.path.join(PACK, 'textures', 'gui', 'menu', name + '.png'))
+        out.append('assets/rune/textures/gui/menu/%s.png' % name)
+    write_json(os.path.join(PACK, 'font', 'menus.json'), menus.font())
+    out.append('assets/rune/font/menus.json')
+    out += item_files('menu_blank', Image.new('RGBA', (16, 16), (0, 0, 0, 0)), 'minecraft:item/generated')
+    return out
+
+
 def append_listed(lines):
     listed = os.path.join(ROOT, 'files.txt')
     have = set(open(listed).read().split())
@@ -166,6 +180,7 @@ def main():
     # Runes, Rune Caches, Rune Codex (v3 runes.py, caches.py)
     lines += rune_files()
     lines += icon_files()
+    lines += menu_files()
     # menu icons (v2 gui.py)
     for key, item in gui.P.items():
         lines += item_files(key, item['img'], 'minecraft:item/generated')

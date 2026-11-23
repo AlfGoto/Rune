@@ -1,0 +1,47 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        "\uf000": -8,
+        "\uf001": -169
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/codex_main.png",
+      "height": 168,
+      "ascent": 13,
+      "chars": [
+        "\ue100"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/jobs.png",
+      "height": 186,
+      "ascent": 13,
+      "chars": [
+        "\ue101"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/quests.png",
+      "height": 168,
+      "ascent": 13,
+      "chars": [
+        "\ue102"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/runes.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue103"
+      ]
+    }
+  ]
+}

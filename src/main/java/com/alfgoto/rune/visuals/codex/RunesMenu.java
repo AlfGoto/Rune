@@ -8,6 +8,7 @@ import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
+import com.alfgoto.rune.visuals.menu.MenuBackground;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +40,7 @@ final class RunesMenu extends Menu {
     private final Player player;
 
     RunesMenu(Player player, Menu parent, PlayerLoadout loadout, RuneRegistry runes) {
-        super(Text.translatable("rune.menu.runes.title", "Runes"), 6, parent);
+        super(MenuBackground.RUNES.title(Text.translatable("rune.menu.runes.title", "Runes")), 6, parent);
         this.player = player;
         this.loadout = loadout;
         this.runes = runes;

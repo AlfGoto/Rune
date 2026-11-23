@@ -7,6 +7,7 @@ import com.alfgoto.rune.text.Rarity;
 import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
+import com.alfgoto.rune.visuals.menu.MenuBackground;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public final class QuestsMenu extends Menu {
     private final UUID owner;
 
     public QuestsMenu(QuestBook book, RuneConfig config, Player player, Menu parent) {
-        super(Text.translatable("rune.menu.quests.title", "Quests"), 3, parent);
+        super(MenuBackground.QUESTS.title(Text.translatable("rune.menu.quests.title", "Quests")), 3, parent);
         this.book = book;
         this.config = config;
         this.owner = player.getUniqueId();

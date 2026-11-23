@@ -148,6 +148,27 @@ class CodexTest {
                 .contains(String.valueOf(level)));
     }
 
+    @Test
+    void everySlotOfAMainMenuBoardOpensItsPage() {
+        int[][] boards = {
+            {CodexMenus.JOBS_SLOT, 4 * 9}, {CodexMenus.QUESTS_SLOT, 3 * 9}, {CodexMenus.RUNES_SLOT, 6 * 9}
+        };
+        for (int[] board : boards) {
+            for (int row = -1; row <= 1; row++) {
+                for (int col = -1; col <= 1; col++) {
+                    player.closeInventory();
+                    click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+                    server.getScheduler().performOneTick();
+                    int slot = board[0] + row * 9 + col;
+                    click(slot, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+                    Menu page = assertInstanceOf(
+                            Menu.class, player.getOpenInventory().getTopInventory().getHolder());
+                    assertEquals(board[1], page.size(), "slot " + slot);
+                }
+            }
+        }
+    }
+
     private Menu openRunesPage() {
         click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
         server.getScheduler().performOneTick();

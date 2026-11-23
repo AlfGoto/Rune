@@ -13,14 +13,17 @@ import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
+import com.alfgoto.rune.visuals.menu.MenuBackground;
 import com.alfgoto.rune.visuals.menu.PagedMenu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -59,28 +62,58 @@ public final class CodexMenus {
         return new QuestsMenu(quests, config, player, parent);
     }
 
-    /** The main menu: leads to the Jobs, Quests and Runes pages. */
+    /** Centre slots of the three 3x3 boards of the main menu: Jobs, Quests, Runes. */
+    static final int JOBS_SLOT = 10;
+    static final int QUESTS_SLOT = 13;
+    static final int RUNES_SLOT = 16;
+
+    /**
+     * The main menu: three 3x3 boards drawn by its background (Jobs, Quests, Runes). The icon sits in the
+     * centre slot; the 8 slots around it are invisible buttons doing the same, so the whole board is clickable.
+     */
     public Menu main(Player player) {
-        Menu main = new Menu(Text.translatable("rune.menu.codex.title", "Rune Codex"), 3);
-        main.set(
-                11,
-                Button.of(
-                        Material.EXPERIENCE_BOTTLE,
-                        Text.translatable("rune.menu.codex.jobs", "Jobs").color(NamedTextColor.GOLD),
-                        p -> jobsPage(p, main).open(p)));
-        main.set(
-                13,
-                Button.of(
-                        Material.WRITABLE_BOOK,
-                        Text.translatable("rune.menu.codex.quests", "Quests").color(NamedTextColor.GOLD),
-                        p -> questsPage(p, main).open(p)));
-        main.set(
-                15,
-                Button.of(
-                        Material.AMETHYST_SHARD,
-                        Text.translatable("rune.menu.codex.runes", "Runes").color(NamedTextColor.LIGHT_PURPLE),
-                        p -> runesPage(p, main).open(p)));
+        Menu main = new Menu(
+                MenuBackground.CODEX_MAIN.title(Text.translatable("rune.menu.codex.title", "Rune Codex")), 3);
+        board(
+                main,
+                JOBS_SLOT,
+                Material.EXPERIENCE_BOTTLE,
+                Text.translatable("rune.menu.codex.jobs", "Jobs").color(NamedTextColor.GOLD),
+                p -> jobsPage(p, main).open(p));
+        board(
+                main,
+                QUESTS_SLOT,
+                Material.WRITABLE_BOOK,
+                Text.translatable("rune.menu.codex.quests", "Quests").color(NamedTextColor.GOLD),
+                p -> questsPage(p, main).open(p));
+        board(
+                main,
+                RUNES_SLOT,
+                Material.AMETHYST_SHARD,
+                Text.translatable("rune.menu.codex.runes", "Runes").color(NamedTextColor.LIGHT_PURPLE),
+                p -> runesPage(p, main).open(p));
         return main;
+    }
+
+    /** The icon in {@code centre}, and an invisible button with the same name and click on each slot around it. */
+    private static void board(
+            Menu menu, int centre, Material icon, Component name, Consumer<Player> click) {
+        for (int row = -1; row <= 1; row++) {
+            for (int col = -1; col <= 1; col++) {
+                int slot = centre + row * 9 + col;
+                menu.set(slot, slot == centre ? Button.of(icon, name, click) : new Button(blank(name), click));
+            }
+        }
+    }
+
+    /** An item drawn with the empty {@code rune:menu_blank} model: the board's own art shows through. */
+    private static ItemStack blank(Component name) {
+        ItemStack stack = new ItemStack(Material.PAPER);
+        stack.editMeta(meta -> {
+            meta.setItemModel(new NamespacedKey("rune", "menu_blank"));
+            meta.displayName(plain(name));
+        });
+        return stack;
     }
 
     /** The Runes page: Player Rune slots, Capacity used / max, and the Runes in the inventory. */
@@ -96,7 +129,8 @@ public final class CodexMenus {
         for (Job job : jobs.all()) {
             buttons.add(jobButton(id, job));
         }
-        return new PagedMenu(Text.translatable("rune.menu.jobs.title", "Jobs"), 4, parent, buttons);
+        return new PagedMenu(
+                MenuBackground.JOBS.title(Text.translatable("rune.menu.jobs.title", "Jobs")), 4, parent, buttons);
     }
 
     private Button accountButton(UUID id) {
