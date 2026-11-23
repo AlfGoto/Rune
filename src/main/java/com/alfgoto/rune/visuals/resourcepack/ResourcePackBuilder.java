@@ -1,7 +1,7 @@
 package com.alfgoto.rune.visuals.resourcepack;
 
-import com.alfgoto.rune.visuals.menu.MenuFont;
 import com.alfgoto.rune.text.LangFiles;
+import com.alfgoto.rune.visuals.menu.MenuFont;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
