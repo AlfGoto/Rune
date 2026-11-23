@@ -1,5 +1,6 @@
 package com.alfgoto.rune.visuals.resourcepack;
 
+import com.alfgoto.rune.visuals.menu.MenuFont;
 import com.alfgoto.rune.text.LangFiles;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,7 +22,7 @@ import java.util.zip.ZipOutputStream;
  * Builds the resource pack zip.
  *
  * <p>Content: {@code pack.mcmeta}, every asset listed in {@code /pack/files.txt} (models, textures,
- * font glyphs) and the plugin language files {@code /lang/<language>/*.json}, merged into
+ * font glyphs), the menu text fonts (one per height, {@link MenuFont#packFiles()}) and the plugin language files {@code /lang/<language>/*.json}, merged into
  * {@code assets/rune/lang/<language>.json} (see {@link LangFiles}). The zip is deterministic: same input, same bytes, same SHA-1.
  */
 public final class ResourcePackBuilder {
@@ -65,6 +67,9 @@ public final class ResourcePackBuilder {
                 if (!path.isEmpty()) {
                     add(zip, path, resource("/pack/" + path));
                 }
+            }
+            for (Map.Entry<String, String> font : MenuFont.packFiles().entrySet()) {
+                add(zip, font.getKey(), font.getValue().getBytes(StandardCharsets.UTF_8));
             }
             for (String language : LangFiles.LANGUAGES) {
                 String json = PRETTY.toJson(LangFiles.merged(language)) + "\n";

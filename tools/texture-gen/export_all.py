@@ -126,16 +126,23 @@ def icon_files():
 
 
 def menu_files():
-    """Menu backgrounds v3 (font rune:menus) and the invisible item used for panel buttons."""
+    """Menu backgrounds v3 + live images (font rune:menus), menu text fonts, the invisible and reroll items."""
     from PIL import Image
+    import menufont
     out = []
-    os.makedirs(os.path.join(PACK, 'textures', 'gui', 'menu'), exist_ok=True)
-    for name, (draw, _rows) in menus.MENUS.items():
-        draw().save(os.path.join(PACK, 'textures', 'gui', 'menu', name + '.png'))
+    gui = os.path.join(PACK, 'textures', 'gui', 'menu')
+    os.makedirs(gui, exist_ok=True)
+    for name in menus.BACKGROUNDS:
+        menus.BACKGROUND_DRAW[name]().save(os.path.join(gui, name + '.png'))
+        out.append('assets/rune/textures/gui/menu/%s.png' % name)
+    for name, im, _top, _ch in menus.images():
+        im.save(os.path.join(gui, name + '.png'))
         out.append('assets/rune/textures/gui/menu/%s.png' % name)
     write_json(os.path.join(PACK, 'font', 'menus.json'), menus.font())
     out.append('assets/rune/font/menus.json')
+    out += menufont.export(os.path.join(PACK, 'textures'), os.path.join(ROOT, '..', 'menu_font.json'))
     out += item_files('menu_blank', Image.new('RGBA', (16, 16), (0, 0, 0, 0)), 'minecraft:item/generated')
+    out += item_files('menu_empty', menus.empty_item(), 'minecraft:item/generated')
     return out
 
 

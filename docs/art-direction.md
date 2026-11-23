@@ -25,19 +25,26 @@ Validated on texture batch v2: pickaxes, axes, components, menu icons, first two
 | Legendary | + gold finial above the head, gold filigree, gem pommel; double-bit axes |
 | Relic / Fused | unique silhouette built around its motif (Warden antennae, Starbreaker star, evoker-fang blade…) |
 
-## Menus (v3, 2026-11-23)
-- Each menu background is a PNG 176 × (114 + 18 × rows) px, the vanilla chest window (`generic_54`, stitched for the row count) with Rune panels painted over the menu area. It is a glyph of the `rune:menus` font (bitmap, `ascent` 13, `height` = image height) put in the menu title: a -8 px space glyph first (the title starts at x 8), then the background, then a -169 px space glyph so the title text is back in its usual place (`MenuBackground.title`). The glyph is white, or the dark title colour tints it.
-- **Every slot that can hold an item is cut out (transparent)**: the menu's used slots and the 36 player slots. The vanilla slot and the item always show, whatever the draw order. Unused menu slots are painted over. A used slot can get a 1px ring on its own edge (never outside it, so two framed slots side by side never overlap): gold = the main thing, copper = Reroll Tokens, deepslate = Back, amethyst = Player Rune slots, oak log = page arrows.
-- Generator `tools/texture-gen/v3/menus.py`; files `textures/gui/menu/<name>.png`; glyphs `\ue100`… in `font/menus.json`. A new menu = a function in `MENUS`, a value in `MenuBackground`, a re-export.
+## Menus (v3 free-form, 2026-11-23)
+Menus are drawn as interfaces, not as chest grids (Alfred: "way better"). Every Codex menu is a 6-row chest whose whole window is drawn in its title.
 
-| Menu | Rows | Look |
+**How it works** (`visuals.menu.MenuCanvas`)
+- **Background**: one 176×222 glyph of the `rune:menus` font (`ascent` 13 puts its top on the window's top), drawn freely by `tools/texture-gen/v3/menus.py`. Buttons are drawn in it.
+- **Clicks** still happen on the 18 px slot grid: a drawn button is covered by **invisible items** (`Button.invisible`, item model `rune:menu_blank`) carrying the tooltip and the click. Hovering shows the vanilla white square.
+- **Real items** (Runes, the player's head, Quest and Job icons) sit in slots **cut out** of the background (transparent), so the item shows whatever Minecraft draws first. An empty one gets `rune:menu_empty` (a dark recess) so the grey vanilla slot never shows. Back, Reroll, Tokens are drawn, not cut out.
+- **Live text and bars** are more glyphs in the title. The cursor is moved with space glyphs of `rune:menus` (``… = −1, −2 … −256 px, ``… = +1 … +256). A font row sits at one height only, so the pack builder generates one font per family and height: `rune:menu/<family>_<y>` (y 3–140 = top of the capitals in window pixels), from `menu_font.json` (written by `menufont.py`). Families: `normal` (vanilla glyphs + French / Latin accents), `shadow` (same + baked drop shadow, for dark backgrounds), `small` (3×5 capitals: numbers, long translations), `bars` (progress-bar pieces 1–16 px in green / aqua / gold / purple).
+- **Translations**: text drawn in a menu is measured on the server, so it uses the server's copy of the lang files in the player's language (`MenuStrings`, French if the client is in French). Text wider than its box switches to `small`, then is cut with "..". Tooltips stay normal translatable components.
+- **Live images** (fixed height, any x): Quest notes in the 5 Tier colours, the Capacity orb in 11 fill steps, page arrows. A menu showing live data rebuilds its title when the data changes (`Menu.retitle` moves the items to a new window and reopens it).
+- Only menus with a fixed layout get this; `PagedMenu` (debug) stays a plain chest.
+
+| Menu | Look | Slots |
 |---|---|---|
-| Rune Codex (`codex_main`) | 3 | three 3×3 boards: Jobs (oak planks), Quests (parchment), Runes (amethyst crystals), rune marks in the corners; the icon in the gold-framed centre slot (10 / 13 / 16), the 8 slots around it are invisible buttons (`rune:menu_blank` model) doing the same |
-| Jobs (`jobs`) | 4 | oak board with the 27 Job slots (Account Level framed gold), dark oak band with Previous / Back / Next |
-| Quests (`quests`) | 3 | parchment: Reroll Tokens (4, copper), the 3 Quests (11 / 13 / 15, gold, underlined), Back (22) |
-| Runes (`runes`) | 6 | deepslate band with the 8 Player Rune slots (amethyst) + Capacity (8, gold), engraved stone divider, amethyst board for the Runes in the inventory (18–44), deepslate band with Back (49) |
+| Rune Codex | an open book: left page = player head (gold frame), name, Level, XP bar, Capacity bar; right page = 3 chapter buttons (Jobs oak, Quests parchment, Runes amethyst) with a 16 px icon, the name and a live value (Lv 14, 2 / 3, 5 / 8) | head 11; chapters 4 × 2 from 5 / 23 / 41 |
+| Runes | an altar: 8 sockets in a ring around a Capacity orb that fills up; a leather satchel with the Runes in the inventory (18 per page) | sockets 3, 5, 15, 24, 32, 30, 20, 11; orb 12–14, 21–23; satchel 36–53; Back 27, pages 26 / 35 |
+| Quests | a notice board: 3 notes with a border and header in the Tier colour, icon, goal on 2 lines, progress bar, Tier; a copper reroll button under each | notes 3 × 5 from 0 / 3 / 6 (icon 10 / 13 / 16); reroll 46 / 49 / 52; Tokens 47; Back 53 |
+| Jobs | Account banner with its XP bar, then 6 job cards (icon, level, XP bar, name), "Coming soon" cards when there are fewer Jobs | banner 0–8; cards 3 × 2 from 9, 12, 15, 27, 30, 33; pages 48 / 50; Back 49 |
 
-The v2 `gui/codex_main.png` and `gui/rune_loadout.png` are not used; `rune_loadout` stays as the idea for the future tool loadout menu.
+The layout constants live in `menus.py` (art) and the Java menus (`CodexMenus`, `RunesMenu`, `QuestsMenu`, `JobsMenu`): change both together. Concepts and final renders: Design canvas "Rune textures — Menus and Rarity icons" (https://claude.ai/artifact/1uAJAkpFQivpaveKqcnVzN).
 
 ## Runes (layered, 2026-11-22)
 A Rune texture is never drawn whole: it is one `minecraft:item/generated` model with stacked layers, all 16×16 on the same canvas. Generator: `tools/texture-gen/v3/runes.py`; contact sheets on the Design canvas "Rune textures — Runes (layered)" (https://claude.ai/artifact/A7xpaMRtAFm31sr1MMZNzH).

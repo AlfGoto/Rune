@@ -9,6 +9,11 @@ import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
 import com.alfgoto.rune.visuals.menu.MenuBackground;
+import com.alfgoto.rune.visuals.menu.MenuCanvas;
+import com.alfgoto.rune.visuals.menu.MenuCanvas.Align;
+import com.alfgoto.rune.visuals.menu.MenuFont;
+import com.alfgoto.rune.visuals.menu.MenuImage;
+import com.alfgoto.rune.visuals.menu.MenuStrings;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,63 +21,114 @@ import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * The Runes page of the Rune Codex: the 8 Player Rune slots on top with Capacity used / max, then the
- * Player Runes found in the player's inventory. Clicking an inventory Rune installs it (the item is
- * consumed); clicking an installed Rune removes it (the item goes back to the inventory, or drops).
- * It only calls {@link PlayerLoadout}, so the Capacity and slot rules are the ones of the Loadout.
+ * The Runes page of the Rune Codex, an altar: the 8 Player Rune sockets in a ring around the Capacity orb
+ * (it fills with Capacity used / max), then a satchel with the Player Runes found in the player's inventory.
+ * Clicking a satchel Rune installs it (the item is consumed); clicking an installed Rune removes it (the item
+ * goes back to the inventory, or drops). It only calls {@link PlayerLoadout}, so the Capacity and slot rules
+ * are the ones of the Loadout. Layout positions match {@code tools/texture-gen/v3/menus.py} ("Runes").
  */
 final class RunesMenu extends Menu {
 
-    static final int INSTALLED_FIRST_SLOT = 0;
-    static final int CAPACITY_SLOT = 8;
-    static final int INVENTORY_FIRST_SLOT = 18;
-    static final int INVENTORY_LAST_SLOT = 44;
+    /** The 8 Player Rune sockets, in slot order (clockwise from the top left). */
+    static final int[] SOCKETS = {3, 5, 15, 24, 32, 30, 20, 11};
+
+    static final int INSTALLED_FIRST_SLOT = SOCKETS[0];
+
+    /** The orb: every slot of it shows the Capacity. */
+    static final int[] ORB_SLOTS = {12, 13, 14, 21, 22, 23};
+
+    static final int CAPACITY_SLOT = 13;
+    static final int INVENTORY_FIRST_SLOT = 36;
+    static final int INVENTORY_LAST_SLOT = 53;
+    static final int BACK_SLOT = 27;
+    static final int PREVIOUS_SLOT = 26;
+    static final int NEXT_SLOT = 35;
+
+    private static final int PAGE_SIZE = INVENTORY_LAST_SLOT - INVENTORY_FIRST_SLOT + 1;
+    private static final int ORB_X = 88 - 15;
+    private static final TextColor TITLE = TextColor.color(225, 200, 255);
 
     private final PlayerLoadout loadout;
     private final RuneRegistry runes;
     private final Player player;
+    private int page;
 
     RunesMenu(Player player, Menu parent, PlayerLoadout loadout, RuneRegistry runes) {
-        super(MenuBackground.RUNES.title(Text.translatable("rune.menu.runes.title", "Runes")), 6, parent);
+        super(Component.empty(), MenuBackground.ROWS, parent);
         this.player = player;
         this.loadout = loadout;
         this.runes = runes;
         draw();
     }
 
+    @Override
+    protected int backSlot() {
+        return BACK_SLOT;
+    }
+
+    @Override
+    protected Button backButton() {
+        return Button.invisible(Text.translatable("rune.menu.back", "Back").color(NamedTextColor.YELLOW), List.of(),
+                this::back);
+    }
+
     private void draw() {
         clear();
         UUID id = player.getUniqueId();
         List<ToolLoadout.Installed> installed = loadout.installed(id);
-        for (int i = 0; i < PlayerLoadout.SLOTS; i++) {
+        for (int i = 0; i < PlayerLoadout.SLOTS && i < SOCKETS.length; i++) {
             int slot = i + 1;
-            set(
-                    INSTALLED_FIRST_SLOT + i,
-                    i < installed.size() ? installedButton(installed.get(i), slot) : emptySlot(slot));
+            set(SOCKETS[i], i < installed.size() ? installedButton(installed.get(i), slot) : emptySlot(slot));
         }
-        set(CAPACITY_SLOT, capacityButton(id));
+        long used = loadout.used(id);
+        int max = loadout.capacity(id);
+        Button capacity = capacityButton(id);
+        for (int slot : ORB_SLOTS) {
+            set(slot, capacity);
+        }
+        MenuCanvas canvas = MenuCanvas.on(MenuBackground.RUNES)
+                .text(88, 6, MenuStrings.of(player).get("rune.menu.runes.title", "Runes"), TITLE, MenuFont.SHADOW,
+                        Align.CENTER, 120)
+                .image(MenuImage.orb(used, max), ORB_X)
+                .text(88, 48, used + "/" + max, NamedTextColor.WHITE, MenuFont.SHADOW, Align.CENTER, 29);
 
-        int next = INVENTORY_FIRST_SLOT;
-        for (Stored stored : inventoryRunes().values()) {
-            if (next > INVENTORY_LAST_SLOT) {
-                break; // more kinds than room: the rest show once some are installed
-            }
-            set(next++, inventoryButton(stored));
+        List<Stored> stored = new ArrayList<>(inventoryRunes().values());
+        int pages = Math.max(1, (stored.size() + PAGE_SIZE - 1) / PAGE_SIZE);
+        page = Math.max(0, Math.min(page, pages - 1));
+        for (int i = 0; i < PAGE_SIZE && page * PAGE_SIZE + i < stored.size(); i++) {
+            set(INVENTORY_FIRST_SLOT + i, inventoryButton(stored.get(page * PAGE_SIZE + i)));
         }
+        if (page > 0) {
+            canvas.image(MenuImage.RUNES_PREVIOUS, 7 + 18 * (PREVIOUS_SLOT % 9));
+            set(PREVIOUS_SLOT, Button.invisible(Text.translatable("rune.menu.previous", "Previous page")
+                    .color(NamedTextColor.YELLOW), List.of(), p -> {
+                        page--;
+                        draw();
+                    }));
+        }
+        if (page < pages - 1) {
+            canvas.image(MenuImage.RUNES_NEXT, 7 + 18 * (NEXT_SLOT % 9));
+            set(NEXT_SLOT, Button.invisible(Text.translatable("rune.menu.next", "Next page")
+                    .color(NamedTextColor.YELLOW), List.of(), p -> {
+                        page++;
+                        draw();
+                    }));
+        }
+        retitle(canvas.build());
     }
 
     private Button emptySlot(int slot) {
-        return Button.of(
-                Material.GRAY_STAINED_GLASS_PANE,
+        return Button.withModel(
+                Button.EMPTY,
                 Text.translatable("rune.menu.runes.empty_slot", "Empty slot %s", Component.text(slot))
                         .color(NamedTextColor.DARK_GRAY),
+                List.of(),
                 p -> {});
     }
 
@@ -97,21 +153,16 @@ final class RunesMenu extends Menu {
         return new Button(icon, p -> install(stored.rune(), stored.rank()));
     }
 
+    /** Invisible: the orb drawn under it shows the Capacity; the tooltip gives the numbers. */
     private Button capacityButton(UUID id) {
         long used = loadout.used(id);
         int max = loadout.capacity(id);
-        String model = used > max ? "capacity_over" : used == max ? "capacity_full" : "capacity_free";
-        Button button = Button.of(
-                Material.PAPER,
-                Text.translatable(
-                                "rune.menu.runes.capacity",
-                                "Capacity: %s / %s",
-                                Component.text(used),
+        return Button.invisible(
+                Text.translatable("rune.menu.runes.capacity", "Capacity: %s / %s", Component.text(used),
                                 Component.text(max))
-                        .color(NamedTextColor.GREEN),
+                        .color(used > max ? NamedTextColor.RED : NamedTextColor.GREEN),
+                List.of(),
                 p -> {});
-        button.icon().editMeta(meta -> meta.setItemModel(new NamespacedKey(Text.NAMESPACE, model)));
-        return button;
     }
 
     private void install(Rune rune, int rank) {

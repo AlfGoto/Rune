@@ -8,35 +8,55 @@ import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.Button;
 import com.alfgoto.rune.visuals.menu.Menu;
 import com.alfgoto.rune.visuals.menu.MenuBackground;
+import com.alfgoto.rune.visuals.menu.MenuCanvas;
+import com.alfgoto.rune.visuals.menu.MenuCanvas.Align;
+import com.alfgoto.rune.visuals.menu.MenuCanvas.Bar;
+import com.alfgoto.rune.visuals.menu.MenuFont;
+import com.alfgoto.rune.visuals.menu.MenuImage;
+import com.alfgoto.rune.visuals.menu.MenuStrings;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * The Quests page of the Rune Codex: the 3 active Quests, each with its Tier colour and live progress.
- * Clicking a Quest spends a Reroll Token to replace it. It only reads and acts through {@link QuestBook}.
+ * The Quests page of the Rune Codex: a notice board with the 3 active Quests as notes in their Tier colour
+ * (goal, progress bar, Tier), a copper reroll button under each, and the Reroll Tokens. It only reads and acts
+ * through {@link QuestBook}. Layout positions match {@code tools/texture-gen/v3/menus.py} ("Quests").
  */
 public final class QuestsMenu extends Menu {
 
     static final int BAR_LENGTH = 20;
-    static final int[] QUEST_SLOTS = {11, 13, 15};
-    private static final int TOKEN_SLOT = 4;
+
+    /** The icon of each Quest (a dye in its Tier colour); the rest of the note shows the same tooltip. */
+    static final int[] QUEST_SLOTS = {10, 13, 16};
+
+    /** The reroll button under each note. */
+    static final int[] REROLL_SLOTS = {46, 49, 52};
+
+    static final int TOKEN_SLOT = 47;
+    static final int BACK_SLOT = 53;
+
+    private static final int[] NOTE_X = {9, 63, 117};
+    private static final TextColor INK = TextColor.color(74, 52, 30);
+    private static final TextColor INK_LIGHT = TextColor.color(110, 90, 60);
 
     private final QuestBook book;
     private final RuneConfig config;
     private final UUID owner;
+    private final MenuStrings text;
 
     public QuestsMenu(QuestBook book, RuneConfig config, Player player, Menu parent) {
-        super(MenuBackground.QUESTS.title(Text.translatable("rune.menu.quests.title", "Quests")), 3, parent);
+        super(Component.empty(), MenuBackground.ROWS, parent);
         this.book = book;
         this.config = config;
         this.owner = player.getUniqueId();
+        this.text = MenuStrings.of(player);
         refresh();
     }
 
@@ -44,53 +64,91 @@ public final class QuestsMenu extends Menu {
         return owner;
     }
 
-    /** Redraws the Quests, their progress and the Reroll Token count from the current data. */
-    public void refresh() {
-        clear();
-        set(TOKEN_SLOT, tokenButton(book.rerollTokens().count(owner)));
-        for (Map.Entry<Integer, Quest> entry : book.slots(owner).entrySet()) {
-            int slot = entry.getKey();
-            set(QUEST_SLOTS[slot - 1], questButton(slot, entry.getValue()));
-        }
+    @Override
+    protected int backSlot() {
+        return BACK_SLOT;
     }
 
-    private Button tokenButton(int tokens) {
-        ItemStack icon = new ItemStack(Material.PAPER);
-        icon.editMeta(meta -> meta.displayName(plain(Text.translatable(
+    @Override
+    protected Button backButton() {
+        return Button.invisible(Text.translatable("rune.menu.back", "Back").color(NamedTextColor.YELLOW), List.of(),
+                this::back);
+    }
+
+    /** Redraws the notes, their progress and the Reroll Token count from the current data. */
+    public void refresh() {
+        clear();
+        int tokens = book.rerollTokens().count(owner);
+        MenuCanvas canvas = MenuCanvas.on(MenuBackground.QUESTS)
+                .text(63, 113, tokens + " / " + config.questMaxRerollTokens(), NamedTextColor.WHITE, MenuFont.SMALL,
+                        Align.LEFT);
+        set(TOKEN_SLOT, Button.invisible(tokenName(tokens), List.of(), p -> {}));
+        for (Map.Entry<Integer, Quest> entry : book.slots(owner).entrySet()) {
+            int slot = entry.getKey();
+            if (slot < 1 || slot > QUEST_SLOTS.length) {
+                continue;
+            }
+            note(canvas, slot, entry.getValue());
+        }
+        retitle(canvas.build());
+    }
+
+    private void note(MenuCanvas canvas, int slot, Quest quest) {
+        int k = slot - 1;
+        int x0 = NOTE_X[k];
+        int done = Math.min(book.progress(owner, slot), quest.target());
+        boolean complete = done >= quest.target();
+        canvas.image(MenuImage.note(quest.tier()), x0)
+                .lines(x0 + 25, 56, 10, 2, text.get(quest.type().translationKey(), quest.type().fallbackName()),
+                        INK, MenuFont.NORMAL, Align.CENTER, 46)
+                .bar(x0 + 5, 79, 41, quest.target() <= 0 ? 0 : (double) done / quest.target(),
+                        complete ? Bar.GOLD : Bar.GREEN)
+                .text(x0 + 25, 85, done + " / " + quest.target(), INK_LIGHT, MenuFont.SMALL, Align.CENTER, 46)
+                .text(x0 + 25, 95, text.get(quest.tier().translationKey(), quest.tier().englishName()), INK_LIGHT,
+                        MenuFont.SMALL, Align.CENTER, 46);
+
+        Component name = CodexMenus.plain(
+                Component.translatable(quest.type().translationKey(), quest.type().fallbackName())
+                        .color(quest.tier().color()));
+        List<Component> lore = List.of(
+                CodexMenus.plain(Component.translatable(
+                                quest.type().job().translationKey(), quest.type().job().fallbackName())
+                        .color(NamedTextColor.GOLD)),
+                CodexMenus.plain(Text.translatable("rune.menu.quests.tier", "Tier: %s", Text.rarityLine(quest.tier()))
+                        .color(NamedTextColor.GRAY)),
+                bar(done, quest.target()),
+                CodexMenus.plain(Text.translatable(
+                                "rune.menu.quests.progress",
+                                "%s / %s",
+                                Component.text(done),
+                                Component.text(quest.target()))
+                        .color(NamedTextColor.GRAY)));
+        ItemStack icon = new ItemStack(material(quest.tier()));
+        icon.editMeta(meta -> {
+            meta.displayName(name);
+            meta.lore(lore);
+        });
+        int first = 3 * k;
+        for (int row = 0; row < 5; row++) {
+            for (int col = 0; col < 3; col++) {
+                int cell = first + row * 9 + col;
+                set(cell, cell == QUEST_SLOTS[k] ? new Button(icon, p -> {}) : Button.invisible(name, lore, p -> {}));
+            }
+        }
+        set(REROLL_SLOTS[k], Button.invisible(
+                Text.translatable("rune.menu.quests.reroll_button", "Reroll this Quest").color(NamedTextColor.GOLD),
+                List.of(Text.translatable("rune.menu.quests.reroll_cost", "Costs 1 Reroll Token")
+                        .color(NamedTextColor.GRAY)),
+                p -> reroll(p, slot)));
+    }
+
+    private Component tokenName(int tokens) {
+        return Text.translatable(
                         "rune.menu.quests.tokens",
                         "Reroll Tokens: %s / %s",
                         Component.text(tokens),
                         Component.text(config.questMaxRerollTokens()))
-                .color(NamedTextColor.AQUA))));
-        return new Button(icon, p -> {});
-    }
-
-    private Button questButton(int slot, Quest quest) {
-        int done = Math.min(book.progress(owner, slot), quest.target());
-        ItemStack icon = new ItemStack(material(quest.tier()));
-        icon.editMeta(meta -> {
-            meta.displayName(plain(Component.translatable(
-                            quest.type().translationKey(), quest.type().fallbackName())
-                    .color(quest.tier().color())));
-            meta.lore(List.of(
-                    plain(Component.translatable(
-                                    quest.type().job().translationKey(),
-                                    quest.type().job().fallbackName())
-                            .color(NamedTextColor.GOLD)),
-                    plain(Text.translatable("rune.menu.quests.tier", "Tier: %s", Text.rarityLine(quest.tier()))
-                            .color(NamedTextColor.GRAY)),
-                    bar(done, quest.target()),
-                    plain(Text.translatable(
-                                    "rune.menu.quests.progress",
-                                    "%s / %s",
-                                    Component.text(done),
-                                    Component.text(quest.target()))
-                            .color(NamedTextColor.GRAY)),
-                    Component.empty(),
-                    plain(Text.translatable("rune.menu.quests.reroll", "Click to reroll (1 Reroll Token)")
-                            .color(NamedTextColor.YELLOW))));
-        });
-        return new Button(icon, p -> reroll(p, slot));
+                .color(NamedTextColor.AQUA);
     }
 
     private void reroll(Player player, int slot) {
@@ -120,11 +178,7 @@ public final class QuestsMenu extends Menu {
 
     static Component bar(int done, int target) {
         int filled = target <= 0 ? 0 : Math.min(BAR_LENGTH, (int) Math.floor((double) done / target * BAR_LENGTH));
-        return plain(Component.text("|".repeat(filled), NamedTextColor.GREEN)
+        return CodexMenus.plain(Component.text("|".repeat(filled), NamedTextColor.GREEN)
                 .append(Component.text("|".repeat(BAR_LENGTH - filled), NamedTextColor.DARK_GRAY)));
-    }
-
-    private static Component plain(Component component) {
-        return component.decoration(TextDecoration.ITALIC, false);
     }
 }

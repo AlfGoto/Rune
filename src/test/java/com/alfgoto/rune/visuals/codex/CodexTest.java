@@ -134,12 +134,11 @@ class CodexTest {
 
         Menu page = menus.jobsPage(player, menus.main(player));
 
-        ItemStack account = page.getInventory().getItem(0);
+        ItemStack account = page.getInventory().getItem(JobsMenu.ACCOUNT_SLOT);
         assertNotNull(account);
-        assertEquals(Material.NETHER_STAR, account.getType());
         String capacity = PlainTextComponentSerializer.plainText().serialize(account.lore().get(0));
         assertTrue(capacity.contains(String.valueOf(5 + progress.accountLevel(player.getUniqueId()))), capacity);
-        ItemStack jobIcon = page.getInventory().getItem(1);
+        ItemStack jobIcon = page.getInventory().getItem(JobsMenu.CARD_SLOTS[0]);
         int level = progress.jobLevel(player.getUniqueId(), job);
         String xpLine = PlainTextComponentSerializer.plainText().serialize(jobIcon.lore().get(2));
         assertTrue(xpLine.contains("120"), xpLine);
@@ -149,30 +148,37 @@ class CodexTest {
     }
 
     @Test
-    void everySlotOfAMainMenuBoardOpensItsPage() {
-        int[][] boards = {
-            {CodexMenus.JOBS_SLOT, 4 * 9}, {CodexMenus.QUESTS_SLOT, 3 * 9}, {CodexMenus.RUNES_SLOT, 6 * 9}
+    void everySlotOfAChapterButtonOpensItsPage() {
+        Object[][] chapters = {
+            {CodexMenus.JOBS_FIRST, JobsMenu.class},
+            {CodexMenus.QUESTS_FIRST, QuestsMenu.class},
+            {CodexMenus.RUNES_FIRST, RunesMenu.class}
         };
-        for (int[] board : boards) {
-            for (int row = -1; row <= 1; row++) {
-                for (int col = -1; col <= 1; col++) {
-                    player.closeInventory();
-                    click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
-                    server.getScheduler().performOneTick();
-                    int slot = board[0] + row * 9 + col;
-                    click(slot, ClickType.LEFT, InventoryAction.PICKUP_ALL);
-                    Menu page = assertInstanceOf(
-                            Menu.class, player.getOpenInventory().getTopInventory().getHolder());
-                    assertEquals(board[1], page.size(), "slot " + slot);
-                }
+        for (Object[] chapter : chapters) {
+            for (int slot : CodexMenus.chapterSlots((int) chapter[0])) {
+                player.closeInventory();
+                click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+                server.getScheduler().performOneTick();
+                click(slot, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+                Object page = player.getOpenInventory().getTopInventory().getHolder();
+                assertInstanceOf((Class<?>) chapter[1], page, "slot " + slot);
             }
         }
+    }
+
+    @Test
+    void mainMenuShowsThePlayersHead() {
+        click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+        server.getScheduler().performOneTick();
+        ItemStack head = player.getOpenInventory().getTopInventory().getItem(CodexMenus.PORTRAIT_SLOT);
+        assertNotNull(head);
+        assertEquals(Material.PLAYER_HEAD, head.getType());
     }
 
     private Menu openRunesPage() {
         click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
         server.getScheduler().performOneTick();
-        click(15, ClickType.LEFT, InventoryAction.PICKUP_ALL); // the Runes button of the main menu
+        click(CodexMenus.RUNES_FIRST, ClickType.LEFT, InventoryAction.PICKUP_ALL); // the Runes chapter
         Menu menu = assertInstanceOf(Menu.class, player.getOpenInventory().getTopInventory().getHolder());
         assertEquals(6 * 9, menu.size());
         return menu;
@@ -257,12 +263,12 @@ class CodexTest {
         return menus.questsPage(player, menus.main(player));
     }
 
-    private void clickQuestSlot(int index) {
+    private void clickReroll(int index) {
         server.getPluginManager()
                 .callEvent(new InventoryClickEvent(
                         player.getOpenInventory(),
                         SlotType.CONTAINER,
-                        QuestsMenu.QUEST_SLOTS[index],
+                        QuestsMenu.REROLL_SLOTS[index],
                         ClickType.LEFT,
                         InventoryAction.PICKUP_ALL));
     }
@@ -299,26 +305,26 @@ class CodexTest {
     }
 
     @Test
-    void clickingAQuestRerollsItAndSpendsAToken() {
+    void theRerollButtonRerollsTheQuestAndSpendsAToken() {
         var book = plugin.context().get(com.alfgoto.rune.gameplay.quests.QuestBook.class);
         var tokens = book.rerollTokens();
         tokens.grant(player.getUniqueId(), 2);
         book.advance(player.getUniqueId(), 2);
         questsPage().open(player);
 
-        clickQuestSlot(1);
+        clickReroll(1);
 
         assertEquals(1, tokens.count(player.getUniqueId()));
         assertEquals(0, book.progress(player.getUniqueId(), 2));
     }
 
     @Test
-    void clickingAQuestWithoutATokenChangesNothing() {
+    void rerollingWithoutATokenChangesNothing() {
         var book = plugin.context().get(com.alfgoto.rune.gameplay.quests.QuestBook.class);
         book.advance(player.getUniqueId(), 1);
         questsPage().open(player);
 
-        clickQuestSlot(0);
+        clickReroll(0);
 
         assertEquals(1, book.progress(player.getUniqueId(), 1));
     }
