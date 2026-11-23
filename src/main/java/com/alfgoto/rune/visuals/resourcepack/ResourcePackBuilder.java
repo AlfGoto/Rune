@@ -22,8 +22,9 @@ import java.util.zip.ZipOutputStream;
  * Builds the resource pack zip.
  *
  * <p>Content: {@code pack.mcmeta}, every asset listed in {@code /pack/files.txt} (models, textures,
- * font glyphs), the menu text fonts (one per height, {@link MenuFont#packFiles()}) and the plugin language files {@code /lang/<language>/*.json}, merged into
- * {@code assets/rune/lang/<language>.json} (see {@link LangFiles}). The zip is deterministic: same input, same bytes, same SHA-1.
+ * font glyphs), the menu text fonts (one per height, {@link MenuFont#packFiles()}) and the plugin language
+ * files {@code /lang/<language>/*.json}, merged into {@code assets/rune/lang/<language>.json} (see
+ * {@link LangFiles}). The zip is deterministic: same input, same bytes, same SHA-1.
  */
 public final class ResourcePackBuilder {
 
