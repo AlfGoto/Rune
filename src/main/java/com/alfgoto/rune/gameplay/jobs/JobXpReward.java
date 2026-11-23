@@ -6,7 +6,9 @@ import com.alfgoto.rune.gameplay.rewards.RollContext;
 import com.alfgoto.rune.text.Text;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /** Job XP in the Job of the roll. Needs a Job in the context, so it is not available without one. */
 public final class JobXpReward implements Reward {
@@ -40,6 +42,11 @@ public final class JobXpReward implements Reward {
                         "+%s %s XP",
                         Component.text(Numbers.format(amount)),
                         Component.translatable(job.translationKey(), job.fallbackName()));
+            }
+
+            @Override
+            public ItemStack icon() {
+                return new ItemStack(Material.EXPERIENCE_BOTTLE);
             }
 
             @Override

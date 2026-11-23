@@ -30,8 +30,7 @@ public final class CacheReelModule implements RuneModule, Listener {
     @Override
     public void enable(RuneContext ctx) {
         ctx.get(Caches.class).setReel((player, rarity, drops, finish) -> {
-            ReelMenu menu =
-                    new ReelMenu(ctx.plugin(), player, rarity, drops, finish, ThreadLocalRandom.current());
+            ReelMenu menu = new ReelMenu(ctx.plugin(), player, drops, finish, ThreadLocalRandom.current());
             active.add(menu);
             try {
                 menu.start();
