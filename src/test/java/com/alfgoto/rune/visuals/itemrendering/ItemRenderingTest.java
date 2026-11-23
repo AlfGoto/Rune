@@ -144,6 +144,7 @@ class ItemRenderingTest {
         ItemStack stack = registry.create(registry.get("maxed_pick"), 1);
         mastery.add(stack, 100_000);
         List<String> keys = stack.getItemMeta().lore().stream()
+                .filter(c -> c instanceof TranslatableComponent) // the Rarity line starts with its icon
                 .map(c -> ((TranslatableComponent) c).key())
                 .toList();
         assertEquals(true, keys.contains("rune.item.lore.mastery_max"));
