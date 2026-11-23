@@ -7,6 +7,8 @@
   "rune.cache.opened": "You open a Cache: %s result(s)",
   "rune.cache.milestone": "Level %s reached: %s Cache earned.",
   "rune.cache.entry": "- %s",
+  "rune.cache.reel.title": "Opening a Cache",
+  "rune.cache.reel.result": "Cache opened!",
   "rune.command.give_cache.usage": "Usage: /rune give cache [job] <rarity>",
   "rune.command.give_cache.unknown_rarity": "Unknown Rarity: %s",
   "rune.command.give_cache.unknown_job": "Unknown Job: %s",
