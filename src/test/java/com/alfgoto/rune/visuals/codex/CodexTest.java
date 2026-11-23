@@ -1,6 +1,7 @@
 package com.alfgoto.rune.visuals.codex;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -109,6 +110,10 @@ class CodexTest {
     void clickingTheCodexOpensTheMainMenu() {
         InventoryClickEvent event = click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
         assertTrue(event.isCancelled());
+        // Not during the click: opening a menu mid-click desyncs the player inventory (ghost Codex
+        // on the cursor, picked-up items not shown).
+        assertFalse(player.getOpenInventory().getTopInventory().getHolder() instanceof Menu);
+        server.getScheduler().performOneTick();
         assertInstanceOf(Menu.class, player.getOpenInventory().getTopInventory().getHolder());
     }
 
@@ -145,6 +150,7 @@ class CodexTest {
 
     private Menu openRunesPage() {
         click(Codex.SLOT, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+        server.getScheduler().performOneTick();
         click(15, ClickType.LEFT, InventoryAction.PICKUP_ALL); // the Runes button of the main menu
         Menu menu = assertInstanceOf(Menu.class, player.getOpenInventory().getTopInventory().getHolder());
         assertEquals(6 * 9, menu.size());
