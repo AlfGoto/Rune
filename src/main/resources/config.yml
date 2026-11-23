@@ -264,6 +264,8 @@ runes:
     interval-seconds: 10
     radius: 12
     seconds: 5
+    # Capacity added to the Echo Pickaxe's base Capacity of 10 (10 + 2 = 12)
+    capacity-modifier: 2
   # Value of a Rune = base + per-rank * (Rank - 1), from docs/jobs/mining.md. Chances are in percent
   # (100 = guaranteed). Silk Touch is on/off. max-rank is the highest Rank when ranking up.
   fortune:
