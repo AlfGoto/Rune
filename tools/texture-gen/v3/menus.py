@@ -331,6 +331,72 @@ def locked_icon(job):
     return out
 
 
+# ================================================================= Cache reel
+# Live: title y 6 centred (cache name in its Rarity colour); after the reveal: the glow image (frame in the
+# Rarity colour) at (4, 47), "Rewards" y 86 centred, hint small y 100 centred. The opened Cache, drawn x2,
+# is a live image at (72, 13).
+CACHE_X, CACHE_Y = 72, 13
+REEL_SLOTS = list(range(18, 27))
+REEL_CENTER = 22
+GLOW_X, GLOW_Y = 4, 47
+
+
+def reel():
+    b = Board(); d = b.d
+    ds, st, gold, ob = ramp('deepslate'), ramp('stone'), ramp('gold'), ramp('obsidian')
+    d.rectangle((4, 3, 171, 127), fill=(24, 22, 30, 255), outline=(10, 9, 14, 255))
+    arches = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ad = ImageDraw.Draw(arches)
+    for k, r in enumerate((70, 58, 46)):                       # arches of the vault, kept inside the window
+        c = (34 + 6 * k, 31 + 6 * k, 42 + 6 * k, 255)
+        ad.ellipse((88 - r, 30 - r // 2, 88 + r, 30 + r), outline=c, width=2)
+    mask = Image.new('L', (W, H), 0); ImageDraw.Draw(mask).rectangle((5, 4, 170, 126), fill=255)
+    b.im.paste(arches, (0, 0), Image.composite(arches, Image.new('RGBA', (W, H), (0, 0, 0, 0)), mask).split()[3])
+    for px in (6, 158):                                       # pillars and torches, like the Runes altar
+        d.rectangle((px, 14, px + 11, 124), fill=st[1]); d.line((px, 14, px, 124), fill=st[3])
+        d.line((px + 11, 14, px + 11, 124), fill=st[0])
+        for yy in range(20, 124, 9):
+            d.line((px + 1, yy, px + 10, yy), fill=st[0])
+        d.rectangle((px + 3, 6, px + 8, 12), fill=(255, 200, 80, 255)); d.point((px + 5, 7), fill=(255, 255, 220, 255))
+    d.rectangle((4, 47, 171, 76), fill=ob[0], outline=(10, 9, 14, 255))   # the reel's frame
+    d.rectangle((5, 48, 170, 75), outline=ds[1])
+    d.line((5, 48, 170, 48), fill=ds[2])
+    for rx in (8, 167):
+        for ry in (51, 72):
+            d.point((rx, ry), fill=st[3])
+    for tip_y, dy in ((51, -1), (72, 1)):                    # pointers above and below the centre slot
+        for i in range(4):
+            y = tip_y + dy * i
+            d.line((88 - i, y, 88 + i, y), fill=gold[2] if i < 3 else gold[0])
+    d.rectangle((24, 82, 151, 110), fill=ds[0], outline=(10, 9, 14, 255))  # rewards plaque
+    d.line((25, 83, 150, 83), fill=ds[1])
+    for i in REEL_SLOTS:
+        b.hole(i)
+    return b.done()
+
+
+def reel_glow(tier):
+    """The reel's frame lit in the Tier colour, with a ring around the centre slot (shown at the reveal)."""
+    c = rgba(hx(TIER_COLOURS[tier]))
+    light = tuple(min(255, int(v + (255 - v) * 0.6)) for v in c[:3]) + (255,)
+    dark = tuple(int(v * 0.5) for v in c[:3]) + (255,)
+    w, h = 168, 30
+    im = Image.new('RGBA', (w, h), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, w - 1, h - 1), outline=dark)
+    d.rectangle((1, 1, w - 2, h - 2), outline=c)
+    d.line((2, 1, w - 3, 1), fill=light)
+    for cx, cy in ((1, 1), (w - 2, 1), (1, h - 2), (w - 2, h - 2)):
+        d.point((cx, cy), fill=(255, 255, 255, 255))
+    x, y = slot_xy(REEL_CENTER)                                # ring just outside the centre slot
+    x, y = x - GLOW_X, y - GLOW_Y
+    d.rectangle((x - 2, y - 2, x + 19, y + 19), outline=c)
+    d.rectangle((x - 1, y - 1, x + 18, y + 18), outline=light)
+    for i in range(3):                                         # pointers lit
+        d.line((84 - GLOW_X - i + 4, 51 - GLOW_Y - i, 84 - GLOW_X + i + 4, 51 - GLOW_Y - i), fill=light)
+        d.line((84 - GLOW_X - i + 4, 72 - GLOW_Y + i, 84 - GLOW_X + i + 4, 72 - GLOW_Y + i), fill=light)
+    d.rectangle((x, y, x + 17, y + 17), fill=(0, 0, 0, 0))
+    return im
+
+
 def reroll_icon():
     """Icon of the reroll buttons: a thick copper circular arrow."""
     import math
@@ -348,9 +414,10 @@ def reroll_icon():
 
 
 # ================================================================= font
-BACKGROUNDS = ['codex', 'runes', 'quests', 'jobs']
-BACKGROUND_DRAW = {'codex': codex, 'runes': runes, 'quests': quests, 'jobs': jobs}
+BACKGROUNDS = ['codex', 'runes', 'quests', 'jobs', 'reel']
+BACKGROUND_DRAW = {'codex': codex, 'runes': runes, 'quests': quests, 'jobs': jobs, 'reel': reel}
 BG_FIRST, NOTE_FIRST, ORB_FIRST, NAV_FIRST, CARD_FIRST, REROLL_CHAR = 0xE100, 0xE110, 0xE120, 0xE130, 0xE140, 0xE150
+GLOW_FIRST = 0xE160
 NAV = [('runes_prev', RUNES_PREV, 'left'), ('runes_next', RUNES_NEXT, 'right'),
        ('jobs_prev', JOBS_PREV, 'left'), ('jobs_next', JOBS_NEXT, 'right')]
 
@@ -400,6 +467,12 @@ def images():
                         slot_xy(first)[1], chr(CARD_FIRST + k)))
             k += 1
     out.append(('reroll', reroll_button(), slot_xy(QUEST_REROLL[0])[1], chr(REROLL_CHAR)))
+    for k, t in enumerate(TIERS):
+        out.append(('reel_glow_' + t, reel_glow(t), GLOW_Y, chr(GLOW_FIRST + k)))
+    import caches
+    for k, t in enumerate(TIERS):
+        big = caches.cache(t).im.resize((32, 32), Image.NEAREST)
+        out.append(('reel_cache_' + t, big, CACHE_Y, chr(GLOW_FIRST + 8 + k)))
     return out
 
 

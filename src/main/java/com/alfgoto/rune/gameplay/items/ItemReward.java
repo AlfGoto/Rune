@@ -59,5 +59,10 @@ public final class ItemReward implements Reward {
         public void give(Player player) {
             GiveSubcommand.give(player, items.create(item, count));
         }
+
+        @Override
+        public org.bukkit.inventory.ItemStack icon() {
+            return items.create(item, Math.min(count, 64));
+        }
     }
 }

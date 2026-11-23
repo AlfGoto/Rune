@@ -40,6 +40,11 @@ public final class AccountXpReward implements Reward {
             public void give(Player player) {
                 progress.addAccountXpBonus(player.getUniqueId(), amount);
             }
+
+            @Override
+            public org.bukkit.inventory.ItemStack icon() {
+                return Drop.named(org.bukkit.Material.NETHER_STAR, describe());
+            }
         };
     }
 }

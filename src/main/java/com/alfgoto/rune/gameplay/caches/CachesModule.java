@@ -18,6 +18,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @AutoService(RuneModule.class)
 public final class CachesModule implements RuneModule {
 
+    private Caches caches;
+
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
         return Set.of(ItemsModule.class, RewardsModule.class, JobsModule.class);
@@ -33,8 +35,17 @@ public final class CachesModule implements RuneModule {
                         items,
                         ctx.get(LootTableRegistry.class),
                         ctx.get(LootRoller.class),
-                        ThreadLocalRandom.current()));
+                        ThreadLocalRandom.current(),
+                        Caches.REVEAL_TICKS));
         ctx.get(GiveSubcommand.class).addVariant(new GiveCacheVariant(caches, ctx.get(JobRegistry.class)));
         ctx.listen(new CacheListener(caches));
+        this.caches = caches;
+    }
+
+    @Override
+    public void disable() {
+        if (caches != null) {
+            caches.giveAllNow();
+        }
     }
 }

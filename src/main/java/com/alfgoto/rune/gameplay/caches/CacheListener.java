@@ -6,11 +6,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-/** Right-click (in the air or on a block) with a Rune Cache in the main hand opens it. */
+/** Right-click (in the air or on a block) with a Rune Cache in the main hand opens it; leaving gives pending loot. */
 final class CacheListener implements Listener {
 
     private final Caches caches;
@@ -35,5 +36,11 @@ final class CacheListener implements Listener {
         if (caches.open(event.getPlayer(), hand)) {
             inventory.setItemInMainHand(hand.getAmount() <= 0 ? null : hand);
         }
+    }
+
+    /** A player leaving before their Cache's loot is given gets it at once. */
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        caches.giveNow(event.getPlayer());
     }
 }

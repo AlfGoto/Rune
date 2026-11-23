@@ -41,5 +41,8 @@
   "rune.menu.jobs.soon": "Bientôt",
   "rune.menu.quests.reroll_button": "Relancer cette Quête",
   "rune.menu.quests.reroll_cost": "Coûte 1 jeton de relance",
-  "rune.menu.jobs.locked": "Pas encore jouable"
+  "rune.menu.jobs.locked": "Pas encore jouable",
+  "rune.menu.cache.title": "Cache %s",
+  "rune.menu.cache.rewards": "Récompenses",
+  "rune.menu.cache.close": "Échap pour fermer"
 }

@@ -46,6 +46,11 @@ public final class JobXpReward implements Reward {
             public void give(Player player) {
                 progress.addJobXp(player.getUniqueId(), job, amount);
             }
+
+            @Override
+            public org.bukkit.inventory.ItemStack icon() {
+                return Drop.named(org.bukkit.Material.EXPERIENCE_BOTTLE, describe());
+            }
         };
     }
 }

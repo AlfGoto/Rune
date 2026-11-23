@@ -84,5 +84,10 @@ public final class RuneReward implements Reward {
         public void give(Player player) {
             GiveSubcommand.give(player, runes.create(rune, 1));
         }
+
+        @Override
+        public org.bukkit.inventory.ItemStack icon() {
+            return runes.create(rune, 1);
+        }
     }
 }

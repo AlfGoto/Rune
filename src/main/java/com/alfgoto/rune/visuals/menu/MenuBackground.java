@@ -9,7 +9,8 @@ public enum MenuBackground {
     CODEX('\ue100'),
     RUNES('\ue101'),
     QUESTS('\ue102'),
-    JOBS('\ue103');
+    JOBS('\ue103'),
+    REEL('\ue104');
 
     /** Every background is a full 6-row chest window. */
     public static final int ROWS = 6;

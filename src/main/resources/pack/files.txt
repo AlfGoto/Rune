@@ -827,3 +827,14 @@ assets/rune/textures/item/menu_locked_adventuring.png
 assets/rune/items/menu_locked_runesmithing.json
 assets/rune/models/item/menu_locked_runesmithing.json
 assets/rune/textures/item/menu_locked_runesmithing.png
+assets/rune/textures/gui/menu/reel.png
+assets/rune/textures/gui/menu/reel_glow_common.png
+assets/rune/textures/gui/menu/reel_glow_uncommon.png
+assets/rune/textures/gui/menu/reel_glow_rare.png
+assets/rune/textures/gui/menu/reel_glow_epic.png
+assets/rune/textures/gui/menu/reel_glow_legendary.png
+assets/rune/textures/gui/menu/reel_cache_common.png
+assets/rune/textures/gui/menu/reel_cache_uncommon.png
+assets/rune/textures/gui/menu/reel_cache_rare.png
+assets/rune/textures/gui/menu/reel_cache_epic.png
+assets/rune/textures/gui/menu/reel_cache_legendary.png
