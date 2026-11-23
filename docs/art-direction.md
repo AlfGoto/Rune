@@ -103,4 +103,4 @@ One 7×7 gem per Rarity, in the Rarity's name colour, in the `rune:glyphs` font 
 ## Tooling
 - Generator: `tools/texture-gen/` (Python + Pillow, see its README). A colour change is a one-line edit; `export_all.py` rebuilds every PNG and pack file.
 - Open points: real poplar palette (no poplar texture in 26.1, colours invented); some Relic loose pixels (hanging moss / roots) to check in game.
-- Next batches: Blueprint, font glyphs (Rarity + Job icons), menus v3 (Cache reel; Jobs and Quests are done).
+- Next batches: Blueprint, font glyphs (Job icons), menus v3 (Cache reel; Jobs and Quests are done).
