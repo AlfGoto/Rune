@@ -756,3 +756,4 @@ assets/rune/models/item/rune_cache_legendary.json
 assets/rune/items/rune_codex.json
 assets/rune/models/item/rune_codex.json
 assets/rune/textures/item/rune_codex.png
+assets/rune/textures/font/rarity.png
