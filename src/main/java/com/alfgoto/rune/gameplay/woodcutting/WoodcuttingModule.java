@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Woodcutting Runes that act on leaves and movement (Leaf Fall, Orchard, Canopy Stride) and Rhythm, the
+ * Woodcutting Runes that act on leaves and movement (Leaf Fall, Orchard, Canopy Stride, Replant) and Rhythm, the
  * Woodcutting armor mechanic: charges from Felled Trees, the {@code rhythm} Scale and the armor effects.
  */
 @AutoService(RuneModule.class)
@@ -32,6 +32,7 @@ public final class WoodcuttingModule implements RuneModule {
         ToolLoadout loadout = ctx.get(ToolLoadout.class);
         ctx.listen(new LeafListener(items, loadout, () -> ThreadLocalRandom.current().nextDouble()));
         ctx.listen(new CanopyListener(ctx.plugin(), items, loadout));
+        ctx.listen(new ReplantListener(ctx.plugin(), items, loadout));
 
         RhythmConfig config = ctx.config().rhythm();
         Rhythm rhythm = ctx.provide(
