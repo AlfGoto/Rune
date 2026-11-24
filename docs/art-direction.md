@@ -43,6 +43,7 @@ Menus are drawn as interfaces, not as chest grids (Alfred: "way better"). Every 
 | Runes | an altar: 8 sockets in a ring around a Capacity orb that fills up; a leather satchel with the Runes in the inventory (18 per page) | sockets 3, 5, 15, 24, 32, 30, 20, 11; orb 12–14, 21–23; satchel 36–53; Back 27, pages 26 / 35 |
 | Quests | a notice board: 3 notes with a border and header in the Tier colour, icon, goal on 2 lines, progress bar, Tier; a copper reroll button under each | notes 3 × 5 from 0 / 3 / 6 (icon 10 / 13 / 16); reroll 46 / 49 / 52; Tokens 47; Back 53 |
 | Jobs | Account banner with its XP bar, then one card per planned Job, 6 per page (`JobsMenu.PLANNED`, design order): a playable Job shows icon, level, XP bar, name; a Job not built yet is a grey locked card (padlock, grey icon `menu_locked_<job>`, name, tooltip "Not playable yet"); "Coming soon" only fills spots past the last Job | banner 0–8; cards 3 × 2 from 9, 12, 15, 27, 30, 33; pages 48 / 50; Back 49 |
+| Cache reel | a vault: the opened Cache drawn x2 on top, a reel of 9 slots under gold pointers where Runes of random Rarities spin (fast, then slowing) and stop on the best reward, with a near miss next to it; then the frame lights up in the colour of that best Rarity and the rewards show centred, with "Rewards" under it; a sound per Rarity (firework for Legendary) | reel 18–26 (centre 22) |
 
 The layout constants live in `menus.py` (art) and the Java menus (`CodexMenus`, `RunesMenu`, `QuestsMenu`, `JobsMenu`): change both together. Concepts and final renders: Design canvas "Rune textures — Menus and Rarity icons" (https://claude.ai/artifact/1uAJAkpFQivpaveKqcnVzN).
 
@@ -103,4 +104,4 @@ One 7×7 gem per Rarity, in the Rarity's name colour, in the `rune:glyphs` font 
 ## Tooling
 - Generator: `tools/texture-gen/` (Python + Pillow, see its README). A colour change is a one-line edit; `export_all.py` rebuilds every PNG and pack file.
 - Open points: real poplar palette (no poplar texture in 26.1, colours invented); some Relic loose pixels (hanging moss / roots) to check in game.
-- Next batches: Blueprint, font glyphs (Job icons), menus v3 (Cache reel; Jobs and Quests are done).
+- Next batches: Blueprint, font glyphs (Job icons), menus v3 are done (Codex, Runes, Quests, Jobs, Cache reel).

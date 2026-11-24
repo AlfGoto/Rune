@@ -41,5 +41,8 @@
   "rune.menu.jobs.soon": "Coming soon",
   "rune.menu.quests.reroll_button": "Reroll this Quest",
   "rune.menu.quests.reroll_cost": "Costs 1 Reroll Token",
-  "rune.menu.jobs.locked": "Not playable yet"
+  "rune.menu.jobs.locked": "Not playable yet",
+  "rune.menu.cache.title": "%s Cache",
+  "rune.menu.cache.rewards": "Rewards",
+  "rune.menu.cache.close": "Press Esc to close"
 }
