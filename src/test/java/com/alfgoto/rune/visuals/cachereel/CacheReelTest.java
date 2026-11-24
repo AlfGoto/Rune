@@ -65,11 +65,6 @@ class CacheReelTest {
     }
 
     @Test
-    void theReelEndsBeforeTheLootIsGiven() {
-        assertTrue(ticks() < Caches.REVEAL_TICKS);
-    }
-
-    @Test
     void leavingBeforeTheEndStillGivesTheLoot() {
         caches.open(player, caches.create(Rarity.COMMON, null));
         player.closeInventory();

@@ -47,12 +47,13 @@ public final class CacheReelModule implements RuneModule {
             if (event.revealTicks() <= 0 || event.drops().isEmpty()) {
                 return; // given at once: nothing to reveal
             }
-            new CacheReel(event, this::filler).start(plugin);
+            // Built once per opening, not once per spinning item.
+            List<Rune> all = runes.all().stream().filter(r -> !r.id().startsWith("test_")).toList();
+            new CacheReel(event, () -> filler(all)).start(plugin);
         }
 
         /** A random Rune shown spinning past (never given). */
-        private ItemStack filler() {
-            List<Rune> all = runes.all().stream().filter(r -> !r.id().startsWith("test_")).toList();
+        private ItemStack filler(List<Rune> all) {
             if (all.isEmpty()) {
                 return new ItemStack(Material.PAPER);
             }
