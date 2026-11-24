@@ -109,14 +109,18 @@ class MiningArmorTest {
 
     @Test
     void runeIngredientsMatchByRuneIdNotByVanillaMaterial() {
-        CraftingRecipe recipe = book.find("drillers_helm").orElseThrow();
         ItemStack setting = items.create(items.get("gem_setting"), 1);
         ItemStack caversHelmet = items.create(items.get("cavers_helmet"), 1);
         ItemStack vanillaLeather = new ItemStack(Material.LEATHER_HELMET);
         ItemStack diamond = new ItemStack(Material.DIAMOND);
+        ItemStack lantern = new ItemStack(Material.SOUL_LANTERN);
 
-        assertTrue(book.hasRuneIngredients(recipe, new ItemStack[] {diamond, caversHelmet, setting}));
-        assertFalse(book.hasRuneIngredients(recipe, new ItemStack[] {diamond, vanillaLeather, setting}));
+        assertEquals("drillers_helm", book.match(
+                new ItemStack[] {diamond, lantern, diamond, caversHelmet, setting, null, null, null, null})
+                .orElseThrow().id());
+        assertTrue(book.match(
+                new ItemStack[] {diamond, lantern, diamond, vanillaLeather, setting, null, null, null, null})
+                .isEmpty());
     }
 
     private static List<String> concat(List<String> a, List<String> b) {

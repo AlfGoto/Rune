@@ -2,6 +2,7 @@ package com.alfgoto.rune.gameplay.crafting;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
@@ -25,7 +26,8 @@ public final class CraftingModule implements RuneModule {
     public void enable(RuneContext ctx) {
         JobProgress progress = ctx.get(JobProgress.class);
         ItemRegistry items = ctx.get(ItemRegistry.class);
-        RecipeBook recipeBook = ctx.provide(RecipeBook.class, new RecipeBook(ctx.plugin(), items, progress));
+        RecipeBook recipeBook = ctx.provide(RecipeBook.class, new RecipeBook(
+                ctx.plugin(), items, progress, ctx.get(BrokenToolListener.class)::isBroken));
         book = recipeBook;
         ctx.listen(new CraftingListener(
                 recipeBook, items, ctx.get(ToolLoadout.class), ctx.get(RuneRegistry.class)));

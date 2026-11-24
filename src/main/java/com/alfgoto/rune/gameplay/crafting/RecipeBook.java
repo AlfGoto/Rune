@@ -3,12 +3,13 @@ package com.alfgoto.rune.gameplay.crafting;
 import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
@@ -32,9 +33,16 @@ public final class RecipeBook {
     private final Server server;
     private final ItemRegistry items;
     private final JobProgress progress;
+    private final Predicate<ItemStack> isBroken;
     private final Registry<CraftingRecipe> recipes = new Registry<>("recipes");
 
     public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress) {
+        this(plugin, items, progress, stack -> false);
+    }
+
+    /** {@code isBroken}: a Broken Rune item (0 durability) is refused as a Rune ingredient, it must be repaired first. */
+    public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress, Predicate<ItemStack> isBroken) {
+        this.isBroken = isBroken;
         this.plugin = plugin;
         this.server = plugin.getServer();
         this.items = items;
@@ -53,8 +61,8 @@ public final class RecipeBook {
 
     private RecipeChoice choice(Ingredient ingredient) {
         if (ingredient.isRune()) {
-            // Base material only: the server cannot match the Rune id. CraftingListener checks the id
-            // (an exact stack would also compare name and lore, which change with Runes and Ranks).
+            // Base material only. An exact stack would also compare durability, Runes, Mastery, name and lore,
+            // so a used or upgraded tool would never match. match() checks the Rune id of each cell instead.
             return new RecipeChoice.MaterialChoice(items.get(ingredient.itemId()).material());
         }
         return new RecipeChoice.MaterialChoice(ingredient.material());
@@ -78,25 +86,103 @@ public final class RecipeBook {
         return Optional.empty();
     }
 
-    /** True when the Rune items in {@code matrix} are exactly the Rune ingredients of {@code recipe} (by id). */
-    public boolean hasRuneIngredients(CraftingRecipe recipe, ItemStack[] matrix) {
-        Map<String, Integer> need = new HashMap<>();
-        for (String row : recipe.shape()) {
-            for (char c : row.toCharArray()) {
-                Ingredient ingredient = recipe.ingredients().get(c);
-                if (ingredient != null && ingredient.isRune()) {
-                    need.merge(ingredient.itemId(), 1, Integer::sum);
+    /**
+     * The Rune recipe this crafting grid really makes, checking each cell: a Rune ingredient needs that Rune item
+     * (any durability but not Broken, any Runes or Mastery), a vanilla ingredient needs that material and not a Rune item. Like vanilla,
+     * the pattern can sit anywhere in the grid and can be mirrored. Empty when no Rune recipe matches.
+     *
+     * <p>Many Rune items share a base material (every Rune pickaxe is a wooden pickaxe, every Component is paper),
+     * so the server may pick the wrong Rune recipe or none: this is the source of truth.
+     */
+    public Optional<CraftingRecipe> match(ItemStack[] matrix) {
+        List<List<ItemStack>> grid = trim(matrix);
+        for (CraftingRecipe recipe : recipes.all()) {
+            List<String> pattern = trim(recipe.shape());
+            if (fits(recipe, pattern, grid, false) || fits(recipe, pattern, grid, true)) {
+                return Optional.of(recipe);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean fits(CraftingRecipe recipe, List<String> pattern, List<List<ItemStack>> grid, boolean mirrored) {
+        if (pattern.size() != grid.size() || pattern.get(0).length() != grid.get(0).size()) {
+            return false;
+        }
+        int width = pattern.get(0).length();
+        for (int row = 0; row < pattern.size(); row++) {
+            for (int col = 0; col < width; col++) {
+                char symbol = pattern.get(row).charAt(mirrored ? width - 1 - col : col);
+                if (!cellFits(symbol == ' ' ? null : recipe.ingredients().get(symbol), grid.get(row).get(col))) {
+                    return false;
                 }
             }
         }
-        Map<String, Integer> have = new HashMap<>();
-        for (ItemStack stack : matrix) {
-            if (stack == null || stack.getType().isAir()) {
-                continue;
-            }
-            items.of(stack).ifPresent(item -> have.merge(item.id(), 1, Integer::sum));
+        return true;
+    }
+
+    private boolean cellFits(Ingredient ingredient, ItemStack stack) {
+        if (ingredient == null) {
+            return isEmpty(stack);
         }
-        return need.equals(have);
+        if (isEmpty(stack)) {
+            return false;
+        }
+        if (ingredient.isRune()) {
+            return items.of(stack).map(item -> item.id().equals(ingredient.itemId())).orElse(false)
+                    && !isBroken.test(stack);
+        }
+        return stack.getType() == ingredient.material() && items.of(stack).isEmpty();
+    }
+
+    /** The grid cut down to the smallest rectangle holding every item. Empty grid gives a 0 by 0 list. */
+    private static List<List<ItemStack>> trim(ItemStack[] matrix) {
+        int side = (int) Math.round(Math.sqrt(matrix.length));
+        int top = side, bottom = -1, left = side, right = -1;
+        for (int i = 0; i < matrix.length; i++) {
+            if (!isEmpty(matrix[i])) {
+                top = Math.min(top, i / side);
+                bottom = Math.max(bottom, i / side);
+                left = Math.min(left, i % side);
+                right = Math.max(right, i % side);
+            }
+        }
+        List<List<ItemStack>> grid = new ArrayList<>();
+        for (int row = top; row <= bottom; row++) {
+            List<ItemStack> cells = new ArrayList<>();
+            for (int col = left; col <= right; col++) {
+                cells.add(matrix[row * side + col]);
+            }
+            grid.add(cells);
+        }
+        return grid.isEmpty() ? List.of(List.of()) : grid;
+    }
+
+    /** The shape padded to a rectangle, then cut down to the smallest rectangle holding every symbol. */
+    private static List<String> trim(List<String> shape) {
+        int width = shape.stream().mapToInt(String::length).max().orElse(0);
+        int top = shape.size(), bottom = -1, left = width, right = -1;
+        for (int row = 0; row < shape.size(); row++) {
+            String line = shape.get(row);
+            for (int col = 0; col < line.length(); col++) {
+                if (line.charAt(col) != ' ') {
+                    top = Math.min(top, row);
+                    bottom = Math.max(bottom, row);
+                    left = Math.min(left, col);
+                    right = Math.max(right, col);
+                }
+            }
+        }
+        List<String> pattern = new ArrayList<>();
+        for (int row = top; row <= bottom; row++) {
+            String line = String.format("%-" + width + "s", shape.get(row));
+            pattern.add(line.substring(left, right + 1));
+        }
+        return pattern.isEmpty() ? List.of("") : pattern;
+    }
+
+    private static boolean isEmpty(ItemStack stack) {
+        return stack == null || stack.getType().isAir() || stack.getAmount() <= 0;
     }
 
     public boolean isUnlocked(UUID player, CraftingRecipe recipe) {
