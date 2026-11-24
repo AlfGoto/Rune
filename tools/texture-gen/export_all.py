@@ -15,7 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, 'v3'))
 import gui  # noqa: E402  (v2 kit/pix: menus)
-import tools, components, armor, runes, caches  # noqa: E402  (v3)
+import tools, components, armor, runes, caches, icons, menus  # noqa: E402  (v3)
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..', 'src', 'main', 'resources', 'pack'))
 PACK = os.path.join(ROOT, 'assets', 'rune')
@@ -113,6 +113,41 @@ def rune_files():
     return lines
 
 
+def icon_files():
+    """Rarity icons: one bitmap row in the rune:glyphs font (\ue000 Common .. \ue004 Legendary)."""
+    path = os.path.join(PACK, 'textures', 'font', 'rarity.png')
+    icons.strip().save(path)
+    font = {"providers": [
+        {"type": "bitmap", "file": "rune:font/placeholder.png", "height": 8, "ascent": 7, "chars": ["\ue0ff"]},
+        {"type": "bitmap", "file": "rune:font/rarity.png", "height": 8, "ascent": 7, "chars": [icons.chars()]},
+    ]}
+    write_json(os.path.join(PACK, 'font', 'glyphs.json'), font)
+    return ['assets/rune/textures/font/rarity.png', 'assets/rune/font/glyphs.json']
+
+
+def menu_files():
+    """Menu backgrounds v3 + live images (font rune:menus), menu text fonts, the invisible and reroll items."""
+    from PIL import Image
+    import menufont
+    out = []
+    gui = os.path.join(PACK, 'textures', 'gui', 'menu')
+    os.makedirs(gui, exist_ok=True)
+    for name in menus.BACKGROUNDS:
+        menus.BACKGROUND_DRAW[name]().save(os.path.join(gui, name + '.png'))
+        out.append('assets/rune/textures/gui/menu/%s.png' % name)
+    for name, im, _top, _ch in menus.images():
+        im.save(os.path.join(gui, name + '.png'))
+        out.append('assets/rune/textures/gui/menu/%s.png' % name)
+    write_json(os.path.join(PACK, 'font', 'menus.json'), menus.font())
+    out.append('assets/rune/font/menus.json')
+    out += menufont.export(os.path.join(PACK, 'textures'), os.path.join(ROOT, '..', 'menu_font.json'))
+    out += item_files('menu_blank', Image.new('RGBA', (16, 16), (0, 0, 0, 0)), 'minecraft:item/generated')
+    out += item_files('menu_empty', menus.empty_item(), 'minecraft:item/generated')
+    for job in menus.LOCKED_ICONS:
+        out += item_files('menu_locked_' + job, menus.locked_icon(job), 'minecraft:item/generated')
+    return out
+
+
 def append_listed(lines):
     listed = os.path.join(ROOT, 'files.txt')
     have = set(open(listed).read().split())
@@ -153,6 +188,8 @@ def main():
                       'assets/rune/textures/entity/equipment/humanoid_leggings/%s.png' % set_key]
     # Runes, Rune Caches, Rune Codex (v3 runes.py, caches.py)
     lines += rune_files()
+    lines += icon_files()
+    lines += menu_files()
     # menu icons (v2 gui.py)
     for key, item in gui.P.items():
         lines += item_files(key, item['img'], 'minecraft:item/generated')

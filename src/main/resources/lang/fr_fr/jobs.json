@@ -10,5 +10,15 @@
   "rune.command.level.changed": "%s est maintenant niveau %s",
   "rune.command.unknown_job": "Métier inconnu : %s",
   "rune.command.invalid_number": "Nombre invalide : %s",
-  "rune.command.player_not_found": "Joueur introuvable : %s"
+  "rune.command.player_not_found": "Joueur introuvable : %s",
+  "rune.job.excavation": "Excavation",
+  "rune.job.farming": "Agriculture",
+  "rune.job.ranching": "Élevage",
+  "rune.job.fishing": "Pêche",
+  "rune.job.combat": "Combat",
+  "rune.job.archery": "Tir à l'arc",
+  "rune.job.smithing": "Forge",
+  "rune.job.alchemy": "Alchimie",
+  "rune.job.adventuring": "Aventure",
+  "rune.job.runesmithing": "Runeforge"
 }

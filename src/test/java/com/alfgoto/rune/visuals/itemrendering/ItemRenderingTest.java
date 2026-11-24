@@ -69,7 +69,7 @@ class ItemRenderingTest {
         ItemStack stack = registry.create(registry.get("rare_thing"), 1);
         List<Component> lore = stack.getItemMeta().lore();
         assertEquals(2, lore.size());
-        assertEquals("rune.rarity.rare", ((TranslatableComponent) lore.get(0)).key());
+        assertEquals("rune.rarity.rare", ((TranslatableComponent) lore.get(0).children().get(2)).key());
         assertEquals("rune.item.lore.stats_placeholder", ((TranslatableComponent) lore.get(1)).key());
     }
 
@@ -78,7 +78,7 @@ class ItemRenderingTest {
         ItemStack stack = runes.create(runes.get("test_rune"), 2);
         List<Component> lore = stack.getItemMeta().lore();
         assertEquals(4, lore.size());
-        assertEquals("rune.rarity.rare", ((TranslatableComponent) lore.get(0)).key());
+        assertEquals("rune.rarity.rare", ((TranslatableComponent) lore.get(0).children().get(2)).key());
         TranslatableComponent rank = (TranslatableComponent) lore.get(1);
         assertEquals("rune.item.lore.rank_max", rank.key());
         assertEquals(List.of(Component.text(2), Component.text(4)), rank.arguments().stream()
@@ -144,6 +144,7 @@ class ItemRenderingTest {
         ItemStack stack = registry.create(registry.get("maxed_pick"), 1);
         mastery.add(stack, 100_000);
         List<String> keys = stack.getItemMeta().lore().stream()
+                .filter(c -> c instanceof TranslatableComponent) // the Rarity line starts with its icon
                 .map(c -> ((TranslatableComponent) c).key())
                 .toList();
         assertEquals(true, keys.contains("rune.item.lore.mastery_max"));
