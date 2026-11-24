@@ -10,6 +10,9 @@
   "rune.item.specialist_redstone": "Spécialiste : Redstone",
   "rune.item.affinity_lush_caves": "Affinité : Grottes luxuriantes",
   "rune.item.affinity_taiga": "Affinité : Taïga",
+  "rune.item.affinity_birch_forest": "Affinité : Forêt de bouleaux",
+  "rune.item.affinity_dappled_forest": "Affinité : Forêt mouchetée",
+  "rune.item.affinity_jungle": "Affinité : Jungle",
   "rune.item.affinity_mineshaft": "Affinité : Mine abandonnée",
   "rune.item.affinity_deep_dark": "Affinité : Abysses"
 }

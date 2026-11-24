@@ -100,6 +100,38 @@ public final class CoreCraftingModule implements RuneModule {
                 'E', Ingredient.vanilla(Material.ECHO_SHARD)));
 
         miningArmor(book, mining);
+        woodcuttingAxes(ctx, book, ctx.get(JobRegistry.class).registry().get("woodcutting"));
+    }
+
+    /**
+     * The Birch (Woodcutting 6), Spruce (6), Poplar (7) and Jungle (10) axes. The ingredients are the documented
+     * ones; the grid layouts are proposed (not in docs).
+     */
+    private static void woodcuttingAxes(RuneContext ctx, RecipeBook book, Job woodcutting) {
+        Ingredient handle = Ingredient.rune("reinforced_handle");
+        book.register(new CraftingRecipe("birch_axe", woodcutting, 6, "birch_axe", 1,
+                List.of("LLF", "LH ", " L "), Map.of(
+                        'L', Ingredient.vanilla(Material.BIRCH_LOG),
+                        'F', Ingredient.vanilla(Material.FEATHER),
+                        'H', handle)));
+        book.register(new CraftingRecipe("spruce_axe", woodcutting, 6, "spruce_axe", 1,
+                List.of("LLB", "LH ", " L "), Map.of(
+                        'L', Ingredient.vanilla(Material.SPRUCE_LOG),
+                        'B', Ingredient.vanilla(Material.POWDER_SNOW_BUCKET),
+                        'H', handle)));
+        book.register(new CraftingRecipe("poplar_axe", woodcutting, 7, "poplar_axe", 1,
+                List.of("LRO", "LHY", "LL "), Map.of(
+                        'L', Ingredient.vanilla(Material.POPLAR_LOG),
+                        'R', Ingredient.vanilla(Material.RED_POPLAR_LEAVES),
+                        'O', Ingredient.vanilla(Material.ORANGE_POPLAR_LEAVES),
+                        'Y', Ingredient.vanilla(Material.YELLOW_POPLAR_LEAVES),
+                        'H', handle)));
+        book.register(new CraftingRecipe("jungle_axe", woodcutting, 10, "jungle_axe", 1,
+                List.of("LLC", "LGD", "LC "), Map.of(
+                        'L', Ingredient.vanilla(Material.JUNGLE_LOG),
+                        'C', Ingredient.vanilla(Material.COCOA_BEANS),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'G', Ingredient.rune("gem_setting"))));
     }
 
     /**

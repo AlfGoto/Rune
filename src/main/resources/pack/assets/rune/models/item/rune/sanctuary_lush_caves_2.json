@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "rune:item/rune/base/rare",
+    "layer1": "rune:item/rune/logo/sanctuary",
+    "layer2": "rune:item/rune/socket/sanctuary_lush_caves",
+    "layer3": "rune:item/rune/rank/2"
+  }
+}

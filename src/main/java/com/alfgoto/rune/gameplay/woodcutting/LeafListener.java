@@ -51,7 +51,7 @@ final class LeafListener implements Listener {
         if (Tag.LEAVES.isTagged(block.getType())) {
             // Leaves a player placed give no bonus, same as for Leaf Fall.
             if (block.getBlockData() instanceof Leaves data && !data.isPersistent()) {
-                orchard(player, tool, sources, block);
+                orchard(random, player, tool, sources, block);
             }
         } else if (Tag.LOGS.isTagged(block.getType())) {
             leafFall(player, tool, sources, block);
@@ -67,14 +67,15 @@ final class LeafListener implements Listener {
             Block leaves = log.getRelative(offset.x(), offset.y(), offset.z());
             // Leaves a player placed do not decay in vanilla, so they do not fall either.
             if (leaves.getBlockData() instanceof Leaves data && !data.isPersistent()) {
-                orchard(player, tool, sources, leaves);
+                orchard(random, player, tool, sources, leaves);
                 leaves.breakNaturally();
             }
         }
     }
 
     /** Rolls the vanilla loot of {@code leaves} again for each Orchard roll, and drops only apples and saplings. */
-    private void orchard(Player player, ItemStack tool, List<Stacking.Source> sources, Block leaves) {
+    static void orchard(
+            DoubleSupplier random, Player player, ItemStack tool, List<Stacking.Source> sources, Block leaves) {
         int rolls = Stacking.rolls(Stacking.total(LeafRules.ORCHARD, sources), random);
         for (int i = 0; i < rolls; i++) {
             for (ItemStack drop : leaves.getDrops(tool, player)) {

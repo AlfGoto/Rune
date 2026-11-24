@@ -1,8 +1,8 @@
 package com.alfgoto.rune.content.items;
 
+import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
-import com.alfgoto.rune.gameplay.runes.HeldTraits;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ArmorKind;
 import com.alfgoto.rune.gameplay.items.ArmorSpec;
@@ -13,6 +13,8 @@ import com.alfgoto.rune.gameplay.items.RuneItem;
 import com.alfgoto.rune.gameplay.items.ToolKind;
 import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.items.TraitBinding;
+import com.alfgoto.rune.gameplay.runes.HeldTraits;
+import com.alfgoto.rune.gameplay.woodcutting.AxeTraits;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -58,6 +60,7 @@ public final class CoreItemsModule implements RuneModule {
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
         biomePickaxes(items, ctx.config().tools());
+        woodcuttingAxes(items, ctx.config());
         // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
         // Numbers are in config: runes.ore_sense.base (Bone's chance), runes.speed.affinity.per-rank (Deep Dark).
         double oreSense = ctx.config().runeNumber("ore_sense", "base").orElse(5);
@@ -102,6 +105,32 @@ public final class CoreItemsModule implements RuneModule {
                         TraitBinding.always(BiomePickaxeTraits.AFFINITY_OCEAN, tools.traitAffinity()),
                         TraitBinding.always(HeldTraits.NO_WATER_PENALTY, 1),
                         TraitBinding.always(HeldTraits.NO_AIR_PENALTY, 1))));
+    }
+
+    /**
+     * The Birch, Spruce, Poplar and Jungle axes (docs/jobs/woodcutting.md). Each has the Affinity Trait of its
+     * Place (the value of an Affinity Rune at Rank 1) and one extra. Tier and Capacity follow the Rarity.
+     */
+    private static void woodcuttingAxes(ItemRegistry items, RuneConfig config) {
+        double affinity = config.speedRunes().affinityPerRank();
+        double birchSeconds = config.traitNumber(AxeTraits.FELLED_TREE_SPEED, "seconds", 5);
+        double climbPercent = config.traitNumber(AxeTraits.CLIMB_SPEED, "percent", 50);
+        axe(items, "birch_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_birch_forest", affinity),
+                TraitBinding.always(AxeTraits.FELLED_TREE_SPEED, birchSeconds));
+        axe(items, "spruce_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_taiga", affinity),
+                TraitBinding.always(AxeTraits.POWDER_SNOW_IMMUNITY, 1));
+        axe(items, "poplar_axe", Rarity.UNCOMMON,
+                TraitBinding.always("affinity_dappled_forest", affinity),
+                TraitBinding.always(AxeTraits.FELLED_TREE_LEAF_FALL, 1));
+        axe(items, "jungle_axe", Rarity.RARE,
+                TraitBinding.always("affinity_jungle", affinity),
+                TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+    }
+
+    private static void axe(ItemRegistry items, String id, Rarity rarity, TraitBinding... bindings) {
+        items.register(RuneItem.tool(id, rarity, ToolKind.AXE, id, ToolSpec.DEFAULT.withTrait(id, 0, bindings)));
     }
 
     /**

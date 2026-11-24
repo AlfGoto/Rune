@@ -86,7 +86,7 @@ FUSED      Timberfall + Evoker's Hatchet ─► Worldfeller
 | 5 | Woodsman's Axe / Hache de forestier | Uncommon | iron | 6 +2 | Plain, very durable |
 | 6 | Birch Axe / Hache de bouleau | Uncommon | iron | 6 | Affinity: Birch Forest; move speed boost after each Felled Tree |
 | 6 | Spruce Axe / Hache de sapin | Uncommon | iron | 6 | Affinity: Taiga; no slowdown or freezing in powder snow |
-| 7 | Poplar Axe / Hache de peuplier | Uncommon | iron | 6 | Affinity: Dappled Forest; a Felled Tree's leaves fall instantly (0 XP) |
+| 7 | Poplar Axe / Hache de peuplier | Uncommon | iron | 6 | Affinity: Dappled Forest; a Felled Tree's leaves fall within about a second (0 XP) |
 | 8 | Orchard Axe / Hache du verger | Uncommon | iron | 6 | More apples and saplings from leaves |
 | 10 | Jungle Axe / Hache de jungle | Rare | diamond | 10 | Affinity: Jungle; climb faster |
 | 10 | Crimson Axe / Hache écarlate | Rare | diamond | 10 | Affinity: Crimson Forest; short fire resistance after each stem |
@@ -160,7 +160,7 @@ Generic Mining Runes already fit axes: Haste, Sturdy, Fortune (+1 log / leaf dro
 | Rune (EN / FR) | Rarity | Max Rank | Per Rank | Fits |
 |---|---|---|---|---|
 | Specialist: <wood> / Spécialiste : <essence> | Common | 3 | +20% speed on one wood type | axe |
-| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Taiga, Jungle, Dappled Forest, Crimson Forest, Woodland Mansion…) | pickaxe, axe |
+| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Taiga, Jungle, Dappled Forest, Crimson Forest, Woodland Mansion…). The forest Places (Taiga, Birch Forest, Dappled Forest, Jungle) are axe only | pickaxe, axe (forest Places: axe only) |
 | Leaf Fall / Défoliation | Uncommon | 3 | Breaking a log makes leaves fall in radius 2 / 4 / 6 (0 XP) | axe |
 | Orchard / Verger | Uncommon | 3 | +10% apples and saplings from leaves | axe |
 | Canopy Stride / Canopée | Uncommon | none | Faster on leaves and logs, +10% per Rank | axe |
