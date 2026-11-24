@@ -57,7 +57,7 @@ class TextTest {
 
     @Test
     void glyphUsesGlyphFont() {
-        assertEquals(Glyphs.FONT, Glyphs.glyph('').font());
+        assertEquals(Glyphs.FONT, Glyphs.glyph('\ue000').font());
     }
 
     @Test

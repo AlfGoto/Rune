@@ -19,7 +19,7 @@ import org.bukkit.inventory.InventoryHolder;
  */
 public class Menu implements InventoryHolder {
 
-    private final Inventory inventory;
+    private Inventory inventory;
     private final Menu parent;
     private final Map<Integer, Button> buttons = new HashMap<>();
 
@@ -64,14 +64,30 @@ public class Menu implements InventoryHolder {
         }
     }
 
-    /** The slot of the back button: bottom row, middle. */
-    protected final int backSlot() {
+    /** The slot of the back button: bottom row, middle. A menu with a drawn background can move it. */
+    protected int backSlot() {
         return size() - 5;
     }
 
-    private Button backButton() {
+    /** The back button: an arrow; a menu whose background draws it uses an invisible button instead. */
+    protected Button backButton() {
         return Button.of(
                 Material.ARROW, Text.translatable("rune.menu.back", "Back").color(NamedTextColor.YELLOW), this::back);
+    }
+
+    /**
+     * Changes the title (menus drawn with {@link MenuCanvas} show live data in it). Minecraft cannot change
+     * an open window's title, so the items move to a new window, reopened for whoever was looking.
+     */
+    protected void retitle(Component title) {
+        Inventory old = inventory;
+        inventory = Bukkit.createInventory(this, old.getSize(), title);
+        inventory.setContents(old.getContents());
+        for (var viewer : new java.util.ArrayList<>(old.getViewers())) {
+            if (viewer instanceof Player player) {
+                player.openInventory(inventory);
+            }
+        }
     }
 
     /** Opens the parent menu, or closes this menu if it has none. */
