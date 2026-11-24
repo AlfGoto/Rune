@@ -62,13 +62,30 @@ public final class QuestTracker implements Listener {
 
     @EventHandler
     public void onJobAction(JobActionEvent event) {
+        count(event, QuestAction.BLOCK);
+    }
+
+    /** A felled or grown tree: counts for the Quest Types of that {@link QuestAction}. */
+    @EventHandler
+    public void onQuestAction(QuestActionEvent event) {
+        count(new JobActionEvent(event.player(), event.job(), 0, event.block(), event.tool()), event.action());
+    }
+
+    private void count(JobActionEvent event, QuestAction action) {
         Player player = event.player();
         UUID id = player.getUniqueId();
         for (var entry : book.slots(id).entrySet()) {
             int slot = entry.getKey();
             Quest quest = entry.getValue();
-            if (!quest.type().job().equals(event.job()) || !quest.type().objective().counts(event)) {
+            QuestType type = quest.type();
+            if (!type.job().equals(event.job()) || type.action() != action || !type.objective().counts(event)) {
                 continue;
+            }
+            if (type.distinct() != null) {
+                String key = type.distinct().apply(event);
+                if (key == null || !book.markSeen(id, slot, key)) {
+                    continue;
+                }
             }
             int done = book.advance(id, slot);
             if (done >= quest.target()) {

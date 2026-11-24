@@ -15,6 +15,8 @@ public final class BlockTrackingModule implements RuneModule {
     public void enable(RuneContext ctx) {
         BlockTracker tracker = ctx.provide(BlockTracker.class, new PdcBlockTracker(Text.NAMESPACE));
         ctx.listen(new BlockTrackingListener(tracker));
+        SaplingPlanters planters = ctx.provide(SaplingPlanters.class, new SaplingPlanters(Text.NAMESPACE));
+        ctx.listen(new SaplingPlanterListener(planters));
         ctx.debug(new BlocksDebug(tracker));
     }
 

@@ -212,7 +212,7 @@ Quest Types at launch:
 | Place | "Cut 40 logs in a Dark Forest" |
 | Variety | "Cut 5 different wood types" |
 | Tool | "Fell 20 trees with a Jungle Axe" |
-| Reforestation | "Grow 10 trees from saplings" (only successful growths count) |
+| Reforestation | "Grow 25 trees from saplings" (only successful growths count; bone meal counts ×1, see `design-decisions.md`) |
 
 Quest Tier (Common → Legendary) multiplies the objective (×1 / ×1.5 / ×2 / ×3 / ×5) and improves the rewards; see `design-decisions.md`. Legendary-tier Woodcutting Quests can, ultra-rarely, reward axe Relics; high Tiers can reward the Treetop Stride Blueprint.
 

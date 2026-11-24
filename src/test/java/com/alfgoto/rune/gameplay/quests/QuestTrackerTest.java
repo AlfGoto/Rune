@@ -65,6 +65,31 @@ class QuestTrackerTest {
     }
 
     @Test
+    void varietyCountsEachKeyOnceAndTreeActionsOnlyCountForTheirType() {
+        QuestType variety = new QuestType("variety", CoreJobs.WOODCUTTING, 5, e -> true)
+                .distinctBy(e -> e.xp() > 0 ? "a" : "b");
+        QuestType grown = new QuestType("grown", CoreJobs.WOODCUTTING, 5).counting(QuestAction.TREE_GROWN);
+        book.set(player.getUniqueId(), 1, variety, Rarity.COMMON);
+        book.set(player.getUniqueId(), 2, grown, Rarity.COMMON);
+        tracker.onJobAction(new JobActionEvent(player, CoreJobs.WOODCUTTING, 1, null, null));
+        tracker.onJobAction(new JobActionEvent(player, CoreJobs.WOODCUTTING, 1, null, null));
+        assertEquals(1, book.progress(player.getUniqueId(), 1), "same key counts once");
+        tracker.onJobAction(new JobActionEvent(player, CoreJobs.WOODCUTTING, 0, null, null));
+        assertEquals(2, book.progress(player.getUniqueId(), 1));
+        assertEquals(0, book.progress(player.getUniqueId(), 2), "block actions do not count as grown trees");
+        tracker.onQuestAction(new QuestActionEvent(player, CoreJobs.WOODCUTTING, QuestAction.TREE_GROWN, null, null));
+        assertEquals(1, book.progress(player.getUniqueId(), 2));
+        assertEquals(2, book.progress(player.getUniqueId(), 1), "a grown tree is not a block");
+    }
+
+    @Test
+    void targetIsCappedByMaxSize() {
+        QuestType capped = new QuestType("capped", CoreJobs.WOODCUTTING, 5).cappedAt(12);
+        assertEquals(12, book.target(capped, Rarity.LEGENDARY));
+        assertEquals(5, book.target(capped, Rarity.COMMON));
+    }
+
+    @Test
     void completionRewardsAndDrawsANewQuest() {
         double jobXpBefore = progress.jobXp(player.getUniqueId(), CoreJobs.MINING);
         double accountBefore = progress.accountXp(player.getUniqueId());

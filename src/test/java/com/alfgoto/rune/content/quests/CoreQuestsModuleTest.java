@@ -2,6 +2,7 @@ package com.alfgoto.rune.content.quests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.alfgoto.rune.RunePlugin;
@@ -15,6 +16,7 @@ import com.alfgoto.rune.gameplay.places.Place;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.gameplay.places.PlaceRegistry;
 import com.alfgoto.rune.gameplay.places.WorldProbe;
+import com.alfgoto.rune.gameplay.quests.QuestAction;
 import com.alfgoto.rune.gameplay.quests.QuestType;
 import com.alfgoto.rune.gameplay.quests.QuestTypeRegistry;
 import com.alfgoto.rune.text.Rarity;
@@ -145,5 +147,59 @@ class CoreQuestsModuleTest {
         JobActionEvent event = new JobActionEvent(player, CoreJobs.MINING, wall, null);
         assertTrue(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft", 5, 40, 5), event));
         assertFalse(CoreQuestsModule.isInPlace(detector("minecraft:mineshaft", 9, 40, 9), event));
+    }
+
+    @Test
+    void woodcuttingTypesAreRegistered() {
+        var types = plugin.context().get(QuestTypeRegistry.class).registry();
+        assertEquals(64, types.get("wood_collect").baseSize());
+        assertEquals(40, types.get("wood_place").baseSize());
+        assertEquals(5, types.get("wood_variety").baseSize());
+        assertEquals(20, types.get("wood_tool").baseSize());
+        assertEquals(25, types.get("reforestation").baseSize());
+        assertEquals(QuestAction.TREE_FELLED, types.get("wood_tool").action());
+        assertEquals(QuestAction.TREE_GROWN, types.get("reforestation").action());
+        assertEquals(12, types.get("wood_variety").maxSize());
+    }
+
+    @Test
+    void woodCollectCountsSpruceLogAndWoodOnly() {
+        assertTrue(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_LOG, 60)));
+        assertTrue(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_WOOD, 60)));
+        assertFalse(CoreQuestsModule.isSpruceLog(block(Material.OAK_LOG, 60)));
+        assertFalse(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_LEAVES, 60)));
+    }
+
+    @Test
+    void woodTypesCoverEveryFamilyAndNothingElse() {
+        assertEquals("oak", WoodTypes.of(Material.OAK_LOG));
+        assertEquals("dark_oak", WoodTypes.of(Material.DARK_OAK_WOOD));
+        assertEquals("pale_oak", WoodTypes.of(Material.PALE_OAK_LOG));
+        assertEquals("crimson", WoodTypes.of(Material.CRIMSON_STEM));
+        assertEquals("warped", WoodTypes.of(Material.STRIPPED_WARPED_HYPHAE));
+        assertEquals("poplar", WoodTypes.of(Material.POPLAR_LOG));
+        assertNull(WoodTypes.of(Material.OAK_PLANKS));
+        assertNull(WoodTypes.of(Material.BAMBOO_BLOCK));
+        assertNull(WoodTypes.of(Material.STONE));
+    }
+
+    @Test
+    void woodPlaceNeedsALogInTheDarkForest() {
+        QuestType place = plugin.context().get(QuestTypeRegistry.class).registry().get("wood_place");
+        Block stone = block(Material.STONE, 60);
+        assertFalse(place.objective().counts(new JobActionEvent(player, CoreJobs.WOODCUTTING, stone, null)));
+        Block log = block(Material.OAK_LOG, 60);
+        // The test world has no Dark Forest biome.
+        assertFalse(place.objective().counts(new JobActionEvent(player, CoreJobs.WOODCUTTING, log, null)));
+    }
+
+    @Test
+    void woodToolCountsTheJungleAxeOnly() {
+        ItemRegistry items = new ItemRegistry(plugin);
+        RuneItem jungle = items.register(
+                RuneItem.tool("jungle_axe", Rarity.RARE, ToolKind.AXE, "jungle_axe", ToolSpec.DEFAULT));
+        assertTrue(CoreQuestsModule.isHeldItem(items, items.create(jungle, 1), CoreQuestsModule.WOOD_TOOL_ID));
+        assertFalse(CoreQuestsModule.isHeldItem(
+                items, new ItemStack(Material.WOODEN_AXE), CoreQuestsModule.WOOD_TOOL_ID));
     }
 }
