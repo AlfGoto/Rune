@@ -1,5 +1,6 @@
 package com.alfgoto.rune.foundations.config;
 
+import com.alfgoto.rune.text.Rarity;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public final class RuneConfig {
     public static final String REWARDS_RARITY_BOOST = "rewards.rarity-boost";
     public static final String REWARDS_ROLLS_BY_RARITY = "rewards.rolls-by-rarity";
     public static final String REWARDS_JOB_BIAS = "rewards.job-bias";
+    public static final String BOOK_CACHE_RARITY = "vanilla-overrides.book-cache-rarity";
 
     static final double DEFAULT_LEVEL_CURVE_BASE = 50;
     static final double DEFAULT_LEVEL_CURVE_EXPONENT = 1.3;
@@ -59,6 +61,7 @@ public final class RuneConfig {
     static final List<Double> DEFAULT_REWARDS_RARITY_BOOST = List.of(1.0, 1.5, 2.0, 3.0, 4.0);
     static final List<Double> DEFAULT_REWARDS_ROLLS_BY_RARITY = List.of(1.0, 1.0, 2.0, 2.0, 3.0);
     static final double DEFAULT_REWARDS_JOB_BIAS = 0.6;
+    static final Rarity DEFAULT_BOOK_CACHE_RARITY = Rarity.UNCOMMON;
     /** One multiplier per Rarity. */
     static final int QUEST_TIER_COUNT = 5;
 
@@ -89,6 +92,7 @@ public final class RuneConfig {
     private CacheConfig caches = CacheConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
+    private Rarity bookCacheRarity = DEFAULT_BOOK_CACHE_RARITY;
     private TraitConfig traits = TraitConfig.defaults();
 
     private RuneConfig(
@@ -241,7 +245,26 @@ public final class RuneConfig {
         loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
+        String bookRarity = section.getString(BOOK_CACHE_RARITY);
+        if (bookRarity == null) {
+            logger.severe("Config '" + BOOK_CACHE_RARITY + "' is missing. Using default "
+                    + DEFAULT_BOOK_CACHE_RARITY.id() + ".");
+        } else {
+            Rarity parsed = Rarity.fromId(bookRarity);
+            if (parsed == null) {
+                logger.severe("Config '" + BOOK_CACHE_RARITY + "' must be a Rarity (common, uncommon, rare, epic,"
+                        + " legendary), got '" + bookRarity + "'. Using default "
+                        + DEFAULT_BOOK_CACHE_RARITY.id() + ".");
+            } else {
+                loaded.bookCacheRarity = parsed;
+            }
+        }
         return loaded;
+    }
+
+    /** Rarity of the Rune Cache that replaces each enchanted book in loot, fishing and trades. */
+    public Rarity bookCacheRarity() {
+        return bookCacheRarity;
     }
 
     /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */

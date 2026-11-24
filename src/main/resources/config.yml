@@ -270,6 +270,10 @@ caches:
   # Above the table: an Epic Cache every N levels, a Legendary one every M levels (wins over Epic)
   epic-every: 5
   legendary-every: 25
+vanilla-overrides:
+  # Rarity of the Rune Cache that replaces each enchanted book in chests, fishing and villager trades
+  # (common, uncommon, rare, epic, legendary)
+  book-cache-rarity: uncommon
 runes:
   rank-up:
     # Rank-up at the smithing table costs vanilla XP levels: multiplier ^ N to go from Rank N to N+1

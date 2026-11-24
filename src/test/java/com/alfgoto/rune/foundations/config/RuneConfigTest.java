@@ -2,6 +2,7 @@ package com.alfgoto.rune.foundations.config;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.alfgoto.rune.text.Rarity;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -275,6 +278,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3
@@ -308,7 +313,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(59, errors.size());
+        assertEquals(60, errors.size());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
         assertEquals(TraitConfig.defaults(), c.traits());
         assertEquals(3, c.rankUpCostMultiplier());
         assertEquals(5, c.playerCapacityBase());
@@ -332,6 +338,23 @@ class RuneConfigTest {
                 """);
         assertEquals(0.6, c.rewardsJobBias());
         assertTrue(errors.stream().anyMatch(e -> e.contains("rewards.job-bias")));
+    }
+
+    @Test
+    void bookCacheRarityDefaultsToUncommonAndRejectsUnknownValues() throws Exception {
+        assertEquals(Rarity.UNCOMMON, RuneConfig.defaults().bookCacheRarity());
+        assertEquals(
+                Rarity.EPIC,
+                load("""
+                vanilla-overrides:
+                  book-cache-rarity: epic
+                """).bookCacheRarity());
+        RuneConfig bad = load("""
+                vanilla-overrides:
+                  book-cache-rarity: shiny
+                """);
+        assertEquals(Rarity.UNCOMMON, bad.bookCacheRarity());
+        assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
     }
 
     @Test
@@ -419,6 +442,8 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                vanilla-overrides:
+                  book-cache-rarity: uncommon
                 runes:
                   rank-up:
                     cost-multiplier: 3

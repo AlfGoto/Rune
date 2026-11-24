@@ -28,4 +28,13 @@ public final class Text {
     public static TranslatableComponent rarityName(Rarity rarity) {
         return translatable(rarity.translationKey(), rarity.englishName()).color(rarity.color());
     }
+
+    /** The Rarity's icon, a space, then its name in its colour: "◆ Rare". */
+    public static Component rarityLine(Rarity rarity) {
+        return Component.text()
+                .append(Glyphs.rarity(rarity))
+                .append(Component.text(" "))
+                .append(rarityName(rarity))
+                .build();
+    }
 }

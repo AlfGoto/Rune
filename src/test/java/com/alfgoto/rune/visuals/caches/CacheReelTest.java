@@ -7,12 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.gameplay.rewards.Drop;
 import com.alfgoto.rune.text.Rarity;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,8 +58,26 @@ class CacheReelTest {
         };
     }
 
+    /** One filler material per Rarity, so the tests can tell which Rarity spins past. */
+    private static ItemStack filler(Rarity rarity) {
+        return new ItemStack(FILLERS[rarity.ordinal()]);
+    }
+
+    private static final Material[] FILLERS = {
+        Material.WHITE_WOOL, Material.LIME_WOOL, Material.LIGHT_BLUE_WOOL, Material.MAGENTA_WOOL, Material.ORANGE_WOOL
+    };
+
     private ReelMenu reel(List<Drop> drops, AtomicInteger given) {
-        return new ReelMenu(plugin, player, drops, given::incrementAndGet, new Random(3));
+        return new ReelMenu(
+                plugin, player, Rarity.RARE, drops, given::incrementAndGet, new Random(3), CacheReelTest::filler);
+    }
+
+    private static int spinTicks() {
+        int total = 0;
+        for (int i = 0; i < ReelMenu.STEPS; i++) {
+            total += ReelMenu.delay(i);
+        }
+        return total;
     }
 
     @Test
@@ -69,9 +90,12 @@ class CacheReelTest {
             assertEquals(0, given.get(), "not before the reveal");
             server.getScheduler().performTicks(1000);
             assertEquals(1, given.get(), rarity.name());
-            // final state: the bar above the middle Drop (3 Drops: slots 3..5 of the middle row)
-            assertEquals(Material.PAPER, menu.getInventory().getItem(13).getType());
-            assertEquals(ReelStyle.pane(rarity), menu.getInventory().getItem(4).getType());
+            // final state: the 3 Drops centred in the reel row (slots 21..23), the rest empty
+            for (int slot = 21; slot <= 23; slot++) {
+                assertEquals(Material.PAPER, menu.getInventory().getItem(slot).getType(), "slot " + slot);
+            }
+            assertNotEquals(Material.PAPER, menu.getInventory().getItem(20).getType());
+            assertNotEquals(Material.PAPER, menu.getInventory().getItem(24).getType());
             menu.complete();
             assertEquals(1, given.get(), "closing after the end gives nothing more");
         }
@@ -84,13 +108,31 @@ class CacheReelTest {
     }
 
     @Test
-    void theReelPauseShowsThePaneOfTheLandedRarityUnderThePointer() {
-        ReelMenu menu = reel(List.of(drop(Rarity.EPIC)), new AtomicInteger());
+    void theReelSpinsFillersAndStopsOnTheBestDropWithANearMiss() {
+        ReelMenu menu = reel(List.of(drop(Rarity.COMMON), drop(Rarity.EPIC)), new AtomicInteger());
         menu.start();
-        server.getScheduler().performTicks(50);
-        assertEquals(Material.HOPPER, menu.getInventory().getItem(4).getType());
-        assertEquals(ReelStyle.pane(Rarity.EPIC), menu.getInventory().getItem(13).getType());
-        assertEquals(Material.BLACK_STAINED_GLASS_PANE, menu.getInventory().getItem(0).getType());
+        assertTrue(Arrays.asList(FILLERS).contains(menu.getInventory().getItem(ReelMenu.CENTER).getType()),
+                "filler items spin before the end");
+        server.getScheduler().performTicks(spinTicks() + 1);
+        ItemStack landing = menu.getInventory().getItem(ReelMenu.CENTER);
+        assertEquals(Material.PAPER, landing.getType(), "the best Drop is under the pointer");
+        assertTrue(landing.getItemMeta().getEnchantmentGlintOverride());
+        Material left = menu.getInventory().getItem(ReelMenu.CENTER - 1).getType();
+        Material right = menu.getInventory().getItem(ReelMenu.CENTER + 1).getType();
+        assertTrue(left == Material.ORANGE_WOOL || right == Material.ORANGE_WOOL,
+                "a Legendary sits next to the Epic landing");
+    }
+
+    @Test
+    void theRevealRedrawsTheTitleWithoutClosingTheReel() {
+        AtomicInteger given = new AtomicInteger();
+        ReelMenu menu = reel(List.of(drop(Rarity.RARE)), given);
+        menu.start();
+        server.getScheduler().performTicks(spinTicks() + ReelMenu.LAND_PAUSE + 1);
+        assertEquals(1, given.get());
+        assertEquals(menu, player.getOpenInventory().getTopInventory().getHolder(), "still open after the reveal");
+        server.getScheduler().performTicks(40);
+        assertEquals(1, given.get(), "no second loot after the reveal");
     }
 
     @Test
@@ -106,16 +148,12 @@ class CacheReelTest {
     }
 
     @Test
-    void closingDuringThePulseGivesNothingMore() {
+    void closingAfterTheRevealGivesNothingMore() {
         AtomicInteger given = new AtomicInteger();
         ReelMenu menu = reel(List.of(drop(Rarity.LEGENDARY)), given);
         menu.start();
-        int total = 0;
-        for (int i = 0; i < ReelMenu.STEPS; i++) {
-            total += ReelMenu.delay(i);
-        }
-        server.getScheduler().performTicks(total + ReelMenu.LAND_PAUSE + 1);
-        assertEquals(1, given.get(), "given at the reveal, before the pulse ends");
+        server.getScheduler().performTicks(spinTicks() + ReelMenu.LAND_PAUSE + 1);
+        assertEquals(1, given.get(), "given at the reveal");
         player.closeInventory();
         server.getScheduler().performTicks(1000);
         assertEquals(1, given.get());
@@ -141,7 +179,7 @@ class CacheReelTest {
     }
 
     @Test
-    void fillerPanesAreWeightedTowardsCommon() {
+    void fillerItemsAreWeightedTowardsCommon() {
         Random random = new Random(1);
         int[] counts = new int[Rarity.values().length];
         for (int i = 0; i < 10_000; i++) {
@@ -156,13 +194,13 @@ class CacheReelTest {
     @Test
     void aTooBigLootShowsTheNetherStar() {
         AtomicInteger given = new AtomicInteger();
-        List<Drop> ten = java.util.stream.IntStream.range(0, 10)
+        List<Drop> ten = IntStream.range(0, 10)
                 .mapToObj(i -> drop(Rarity.COMMON))
                 .toList();
         ReelMenu menu = reel(ten, given);
         menu.start();
         server.getScheduler().performTicks(1000);
-        assertEquals(Material.NETHER_STAR, menu.getInventory().getItem(13).getType());
+        assertEquals(Material.NETHER_STAR, menu.getInventory().getItem(ReelMenu.CENTER).getType());
         assertEquals(1, given.get());
     }
 }

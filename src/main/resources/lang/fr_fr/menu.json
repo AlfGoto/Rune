@@ -34,5 +34,15 @@
   "rune.menu.quests.tokens": "Jetons de relance : %s / %s",
   "rune.menu.quests.tier": "Palier : %s",
   "rune.menu.quests.progress": "%s / %s",
-  "rune.menu.quests.reroll": "Clique pour relancer (1 jeton de relance)"
+  "rune.menu.codex.level": "Niveau %s",
+  "rune.menu.codex.capacity": "Capacité",
+  "rune.menu.codex.jobs_value": "Niv. %s",
+  "rune.menu.jobs.card_level": "Niv. %s",
+  "rune.menu.jobs.soon": "Bientôt",
+  "rune.menu.quests.reroll_button": "Relancer cette Quête",
+  "rune.menu.quests.reroll_cost": "Coûte 1 jeton de relance",
+  "rune.menu.jobs.locked": "Pas encore jouable",
+  "rune.menu.cache.title": "Cache %s",
+  "rune.menu.cache.rewards": "Récompenses",
+  "rune.menu.cache.close": "Échap pour fermer"
 }
