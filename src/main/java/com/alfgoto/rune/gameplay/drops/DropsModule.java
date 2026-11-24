@@ -26,5 +26,6 @@ public final class DropsModule implements RuneModule {
                 ctx.get(ToolLoadout.class),
                 new Smelting(),
                 () -> ThreadLocalRandom.current().nextDouble()));
+        ctx.listen(new MagnetListener(ctx.get(ItemRegistry.class), ctx.get(ToolLoadout.class)));
     }
 }

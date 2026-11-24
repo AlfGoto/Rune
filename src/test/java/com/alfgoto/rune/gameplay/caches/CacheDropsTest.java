@@ -20,6 +20,14 @@ class CacheDropsTest {
     }
 
     @Test
+    void cacheHunterRaisesTheChanceByARelativePercent() {
+        assertEquals(0.015 * 1.15, drops.chance(30, 15), 1e-12); // Rank 1
+        assertEquals(0.015 * 1.45, drops.chance(30, 45), 1e-12); // Rank 3
+        assertEquals(drops.chance(30), drops.chance(30, 0), 1e-12);
+        assertEquals(1, drops.chance(3000, 45)); // still capped
+    }
+
+    @Test
     void noXpMeansNoChanceAndChanceIsCapped() {
         assertEquals(0, drops.chance(0));
         assertEquals(0, drops.chance(-3));
