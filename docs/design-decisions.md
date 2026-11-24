@@ -112,6 +112,7 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
 
 ## Anti-exploit
 - Player-placed blocks give 0 Job XP in every Job (placed blocks are tracked). This also covers silk-touched ores placed back down.
+- Fortune and Smelt do nothing on a block tagged `placed` (decided 2026-11-24, round 2 of #89: no item farm by placing and breaking logs or ores). Silk Touch is unchanged. `DropEffectsListener` reads the tag at the break event (HIGH), before Block Tracking clears it at MONITOR.
 - Blocks created by fluids (cobblestone / cobbled deepslate / stone / basalt generators) give 0 XP. Exception: obsidian (costs a lava source).
 - Blocks only count when the player breaks them (tool, tool effect, hand); TNT, creepers and natural decay (leaves) give 0.
 - Grown blocks (trees, giant mushrooms, huge fungi, chorus, spreading plants…) are tagged when they grow. Grown over time: full XP. Grown by bone meal (player or dispenser), or by an instant-regrowth effect: ×0.25 XP and ×0.25 Mastery. One rule for every Job.
