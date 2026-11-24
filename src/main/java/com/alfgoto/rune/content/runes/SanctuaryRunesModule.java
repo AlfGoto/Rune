@@ -32,7 +32,7 @@ public final class SanctuaryRunesModule implements RuneModule {
     static final List<String> BIOMES = List.of("lush_caves", "taiga");
 
     /** Biomes that already have a real Rune texture (tools/texture-gen/v3/runes.py, VARIANTS). */
-    private static final Set<String> TEXTURED = Set.of("taiga");
+    private static final Set<String> TEXTURED = Set.of("taiga", "lush_caves");
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {

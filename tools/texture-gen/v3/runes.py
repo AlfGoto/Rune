@@ -234,7 +234,7 @@ VARIANTS = {
         'lush_caves': 'moss', 'taiga': 'spruce', 'mineshaft': 'oak_log', 'deep_dark': 'sculk',
         'dripstone': 'dripstone', 'mountains': 'snow', 'jungle': 'jungle', 'crimson_forest': 'crimson'},
     'sanctuary': {'forest': 'leaves_green', 'cherry_grove': 'pink_petals', 'pale_garden': 'pale_moss',
-                  'taiga': 'spruce'},
+                  'taiga': 'spruce', 'lush_caves': 'moss'},
 }
 
 
