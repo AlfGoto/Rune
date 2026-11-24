@@ -1,0 +1,14 @@
+{
+  "rune.item.blueprint": "Blueprint",
+  "rune.item.blueprint_named": "Blueprint: %s",
+  "rune.item.lore.blueprint": "Unlocks the recipe: %s",
+  "rune.item.lore.blueprint_use": "Right-click to learn it",
+  "rune.blueprint.test_blueprint": "Test Blueprint",
+  "rune.blueprint.learned": "Recipe unlocked: %s.",
+  "rune.blueprint.already_known": "You already know the recipe: %s.",
+  "rune.blueprint.milestone": "Level %s reached: Blueprint earned: %s.",
+  "rune.reward.blueprint": "Blueprint: %s",
+  "rune.command.give_blueprint.usage": "Usage: /rune give blueprint <id>",
+  "rune.command.give_blueprint.unknown": "Unknown Blueprint: %s",
+  "rune.command.give_blueprint.done": "Gave the Blueprint: %s."
+}

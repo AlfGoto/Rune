@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
@@ -35,6 +36,7 @@ public final class RecipeBook {
     private final JobProgress progress;
     private final Predicate<ItemStack> isBroken;
     private final Registry<CraftingRecipe> recipes = new Registry<>("recipes");
+    private BiPredicate<UUID, String> blueprintKnown = (player, id) -> false;
 
     public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress) {
         this(plugin, items, progress, stack -> false);
@@ -185,7 +187,16 @@ public final class RecipeBook {
         return stack == null || stack.getType().isAir() || stack.getAmount() <= 0;
     }
 
+    /** Sets how a Blueprint recipe is unlocked: {@code known(player, blueprint id)}. The default knows none. */
+    public void setBlueprintCheck(BiPredicate<UUID, String> known) {
+        this.blueprintKnown = known;
+    }
+
+    /** A Blueprint recipe needs its Blueprint used; any other recipe needs its Job Level. */
     public boolean isUnlocked(UUID player, CraftingRecipe recipe) {
+        if (recipe.blueprint()) {
+            return blueprintKnown.test(player, recipe.id());
+        }
         return progress.jobLevel(player, recipe.job()) >= recipe.level();
     }
 

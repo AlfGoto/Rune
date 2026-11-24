@@ -19,8 +19,32 @@ public record CraftingRecipe(
         String result,
         int amount,
         List<String> shape,
-        Map<Character, Ingredient> ingredients)
+        Map<Character, Ingredient> ingredients,
+        boolean blueprint)
         implements Identified {
+
+    /** A recipe unlocked by a Job Level. */
+    public CraftingRecipe(
+            String id,
+            Job job,
+            int level,
+            String result,
+            int amount,
+            List<String> shape,
+            Map<Character, Ingredient> ingredients) {
+        this(id, job, level, result, amount, shape, ingredients, false);
+    }
+
+    /** A recipe unlocked by its Blueprint (the Blueprint id is {@code id}), not by a Job Level. */
+    public static CraftingRecipe blueprint(
+            String id,
+            Job job,
+            String result,
+            int amount,
+            List<String> shape,
+            Map<Character, Ingredient> ingredients) {
+        return new CraftingRecipe(id, job, 1, result, amount, shape, ingredients, true);
+    }
 
     public CraftingRecipe {
         Objects.requireNonNull(id, "id");

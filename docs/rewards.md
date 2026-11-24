@@ -21,7 +21,7 @@ Decided 2026-11-15 (issue #41). Builds on ADR 0002 and `design-decisions.md` ("E
 | `AccountXpReward` | `gameplay.jobs` | Uses `JobProgress.addAccountXpBonus` (no Job XP behind it) |
 | `RerollTokenReward` | `gameplay.quests` | Uses `RerollTokens.grant`, capped at the max held |
 
-- Blueprint: not now. Ticket #56 adds a `BlueprintReward` the same way.
+- `BlueprintReward` (`gameplay.blueprints`, #56): one Blueprint by id, Legendary. Not available if the Blueprint is not registered or the player already used it. No table uses it yet: content tickets add the entries.
 - Tables are filled by a Content module: `content.rewards.CoreLootModule`.
 
 ## How a Rarity shifts the odds
