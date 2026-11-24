@@ -232,9 +232,10 @@ VARIANTS = {
         'poplar': 'poplar', 'crimson': 'crimson', 'warped': 'warped'},
     'affinity': {
         'lush_caves': 'moss', 'taiga': 'spruce', 'mineshaft': 'oak_log', 'deep_dark': 'sculk',
-        'dripstone': 'dripstone', 'mountains': 'snow', 'jungle': 'jungle', 'crimson_forest': 'crimson'},
+        'dripstone': 'dripstone', 'mountains': 'snow', 'jungle': 'jungle', 'crimson_forest': 'crimson',
+        'birch_forest': 'birch', 'dappled_forest': 'poplar'},
     'sanctuary': {'forest': 'leaves_green', 'cherry_grove': 'pink_petals', 'pale_garden': 'pale_moss',
-                  'taiga': 'spruce'},
+                  'taiga': 'spruce', 'lush_caves': 'moss'},
 }
 
 

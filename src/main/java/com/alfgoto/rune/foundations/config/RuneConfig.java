@@ -92,6 +92,7 @@ public final class RuneConfig {
     private final SpeedRuneConfig speedRunes;
     private CacheConfig caches = CacheConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
+    private ConfigurationSection traitSection; // the 'traits' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
     private Rarity bookCacheRarity = DEFAULT_BOOK_CACHE_RARITY;
     private TraitConfig traits = TraitConfig.defaults();
@@ -243,6 +244,7 @@ public final class RuneConfig {
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
         loaded.rhythm = RhythmConfig.load(section, logger);
+        loaded.traitSection = section.getConfigurationSection("traits");
         loaded.caches = CacheConfig.load(section, logger);
         loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
@@ -300,6 +302,21 @@ public final class RuneConfig {
             return OptionalDouble.empty();
         }
         return OptionalDouble.of(n.doubleValue());
+    }
+
+    /**
+     * A number of a Trait from {@code traits.<traitId>.<key>} (e.g. {@code traits.climb_speed.percent}), or
+     * {@code fallback} when the value is missing or not a positive finite number (an error is not logged here:
+     * the defaults match config.yml).
+     */
+    public double traitNumber(String traitId, String key, double fallback) {
+        if (traitSection == null
+                || !(traitSection.get(traitId + "." + key) instanceof Number n)
+                || !Double.isFinite(n.doubleValue())
+                || n.doubleValue() <= 0) {
+            return fallback;
+        }
+        return n.doubleValue();
     }
 
     /** Rune Tool balancing: speed, durability, slots and Capacity. */
