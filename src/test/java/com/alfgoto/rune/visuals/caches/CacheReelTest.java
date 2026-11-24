@@ -7,9 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.gameplay.rewards.Drop;
 import com.alfgoto.rune.text.Rarity;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -109,7 +111,7 @@ class CacheReelTest {
     void theReelSpinsFillersAndStopsOnTheBestDropWithANearMiss() {
         ReelMenu menu = reel(List.of(drop(Rarity.COMMON), drop(Rarity.EPIC)), new AtomicInteger());
         menu.start();
-        assertTrue(java.util.Arrays.asList(FILLERS).contains(menu.getInventory().getItem(ReelMenu.CENTER).getType()),
+        assertTrue(Arrays.asList(FILLERS).contains(menu.getInventory().getItem(ReelMenu.CENTER).getType()),
                 "filler items spin before the end");
         server.getScheduler().performTicks(spinTicks() + 1);
         ItemStack landing = menu.getInventory().getItem(ReelMenu.CENTER);
@@ -130,7 +132,7 @@ class CacheReelTest {
         assertEquals(1, given.get());
         assertEquals(menu, player.getOpenInventory().getTopInventory().getHolder(), "still open after the reveal");
         server.getScheduler().performTicks(40);
-        assertEquals(1, given.get(), "the Legendary-style sounds after the reveal give nothing more");
+        assertEquals(1, given.get(), "no second loot after the reveal");
     }
 
     @Test
@@ -192,7 +194,7 @@ class CacheReelTest {
     @Test
     void aTooBigLootShowsTheNetherStar() {
         AtomicInteger given = new AtomicInteger();
-        List<Drop> ten = java.util.stream.IntStream.range(0, 10)
+        List<Drop> ten = IntStream.range(0, 10)
                 .mapToObj(i -> drop(Rarity.COMMON))
                 .toList();
         ReelMenu menu = reel(ten, given);
