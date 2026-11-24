@@ -6,7 +6,6 @@
   "rune.item.rune_cache_legendary": "Cache de Runes",
   "rune.cache.opened": "Vous ouvrez un Cache : %s résultat(s)",
   "rune.cache.entry": "- %s",
-  "rune.cache.reel.title": "Ouverture d'un Cache",
   "rune.cache.reel.result": "Cache ouvert !",
   "rune.command.give_cache.usage": "Utilisation : /rune give cache [métier] <rareté>",
   "rune.command.give_cache.unknown_rarity": "Rareté inconnue : %s",

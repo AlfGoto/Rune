@@ -61,6 +61,15 @@
     },
     {
       "type": "bitmap",
+      "file": "rune:gui/menu/reel.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue104"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "rune:gui/menu/note_common.png",
       "height": 93,
       "ascent": 0,
@@ -282,6 +291,96 @@
       "ascent": -94,
       "chars": [
         "\ue150"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_common.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue160"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_uncommon.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue161"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_rare.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue162"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_epic.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue163"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_legendary.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue164"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_common.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue168"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_uncommon.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue169"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_rare.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16a"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_epic.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16b"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_legendary.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16c"
       ]
     }
   ]

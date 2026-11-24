@@ -31,7 +31,17 @@ public enum MenuImage {
     JOB_CARD_TOP_LOCKED('\ue141', 53),
     JOB_CARD_BOTTOM('\ue142', 53),
     JOB_CARD_BOTTOM_LOCKED('\ue143', 53),
-    REROLL('\ue150', 18);
+    REROLL('\ue150', 18),
+    GLOW_COMMON('\ue160', 168),
+    GLOW_UNCOMMON('\ue161', 168),
+    GLOW_RARE('\ue162', 168),
+    GLOW_EPIC('\ue163', 168),
+    GLOW_LEGENDARY('\ue164', 168),
+    CACHE_COMMON('\ue168', 30),
+    CACHE_UNCOMMON('\ue169', 30),
+    CACHE_RARE('\ue16a', 30),
+    CACHE_EPIC('\ue16b', 30),
+    CACHE_LEGENDARY('\ue16c', 32);
 
     private final char glyph;
     private final int width;
@@ -53,6 +63,16 @@ public enum MenuImage {
     /** The Quest note drawn in the colour of {@code tier}. */
     public static MenuImage note(Rarity tier) {
         return values()[NOTE_COMMON.ordinal() + tier.ordinal()];
+    }
+
+    /** The Cache reel's frame lit in the colour of {@code rarity} (shown at the reveal). */
+    public static MenuImage glow(Rarity rarity) {
+        return values()[GLOW_COMMON.ordinal() + rarity.ordinal()];
+    }
+
+    /** The Cache of {@code rarity}, drawn x2 above the reel. */
+    public static MenuImage cache(Rarity rarity) {
+        return values()[CACHE_COMMON.ordinal() + rarity.ordinal()];
     }
 
     /** The Capacity orb filled to {@code used / max}, in tenths (rounded down, never empty if anything is used). */
