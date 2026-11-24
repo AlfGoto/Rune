@@ -28,13 +28,16 @@ public final class SaplingPlanterListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        planters.clear(event.getBlock());
+        if (Tag.SAPLINGS.isTagged(event.getBlock().getType())) {
+            planters.clear(event.getBlock());
+        }
     }
 
     /** A dispenser has no planter: a sapling it places must not inherit an old one. */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDispense(BlockDispenseEvent event) {
-        if (event.getBlock().getBlockData() instanceof Directional directional) {
+        if (Tag.SAPLINGS.isTagged(event.getItem().getType())
+                && event.getBlock().getBlockData() instanceof Directional directional) {
             Block target = event.getBlock().getRelative(directional.getFacing());
             planters.clear(target);
         }

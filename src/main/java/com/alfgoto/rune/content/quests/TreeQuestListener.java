@@ -5,10 +5,12 @@ import com.alfgoto.rune.foundations.blocktracking.SaplingPlanters;
 import com.alfgoto.rune.foundations.triggers.TreeFelled;
 import com.alfgoto.rune.gameplay.quests.QuestAction;
 import com.alfgoto.rune.gameplay.quests.QuestActionEvent;
+import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Server;
-import org.bukkit.Tag;
+import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +27,14 @@ import org.jspecify.annotations.Nullable;
  * planter and no player: its trees count for no one.
  */
 final class TreeQuestListener implements Listener {
+
+    /** Growths that fire {@link StructureGrowEvent} but are not trees. */
+    private static final Set<TreeType> NOT_TREES = EnumSet.of(
+            TreeType.RED_MUSHROOM,
+            TreeType.BROWN_MUSHROOM,
+            TreeType.CHORUS_PLANT,
+            TreeType.CRIMSON_FUNGUS,
+            TreeType.WARPED_FUNGUS);
 
     private final Server server;
     private final SaplingPlanters planters;
@@ -43,10 +53,11 @@ final class TreeQuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent event) {
-        Block sapling = event.getLocation().getBlock();
-        if (!Tag.SAPLINGS.isTagged(sapling.getType()) || event.getBlocks().isEmpty()) {
+        if (NOT_TREES.contains(event.getSpecies()) || event.getBlocks().isEmpty()) {
             return;
         }
+        // Vanilla may already have removed the sapling: never read its block type here.
+        Block sapling = event.getLocation().getBlock();
         Player credited = event.isFromBonemeal() ? event.getPlayer() : planterOf(sapling);
         planters.clear(sapling);
         if (credited != null) {
@@ -64,9 +75,6 @@ final class TreeQuestListener implements Listener {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 Block near = sapling.getRelative(dx, 0, dz);
-                if (near.getType() != sapling.getType()) {
-                    continue;
-                }
                 Optional<UUID> planter = planters.get(near);
                 if (planter.isPresent()) {
                     planters.clear(near);
