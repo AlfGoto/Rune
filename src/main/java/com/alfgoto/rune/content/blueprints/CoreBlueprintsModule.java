@@ -37,7 +37,7 @@ public final class CoreBlueprintsModule implements RuneModule {
         // No texture is drawn for the Blueprint yet: its item definition (assets/rune/items/blueprint.json)
         // points to the test model. Replace it when the texture exists.
         ctx.get(ItemRegistry.class)
-                .register(new RuneItem(Blueprints.ITEM_ID, Rarity.LEGENDARY, Material.PAPER, "blueprint"));
+                .register(new RuneItem(Blueprints.ITEM_ID, Rarity.LEGENDARY, Material.NAME_TAG, "blueprint"));
         ctx.get(RecipeBook.class)
                 .register(CraftingRecipe.blueprint(
                         "test_blueprint",

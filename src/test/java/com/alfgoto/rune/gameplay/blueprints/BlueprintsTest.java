@@ -57,7 +57,7 @@ class BlueprintsTest {
         PlayerStorage storage = new MemoryStorage();
         progress = new JobProgress(storage, new LevelCurve(50, 1.3), new LevelCurve(200, 1.3));
         ItemRegistry items = new ItemRegistry(plugin);
-        items.register(new RuneItem(Blueprints.ITEM_ID, Rarity.LEGENDARY, Material.PAPER, "test_rune"));
+        items.register(new RuneItem(Blueprints.ITEM_ID, Rarity.LEGENDARY, Material.NAME_TAG, "test_rune"));
         items.register(new RuneItem("bp_result", Rarity.LEGENDARY, Material.STICK, "test_rune"));
         book = new RecipeBook(plugin, items, progress);
         recipe = book.register(CraftingRecipe.blueprint(
