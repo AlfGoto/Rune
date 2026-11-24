@@ -253,6 +253,10 @@ rewards:
   rolls-by-rarity: [1, 1, 2, 2, 3]
   # Chance that a roll with a Job gives that Job's Runes instead of general Runes (0 to 1)
   job-bias: 0.6
+vanilla-overrides:
+  # Rarity of the Rune Cache that replaces each enchanted book in chests, fishing and villager trades
+  # (common, uncommon, rare, epic, legendary)
+  book-cache-rarity: uncommon
 runes:
   rank-up:
     # Rank-up at the smithing table costs vanilla XP levels: multiplier ^ N to go from Rank N to N+1
