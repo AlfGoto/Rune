@@ -1,5 +1,7 @@
 package com.alfgoto.rune.gameplay.drops;
 
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.gameplay.drops.DropRules.Mode;
 import com.alfgoto.rune.gameplay.drops.DropRules.Stack;
 import com.alfgoto.rune.gameplay.effects.Stacking;
@@ -29,12 +31,22 @@ public final class DropEffectsListener implements Listener {
     private final ToolLoadout loadout;
     private final Smelting smelting;
     private final DoubleSupplier random;
+    private final BlockTracker tracker;
 
-    public DropEffectsListener(ItemRegistry items, ToolLoadout loadout, Smelting smelting, DoubleSupplier random) {
+    /** The block just broken, if it was tagged {@code placed}. The drop event follows the break event at once. */
+    private Block placedBreak;
+
+    public DropEffectsListener(
+            ItemRegistry items,
+            ToolLoadout loadout,
+            Smelting smelting,
+            DoubleSupplier random,
+            BlockTracker tracker) {
         this.items = items;
         this.loadout = loadout;
         this.smelting = smelting;
         this.random = random;
+        this.tracker = tracker;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -42,6 +54,11 @@ public final class DropEffectsListener implements Listener {
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
         if (items.of(tool).isEmpty()) {
             return;
+        }
+        boolean placed = placedBreak != null && placedBreak.equals(event.getBlock());
+        placedBreak = null;
+        if (placed) {
+            return; // a block the player placed: no Fortune, no Smelt (Silk Touch is handled in onBreak)
         }
         List<Stacking.Source> sources = loadout.sources(tool, event.getPlayer());
         switch (DropRules.mode(sources)) {
@@ -59,6 +76,8 @@ public final class DropEffectsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
+        // Read the tag here: Block Tracking clears it at MONITOR, before the drop event.
+        placedBreak = tracker.has(event.getBlock(), BlockTag.PLACED) ? event.getBlock() : null;
         if (items.of(tool).isEmpty() || DropRules.mode(loadout.sources(tool, event.getPlayer())) != Mode.SILK) {
             return;
         }

@@ -400,6 +400,17 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Flint Hatchet: fortune = % chance of +1 log, slower_percent = % slower mining
+  flint_hatchet:
+    fortune: 15
+    slower_percent: 10
+  # Stone Hatchet: faster_percent = % faster mining, durability = max durability (stone tier default is 131)
+  stone_hatchet:
+    faster_percent: 15
+    durability: 100
+  # Woodsman's Axe: durability = max durability (iron tier default is 250)
+  woodsmans_axe:
+    durability: 500
   # Jungle Axe: % climbing speed on vines, ladders and scaffolding
   climb_speed:
     percent: 50
