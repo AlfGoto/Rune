@@ -89,6 +89,7 @@ public final class RuneConfig {
     private final ToolConfig tools;
     private final ArmorConfig armor;
     private final SpeedRuneConfig speedRunes;
+    private CacheConfig caches = CacheConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
     private Rarity bookCacheRarity = DEFAULT_BOOK_CACHE_RARITY;
@@ -240,6 +241,7 @@ public final class RuneConfig {
                 ArmorConfig.load(section, logger),
                 SpeedRuneConfig.load(section, logger));
         loaded.runes = section.getConfigurationSection("runes");
+        loaded.caches = CacheConfig.load(section, logger);
         loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
@@ -268,6 +270,11 @@ public final class RuneConfig {
     /** Rank-up cost in vanilla XP levels: going up from Rank N costs this number to the power N (3: 3, 9, 27…). */
     public double rankUpCostMultiplier() {
         return rankUpCostMultiplier;
+    }
+
+    /** Rune Cache drop chance and Milestone Cache table. */
+    public CacheConfig caches() {
+        return caches;
     }
 
     /** Copper and Momentum Trait balancing. */

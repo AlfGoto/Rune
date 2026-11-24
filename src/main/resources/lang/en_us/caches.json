@@ -5,6 +5,7 @@
   "rune.item.rune_cache_epic": "Rune Cache",
   "rune.item.rune_cache_legendary": "Rune Cache",
   "rune.cache.opened": "You open a Cache: %s result(s)",
+  "rune.cache.milestone": "Level %s reached: %s Cache earned.",
   "rune.cache.entry": "- %s",
   "rune.cache.reel.result": "Cache opened!",
   "rune.command.give_cache.usage": "Usage: /rune give cache [job] <rarity>",
