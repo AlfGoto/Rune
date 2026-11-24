@@ -5,11 +5,14 @@ import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.GiveSubcommand;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
+import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
 import com.alfgoto.rune.gameplay.jobs.JobsModule;
 import com.alfgoto.rune.gameplay.rewards.LootRoller;
 import com.alfgoto.rune.gameplay.rewards.LootTableRegistry;
 import com.alfgoto.rune.gameplay.rewards.RewardsModule;
+import com.alfgoto.rune.gameplay.runes.IndestructibleItems;
+import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.google.auto.service.AutoService;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,7 +23,7 @@ public final class CachesModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, RewardsModule.class, JobsModule.class);
+        return Set.of(ItemsModule.class, RewardsModule.class, JobsModule.class, RunesModule.class);
     }
 
     @Override
@@ -35,6 +38,11 @@ public final class CachesModule implements RuneModule {
                         ctx.get(LootRoller.class),
                         ThreadLocalRandom.current()));
         ctx.get(GiveSubcommand.class).addVariant(new GiveCacheVariant(caches, ctx.get(JobRegistry.class)));
+        ctx.get(IndestructibleItems.class).protect(stack -> caches.rarityOf(stack).isPresent());
         ctx.listen(new CacheListener(caches));
+        CacheDropListener drops = new CacheDropListener(
+                caches, new CacheDrops(ctx.config().caches()), () -> ThreadLocalRandom.current().nextDouble());
+        ctx.listen(drops);
+        ctx.get(JobProgress.class).addLevelListener(drops);
     }
 }

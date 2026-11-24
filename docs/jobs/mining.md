@@ -60,7 +60,8 @@ Job Levels give recipes, Blueprints and milestone Rune Caches — never passive 
 ## Rune Caches from mining
 - Drop chance per block = `XP × 0.05%` (stone ≈ 1/10,000, diamond 1.5%, emerald 2%).
 - Contents: 60% Mining Runes, 40% general passive Runes (Player/Armor Runes).
-- Rarity follows the shared rule (same loot table; Rarity shifts odds and quantity).
+- Rarity of the dropped Cache: Common (decided 2026-11-22, config `caches.drop-rarity`). Same loot table; Rarity shifts odds and quantity.
+- No Cache drops in Creative (decided 2026-11-22). Milestone Caches still work.
 
 ## Pickaxe base stats
 Default by Harvest Tier, overridable per pickaxe:

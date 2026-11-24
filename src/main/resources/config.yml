@@ -253,6 +253,23 @@ rewards:
   rolls-by-rarity: [1, 1, 2, 2, 3]
   # Chance that a roll with a Job gives that Job's Runes instead of general Runes (0 to 1)
   job-bias: 0.6
+caches:
+  # Rune Cache drop chance per Job Action = Job XP x this, in percent (0.05: iron ore, 8 XP = 0.4%).
+  # Raise it to test (10000 = every natural block drops a Cache). The Cache drops at the block.
+  drop-percent-per-xp: 0.05
+  # Rarity of a Cache dropped by a Job Action (common, uncommon, rare, epic, legendary). No drops in Creative.
+  drop-rarity: common
+  # Milestone Cache (given on Job Level up): Rarity by Job Level, then the rule above the table
+  milestones:
+    5: common
+    10: uncommon
+    15: rare
+    20: rare
+    25: epic
+    30: epic
+  # Above the table: an Epic Cache every N levels, a Legendary one every M levels (wins over Epic)
+  epic-every: 5
+  legendary-every: 25
 vanilla-overrides:
   # Rarity of the Rune Cache that replaces each enchanted book in chests, fishing and villager trades
   # (common, uncommon, rare, epic, legendary)
@@ -317,6 +334,16 @@ runes:
   canopy_stride:
     base: 10
     per-rank: 10
+  # Sanctuary: <biome> (docs/jobs/woodcutting.md). Value = Rank (base 1, +1 per Rank). Total value 1 gives
+  # Regeneration I, resistance-from adds Resistance I, regeneration-2-from makes it Regeneration II.
+  # effect-seconds: how long each refresh lasts (the effect ends this long after leaving the biome).
+  sanctuary:
+    base: 1
+    per-rank: 1
+    max-rank: 3
+    resistance-from: 2
+    regeneration-2-from: 3
+    effect-seconds: 3
   # Replant: on/off (Max Rank 1). Plants a sapling where a Felled Tree stood.
   replant:
     base: 1

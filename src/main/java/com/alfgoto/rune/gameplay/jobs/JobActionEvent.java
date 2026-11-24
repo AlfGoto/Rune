@@ -1,5 +1,6 @@
 package com.alfgoto.rune.gameplay.jobs;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -17,19 +18,39 @@ public final class JobActionEvent extends Event {
 
     private final Player player;
     private final Job job;
+    private final double xp;
     private final @Nullable Block block;
     private final @Nullable ItemStack tool;
 
     public JobActionEvent(Player player, Job job) {
-        this(player, job, null, null);
+        this(player, job, 0, null, null);
     }
 
-    /** A block action: {@code block} is the broken block, {@code tool} the item held in the main hand. */
+    /** A block action with no XP info (xp = 0). */
     public JobActionEvent(Player player, Job job, @Nullable Block block, @Nullable ItemStack tool) {
+        this(player, job, 0, block, tool);
+    }
+
+    /**
+     * A block action: {@code xp} is the Job XP it gave, {@code block} the broken block,
+     * {@code tool} the item held in the main hand.
+     */
+    public JobActionEvent(Player player, Job job, double xp, @Nullable Block block, @Nullable ItemStack tool) {
         this.player = player;
         this.job = job;
+        this.xp = xp;
         this.block = block;
         this.tool = tool;
+    }
+
+    /** Job XP the action gave (0 when unknown). */
+    public double xp() {
+        return xp;
+    }
+
+    /** Where the action happened (the block's center), or null when it is not a block break. */
+    public @Nullable Location location() {
+        return block == null ? null : block.getLocation().add(0.5, 0.5, 0.5);
     }
 
     /** The block that was broken, or null when the action is not a block break. */
