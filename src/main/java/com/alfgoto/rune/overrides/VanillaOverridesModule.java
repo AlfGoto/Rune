@@ -20,6 +20,9 @@ public final class VanillaOverridesModule implements RuneModule {
     public void enable(RuneContext ctx) {
         ctx.listen(new NoEnchantingListener());
         ctx.listen(new LockedGearListener());
+        // One tick later, so every recipe exists. The listener's craft checks stay as a safety net.
+        ctx.plugin().getServer().getScheduler().runTask(
+                ctx.plugin(), () -> LockedGearRecipes.removeAll(ctx.plugin().getServer()));
         ctx.listen(new BookLootListener(ctx.get(Caches.class), ctx.config().bookCacheRarity()));
     }
 }
