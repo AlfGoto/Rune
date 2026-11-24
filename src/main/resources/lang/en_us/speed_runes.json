@@ -10,6 +10,9 @@
   "rune.item.specialist_redstone": "Specialist: Redstone",
   "rune.item.affinity_lush_caves": "Affinity: Lush Caves",
   "rune.item.affinity_taiga": "Affinity: Taiga",
+  "rune.item.affinity_birch_forest": "Affinity: Birch Forest",
+  "rune.item.affinity_dappled_forest": "Affinity: Dappled Forest",
+  "rune.item.affinity_jungle": "Affinity: Jungle",
   "rune.item.affinity_mineshaft": "Affinity: Mineshaft",
   "rune.item.affinity_deep_dark": "Affinity: Deep Dark"
 }
