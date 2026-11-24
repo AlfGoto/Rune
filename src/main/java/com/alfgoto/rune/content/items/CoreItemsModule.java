@@ -59,6 +59,7 @@ public final class CoreItemsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
         items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
                 ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
+        startAxes(items, ctx.config());
         biomePickaxes(items, ctx.config().tools());
         woodcuttingAxes(items, ctx.config());
         // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
@@ -127,6 +128,34 @@ public final class CoreItemsModule implements RuneModule {
         axe(items, "jungle_axe", Rarity.RARE,
                 TraitBinding.always("affinity_jungle", affinity),
                 TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+    }
+
+    /**
+     * The Flint Hatchet, Stone Hatchet and Woodsman's Axe (docs/jobs/woodcutting.md). Numbers are in config
+     * ({@code traits.flint_hatchet}, {@code traits.stone_hatchet}, {@code traits.woodsmans_axe}).
+     */
+    private static void startAxes(ItemRegistry items, RuneConfig config) {
+        // Flint Hatchet: Common, stone tier, Capacity 3. Chance of +1 log (Fortune), mines slower.
+        double fortune = config.traitNumber("flint_hatchet", "fortune", 15);
+        double slower = config.traitNumber("flint_hatchet", "slower_percent", 10);
+        items.register(RuneItem.tool("flint_hatchet", Rarity.COMMON, ToolKind.AXE, "flint_hatchet",
+                ToolSpec.DEFAULT.withTrait("flint_hatchet", 0,
+                        TraitBinding.always("fortune", fortune), TraitBinding.always("haste", -slower))));
+        // Stone Hatchet: Common, stone tier, Capacity 3 -1. Faster, less durable.
+        double faster = config.traitNumber("stone_hatchet", "faster_percent", 15);
+        int stoneDurability = (int) config.traitNumber("stone_hatchet", "durability", 100);
+        items.register(RuneItem.tool("stone_hatchet", Rarity.COMMON, ToolKind.AXE, "stone_hatchet",
+                withDurability(ToolSpec.DEFAULT.withTrait("stone_hatchet", -1, TraitBinding.always("haste", faster)),
+                        stoneDurability)));
+        // Woodsman's Axe: Uncommon, iron tier, Capacity 6 +2. Plain, very durable.
+        int woodsmanDurability = (int) config.traitNumber("woodsmans_axe", "durability", 500);
+        items.register(RuneItem.tool("woodsmans_axe", Rarity.UNCOMMON, ToolKind.AXE, "woodsmans_axe",
+                withDurability(ToolSpec.DEFAULT.withTrait("woodsmans_axe", 2), woodsmanDurability)));
+    }
+
+    private static ToolSpec withDurability(ToolSpec spec, int durability) {
+        return new ToolSpec(spec.tierOffset(), spec.speed(), durability, spec.slots(), spec.capacity(), spec.trait(),
+                spec.traitBindings(), spec.capacityModifier());
     }
 
     private static void axe(ItemRegistry items, String id, Rarity rarity, TraitBinding... bindings) {
