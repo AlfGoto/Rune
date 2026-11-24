@@ -102,7 +102,13 @@ public final class CoreQuestsModule implements RuneModule {
     }
 
     static boolean isSpruceLog(Block block) {
-        return block != null && (block.getType() == Material.SPRUCE_LOG || block.getType() == Material.SPRUCE_WOOD);
+        if (block == null) {
+            return false;
+        }
+        return switch (block.getType()) {
+            case SPRUCE_LOG, SPRUCE_WOOD, STRIPPED_SPRUCE_LOG, STRIPPED_SPRUCE_WOOD -> true;
+            default -> false;
+        };
     }
 
     /**

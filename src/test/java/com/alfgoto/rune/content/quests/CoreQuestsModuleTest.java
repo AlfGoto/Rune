@@ -175,6 +175,8 @@ class CoreQuestsModuleTest {
     void woodCollectCountsSpruceLogAndWoodOnly() {
         assertTrue(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_LOG, 60)));
         assertTrue(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_WOOD, 60)));
+        assertTrue(CoreQuestsModule.isSpruceLog(block(Material.STRIPPED_SPRUCE_LOG, 60)));
+        assertTrue(CoreQuestsModule.isSpruceLog(block(Material.STRIPPED_SPRUCE_WOOD, 60)));
         assertFalse(CoreQuestsModule.isSpruceLog(block(Material.OAK_LOG, 60)));
         assertFalse(CoreQuestsModule.isSpruceLog(block(Material.SPRUCE_LEAVES, 60)));
     }

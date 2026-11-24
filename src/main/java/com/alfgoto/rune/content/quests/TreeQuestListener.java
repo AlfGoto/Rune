@@ -38,6 +38,14 @@ final class TreeQuestListener implements Listener {
             TreeType.CRIMSON_FUNGUS,
             TreeType.WARPED_FUNGUS);
 
+    /** Species grown from a 2x2 of saplings (by name, so a missing constant on older APIs cannot break us). */
+    private static final Set<String> BIG_TREES =
+            Set.of("JUNGLE", "DARK_OAK", "MEGA_REDWOOD", "PALE_OAK", "PALE_OAK_CREAKING");
+
+    private static boolean isBigTree(StructureGrowEvent event) {
+        return BIG_TREES.contains(event.getSpecies().name());
+    }
+
     private final Server server;
     private final SaplingPlanters planters;
     private final BlockTracker tracker;
@@ -66,7 +74,7 @@ final class TreeQuestListener implements Listener {
         }
         // Vanilla may already have removed the sapling: never read its block type here.
         Block sapling = event.getLocation().getBlock();
-        Player credited = event.isFromBonemeal() ? event.getPlayer() : planterOf(sapling);
+        Player credited = event.isFromBonemeal() ? event.getPlayer() : planterOf(sapling, isBigTree(event));
         planters.clear(sapling);
         if (credited != null) {
             server.getPluginManager()
@@ -76,14 +84,17 @@ final class TreeQuestListener implements Listener {
     }
 
     /**
-     * The online player who planted this sapling. A 2x2 tree grows from one of 4 saplings, so same-type saplings
-     * next to it are checked too.
+     * The online player who planted this sapling. A 2x2 tree grows from one of 4 saplings, so for those species
+     * (only) the neighbours are checked too. A dispensed sapling of a 1x1 tree never takes a neighbour's credit.
      */
-    private @Nullable Player planterOf(Block sapling) {
+    private @Nullable Player planterOf(Block sapling, boolean bigTree) {
         Optional<UUID> own = planters.get(sapling);
         if (own.isPresent()) {
             planters.clear(sapling);
             return server.getPlayer(own.get());
+        }
+        if (!bigTree) {
+            return null;
         }
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
