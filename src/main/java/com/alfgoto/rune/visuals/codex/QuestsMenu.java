@@ -76,7 +76,7 @@ public final class QuestsMenu extends Menu {
                                     quest.type().job().translationKey(),
                                     quest.type().job().fallbackName())
                             .color(NamedTextColor.GOLD)),
-                    plain(Text.translatable("rune.menu.quests.tier", "Tier: %s", Text.rarityName(quest.tier()))
+                    plain(Text.translatable("rune.menu.quests.tier", "Tier: %s", Text.rarityLine(quest.tier()))
                             .color(NamedTextColor.GRAY)),
                     bar(done, quest.target()),
                     plain(Text.translatable(

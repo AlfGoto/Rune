@@ -81,7 +81,10 @@ A Rune texture is never drawn whole: it is one `minecraft:item/generated` model 
 - **Rune Cache** `rune_cache_<rarity>`: a sealed coffer (`caches.py`). Body wood + metal bands + a seal in the **Rarity's name colour** (white, green, aqua, magenta, gold): Common oak + cobblestone · Uncommon spruce + copper · Rare dark oak + gold · Epic obsidian + crying obsidian · Legendary netherite + gold, same animated sparkles as the Legendary stone.
 - **Rune Codex** `rune_codex`: the vanilla 26.1 book, indigo leather, gold corners, a glowing cyan rune on the cover.
 
+## Rarity icons (2026-11-23)
+One 7×7 gem per Rarity, in the Rarity's name colour, in the `rune:glyphs` font (`\ue000` Common … `\ue004` Legendary; bitmap height 8, ascent 7 like vanilla text). The shape grows with Rarity: Common pebble · Uncommon rhombus · Rare cut gem · Epic crystal cluster · Legendary crown. Generator: `tools/texture-gen/v3/icons.py`. In code: `Glyphs.rarity(rarity)` (always white, or the text colour tints it) and `Text.rarityLine(rarity)` = icon + space + name, used for the Rarity line of every item and the Quest Tier.
+
 ## Tooling
 - Generator: `tools/texture-gen/` (Python + Pillow, see its README). A colour change is a one-line edit; `export_all.py` rebuilds every PNG and pack file.
 - Open points: real poplar palette (no poplar texture in 26.1, colours invented); some Relic loose pixels (hanging moss / roots) to check in game.
-- Next batches: Blueprint, font glyphs (Rarity + Job icons), menus v3 (Jobs, Quests, Cache reel).
+- Next batches: Blueprint, font glyphs (Job icons), menus v3 (Jobs, Quests, Cache reel).

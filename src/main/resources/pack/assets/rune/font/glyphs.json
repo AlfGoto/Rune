@@ -5,7 +5,18 @@
       "file": "rune:font/placeholder.png",
       "height": 8,
       "ascent": 7,
-      "chars": [""]
+      "chars": [
+        "\ue0ff"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:font/rarity.png",
+      "height": 8,
+      "ascent": 7,
+      "chars": [
+        "\ue000\ue001\ue002\ue003\ue004"
+      ]
     }
   ]
 }
