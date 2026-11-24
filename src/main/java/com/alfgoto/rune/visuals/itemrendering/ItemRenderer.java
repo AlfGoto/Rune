@@ -69,7 +69,7 @@ public final class ItemRenderer implements ItemRedrawer {
     /** Rarity, protection, slots, Capacity and Trait of a Rune Armor piece. */
     static List<Component> armorLore(RuneItem item, ArmorStats s) {
         List<Component> lore = new ArrayList<>();
-        lore.add(Text.rarityName(item.rarity()).decoration(TextDecoration.ITALIC, false));
+        lore.add(Text.rarityLine(item.rarity()).decoration(TextDecoration.ITALIC, false));
         lore.add(stat("rune.item.lore.defense", "Protection: %s", Component.text(s.defense())));
         if (s.toughness() > 0) {
             lore.add(stat("rune.item.lore.toughness", "Toughness: %s", Component.text(s.toughness())));
@@ -89,7 +89,7 @@ public final class ItemRenderer implements ItemRedrawer {
 
     static List<Component> lore(RuneItem item, Optional<ToolStats> stats, Optional<MasteryStatus> mastery) {
         List<Component> lore = new ArrayList<>();
-        lore.add(Text.rarityName(item.rarity()).decoration(TextDecoration.ITALIC, false));
+        lore.add(Text.rarityLine(item.rarity()).decoration(TextDecoration.ITALIC, false));
         if (stats.isEmpty()) {
             lore.add(line(Text.translatable("rune.item.lore.stats_placeholder", "No stats yet")
                     .color(NamedTextColor.DARK_GRAY)));
@@ -157,7 +157,7 @@ public final class ItemRenderer implements ItemRedrawer {
             fits.add(Text.translatable(fit.translationKey(), fit.englishName()));
         }
         return List.of(
-                Text.rarityName(rune.rarity()).decoration(TextDecoration.ITALIC, false),
+                Text.rarityLine(rune.rarity()).decoration(TextDecoration.ITALIC, false),
                 gray(rankText),
                 gray(Text.translatable(
                         "rune.item.lore.capacity_cost",

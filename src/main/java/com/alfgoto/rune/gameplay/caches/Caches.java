@@ -10,6 +10,7 @@ import com.alfgoto.rune.text.Rarity;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,7 +25,8 @@ import org.jspecify.annotations.Nullable;
  * Rune Caches: sealed items with a Rarity (one item per Rarity, {@code rune_cache_<rarity>}) and an optional
  * Job id. Opening one takes it from the stack, rolls the shared {@code cache} loot table with the Cache
  * Rarity and Job, and gives the loot. A Job Cache leans towards that Job's Runes (the bias is in
- * {@code RuneReward}, not here). Opening is instant for now; the reel menu comes later.
+ * {@code RuneReward}, not here). A {@link CacheReel} (from Visuals) plays the opening; without one, the
+ * loot is given at once.
  */
 public final class Caches {
 
@@ -36,6 +38,7 @@ public final class Caches {
     private final LootRoller roller;
     private final RandomGenerator random;
     private final NamespacedKey jobKey;
+    private CacheReel reel = (player, rarity, drops, finish) -> finish.run();
 
     public Caches(
             Plugin plugin, ItemRegistry items, LootTableRegistry tables, LootRoller roller, RandomGenerator random) {
@@ -44,6 +47,11 @@ public final class Caches {
         this.roller = roller;
         this.random = random;
         this.jobKey = new NamespacedKey(plugin, "cache_job");
+    }
+
+    /** Sets what plays the opening of a Cache. The default gives the loot at once. */
+    public void setReel(CacheReel reel) {
+        this.reel = reel;
     }
 
     /** The item id of the Cache of this Rarity, e.g. {@code rune_cache_rare}. */
@@ -91,6 +99,16 @@ public final class Caches {
         RollContext context = new RollContext(player.getUniqueId(), rarity, jobOf(stack).orElse(null));
         stack.setAmount(stack.getAmount() - 1);
         List<Drop> drops = roller.roll(table, context, random);
+        AtomicBoolean given = new AtomicBoolean();
+        reel.play(player, rarity, drops, () -> {
+            if (given.compareAndSet(false, true)) {
+                give(player, rarity, drops);
+            }
+        });
+        return true;
+    }
+
+    private static void give(Player player, Rarity rarity, List<Drop> drops) {
         player.sendMessage(Component.translatable(
                         "rune.cache.opened", "You open a Cache: %s result(s)", Component.text(drops.size()))
                 .color(rarity.color()));
@@ -99,6 +117,5 @@ public final class Caches {
             player.sendMessage(Component.translatable("rune.cache.entry", "- %s", drop.describe())
                     .color(NamedTextColor.GRAY));
         }
-        return true;
     }
 }

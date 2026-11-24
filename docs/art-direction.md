@@ -25,10 +25,26 @@ Validated on texture batch v2: pickaxes, axes, components, menu icons, first two
 | Legendary | + gold finial above the head, gold filigree, gem pommel; double-bit axes |
 | Relic / Fused | unique silhouette built around its motif (Warden antennae, Starbreaker star, evoker-fang blade…) |
 
-## Menus (start)
-- Each menu background is a 176×222 PNG (same frame as `generic_54`), shown through a bitmap font glyph in the menu title shifted with negative space. Clickable things stay real chest slots, so `Menu` / `Button` don't change.
-- Rune Codex main menu: player head (Account level) on top, three 3×3 panels (Jobs = wood, Quests = parchment, Runes = amethyst); the gold-framed middle slot holds the icon, the 8 slots around it are invisible buttons doing the same. Back on `Menu.backSlot()`.
-- Rune loadout: tool on display, 5 Rune slots in a deepslate band (first 2 = Active Slots, gold brackets), capacity bar made of pip items (used / free / over) over a groove.
+## Menus (v3 free-form, 2026-11-23)
+Menus are drawn as interfaces, not as chest grids (Alfred: "way better"). Every Codex menu is a 6-row chest whose whole window is drawn in its title.
+
+**How it works** (`visuals.menu.MenuCanvas`)
+- **Background**: one 176×222 glyph of the `rune:menus` font (`ascent` 13 puts its top on the window's top), drawn freely by `tools/texture-gen/v3/menus.py`. Buttons are drawn in it.
+- **Clicks** still happen on the 18 px slot grid: a drawn button is covered by **invisible items** (`Button.invisible`, item model `rune:menu_blank`) carrying the tooltip and the click. Hovering shows the vanilla white square.
+- **Real items** (Runes, the player's head, Quest and Job icons) sit in slots **cut out** of the background (transparent), so the item shows whatever Minecraft draws first. An empty one gets `rune:menu_empty` (a dark recess) so the grey vanilla slot never shows. Back, Reroll, Tokens are drawn, not cut out.
+- **Live text and bars** are more glyphs in the title. The cursor is moved with space glyphs of `rune:menus` (``… = −1, −2 … −256 px, ``… = +1 … +256). A font row sits at one height only, so the pack builder generates one font per family and height: `rune:menu/<family>_<y>` (y 3–140 = top of the capitals in window pixels), from `menu_font.json` (written by `menufont.py`). Families: `normal` (vanilla glyphs + French / Latin accents), `shadow` (same + baked drop shadow, for dark backgrounds), `small` (3×5 capitals: numbers, long translations), `bars` (progress-bar pieces 1–16 px in green / aqua / gold / purple).
+- **Translations**: text drawn in a menu is measured on the server, so it uses the server's copy of the lang files in the player's language (`MenuStrings`, French if the client is in French). Text wider than its box switches to `small`, then is cut with "..". Tooltips stay normal translatable components.
+- **Live images** (fixed height, any x): Quest notes in the 5 Tier colours, the Capacity orb in 11 fill steps, page arrows. A menu showing live data rebuilds its title when the data changes (`Menu.retitle` moves the items to a new window and reopens it).
+- Only menus with a fixed layout get this; `PagedMenu` (debug) stays a plain chest.
+
+| Menu | Look | Slots |
+|---|---|---|
+| Rune Codex | an open book: left page = player head (gold frame), name, Level, XP bar, Capacity bar; right page = 3 chapter buttons (Jobs oak, Quests parchment, Runes amethyst) with a 16 px icon, the name and a live value (Lv 14, 2 / 3, 5 / 8) | head 11; chapters 4 × 2 from 5 / 23 / 41 |
+| Runes | an altar: 8 sockets in a ring around a Capacity orb that fills up; a leather satchel with the Runes in the inventory (18 per page) | sockets 3, 5, 15, 24, 32, 30, 20, 11; orb 12–14, 21–23; satchel 36–53; Back 27, pages 26 / 35 |
+| Quests | a notice board: 3 notes with a border and header in the Tier colour, icon, goal on 2 lines, progress bar, Tier; a copper reroll button under each | notes 3 × 5 from 0 / 3 / 6 (icon 10 / 13 / 16); reroll 46 / 49 / 52; Tokens 47; Back 53 |
+| Jobs | Account banner with its XP bar, then one card per planned Job, 6 per page (`JobsMenu.PLANNED`, design order): a playable Job shows icon, level, XP bar, name; a Job not built yet is a grey locked card (padlock, grey icon `menu_locked_<job>`, name, tooltip "Not playable yet"); "Coming soon" only fills spots past the last Job | banner 0–8; cards 3 × 2 from 9, 12, 15, 27, 30, 33; pages 48 / 50; Back 49 |
+
+The layout constants live in `menus.py` (art) and the Java menus (`CodexMenus`, `RunesMenu`, `QuestsMenu`, `JobsMenu`): change both together. Concepts and final renders: Design canvas "Rune textures — Menus and Rarity icons" (https://claude.ai/artifact/1uAJAkpFQivpaveKqcnVzN).
 
 ## Runes (layered, 2026-11-22)
 A Rune texture is never drawn whole: it is one `minecraft:item/generated` model with stacked layers, all 16×16 on the same canvas. Generator: `tools/texture-gen/v3/runes.py`; contact sheets on the Design canvas "Rune textures — Runes (layered)" (https://claude.ai/artifact/A7xpaMRtAFm31sr1MMZNzH).
@@ -81,7 +97,10 @@ A Rune texture is never drawn whole: it is one `minecraft:item/generated` model 
 - **Rune Cache** `rune_cache_<rarity>`: a sealed coffer (`caches.py`). Body wood + metal bands + a seal in the **Rarity's name colour** (white, green, aqua, magenta, gold): Common oak + cobblestone · Uncommon spruce + copper · Rare dark oak + gold · Epic obsidian + crying obsidian · Legendary netherite + gold, same animated sparkles as the Legendary stone.
 - **Rune Codex** `rune_codex`: the vanilla 26.1 book, indigo leather, gold corners, a glowing cyan rune on the cover.
 
+## Rarity icons (2026-11-23)
+One 7×7 gem per Rarity, in the Rarity's name colour, in the `rune:glyphs` font (`\ue000` Common … `\ue004` Legendary; bitmap height 8, ascent 7 like vanilla text). The shape grows with Rarity: Common pebble · Uncommon rhombus · Rare cut gem · Epic crystal cluster · Legendary crown. Generator: `tools/texture-gen/v3/icons.py`. In code: `Glyphs.rarity(rarity)` (always white, or the text colour tints it) and `Text.rarityLine(rarity)` = icon + space + name, used for the Rarity line of every item and the Quest Tier.
+
 ## Tooling
 - Generator: `tools/texture-gen/` (Python + Pillow, see its README). A colour change is a one-line edit; `export_all.py` rebuilds every PNG and pack file.
 - Open points: real poplar palette (no poplar texture in 26.1, colours invented); some Relic loose pixels (hanging moss / roots) to check in game.
-- Next batches: Blueprint, font glyphs (Rarity + Job icons), menus v3 (Jobs, Quests, Cache reel).
+- Next batches: Blueprint, font glyphs (Job icons), menus v3 (Cache reel; Jobs and Quests are done).
