@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "rune:item/menu_locked_runesmithing"
+  }
+}

@@ -66,7 +66,9 @@ _Avoid_: enchantment
 
 **Loadout** — The set of Runes currently installed on a player, a tool or an armor piece. Can be changed freely at any time. Players have 8 Player Rune slots.
 
-**Rune Cache** — A sealed item containing a random reward (usually Runes). Dropped by Job Actions, found in loot where vanilla had enchanted books, and given by Quests; the player opens it whenever they choose. Every Cache rolls the same loot table; the Cache's Rarity only shifts the odds and the quantity of what it gives (a Legendary Cache may give several Epic Runes instead of a Legendary one). A Cache dropped by a Job leans towards that Job's Runes.
+**Rune Cache** — A sealed item containing a random reward (usually Runes). Dropped by Job Actions, found in loot, fishing and villager trades where vanilla had enchanted books, and given by Quests; the player opens it whenever they choose. Every Cache rolls the same loot table; the Cache's Rarity only shifts the odds and the quantity of what it gives (a Legendary Cache may give several Epic Runes instead of a Legendary one). A Cache dropped by a Job leans towards that Job's Runes.
+
+**Cache reel** — The spinning menu shown when a Rune Cache is opened, a Drawn menu: items of random Rarities scroll under a pointer and slow down, then it lands on the best Rarity among the loot, lights up in that colour, plays a sound and shows every reward. Closing it early still gives the loot. Display only: the loot is rolled before the reel.
 
 **Loot Table** — A named weighted list of rewards (Runes, items, Job XP, Account XP, Reroll Tokens). A Rarity (Cache Rarity or Quest Tier) shifts its odds and how many times it is rolled. Rolling gives nothing by itself: it returns the results, and the caller gives them. Details in `docs/rewards.md`. Test with `/rune loot roll <table> [rarity] [job]`.
 

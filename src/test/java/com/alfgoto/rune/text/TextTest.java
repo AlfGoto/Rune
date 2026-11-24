@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.junit.jupiter.api.Test;
 
 class TextTest {
@@ -55,7 +57,7 @@ class TextTest {
 
     @Test
     void glyphUsesGlyphFont() {
-        assertEquals(Glyphs.FONT, Glyphs.glyph('').font());
+        assertEquals(Glyphs.FONT, Glyphs.glyph('\ue000').font());
     }
 
     @Test
@@ -68,6 +70,18 @@ class TextTest {
         JsonObject en = load("en_us");
         for (Rarity rarity : Rarity.values()) {
             assertEquals(rarity.englishName(), en.get(rarity.translationKey()).getAsString());
+        }
+    }
+
+    @Test
+    void rarityLineIsIconSpaceThenName() {
+        for (Rarity rarity : Rarity.values()) {
+            Component line = Text.rarityLine(rarity);
+            TextComponent icon = (TextComponent) line.children().get(0);
+            assertEquals(String.valueOf((char) ('\ue000' + rarity.ordinal())), icon.content());
+            assertEquals(Glyphs.FONT, icon.font());
+            assertEquals(NamedTextColor.WHITE, icon.color());
+            assertEquals(rarity.translationKey(), ((TranslatableComponent) line.children().get(2)).key());
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.alfgoto.rune.gameplay.runes;
 
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
@@ -22,10 +25,16 @@ public final class IndestructibleItems implements Listener {
 
     private final ItemRegistry items;
     private final RuneRegistry runes;
+    private final List<Predicate<ItemStack>> extra = new CopyOnWriteArrayList<>();
 
     public IndestructibleItems(ItemRegistry items, RuneRegistry runes) {
         this.items = items;
         this.runes = runes;
+    }
+
+    /** Protects more items (e.g. Rune Caches, which hold Runes). */
+    public void protect(Predicate<ItemStack> predicate) {
+        extra.add(predicate);
     }
 
     /** True for a Rune, a Rune Tool or a Rune Armor piece (they carry Runes). */
@@ -34,6 +43,9 @@ public final class IndestructibleItems implements Listener {
             return false;
         }
         if (runes.of(stack).isPresent()) {
+            return true;
+        }
+        if (extra.stream().anyMatch(p -> p.test(stack))) {
             return true;
         }
         return items.of(stack)

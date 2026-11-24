@@ -10,5 +10,15 @@
   "rune.command.level.changed": "%s is now level %s",
   "rune.command.unknown_job": "Unknown Job: %s",
   "rune.command.invalid_number": "Invalid number: %s",
-  "rune.command.player_not_found": "Player not found: %s"
+  "rune.command.player_not_found": "Player not found: %s",
+  "rune.job.excavation": "Excavation",
+  "rune.job.farming": "Farming",
+  "rune.job.ranching": "Ranching",
+  "rune.job.fishing": "Fishing",
+  "rune.job.combat": "Combat",
+  "rune.job.archery": "Archery",
+  "rune.job.smithing": "Smithing",
+  "rune.job.alchemy": "Alchemy",
+  "rune.job.adventuring": "Adventuring",
+  "rune.job.runesmithing": "Runesmithing"
 }

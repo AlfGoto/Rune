@@ -1,0 +1,387 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        "\uf801": -1,
+        "\uf821": 1,
+        "\uf802": -2,
+        "\uf822": 2,
+        "\uf803": -4,
+        "\uf823": 4,
+        "\uf804": -8,
+        "\uf824": 8,
+        "\uf805": -16,
+        "\uf825": 16,
+        "\uf806": -32,
+        "\uf826": 32,
+        "\uf807": -64,
+        "\uf827": 64,
+        "\uf808": -128,
+        "\uf828": 128,
+        "\uf809": -256,
+        "\uf829": 256
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/codex.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue100"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/runes.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue101"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/quests.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue102"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/jobs.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue103"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel.png",
+      "height": 222,
+      "ascent": 13,
+      "chars": [
+        "\ue104"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/note_common.png",
+      "height": 93,
+      "ascent": 0,
+      "chars": [
+        "\ue110"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/note_uncommon.png",
+      "height": 93,
+      "ascent": 0,
+      "chars": [
+        "\ue111"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/note_rare.png",
+      "height": 93,
+      "ascent": 0,
+      "chars": [
+        "\ue112"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/note_epic.png",
+      "height": 93,
+      "ascent": 0,
+      "chars": [
+        "\ue113"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/note_legendary.png",
+      "height": 93,
+      "ascent": 0,
+      "chars": [
+        "\ue114"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_0.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue120"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_1.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue121"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_2.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue122"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_3.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue123"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_4.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue124"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_5.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue125"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_6.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue126"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_7.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue127"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_8.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue128"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_9.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue129"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/orb_10.png",
+      "height": 31,
+      "ascent": -24,
+      "chars": [
+        "\ue12a"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/nav_runes_prev.png",
+      "height": 18,
+      "ascent": -40,
+      "chars": [
+        "\ue130"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/nav_runes_next.png",
+      "height": 18,
+      "ascent": -58,
+      "chars": [
+        "\ue131"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/nav_jobs_prev.png",
+      "height": 18,
+      "ascent": -94,
+      "chars": [
+        "\ue132"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/nav_jobs_next.png",
+      "height": 18,
+      "ascent": -94,
+      "chars": [
+        "\ue133"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_top.png",
+      "height": 36,
+      "ascent": -22,
+      "chars": [
+        "\ue140"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_top_locked.png",
+      "height": 36,
+      "ascent": -22,
+      "chars": [
+        "\ue141"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_bottom.png",
+      "height": 36,
+      "ascent": -58,
+      "chars": [
+        "\ue142"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/job_card_bottom_locked.png",
+      "height": 36,
+      "ascent": -58,
+      "chars": [
+        "\ue143"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reroll.png",
+      "height": 18,
+      "ascent": -94,
+      "chars": [
+        "\ue150"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_common.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue160"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_uncommon.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue161"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_rare.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue162"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_epic.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue163"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_glow_legendary.png",
+      "height": 30,
+      "ascent": -34,
+      "chars": [
+        "\ue164"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_common.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue168"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_uncommon.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue169"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_rare.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16a"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_epic.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16b"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rune:gui/menu/reel_cache_legendary.png",
+      "height": 32,
+      "ascent": 0,
+      "chars": [
+        "\ue16c"
+      ]
+    }
+  ]
+}
