@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -98,6 +99,13 @@ final class RhythmArmorListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onItemBreak(PlayerItemBreakEvent event) {
         later(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDispenseArmor(BlockDispenseArmorEvent event) {
+        if (event.getTargetEntity() instanceof Player player) {
+            later(player);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

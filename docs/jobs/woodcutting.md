@@ -183,7 +183,7 @@ Unlock levels: Common 3, Uncommon 7, Rare 12, Epic 18, Legendary by Blueprint.
 | Helmet | Chopping speed | Lumberjack's Cap / Bonnet de bûcheron | Feller's Hood / Capuche d'élagueur | Sylvan Helm / Heaume sylvestre | Heartwood Helm / Heaume de cœur-de-bois | Crown of the Grove / Couronne du Bosquet |
 | Chestplate | Damage reduction | Lumberjack's Vest / Veste de bûcheron | Feller's Jerkin / Gilet d'élagueur | Sylvan Cuirass / Cuirasse sylvestre | Heartwood Cuirass / Cuirasse de cœur-de-bois | Elder's Bark / Écorce de l'Ancien |
 | Leggings | Move speed | Lumberjack's Trousers / Pantalon de bûcheron | Feller's Leggings / Jambières d'élagueur | Sylvan Leggings / Jambières sylvestres | Heartwood Leggings / Jambières de cœur-de-bois | Treetop Stride / Foulée de la Canopée |
-| Boots | Jump height + less fall damage | Lumberjack's Boots / Bottes de bûcheron | Feller's Boots / Bottes d'élagueur | Sylvan Boots / Bottes sylvestres | Heartwood Boots / Bottes de cœur-de-bois | Stag's Hooves / Sabots du Cerf |
+| Boots | Jump strength + less fall damage | Lumberjack's Boots / Bottes de bûcheron | Feller's Boots / Bottes d'élagueur | Sylvan Boots / Bottes sylvestres | Heartwood Boots / Bottes de cœur-de-bois | Stag's Hooves / Sabots du Cerf |
 
 ### Armor recipes
 Each piece above Common consumes the previous one (Upgrade). Uncommon adds a Reinforced Lining, Rare a Gem Setting, Legendary a Legendary Core + 2 netherite blocks.
