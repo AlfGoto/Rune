@@ -1,6 +1,8 @@
 package com.alfgoto.rune.content.quests;
 
 import com.alfgoto.rune.content.jobs.CoreJobs;
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.blocktracking.SaplingPlanters;
 import com.alfgoto.rune.foundations.triggers.TreeFelled;
 import com.alfgoto.rune.gameplay.quests.QuestAction;
@@ -38,14 +40,20 @@ final class TreeQuestListener implements Listener {
 
     private final Server server;
     private final SaplingPlanters planters;
+    private final BlockTracker tracker;
 
-    TreeQuestListener(Server server, SaplingPlanters planters) {
+    TreeQuestListener(Server server, SaplingPlanters planters, BlockTracker tracker) {
         this.server = server;
+        this.tracker = tracker;
         this.planters = planters;
     }
 
     @EventHandler
     public void onTreeFelled(TreeFelled event) {
+        // A bone-meal tree is not a natural tree: no bone-meal farm for the Tool Quest (same rule as Job XP).
+        if (tracker.has(event.lastLog(), BlockTag.GROWN_BONEMEAL)) {
+            return;
+        }
         server.getPluginManager()
                 .callEvent(new QuestActionEvent(
                         event.player(), CoreJobs.WOODCUTTING, QuestAction.TREE_FELLED, event.lastLog(), event.item()));
@@ -72,6 +80,11 @@ final class TreeQuestListener implements Listener {
      * next to it are checked too.
      */
     private @Nullable Player planterOf(Block sapling) {
+        Optional<UUID> own = planters.get(sapling);
+        if (own.isPresent()) {
+            planters.clear(sapling);
+            return server.getPlayer(own.get());
+        }
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 Block near = sapling.getRelative(dx, 0, dz);

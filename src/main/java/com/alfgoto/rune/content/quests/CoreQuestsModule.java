@@ -3,6 +3,7 @@ package com.alfgoto.rune.content.quests;
 import com.alfgoto.rune.content.jobs.CoreJobs;
 import com.alfgoto.rune.content.jobs.CoreJobsModule;
 import com.alfgoto.rune.content.places.CorePlacesModule;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.blocktracking.BlockTrackingModule;
 import com.alfgoto.rune.foundations.blocktracking.SaplingPlanters;
 import com.alfgoto.rune.foundations.module.RuneContext;
@@ -96,7 +97,8 @@ public final class CoreQuestsModule implements RuneModule {
                         "wood_tool", CoreJobs.WOODCUTTING, 20, event -> isHeldItem(items, event.tool(), WOOD_TOOL_ID))
                 .counting(QuestAction.TREE_FELLED));
         types.register(new QuestType("reforestation", CoreJobs.WOODCUTTING, 25).counting(QuestAction.TREE_GROWN));
-        ctx.listen(new TreeQuestListener(ctx.plugin().getServer(), ctx.get(SaplingPlanters.class)));
+        ctx.listen(new TreeQuestListener(
+                ctx.plugin().getServer(), ctx.get(SaplingPlanters.class), ctx.get(BlockTracker.class)));
     }
 
     static boolean isSpruceLog(Block block) {
