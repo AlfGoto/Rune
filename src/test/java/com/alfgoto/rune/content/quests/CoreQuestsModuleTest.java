@@ -16,15 +16,24 @@ import com.alfgoto.rune.gameplay.places.Place;
 import com.alfgoto.rune.gameplay.places.PlaceDetector;
 import com.alfgoto.rune.gameplay.places.PlaceRegistry;
 import com.alfgoto.rune.gameplay.places.WorldProbe;
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
+import com.alfgoto.rune.foundations.blocktracking.SaplingPlanters;
+import com.alfgoto.rune.foundations.triggers.TreeFelled;
 import com.alfgoto.rune.gameplay.quests.QuestAction;
+import com.alfgoto.rune.gameplay.quests.QuestActionEvent;
 import com.alfgoto.rune.gameplay.quests.QuestType;
 import com.alfgoto.rune.gameplay.quests.QuestTypeRegistry;
 import com.alfgoto.rune.text.Rarity;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -201,5 +210,29 @@ class CoreQuestsModuleTest {
         assertTrue(CoreQuestsModule.isHeldItem(items, items.create(jungle, 1), CoreQuestsModule.WOOD_TOOL_ID));
         assertFalse(CoreQuestsModule.isHeldItem(
                 items, new ItemStack(Material.WOODEN_AXE), CoreQuestsModule.WOOD_TOOL_ID));
+    }
+
+    @Test
+    void toolQuestSkipsBoneMealTreesButCountsNaturalOnes() {
+        BlockTracker tracker = plugin.context().get(BlockTracker.class);
+        List<QuestActionEvent> seen = new ArrayList<>();
+        server.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void on(QuestActionEvent event) {
+                seen.add(event);
+            }
+        }, plugin);
+        TreeQuestListener listener =
+                new TreeQuestListener(server, plugin.context().get(SaplingPlanters.class), tracker);
+        Block log = block(Material.JUNGLE_LOG, 60);
+        ItemStack axe = new ItemStack(Material.WOODEN_AXE);
+
+        tracker.add(log, BlockTag.GROWN_BONEMEAL);
+        listener.onTreeFelled(new TreeFelled(player, log, axe, List.of(log)));
+        assertTrue(seen.isEmpty());
+
+        tracker.remove(log, BlockTag.GROWN_BONEMEAL);
+        listener.onTreeFelled(new TreeFelled(player, log, axe, List.of(log)));
+        assertEquals(1, seen.size());
     }
 }
