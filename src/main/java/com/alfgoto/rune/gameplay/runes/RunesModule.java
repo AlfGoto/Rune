@@ -31,7 +31,8 @@ public final class RunesModule implements RuneModule {
                 PlayerLoadout.class,
                 new PlayerLoadout(ctx.get(PlayerStorage.class), registry, playerCapacity, ctx.get(JobProgress.class)));
         ctx.get(GiveSubcommand.class).addVariant(new GiveRuneVariant(registry));
-        ctx.listen(new IndestructibleItems(ctx.get(ItemRegistry.class), registry));
+        ctx.listen(ctx.provide(
+                IndestructibleItems.class, new IndestructibleItems(ctx.get(ItemRegistry.class), registry)));
         ToolLoadout loadout =
                 ctx.provide(ToolLoadout.class, new ToolLoadout(ctx.plugin(), ctx.get(ItemRegistry.class), registry));
         ctx.listen(ctx.provide(ActiveRunes.class, new ActiveRunes(loadout, ctx.get(BrokenToolListener.class)::isBroken)));
