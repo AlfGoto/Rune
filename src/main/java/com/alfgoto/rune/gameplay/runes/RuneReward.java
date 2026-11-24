@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * One Rune of a given Rarity (Rank 1).
@@ -78,6 +79,16 @@ public final class RuneReward implements Reward {
         public Component describe() {
             return Component.translatable(rune.item().translationKey(), rune.item().fallbackName())
                     .color(rune.rarity().color());
+        }
+
+        @Override
+        public Rarity rarity() {
+            return rune.rarity();
+        }
+
+        @Override
+        public ItemStack icon() {
+            return runes.create(rune, 1);
         }
 
         @Override

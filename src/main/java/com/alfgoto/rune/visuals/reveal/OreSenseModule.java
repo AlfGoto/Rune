@@ -1,6 +1,8 @@
 package com.alfgoto.rune.visuals.reveal;
 
 import com.alfgoto.rune.content.runes.CoreRunesModule;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
+import com.alfgoto.rune.foundations.blocktracking.BlockTrackingModule;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
@@ -20,7 +22,8 @@ public final class OreSenseModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(RunesModule.class, ItemsModule.class, BlockRevealModule.class, CoreRunesModule.class);
+        return Set.of(RunesModule.class, ItemsModule.class, BlockRevealModule.class, CoreRunesModule.class,
+                BlockTrackingModule.class);
     }
 
     @Override
@@ -31,6 +34,7 @@ public final class OreSenseModule implements RuneModule {
                 ctx.get(ItemRegistry.class),
                 ctx.get(ToolLoadout.class),
                 ctx.get(BlockReveal.class),
+                ctx.get(BlockTracker.class),
                 () -> ThreadLocalRandom.current().nextDouble(),
                 radius,
                 seconds));
