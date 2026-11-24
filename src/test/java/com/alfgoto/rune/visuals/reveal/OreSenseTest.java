@@ -3,6 +3,8 @@ package com.alfgoto.rune.visuals.reveal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.alfgoto.rune.RunePlugin;
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import com.alfgoto.rune.foundations.triggers.BreakCause;
 import com.alfgoto.rune.foundations.triggers.RuneBlockBreakEvent;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
@@ -33,6 +35,7 @@ class OreSenseTest {
     private RuneRegistry runes;
     private ToolLoadout loadout;
     private BlockReveal reveal;
+    private BlockTracker tracker;
     private int picks;
 
     @BeforeEach
@@ -46,6 +49,7 @@ class OreSenseTest {
         runes = plugin.context().get(RuneRegistry.class);
         loadout = plugin.context().get(ToolLoadout.class);
         reveal = plugin.context().get(BlockReveal.class);
+        tracker = plugin.context().get(BlockTracker.class);
     }
 
     @AfterEach
@@ -65,7 +69,7 @@ class OreSenseTest {
     }
 
     private OreSenseListener listener(double random) {
-        return new OreSenseListener(items, loadout, reveal, () -> random, 8, 5);
+        return new OreSenseListener(items, loadout, reveal, tracker, () -> random, 8, 5);
     }
 
     private void breakBlock(OreSenseListener listener, Block block, ItemStack tool) {
@@ -101,6 +105,16 @@ class OreSenseTest {
         Block dirt = world.getBlockAt(0, 11, 0);
         dirt.setType(Material.DIRT);
         breakBlock(listener(0), dirt, pick(true));
+        assertEquals(0, reveal.count(player.getUniqueId()));
+    }
+
+    @Test
+    void placedStoneNeverRolls() {
+        world.getBlockAt(3, 10, 0).setType(Material.DIAMOND_ORE);
+        Block stone = world.getBlockAt(0, 10, 0);
+        stone.setType(Material.STONE);
+        tracker.add(stone, BlockTag.PLACED);
+        breakBlock(listener(0), stone, pick(true));
         assertEquals(0, reveal.count(player.getUniqueId()));
     }
 }
