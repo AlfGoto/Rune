@@ -14,8 +14,15 @@ public final class QuestType implements Identified {
     private final String id;
     private final Job job;
     private final int baseSize;
+    private final QuestObjective objective;
 
+    /** A Quest Type where every Job Action of the Job counts. */
     public QuestType(String id, Job job, int baseSize) {
+        this(id, job, baseSize, QuestObjective.ANY);
+    }
+
+    /** A Quest Type where only the Job Actions accepted by {@code objective} count. */
+    public QuestType(String id, Job job, int baseSize, QuestObjective objective) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Quest Type id must not be blank");
         }
@@ -25,6 +32,12 @@ public final class QuestType implements Identified {
         this.id = id;
         this.job = Objects.requireNonNull(job, "job");
         this.baseSize = baseSize;
+        this.objective = Objects.requireNonNull(objective, "objective");
+    }
+
+    /** Tells which Job Actions of this Quest's Job count as progress. */
+    public QuestObjective objective() {
+        return objective;
     }
 
     @Override

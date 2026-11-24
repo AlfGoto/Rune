@@ -7,15 +7,13 @@ import com.alfgoto.rune.gameplay.rewards.LootTable;
 import com.alfgoto.rune.gameplay.rewards.LootTableRegistry;
 import com.alfgoto.rune.gameplay.rewards.RollContext;
 import com.alfgoto.rune.text.Rarity;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,47 +25,33 @@ import org.jspecify.annotations.Nullable;
  * Rune Caches: sealed items with a Rarity (one item per Rarity, {@code rune_cache_<rarity>}) and an optional
  * Job id. Opening one takes it from the stack, rolls the shared {@code cache} loot table with the Cache
  * Rarity and Job, and gives the loot. A Job Cache leans towards that Job's Runes (the bias is in
- * {@code RuneReward}, not here). Opening fires a {@link CacheOpenEvent} and gives the loot {@code revealTicks}
- * later, so the Cache reel can reveal it first; a player who leaves in the meantime gets it at once.
+ * {@code RuneReward}, not here). A {@link CacheReel} (from Visuals) plays the opening; without one, the
+ * loot is given at once.
  */
 public final class Caches {
 
     /** The loot table every Cache rolls. */
     public static final String TABLE = "cache";
 
-    /** Ticks between opening a Cache and getting its loot in game: the length of the reel. */
-    public static final int REVEAL_TICKS = 50;
-
     private final ItemRegistry items;
     private final LootTableRegistry tables;
     private final LootRoller roller;
     private final RandomGenerator random;
     private final NamespacedKey jobKey;
-    private final Plugin plugin;
-    private final int revealTicks;
-    private final List<Pending> pending = new ArrayList<>();
+    private CacheReel reel = (player, rarity, drops, finish) -> finish.run();
 
-    /** Loot given at once when a Cache is opened. */
     public Caches(
             Plugin plugin, ItemRegistry items, LootTableRegistry tables, LootRoller roller, RandomGenerator random) {
-        this(plugin, items, tables, roller, random, 0);
-    }
-
-    /** Loot given {@code revealTicks} after a Cache is opened. */
-    public Caches(
-            Plugin plugin,
-            ItemRegistry items,
-            LootTableRegistry tables,
-            LootRoller roller,
-            RandomGenerator random,
-            int revealTicks) {
-        this.plugin = plugin;
-        this.revealTicks = revealTicks;
         this.items = items;
         this.tables = tables;
         this.roller = roller;
         this.random = random;
         this.jobKey = new NamespacedKey(plugin, "cache_job");
+    }
+
+    /** Sets what plays the opening of a Cache. The default gives the loot at once. */
+    public void setReel(CacheReel reel) {
+        this.reel = reel;
     }
 
     /** The item id of the Cache of this Rarity, e.g. {@code rune_cache_rare}. */
@@ -115,45 +99,14 @@ public final class Caches {
         RollContext context = new RollContext(player.getUniqueId(), rarity, jobOf(stack).orElse(null));
         stack.setAmount(stack.getAmount() - 1);
         List<Drop> drops = roller.roll(table, context, random);
-        Bukkit.getPluginManager().callEvent(new CacheOpenEvent(player, rarity, drops, revealTicks));
-        if (revealTicks <= 0) {
-            give(player, rarity, drops);
-            return true;
-        }
-        Pending later = new Pending(player.getUniqueId(), rarity, drops);
-        pending.add(later);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> finish(later), revealTicks);
+        AtomicBoolean given = new AtomicBoolean();
+        reel.play(player, rarity, drops, () -> {
+            if (given.compareAndSet(false, true)) {
+                give(player, rarity, drops);
+            }
+        });
         return true;
     }
-
-    /** Gives at once everything {@code player} still waits for (they are leaving). */
-    void giveNow(Player player) {
-        for (Pending p : List.copyOf(pending)) {
-            if (p.player().equals(player.getUniqueId()) && pending.remove(p)) {
-                give(player, p.rarity(), p.drops());
-            }
-        }
-    }
-
-    /** Gives everything still waiting to the players still online (the plugin stops). */
-    void giveAllNow() {
-        for (Pending p : List.copyOf(pending)) {
-            Player player = Bukkit.getPlayer(p.player());
-            if (player != null && pending.remove(p)) {
-                give(player, p.rarity(), p.drops());
-            }
-        }
-        pending.clear();
-    }
-
-    private void finish(Pending later) {
-        Player player = Bukkit.getPlayer(later.player());
-        if (player != null && pending.remove(later)) {
-            give(player, later.rarity(), later.drops());
-        }
-    }
-
-    private record Pending(UUID player, Rarity rarity, List<Drop> drops) {}
 
     private static void give(Player player, Rarity rarity, List<Drop> drops) {
         player.sendMessage(Component.translatable(

@@ -1,7 +1,7 @@
 package com.alfgoto.rune.gameplay.rewards;
 
+import com.alfgoto.rune.text.Rarity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,21 +12,16 @@ public interface Drop {
     /** What the player sees, e.g. "Test Rune" or "+100 Mining XP". */
     Component describe();
 
+    /** The Rarity of this result, or {@code null} when it has none (XP, Reroll Token). */
+    default Rarity rarity() {
+        return null;
+    }
+
+    /** An item stack that shows this result in a menu. Never {@code null}. */
+    default ItemStack icon() {
+        return new ItemStack(Material.PAPER);
+    }
+
     /** Gives this result to {@code player}. Run on the main thread. */
     void give(Player player);
-
-    /**
-     * An item showing this result (the Cache reel shows it); never given. Default: a paper named
-     * {@link #describe()}; results that are items show the item itself.
-     */
-    default ItemStack icon() {
-        return named(Material.PAPER, describe());
-    }
-
-    /** One {@code material} named {@code name} (not in italics). */
-    static ItemStack named(Material material, Component name) {
-        ItemStack icon = new ItemStack(material);
-        icon.editMeta(meta -> meta.displayName(name.decoration(TextDecoration.ITALIC, false)));
-        return icon;
-    }
 }

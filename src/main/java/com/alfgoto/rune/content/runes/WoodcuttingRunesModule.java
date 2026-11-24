@@ -147,10 +147,10 @@ public final class WoodcuttingRunesModule implements RuneModule {
                                         lift.getAsDouble());
                             }
                         }));
-        // No Rune texture is drawn yet: shares the test model (see docs/design-decisions.md, Textures).
+        // Model: assets/rune/items/<id>.json, layered with the Rank (docs/art-direction.md, "Runes").
         ctx.get(RuneRegistry.class)
                 .register(Rune.active(
-                        new RuneItem(id, Rarity.RARE, Material.PAPER, "test_rune"),
+                        new RuneItem(id, Rarity.RARE, Material.PAPER, id),
                         effect.with(
                                 base.getAsDouble(),
                                 perRank.getAsDouble(),

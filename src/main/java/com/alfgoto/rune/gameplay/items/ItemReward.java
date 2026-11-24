@@ -3,10 +3,12 @@ package com.alfgoto.rune.gameplay.items;
 import com.alfgoto.rune.gameplay.rewards.Drop;
 import com.alfgoto.rune.gameplay.rewards.Reward;
 import com.alfgoto.rune.gameplay.rewards.RollContext;
+import com.alfgoto.rune.text.Rarity;
 import com.alfgoto.rune.text.Text;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /** An item by id, {@code min} to {@code max} of it. Not available if the item is not registered. */
 public final class ItemReward implements Reward {
@@ -56,13 +58,18 @@ public final class ItemReward implements Reward {
         }
 
         @Override
-        public void give(Player player) {
-            GiveSubcommand.give(player, items.create(item, count));
+        public Rarity rarity() {
+            return item.rarity();
         }
 
         @Override
-        public org.bukkit.inventory.ItemStack icon() {
-            return items.create(item, Math.min(count, 64));
+        public ItemStack icon() {
+            return items.create(item, count);
+        }
+
+        @Override
+        public void give(Player player) {
+            GiveSubcommand.give(player, items.create(item, count));
         }
     }
 }

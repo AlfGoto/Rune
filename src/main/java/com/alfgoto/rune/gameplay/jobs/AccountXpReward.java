@@ -6,7 +6,9 @@ import com.alfgoto.rune.gameplay.rewards.RollContext;
 import com.alfgoto.rune.text.Text;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /** Account XP, with no Job XP behind it (see {@link JobProgress#addAccountXpBonus}). Always available. */
 public final class AccountXpReward implements Reward {
@@ -37,13 +39,13 @@ public final class AccountXpReward implements Reward {
             }
 
             @Override
-            public void give(Player player) {
-                progress.addAccountXpBonus(player.getUniqueId(), amount);
+            public ItemStack icon() {
+                return new ItemStack(Material.EXPERIENCE_BOTTLE);
             }
 
             @Override
-            public org.bukkit.inventory.ItemStack icon() {
-                return Drop.named(org.bukkit.Material.NETHER_STAR, describe());
+            public void give(Player player) {
+                progress.addAccountXpBonus(player.getUniqueId(), amount);
             }
         };
     }

@@ -6,7 +6,9 @@ import com.alfgoto.rune.gameplay.rewards.RollContext;
 import com.alfgoto.rune.text.Text;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /** Job XP in the Job of the roll. Needs a Job in the context, so it is not available without one. */
 public final class JobXpReward implements Reward {
@@ -43,13 +45,13 @@ public final class JobXpReward implements Reward {
             }
 
             @Override
-            public void give(Player player) {
-                progress.addJobXp(player.getUniqueId(), job, amount);
+            public ItemStack icon() {
+                return new ItemStack(Material.EXPERIENCE_BOTTLE);
             }
 
             @Override
-            public org.bukkit.inventory.ItemStack icon() {
-                return Drop.named(org.bukkit.Material.EXPERIENCE_BOTTLE, describe());
+            public void give(Player player) {
+                progress.addJobXp(player.getUniqueId(), job, amount);
             }
         };
     }
