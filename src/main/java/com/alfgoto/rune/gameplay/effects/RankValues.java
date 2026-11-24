@@ -16,11 +16,24 @@ public final class RankValues {
     private final double base;
     private final double perRank;
     private final int maxRank; // 0 = no Max Rank
+    private final double ratio; // 0 = linear; otherwise the value is multiplied by this each Rank
 
-    private RankValues(double base, double perRank, int maxRank) {
+    private RankValues(double base, double perRank, int maxRank, double ratio) {
         this.base = base;
         this.perRank = perRank;
         this.maxRank = maxRank;
+        this.ratio = ratio;
+    }
+
+    /** A value multiplied by {@code ratio} each Rank: base, base x ratio, base x ratio^2... (e.g. 8, 16, 32). */
+    public static RankValues multiplied(double base, double ratio, int maxRank) {
+        if (maxRank < 1) {
+            throw new IllegalArgumentException("Max Rank must be at least 1, got " + maxRank);
+        }
+        if (!Double.isFinite(base) || !Double.isFinite(ratio) || ratio <= 0) {
+            throw new IllegalArgumentException("Base must be finite and the ratio a positive number");
+        }
+        return new RankValues(base, 0, maxRank, ratio);
     }
 
     /** Starts at {@code base} on Rank 1 and adds {@code perRank} each Rank. No Max Rank. */
@@ -40,7 +53,7 @@ public final class RankValues {
         if (!Double.isFinite(base) || !Double.isFinite(perRank)) {
             throw new IllegalArgumentException("Base and growth per Rank must be finite numbers");
         }
-        return new RankValues(base, perRank, maxRank);
+        return new RankValues(base, perRank, maxRank, 0);
     }
 
     public double base() {
@@ -67,7 +80,7 @@ public final class RankValues {
             throw new IllegalArgumentException("Rank starts at 1, got " + rank);
         }
         int effective = maxRank == 0 ? rank : Math.min(rank, maxRank);
-        return base + perRank * (effective - 1);
+        return ratio > 0 ? base * Math.pow(ratio, effective - 1) : base + perRank * (effective - 1);
     }
 
     @Override
