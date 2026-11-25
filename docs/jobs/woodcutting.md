@@ -18,7 +18,7 @@ Requires Minecraft 26.3+ (Poplar trees, Dappled Forest, Abandoned Camps).
 - Account Rate: **0.8**.
 
 ### Felled Tree
-A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). The first break scans the whole connected trunk (not only at or above the broken log) and starts an in-memory felling session with those log positions. Each break removes its log; logs that are gone for another reason (fire, explosions, other players) are dropped too. The tree is felled, exactly once, when no log is left, in any break order. Sessions last 30 minutes and track up to 200 logs. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees.
+A tree is felled when the player breaks the last natural log of its trunk (the logs of the same wood type connected to the one they broke). The first break scans the whole connected trunk (not only at or above the broken log) and starts an in-memory felling session with those log positions. Each break removes its log; logs that are gone for another reason (fire, explosions, other players) are dropped too. The tree is felled, exactly once, when no log is left, in any break order. Sessions last 30 minutes and track up to 200 logs. Cutting only the top does not fell the tree. Everything that says "per tree" (Rhythm, Birch / Cherry / Verdant axes, Replant, Motherroot, tree Quests) counts Felled Trees (except Reforestation: it counts trees grown from saplings).
 
 ## Job XP per block
 
@@ -212,7 +212,7 @@ Quest Types at launch:
 | Place | "Cut 40 logs in a Dark Forest" |
 | Variety | "Cut 5 different wood types" |
 | Tool | "Fell 20 trees with a Jungle Axe" |
-| Reforestation | "Grow 10 trees from saplings" (only successful growths count) |
+| Reforestation | "Grow 25 trees from saplings" (only successful growths count; bone meal counts ×1, see `design-decisions.md`) |
 
 Quest Tier (Common → Legendary) multiplies the objective (×1 / ×1.5 / ×2 / ×3 / ×5) and improves the rewards; see `design-decisions.md`. Legendary-tier Woodcutting Quests can, ultra-rarely, reward axe Relics; high Tiers can reward the Treetop Stride Blueprint.
 
