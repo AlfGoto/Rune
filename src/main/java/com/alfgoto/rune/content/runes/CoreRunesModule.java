@@ -58,6 +58,12 @@ public final class CoreRunesModule implements RuneModule {
         configuredRune(ctx, "smelt", Rarity.RARE, diggers);
         configuredRune(ctx, "silk_touch", Rarity.EPIC, diggers);
 
+        // Tool Runes (docs/jobs/mining.md): Sturdy is done by gameplay.durability, Magnet by gameplay.drops and
+        // Cache Hunter by gameplay.caches. Each only names its value here.
+        configuredRune(ctx, "sturdy", Rarity.COMMON, diggers);
+        configuredRune(ctx, "magnet", Rarity.UNCOMMON, diggers);
+        configuredRune(ctx, "cache_hunter", Rarity.RARE, diggers);
+
         // Ore Runes (docs/jobs/mining.md), pickaxe only. Ore Sense is shown by visuals.reveal.OreSenseListener
         // and Ore Bloom is done by OreBloomListener.
         configuredRune(ctx, "ore_sense", Rarity.UNCOMMON, Set.of(Fit.PICKAXE));
