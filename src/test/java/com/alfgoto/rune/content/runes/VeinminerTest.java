@@ -76,7 +76,7 @@ class VeinminerTest {
             block.setType(Material.AIR);
             return true;
         });
-        return new VeinminerListener(items, loadout, tracker, multi);
+        return new VeinminerListener(items, loadout, tracker, multi, stack -> false);
     }
 
     private void mine(Block block, ItemStack tool, BreakCause cause) {

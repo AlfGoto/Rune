@@ -12,6 +12,7 @@ import com.alfgoto.rune.gameplay.effects.EffectRegistry;
 import com.alfgoto.rune.gameplay.effects.EffectTriggers;
 import com.alfgoto.rune.gameplay.effects.EffectsModule;
 import com.alfgoto.rune.gameplay.effects.RankValues;
+import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.RuneItem;
@@ -49,7 +50,8 @@ public final class OreRunesModule implements RuneModule {
                 ctx.get(ItemRegistry.class),
                 ctx.get(ToolLoadout.class),
                 ctx.get(BlockTracker.class),
-                new MultiBreak(ctx.get(Triggers.class))));
+                new MultiBreak(ctx.get(Triggers.class)),
+                ctx.get(BrokenToolListener.class)::isBroken));
         ctx.listen(new OreBloomListener(
                 ctx.get(ItemRegistry.class),
                 ctx.get(ToolLoadout.class),
