@@ -252,12 +252,9 @@ class TraitsTest {
 
     @Test
     void recipesUseTheDocumentedIngredients() {
-        for (String id : new String[] {"copper_pickaxe", "redstone_pickaxe", "breeze_axe"}) {
+        for (String id : new String[] {"copper_pickaxe", "copper_axe", "redstone_pickaxe", "breeze_axe"}) {
             assertNotNull(server.getRecipe(plugin.context().get(com.alfgoto.rune.gameplay.crafting.RecipeBook.class).key(id)), id);
         }
-        assertTrue(
-                plugin.context().get(com.alfgoto.rune.gameplay.crafting.RecipeBook.class).find("copper_axe").isEmpty(),
-                "Copper Axe has no recipe: Stone Hatchet does not exist yet");
     }
 
     private static NamespacedKey key(String model) {

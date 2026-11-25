@@ -34,7 +34,7 @@ import org.bukkit.Material;
  * block in a row (+5% per block, up to +50%). Both are a {@code haste} Trait binding on a Scale. Numbers: config
  * {@code tools.copper} and {@code tools.momentum}.
  *
- * <p>Recipes are the documented ones. The Copper Axe has none: it upgrades the Stone Hatchet, which is not built.
+ * <p>Recipes are the documented ones. The Copper Axe upgrades the Stone Hatchet (Woodcutting 4).
  */
 @AutoService(RuneModule.class)
 public final class SpeedToolsModule implements RuneModule {
@@ -93,6 +93,11 @@ public final class SpeedToolsModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COPPER_INGOT),
                         'H', Ingredient.rune("reinforced_handle"),
                         'P', Ingredient.rune("coal_pickaxe"))));
+        book.register(new CraftingRecipe("copper_axe", woodcutting, 4, "copper_axe", 1,
+                List.of("CCC", "HA "), Map.of(
+                        'C', Ingredient.vanilla(Material.COPPER_INGOT),
+                        'H', Ingredient.rune("reinforced_handle"),
+                        'A', Ingredient.rune("stone_hatchet"))));
         book.register(new CraftingRecipe("redstone_pickaxe", mining, 11, "redstone_pickaxe", 1,
                 List.of("RDR", "GP "), Map.of(
                         'R', Ingredient.vanilla(Material.REDSTONE_BLOCK),

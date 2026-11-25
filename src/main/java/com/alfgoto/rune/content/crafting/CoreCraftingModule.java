@@ -99,6 +99,29 @@ public final class CoreCraftingModule implements RuneModule {
 
         miningArmor(book, mining);
         woodcuttingAxes(ctx, book, ctx.get(JobRegistry.class).registry().get("woodcutting"));
+        startAxes(book, ctx.get(JobRegistry.class).registry().get("woodcutting"));
+    }
+
+    /**
+     * Flint Hatchet and Stone Hatchet (Woodcutting 2) and Woodsman's Axe (5). The ingredients are the documented
+     * ones; the grid layouts are proposed (not in docs). Woodsman's consumes the Flint Hatchet (an Upgrade), so its
+     * Runes carry over. The Copper Axe recipe is in SpeedToolsModule, next to its item.
+     */
+    private static void startAxes(RecipeBook book, Job woodcutting) {
+        Ingredient stick = Ingredient.vanilla(Material.STICK);
+        Ingredient handle = Ingredient.rune("reinforced_handle");
+        book.register(new CraftingRecipe("flint_hatchet", woodcutting, 2, "flint_hatchet", 1,
+                List.of("FF", "FS", " S"), Map.of('F', Ingredient.vanilla(Material.FLINT), 'S', stick)));
+        book.register(new CraftingRecipe("stone_hatchet", woodcutting, 2, "stone_hatchet", 1,
+                List.of("CF", "CS", " S"), Map.of(
+                        'C', Ingredient.vanilla(Material.COBBLESTONE),
+                        'F', Ingredient.vanilla(Material.FLINT),
+                        'S', stick)));
+        book.register(new CraftingRecipe("woodsmans_axe", woodcutting, 5, "woodsmans_axe", 1,
+                List.of("III", "HA "), Map.of(
+                        'I', Ingredient.vanilla(Material.IRON_INGOT),
+                        'H', handle,
+                        'A', Ingredient.rune("flint_hatchet"))));
     }
 
     /**
