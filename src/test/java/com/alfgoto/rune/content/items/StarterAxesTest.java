@@ -32,6 +32,7 @@ class StarterAxesTest {
     void setUp() {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(RunePlugin.class);
+        MockBukkit.getMock().getScheduler().performOneTick(); // Rune recipes reach the server one tick later
         items = plugin.context().get(ItemRegistry.class);
         book = plugin.context().get(RecipeBook.class);
         loadout = plugin.context().get(ToolLoadout.class);

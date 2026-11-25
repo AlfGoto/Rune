@@ -48,6 +48,7 @@ public final class CorePlaces {
                 "minecraft:crimson_forest",
                 "minecraft:warped_forest",
                 "minecraft:basalt_deltas"));
+        registry.register(Place.biome("dark_forest", "minecraft:dark_forest"));
         registry.register(Place.biome("deep_dark", "minecraft:deep_dark"));
         registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
     }

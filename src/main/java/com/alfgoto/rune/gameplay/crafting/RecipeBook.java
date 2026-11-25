@@ -35,6 +35,8 @@ public final class RecipeBook {
     private final JobProgress progress;
     private final Predicate<ItemStack> isBroken;
     private final Registry<CraftingRecipe> recipes = new Registry<>("recipes");
+    private final List<CraftingRecipe> pending = new ArrayList<>();
+    private boolean deferred;
 
     public RecipeBook(Plugin plugin, ItemRegistry items, JobProgress progress) {
         this(plugin, items, progress, stack -> false);
@@ -49,14 +51,43 @@ public final class RecipeBook {
         this.progress = progress;
     }
 
-    /** Adds the recipe and registers it on the server. Its result and Rune ingredients must exist. */
+    /**
+     * Adds the recipe. It is registered on the server at once, unless {@link #deferRegistration} is on: then it waits
+     * for {@link #flush}. Its result and Rune ingredients must exist.
+     */
     public CraftingRecipe register(CraftingRecipe recipe) {
+        recipes.register(recipe);
+        if (deferred) {
+            pending.add(recipe);
+        } else {
+            server.addRecipe(shaped(recipe));
+        }
+        return recipe;
+    }
+
+    /**
+     * Holds back server registration until {@link #flush}. The result stack is built at flush time, when every item
+     * redrawer (name, lore) is registered, so the vanilla recipe book shows the Rune name.
+     */
+    public void deferRegistration() {
+        deferred = true;
+    }
+
+    /** Adds every held recipe to the server, then registers later ones at once. Refreshes online players' books. */
+    public void flush() {
+        deferred = false;
+        for (CraftingRecipe recipe : pending) {
+            server.addRecipe(shaped(recipe));
+        }
+        pending.clear();
+        server.getOnlinePlayers().forEach(this::sync);
+    }
+
+    private ShapedRecipe shaped(CraftingRecipe recipe) {
         ShapedRecipe shaped = new ShapedRecipe(key(recipe.id()), items.create(items.get(recipe.result()), recipe.amount()));
         shaped.shape(recipe.shape().toArray(String[]::new));
         recipe.ingredients().forEach((symbol, ingredient) -> shaped.setIngredient(symbol, choice(ingredient)));
-        recipes.register(recipe);
-        server.addRecipe(shaped);
-        return recipe;
+        return shaped;
     }
 
     private RecipeChoice choice(Ingredient ingredient) {

@@ -30,6 +30,7 @@ class BiomePickaxesTest {
     void setUp() {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(RunePlugin.class);
+        server.getScheduler().performOneTick(); // Rune recipes reach the server one tick later
         items = plugin.context().get(ItemRegistry.class);
         loadout = plugin.context().get(ToolLoadout.class);
     }

@@ -24,6 +24,14 @@ public final class CacheDrops {
         return Math.min(1, xp * config.dropPercentPerXp() / 100);
     }
 
+    /**
+     * Same as {@link #chance(double)} with Cache Hunter: {@code bonusPercent} is the stacked value of the
+     * Rune, a relative bonus (15 makes the chance 1.15 times bigger).
+     */
+    public double chance(double xp, double bonusPercent) {
+        return Math.min(1, chance(xp) * (1 + Math.max(0, bonusPercent) / 100));
+    }
+
     /** The Rarity of a Cache dropped by a Job Action (config {@code caches.drop-rarity}). */
     public Rarity dropRarity() {
         return Rarity.fromId(config.dropRarity());
