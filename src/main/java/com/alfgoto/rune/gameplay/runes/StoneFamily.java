@@ -32,6 +32,16 @@ public final class StoneFamily {
         return material.name().endsWith("_ORE") || material == Material.ANCIENT_DEBRIS;
     }
 
+    /** True if both are ores of the same kind: deepslate iron ore and iron ore are the same vein (Veinminer). */
+    public static boolean sameOre(Material a, Material b) {
+        return isOre(a) && isOre(b) && plainName(a).equals(plainName(b));
+    }
+
+    private static String plainName(Material ore) {
+        String name = ore.name();
+        return name.startsWith("DEEPSLATE_") ? name.substring("DEEPSLATE_".length()) : name;
+    }
+
     /**
      * The ore a neighbouring {@code stone} becomes when {@code ore} blooms into it: the same ore, in its deepslate
      * variant if the stone is deepslate, in its Nether variant if the stone is netherrack. Empty when that ore has

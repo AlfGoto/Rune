@@ -334,6 +334,12 @@ runes:
     base: 8
     per-rank: 8
     max-rank: 5
+  # Veinminer: the most blocks one mining breaks (the first included). Rank 1 = base, then times ratio each
+  # Rank: 8 / 16 / 32.
+  veinminer:
+    base: 8
+    ratio: 2
+    max-rank: 3
   # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # Leaf Fall: radius in blocks (2 / 4 / 6)
   leaf_fall:
