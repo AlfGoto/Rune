@@ -1,9 +1,12 @@
 package com.alfgoto.rune.gameplay.caches;
 
+import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.GiveSubcommand;
+import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.jobs.Job;
 import com.alfgoto.rune.gameplay.jobs.JobActionEvent;
 import com.alfgoto.rune.gameplay.jobs.JobLevelListener;
+import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.text.Rarity;
 import com.alfgoto.rune.text.Text;
 import java.util.UUID;
@@ -15,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Gives Caches for Jobs: a chance of a Cache at the block on every Job Action (Rarity from config, none in Creative),
@@ -22,14 +26,22 @@ import org.bukkit.event.Listener;
  */
 final class CacheDropListener implements Listener, JobLevelListener {
 
+    /** Effect id of Cache Hunter: more Cache chance, in percent. */
+    static final String CACHE_HUNTER = "cache_hunter";
+
     private final Caches caches;
     private final CacheDrops rules;
     private final DoubleSupplier random;
+    private final ItemRegistry items;
+    private final ToolLoadout loadout;
 
-    CacheDropListener(Caches caches, CacheDrops rules, DoubleSupplier random) {
+    CacheDropListener(
+            Caches caches, CacheDrops rules, DoubleSupplier random, ItemRegistry items, ToolLoadout loadout) {
         this.caches = caches;
         this.rules = rules;
         this.random = random;
+        this.items = items;
+        this.loadout = loadout;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -37,12 +49,21 @@ final class CacheDropListener implements Listener, JobLevelListener {
         if (event.location() == null || event.player().getGameMode() == GameMode.CREATIVE) {
             return;
         }
-        if (random.getAsDouble() >= rules.chance(event.xp())) {
+        if (random.getAsDouble() >= rules.chance(event.xp(), cacheHunter(event))) {
             return;
         }
         event.location()
                 .getWorld()
                 .dropItemNaturally(event.location(), caches.create(rules.dropRarity(), event.job().id()));
+    }
+
+    /** The stacked Cache Hunter value (Trait and Runes) of the tool of the action, 0 without a Rune Tool. */
+    private double cacheHunter(JobActionEvent event) {
+        ItemStack tool = event.tool();
+        if (tool == null || items.of(tool).isEmpty()) {
+            return 0;
+        }
+        return Stacking.total(CACHE_HUNTER, loadout.sources(tool, event.player()));
     }
 
     @Override

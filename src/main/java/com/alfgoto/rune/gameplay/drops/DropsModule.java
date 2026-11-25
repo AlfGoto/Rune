@@ -1,5 +1,7 @@
 package com.alfgoto.rune.gameplay.drops;
 
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
+import com.alfgoto.rune.foundations.blocktracking.BlockTrackingModule;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
@@ -16,7 +18,7 @@ public final class DropsModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, RunesModule.class);
+        return Set.of(ItemsModule.class, RunesModule.class, BlockTrackingModule.class);
     }
 
     @Override
@@ -25,6 +27,8 @@ public final class DropsModule implements RuneModule {
                 ctx.get(ItemRegistry.class),
                 ctx.get(ToolLoadout.class),
                 new Smelting(),
-                () -> ThreadLocalRandom.current().nextDouble()));
+                () -> ThreadLocalRandom.current().nextDouble(),
+                ctx.get(BlockTracker.class)));
+        ctx.listen(new MagnetListener(ctx.get(ItemRegistry.class), ctx.get(ToolLoadout.class)));
     }
 }

@@ -37,6 +37,7 @@ class ComponentsTest {
     void setUp() {
         server = MockBukkit.mock();
         RunePlugin plugin = MockBukkit.load(RunePlugin.class);
+        MockBukkit.getMock().getScheduler().performOneTick(); // Rune recipes reach the server one tick later
         items = plugin.context().get(ItemRegistry.class);
         book = plugin.context().get(RecipeBook.class);
     }

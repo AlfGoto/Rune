@@ -13,6 +13,7 @@ import com.alfgoto.rune.gameplay.rewards.LootTableRegistry;
 import com.alfgoto.rune.gameplay.rewards.RewardsModule;
 import com.alfgoto.rune.gameplay.runes.IndestructibleItems;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
+import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,7 +42,11 @@ public final class CachesModule implements RuneModule {
         ctx.get(IndestructibleItems.class).protect(stack -> caches.rarityOf(stack).isPresent());
         ctx.listen(new CacheListener(caches));
         CacheDropListener drops = new CacheDropListener(
-                caches, new CacheDrops(ctx.config().caches()), () -> ThreadLocalRandom.current().nextDouble());
+                caches,
+                new CacheDrops(ctx.config().caches()),
+                () -> ThreadLocalRandom.current().nextDouble(),
+                items,
+                ctx.get(ToolLoadout.class));
         ctx.listen(drops);
         ctx.get(JobProgress.class).addLevelListener(drops);
     }

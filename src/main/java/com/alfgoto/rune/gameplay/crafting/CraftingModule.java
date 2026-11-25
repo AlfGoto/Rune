@@ -29,6 +29,9 @@ public final class CraftingModule implements RuneModule {
         RecipeBook recipeBook = ctx.provide(RecipeBook.class, new RecipeBook(
                 ctx.plugin(), items, progress, ctx.get(BrokenToolListener.class)::isBroken));
         book = recipeBook;
+        // Server recipes are added one tick later, once every item redrawer exists (the book shows the Rune name).
+        recipeBook.deferRegistration();
+        ctx.plugin().getServer().getScheduler().runTask(ctx.plugin(), recipeBook::flush);
         ctx.listen(new CraftingListener(
                 recipeBook, items, ctx.get(ToolLoadout.class), ctx.get(RuneRegistry.class)));
         // Rank-up at the smithing table. The hidden recipe is registered one tick later, once every module
