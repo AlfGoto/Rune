@@ -97,6 +97,22 @@ public final class QuestBook {
     }
 
     /**
+     * Remembers {@code key} for the Quest in {@code slot} (1..3), for Quest Types that count each key once
+     * (Variety). Returns false when the key was already seen. Forgotten when the slot gets a new Quest.
+     */
+    public boolean markSeen(UUID player, int slot, String key) {
+        requireSlot(slot);
+        String raw = storage.get(player, seenKey(slot)).orElse("");
+        List<String> seen = raw.isEmpty() ? new ArrayList<>() : new ArrayList<>(List.of(raw.split(",")));
+        if (seen.contains(key)) {
+            return false;
+        }
+        seen.add(key);
+        storage.set(player, seenKey(slot), String.join(",", seen));
+        return true;
+    }
+
+    /**
      * Replaces the Quest in {@code slot} (1..3) with a new draw and resets its progress. Used when the
      * Quest is completed. Returns the new Quest, or empty (slot left empty) if none can be drawn.
      */
@@ -106,6 +122,7 @@ public final class QuestBook {
         if (quest == null) {
             storage.remove(player, key(slot));
             storage.remove(player, progressKey(slot));
+            storage.remove(player, seenKey(slot));
             return Optional.empty();
         }
         write(player, slot, quest);
@@ -137,7 +154,8 @@ public final class QuestBook {
 
     /** Objective size: base size × Tier multiplier, rounded up. */
     public int target(QuestType type, Rarity tier) {
-        return (int) Math.ceil(type.baseSize() * config.questTierMultipliers().get(tier.ordinal()));
+        int size = (int) Math.ceil(type.baseSize() * config.questTierMultipliers().get(tier.ordinal()));
+        return Math.min(size, type.maxSize());
     }
 
     /** Draws a Quest: a random eligible Job, one of its Quest Types, a Tier weighted by that Job's level. */
@@ -181,6 +199,7 @@ public final class QuestBook {
     private void write(UUID player, int slot, Quest quest) {
         storage.set(player, key(slot), quest.type().id() + ":" + quest.tier().id());
         storage.remove(player, progressKey(slot)); // a new Quest starts at 0
+        storage.remove(player, seenKey(slot));
     }
 
     private static String key(int slot) {
@@ -189,6 +208,10 @@ public final class QuestBook {
 
     private static String progressKey(int slot) {
         return "quest/progress/" + slot;
+    }
+
+    private static String seenKey(int slot) {
+        return "quest/seen/" + slot;
     }
 
     private static void requireSlot(int slot) {

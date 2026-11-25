@@ -20,6 +20,7 @@ public final class CorePlaces {
         registry.register(Place.biome("dappled_forest", "minecraft:dappled_forest"));
         registry.register(Place.biome(
                 "jungle", "minecraft:jungle", "minecraft:sparse_jungle", "minecraft:bamboo_jungle"));
+        registry.register(Place.biome("dark_forest", "minecraft:dark_forest"));
         registry.register(Place.biome("deep_dark", "minecraft:deep_dark"));
         registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));
     }

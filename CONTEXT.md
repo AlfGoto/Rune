@@ -17,7 +17,7 @@ An RPG layer for Minecraft: players level Jobs by playing, and customise themsel
 **Woodcutting** — The Job for natural axe blocks (logs, wood, Nether stems, giant mushroom blocks, mangrove roots, structure planks…) plus leaves, whatever tool breaks them. Axe blocks that are crops (pumpkins, melons, cocoa, bamboo) belong to Farming; bee nests and beehives belong to Ranching.
 _Avoid_: Foraging, Lumberjack
 
-**Felled Tree** — A tree counts as felled when the player breaks the last natural log of its trunk: the logs of the same wood type connected to the one they broke. Cutting only the top of a tree does not fell it. Effects that say "per tree" (Rhythm, replanting, tree Quests) count Felled Trees.
+**Felled Tree** — A tree counts as felled when the player breaks the last natural log of its trunk: the logs of the same wood type connected to the one they broke. Cutting only the top of a tree does not fell it. Effects that say "per tree" (Rhythm, replanting, tree Quests) count Felled Trees (except Reforestation: it counts trees grown from saplings).
 
 **Job Action** — An in-game action that grants Job XP to exactly one Job (e.g. breaking a diamond ore → Mining). Different actions grant different amounts (diamond ≫ stone). For blocks, the block decides the Job, not the tool (wood broken with a pickaxe → Woodcutting). For kills, the weapon decides (bow kill → Archery, sword kill → Combat). A block only counts when the player breaks it themselves (with a tool, a tool's effect, or by hand) — not by TNT or creepers. Blocks placed by a player, and blocks created by fluids (cobblestone/basalt generators), never give Job XP, in any Job; obsidian is the exception.
 
