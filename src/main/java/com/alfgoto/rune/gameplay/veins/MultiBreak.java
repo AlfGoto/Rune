@@ -33,21 +33,17 @@ public final class MultiBreak {
     /**
      * Breaks {@code blocks} one by one for {@code player}. Stops when the main-hand item is no longer {@code usable}
      * (the tool broke or was swapped).
-     *
-     * @return how many blocks were broken
      */
-    public int breakAll(Player player, List<Block> blocks, Predicate<ItemStack> usable) {
-        int[] broken = {0};
+    public void breakAll(Player player, List<Block> blocks, Predicate<ItemStack> usable) {
         triggers.asEffect(() -> {
             for (Block block : blocks) {
                 if (!usable.test(player.getInventory().getItemInMainHand())) {
                     return;
                 }
-                if (!block.getType().isAir() && breaker.test(player, block)) {
-                    broken[0]++;
+                if (!block.getType().isAir()) {
+                    breaker.test(player, block);
                 }
             }
         });
-        return broken[0];
     }
 }
