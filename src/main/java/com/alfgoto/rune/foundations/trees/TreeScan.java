@@ -12,6 +12,7 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 /**
  * The shared tree scan (see {@code docs/jobs/woodcutting.md}): from a block, follows natural logs of the same wood
@@ -59,6 +60,67 @@ public final class TreeScan {
             }
         }
         return logs;
+    }
+
+    private static final BlockFace[] FACES = {
+        BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
+    };
+
+    /**
+     * The Treefeller scan (docs/jobs/woodcutting.md): the natural logs of the origin's wood type that connect to it
+     * and are at or above its height, then the canopy blocks (leaves, wart blocks, shroomlight) that touch those
+     * logs or the origin by a face. Everything counts towards {@code cap}: logs come first (nearest first), the
+     * canopy fills what is left. The origin is not in the result. Canopy tagged {@link BlockTag#PLACED} is left
+     * alone.
+     *
+     * @param cap max blocks returned (logs and canopy together)
+     */
+    public List<Block> scanTree(Block origin, int cap) {
+        List<Block> result = new ArrayList<>();
+        String wood = woodType(origin.getType());
+        if (wood == null || cap <= 0) {
+            return result;
+        }
+        List<Block> trunk = new ArrayList<>();
+        trunk.add(origin);
+        Set<Block> seen = new HashSet<>();
+        seen.add(origin);
+        for (int i = 0; i < trunk.size() && result.size() < cap; i++) {
+            Block current = trunk.get(i);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        Block next = current.getRelative(dx, dy, dz);
+                        if (result.size() < cap
+                                && next.getY() >= origin.getY()
+                                && !seen.contains(next)
+                                && isNaturalLog(next, wood)) {
+                            seen.add(next);
+                            trunk.add(next);
+                            result.add(next);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < trunk.size() && result.size() < cap; i++) {
+            for (BlockFace face : FACES) {
+                Block next = trunk.get(i).getRelative(face);
+                if (result.size() < cap && seen.add(next) && isNaturalCanopy(next)) {
+                    result.add(next);
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean isNaturalCanopy(Block block) {
+        Material type = block.getType();
+        boolean canopy = Tag.LEAVES.isTagged(type)
+                || type == Material.NETHER_WART_BLOCK
+                || type == Material.WARPED_WART_BLOCK
+                || type == Material.SHROOMLIGHT;
+        return canopy && !tracker.has(block, BlockTag.PLACED);
     }
 
     /** True when the block is a log that is not tagged {@link BlockTag#PLACED}. */

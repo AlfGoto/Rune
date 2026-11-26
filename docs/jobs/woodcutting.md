@@ -173,6 +173,8 @@ Generic Mining Runes already fit axes: Haste, Sturdy, Fortune (+1 log / leaf dro
 
 **Treefeller rules** (also used by Tempest Axe, Great Fell, Boomerang; Felled Tree uses only the log scan, in every direction, see above): follows natural logs of **the same wood type** as the broken block, connected, **at or above** the broken block only, plus the canopy blocks touching them (leaves, wart blocks, shroomlight). Everything counts towards the block cap, so packed forests (Nether, jungle, dark oak) are never cut whole.
 
+**Treefeller build notes** (#84; `TreeScan.scanTree` + `content.runes.TreefellerListener`, numbers in config under `runes.treefeller`: base 16, ratio 2, max-rank 3, so `RankValues.multiplied`): Epic, axe only. The cap **includes the broken log**. Logs are taken first (nearest first), then the canopy (any leaves, wart blocks, shroomlight; touching a taken log by a face) fills the rest of the cap. Blocks Block Tracking tagged `placed` are skipped. Only a `TOOL` break starts it (it never chains), it goes through the shared `MultiBreak` (full XP, Cache roll, drops, durability per block) and stops when the tool is Broken. It is always on. Felled Tree still counts via the log scan, whatever the cap. Rune model: `treefeller` (falling tree).
+
 ## Woodcutting armor ("Rhythm")
 **Rhythm** (FR: Cadence): each Felled Tree adds one charge, max 10; all charges reset after 30 s without felling a tree. Each piece's Trait scales from 0% (no charge) to 100% (10 charges). Protection follows vanilla by Rarity, overridable. Capacity fixed (no Mastery).
 
