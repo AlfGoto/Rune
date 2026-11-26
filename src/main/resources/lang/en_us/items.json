@@ -59,6 +59,8 @@
   "rune.command.give_rune.bad_rank": "The Rank must be a number from 1 to %s.",
   "rune.command.give_rune.bad_rank_min": "The Rank must be 1 or more.",
   "rune.command.give_rune.done": "Gave %s, Rank %s.",
+  "rune.item.ironbound_pickaxe": "Ironbound Pickaxe",
+  "rune.trait.ironbound_pickaxe": "Plain · very durable",
   "rune.item.copper_pickaxe": "Copper Pickaxe",
   "rune.item.flint_hatchet": "Flint Hatchet",
   "rune.item.stone_hatchet": "Stone Hatchet",

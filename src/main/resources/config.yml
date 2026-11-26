@@ -406,6 +406,17 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
+  flint_pickaxe:
+    fortune: 15
+    slower_percent: 10
+  # Coal Pickaxe: faster_percent = % faster mining, durability = max durability (stone tier default is 131)
+  coal_pickaxe:
+    faster_percent: 15
+    durability: 100
+  # Ironbound Pickaxe: durability = max durability (iron tier default is 250)
+  ironbound_pickaxe:
+    durability: 500
   # Flint Hatchet: fortune = % chance of +1 log, slower_percent = % slower mining
   flint_hatchet:
     fortune: 15

@@ -59,6 +59,8 @@
   "rune.command.give_rune.bad_rank": "Le rang doit être un nombre de 1 à %s.",
   "rune.command.give_rune.bad_rank_min": "Le rang doit être 1 ou plus.",
   "rune.command.give_rune.done": "Vous avez reçu %s, rang %s.",
+  "rune.item.ironbound_pickaxe": "Pioche cerclée de fer",
+  "rune.trait.ironbound_pickaxe": "Simple · très durable",
   "rune.item.copper_pickaxe": "Pioche en cuivre",
   "rune.item.flint_hatchet": "Hachette de silex",
   "rune.item.stone_hatchet": "Hachette de pierre",

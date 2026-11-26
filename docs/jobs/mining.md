@@ -118,6 +118,7 @@ Echo serves both Detection and Biomes; sacrificing it for the Worldpick means cr
 | Relic | Starbreaker (FR: Fendeur d'étoiles) | Legendary | diamond | 18 | Mines 5×5 with no speed loss |
 | Fused Relic | Worldheart (FR: Cœur du Monde) | Legendary | diamond | 18 | Mines 5×5 with no speed loss; every ore broken pings a 24-block sonar; click in air: pulls every revealed ore within 16 blocks straight into the inventory |
 
+- Sturdy and Speed lines built (#73, 2026-11-26; Copper and Redstone already existed). Small decisions by Claude, starting values in config `traits.flint_pickaxe`, `traits.coal_pickaxe`, `traits.ironbound_pickaxe`: Flint = Fortune 15% + 10% slower; Coal = 15% faster, durability 100; Ironbound = Capacity +2, durability 500 (Mining 5, recipe consumes the Flint Pickaxe so Runes carry over; grid `III / HP`). Names: Ironbound Pickaxe / Pioche cerclée de fer. Fortune and Haste are the existing effects, so Runes stack.
 - Briseroc Blueprint: guaranteed at Mining Level 22.
 - Relics: Ancient City chests (Warden Pickaxe), Trial Vault chests (Starbreaker), and ultra-rare Legendary-tier Mining Quest rewards; only for players at Mining Level 25+.
 - Worldheart: no Blueprint; recipe = Warden Pickaxe + Starbreaker + 2 Legendary Cores + 4 netherite blocks + 2 beacons + 1 heavy core + 16 echo shards. Ores pulled by its click give full XP and a Cache roll each.
