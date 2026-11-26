@@ -68,8 +68,8 @@ public final class GlowLight implements Runnable {
         UUID id = player.getUniqueId();
         Glow old = glows.get(id);
         Block head = level > 0 ? player.getEyeLocation().getBlock() : null;
-        if (head != null && !head.getType().isAir()) {
-            head = null; // the head is inside a block or liquid: no room for a Light block
+        if (head != null && (head.isSolid() || head.isLiquid())) {
+            head = null; // the head is inside a solid block or liquid (plants do not count): no room for light
         }
         if (head == null) {
             if (old != null) {
@@ -105,7 +105,9 @@ public final class GlowLight implements Runnable {
     private void restore(Glow glow) {
         BlockData real = glow.location.getBlock().getBlockData();
         for (Player viewer : glow.location.getWorld().getPlayers()) {
-            viewer.sendBlockChange(glow.location, real);
+            if (viewer.getLocation().distanceSquared(glow.location) <= VIEW_DISTANCE * VIEW_DISTANCE) {
+                viewer.sendBlockChange(glow.location, real);
+            }
         }
     }
 }
