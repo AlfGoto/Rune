@@ -50,13 +50,7 @@ public final class CoreItemsModule implements RuneModule {
         miningArmor(items);
         // The Rune Codex (soulbound, opens the menus). Model: assets/rune/items/rune_codex.json.
         items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, Codex.ID));
-        // Mining pickaxes (docs/jobs/mining.md). Common = stone tier, Capacity 3. The Trait is an id plus a
-        // Capacity modifier for now: the "mines slower / faster" and durability numbers are not decided, so
-        // speed and durability stay at the stone-tier default. Coal's Trait has Capacity -1 (3 - 1 = 2).
-        items.register(RuneItem.tool("flint_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe",
-                ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0)));
-        items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
-                ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1)));
+        startPickaxes(items, ctx.config());
         startAxes(items, ctx.config());
         woodcuttingAxes(items, ctx.config());
         // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
@@ -101,6 +95,29 @@ public final class CoreItemsModule implements RuneModule {
         axe(items, "jungle_axe", Rarity.RARE,
                 TraitBinding.always("affinity_jungle", affinity),
                 TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+    }
+
+    /**
+     * The Flint, Coal and Ironbound Pickaxes (docs/jobs/mining.md). Numbers are in config
+     * ({@code traits.flint_pickaxe}, {@code traits.coal_pickaxe}, {@code traits.ironbound_pickaxe}).
+     */
+    private static void startPickaxes(ItemRegistry items, RuneConfig config) {
+        // Flint: Common, stone tier, Capacity 3. Fortune, mines slower.
+        double fortune = config.traitNumber("flint_pickaxe", "fortune", 15);
+        double slower = config.traitNumber("flint_pickaxe", "slower_percent", 10);
+        items.register(RuneItem.tool("flint_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "flint_pickaxe",
+                ToolSpec.DEFAULT.withTrait("flint_pickaxe", 0,
+                        TraitBinding.always("fortune", fortune), TraitBinding.always("haste", -slower))));
+        // Coal: Common, stone tier, Capacity 3 -1. Mines faster, lower durability.
+        double faster = config.traitNumber("coal_pickaxe", "faster_percent", 15);
+        int coalDurability = (int) config.traitNumber("coal_pickaxe", "durability", 100);
+        items.register(RuneItem.tool("coal_pickaxe", Rarity.COMMON, ToolKind.PICKAXE, "coal_pickaxe",
+                withDurability(ToolSpec.DEFAULT.withTrait("coal_pickaxe", -1, TraitBinding.always("haste", faster)),
+                        coalDurability)));
+        // Ironbound: Uncommon, iron tier, Capacity 6 +2. Plain, very durable.
+        int ironboundDurability = (int) config.traitNumber("ironbound_pickaxe", "durability", 500);
+        items.register(RuneItem.tool("ironbound_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "ironbound_pickaxe",
+                withDurability(ToolSpec.DEFAULT.withTrait("ironbound_pickaxe", 2), ironboundDurability)));
     }
 
     /**

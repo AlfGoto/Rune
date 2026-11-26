@@ -62,6 +62,25 @@ class StarterPickaxesTest {
         assertEquals(2, loadout.capacity(items.create(items.get("coal_pickaxe"), 1)));
     }
 
+    @Test
+    void traitsGiveTheirEffects() {
+        ToolLoadout loadout = plugin.context().get(ToolLoadout.class);
+        var flint = loadout.sources(items.create(items.get("flint_pickaxe"), 1));
+        var coal = loadout.sources(items.create(items.get("coal_pickaxe"), 1));
+        assertEquals(15, com.alfgoto.rune.gameplay.effects.Stacking.total("fortune", flint));
+        assertEquals(-10, com.alfgoto.rune.gameplay.effects.Stacking.total("haste", flint));
+        assertEquals(15, com.alfgoto.rune.gameplay.effects.Stacking.total("haste", coal));
+    }
+
+    @Test
+    void ironboundIsAnUncommonUpgradeOfTheFlintPickaxe() {
+        ToolLoadout loadout = plugin.context().get(ToolLoadout.class);
+        assertEquals(Rarity.UNCOMMON, items.get("ironbound_pickaxe").rarity());
+        assertEquals(5, book.find("ironbound_pickaxe").orElseThrow().level());
+        assertNotNull(server.getRecipe(book.key("ironbound_pickaxe")));
+        assertEquals(8, loadout.capacity(items.create(items.get("ironbound_pickaxe"), 1)));
+    }
+
     private Map<Material, Long> counts(String id) {
         ShapedRecipe recipe = (ShapedRecipe) server.getRecipe(book.key(id));
         Map<Material, Long> counts = new HashMap<>();

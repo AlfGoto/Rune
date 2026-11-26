@@ -53,6 +53,13 @@ public final class CoreCraftingModule implements RuneModule {
                         'B', Ingredient.vanilla(Material.COBBLESTONE),
                         'S', Ingredient.vanilla(Material.STICK))));
 
+        // Ironbound (Mining 5): an Upgrade of the Flint Pickaxe, so its Runes carry over. Layout proposed.
+        book.register(new CraftingRecipe("ironbound_pickaxe", mining, 5, "ironbound_pickaxe", 1,
+                List.of("III", "HP "), Map.of(
+                        'I', Ingredient.vanilla(Material.IRON_INGOT),
+                        'H', Ingredient.rune("reinforced_handle"),
+                        'P', Ingredient.rune("flint_pickaxe"))));
+
         // Bone (Mining 7) and Echo (Mining 15). Ingredients are the documented ones; the grid layouts are proposed.
         book.register(new CraftingRecipe("bone_pickaxe", mining, 7, "bone_pickaxe", 1,
                 List.of("BBB", " K ", " H "), Map.of(
