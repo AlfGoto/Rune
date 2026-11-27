@@ -15,5 +15,6 @@
   "rune.item.orchard": "Verger",
   "rune.item.canopy_stride": "Canopée",
   "rune.item.replant": "Replantation",
-  "rune.item.tree_dash": "Bond forestier"
+  "rune.item.tree_dash": "Bond forestier",
+  "rune.item.treefeller": "Abattage"
 }
