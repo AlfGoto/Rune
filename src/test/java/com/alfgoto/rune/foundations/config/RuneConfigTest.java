@@ -113,6 +113,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:
@@ -278,6 +286,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:
@@ -313,7 +329,8 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(60, errors.size());
+        assertEquals(61, errors.size()); // includes the missing armor.rhythm section
+        assertEquals(RhythmConfig.defaults(), c.rhythm());
         assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
         assertEquals(TraitConfig.defaults(), c.traits());
         assertEquals(3, c.rankUpCostMultiplier());
@@ -442,6 +459,14 @@ class RuneConfigTest {
                   depth:
                     top-y: 64
                     bottom-y: -64
+                  rhythm:
+                    max-charges: 10
+                    reset-seconds: 30
+                    chop-speed: {common: 15, uncommon: 25}
+                    damage-reduction: {common: 8, uncommon: 12}
+                    move-speed: {common: 8, uncommon: 12}
+                    jump: {common: 10, uncommon: 15}
+                    fall-reduction: {common: 20, uncommon: 35}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:
