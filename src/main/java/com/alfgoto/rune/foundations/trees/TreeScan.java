@@ -25,6 +25,13 @@ import org.bukkit.block.BlockFace;
  */
 public final class TreeScan {
 
+    /** How many canopy blocks in a row can lie between a log and a felled canopy block. */
+    public static final int CANOPY_REACH = 4;
+
+    private static final BlockFace[] FACES = {
+        BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
+    };
+
     private final BlockTracker tracker;
 
     public TreeScan(BlockTracker tracker) {
@@ -63,13 +70,6 @@ public final class TreeScan {
         }
         return logs;
     }
-
-    /** How many canopy blocks in a row can lie between a log and a felled canopy block. */
-    public static final int CANOPY_REACH = 4;
-
-    private static final BlockFace[] FACES = {
-        BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-    };
 
     /**
      * The Treefeller scan (docs/jobs/woodcutting.md): the natural logs of the origin's wood type that connect to it
@@ -123,7 +123,11 @@ public final class TreeScan {
             }
             for (BlockFace face : FACES) {
                 Block next = current.getRelative(face);
-                if (result.size() < cap && seen.add(next) && isNaturalCanopy(next)) {
+                if (result.size() >= cap) {
+                    break;
+                }
+                boolean firstVisit = seen.add(next);
+                if (firstVisit && isNaturalCanopy(next)) {
                     result.add(next);
                     depth.put(next, nextDepth);
                     queue.add(next);
