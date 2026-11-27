@@ -176,6 +176,19 @@ class TreefellerTest {
     }
 
     @Test
+    void aHatWiderThanTheStemIsFelledThroughCanopyContactUpToTheReach() {
+        for (int y = 10; y < 14; y++) {
+            world.getBlockAt(0, y, 0).setType(Material.CRIMSON_STEM);
+        }
+        for (int x = 1; x <= 6; x++) { // a row of wart blocks leaving the top stem sideways
+            world.getBlockAt(x, 13, 0).setType(Material.NETHER_WART_BLOCK);
+        }
+        chop(world.getBlockAt(0, 10, 0), axe(3), BreakCause.TOOL);
+        assertEquals(3 + TreeScan.CANOPY_REACH, broken.size()); // blocks 5 and 6 are too far from a log
+        assertFalse(broken.contains(world.getBlockAt(5, 13, 0)));
+    }
+
+    @Test
     void onlyAToolBreakStartsAFelling() {
         trunk(5, Material.OAK_LOG);
         chop(world.getBlockAt(0, 10, 0), axe(3), BreakCause.EFFECT);

@@ -5,9 +5,11 @@ import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -62,6 +64,9 @@ public final class TreeScan {
         return logs;
     }
 
+    /** How many canopy blocks in a row can lie between a log and a felled canopy block. */
+    public static final int CANOPY_REACH = 4;
+
     private static final BlockFace[] FACES = {
         BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
     };
@@ -103,11 +108,25 @@ public final class TreeScan {
                 }
             }
         }
-        for (int i = 0; i < trunk.size() && result.size() < cap; i++) {
+        // Canopy: starts on the faces of the logs, then spreads face to face through canopy blocks, at most
+        // CANOPY_REACH blocks away from a log (a huge fungus hat or a big oak crown is wider than its trunk).
+        Deque<Block> queue = new ArrayDeque<>(trunk);
+        Map<Block, Integer> depth = new HashMap<>();
+        for (Block log : trunk) {
+            depth.put(log, 0);
+        }
+        while (!queue.isEmpty() && result.size() < cap) {
+            Block current = queue.poll();
+            int nextDepth = depth.get(current) + 1;
+            if (nextDepth > CANOPY_REACH) {
+                continue;
+            }
             for (BlockFace face : FACES) {
-                Block next = trunk.get(i).getRelative(face);
+                Block next = current.getRelative(face);
                 if (result.size() < cap && seen.add(next) && isNaturalCanopy(next)) {
                     result.add(next);
+                    depth.put(next, nextDepth);
+                    queue.add(next);
                 }
             }
         }
