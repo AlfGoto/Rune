@@ -19,6 +19,8 @@ _Avoid_: Foraging, Lumberjack
 
 **Felled Tree** — A tree counts as felled when the player breaks the last natural log of its trunk: the logs of the same wood type connected to the one they broke. Cutting only the top of a tree does not fell it. Effects that say "per tree" (Rhythm, replanting, tree Quests) count Felled Trees (except Reforestation: it counts trees grown from saplings).
 
+**Rhythm** (FR: Cadence) — The Woodcutting armor mechanic. Each Felled Tree gives the player one charge, up to 10; every charge is lost after 30 s without a Felled Tree. A Rhythm Trait goes from 0% (no charge) to its full value (10 charges): it is a Trait binding with the `rhythm` Scale. Charges show in the action bar for a player who wears Rhythm armor.
+
 **Job Action** — An in-game action that grants Job XP to exactly one Job (e.g. breaking a diamond ore → Mining). Different actions grant different amounts (diamond ≫ stone). For blocks, the block decides the Job, not the tool (wood broken with a pickaxe → Woodcutting). For kills, the weapon decides (bow kill → Archery, sword kill → Combat). A block only counts when the player breaks it themselves (with a tool, a tool's effect, or by hand) — not by TNT or creepers. Blocks placed by a player, and blocks created by fluids (cobblestone/basalt generators), never give Job XP, in any Job; obsidian is the exception.
 
 **Job XP** — Points earned in a single Job. Not to be confused with vanilla XP.

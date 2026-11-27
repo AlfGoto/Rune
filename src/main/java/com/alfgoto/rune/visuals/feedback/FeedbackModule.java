@@ -7,6 +7,7 @@ import com.alfgoto.rune.gameplay.jobs.JobsModule;
 import com.alfgoto.rune.gameplay.quests.QuestsModule;
 import com.alfgoto.rune.gameplay.runes.ActiveRunes;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
+import com.alfgoto.rune.gameplay.woodcutting.WoodcuttingModule;
 import com.google.auto.service.AutoService;
 import java.util.Set;
 
@@ -19,10 +20,11 @@ public final class FeedbackModule implements RuneModule {
         ctx.get(JobProgress.class).addListener(new XpFeedback());
         ctx.get(ActiveRunes.class).addListener(new ActiveRuneFeedback());
         ctx.listen(new QuestFeedback());
+        ctx.listen(new RhythmFeedback());
     }
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(JobsModule.class, RunesModule.class, QuestsModule.class);
+        return Set.of(JobsModule.class, RunesModule.class, QuestsModule.class, WoodcuttingModule.class);
     }
 }

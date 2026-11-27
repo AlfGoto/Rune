@@ -334,6 +334,12 @@ runes:
     base: 8
     per-rank: 8
     max-rank: 5
+  # Veinminer: the most blocks one mining breaks (the first included). Rank 1 = base, then times ratio each
+  # Rank: 8 / 16 / 32.
+  veinminer:
+    base: 8
+    ratio: 2
+    max-rank: 3
   # Woodcutting Runes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # Leaf Fall: radius in blocks (2 / 4 / 6)
   leaf_fall:
@@ -400,6 +406,17 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
+  flint_pickaxe:
+    fortune: 15
+    slower_percent: 10
+  # Coal Pickaxe: faster_percent = % faster mining, durability = max durability (stone tier default is 131)
+  coal_pickaxe:
+    faster_percent: 15
+    durability: 100
+  # Ironbound Pickaxe: durability = max durability (iron tier default is 250)
+  ironbound_pickaxe:
+    durability: 500
   # Flint Hatchet: fortune = % chance of +1 log, slower_percent = % slower mining
   flint_hatchet:
     fortune: 15
@@ -484,6 +501,17 @@ armor:
   depth:
     top-y: 64
     bottom-y: -64
+  # Woodcutting armor ("Rhythm", docs/jobs/woodcutting.md): each Felled Tree adds one charge, up to
+  # max-charges. Every charge is lost after reset-seconds without a Felled Tree. A Trait goes from 0% (no
+  # charge) to its value below (in percent) at max-charges. Values by Rarity; Rare and up come with their pieces.
+  rhythm:
+    max-charges: 10
+    reset-seconds: 30
+    chop-speed: {common: 15, uncommon: 25}        # helmet: log breaking speed
+    damage-reduction: {common: 8, uncommon: 12}   # chestplate: damage taken
+    move-speed: {common: 8, uncommon: 12}         # leggings: movement speed
+    jump: {common: 10, uncommon: 15}              # boots: jump strength
+    fall-reduction: {common: 20, uncommon: 35}    # boots: fall damage taken
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123
