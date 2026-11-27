@@ -43,6 +43,7 @@ class WoodcuttingArmorTest {
         book = plugin.context().get(RecipeBook.class);
         loadout = plugin.context().get(ToolLoadout.class);
         rhythm = plugin.context().get(Rhythm.class);
+        server.getScheduler().performOneTick(); // Rune recipes reach the server one tick later
     }
 
     @AfterEach

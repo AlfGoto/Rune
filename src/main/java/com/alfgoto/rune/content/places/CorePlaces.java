@@ -20,6 +20,34 @@ public final class CorePlaces {
         registry.register(Place.biome("dappled_forest", "minecraft:dappled_forest"));
         registry.register(Place.biome(
                 "jungle", "minecraft:jungle", "minecraft:sparse_jungle", "minecraft:bamboo_jungle"));
+        registry.register(Place.biome(
+                "mountains",
+                "minecraft:meadow",
+                "minecraft:grove",
+                "minecraft:snowy_slopes",
+                "minecraft:jagged_peaks",
+                "minecraft:frozen_peaks",
+                "minecraft:stony_peaks",
+                "minecraft:windswept_hills",
+                "minecraft:windswept_gravelly_hills"));
+        registry.register(Place.biome(
+                "ocean",
+                "minecraft:ocean",
+                "minecraft:deep_ocean",
+                "minecraft:warm_ocean",
+                "minecraft:lukewarm_ocean",
+                "minecraft:deep_lukewarm_ocean",
+                "minecraft:cold_ocean",
+                "minecraft:deep_cold_ocean",
+                "minecraft:frozen_ocean",
+                "minecraft:deep_frozen_ocean"));
+        registry.register(Place.biome(
+                "nether",
+                "minecraft:nether_wastes",
+                "minecraft:soul_sand_valley",
+                "minecraft:crimson_forest",
+                "minecraft:warped_forest",
+                "minecraft:basalt_deltas"));
         registry.register(Place.biome("dark_forest", "minecraft:dark_forest"));
         registry.register(Place.biome("deep_dark", "minecraft:deep_dark"));
         registry.register(Place.structure("mineshaft", "minecraft:mineshaft", "minecraft:mineshaft_mesa"));

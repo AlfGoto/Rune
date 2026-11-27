@@ -82,6 +82,11 @@ class RuneConfigTest {
                 tools:
                   speed-by-tier: [1, 2, 3.5]
                   epic-speed: 9
+                  traits:
+                    affinity: 12
+                    glow-light: 9
+                    fiery-smelt: 30
+                    mountain-move-speed: 15
                   durability-by-tier: [10, 20, 30]
                   epic-durability: 40
                   slots-by-rarity: [2, 3, 4, 5, 6]
@@ -150,6 +155,10 @@ class RuneConfigTest {
         assertEquals(2, c.speedRunes().specialistMaxRank());
         assertEquals(12.5, c.speedRunes().affinityPerRank());
         assertEquals(6, c.speedRunes().affinityMaxRank());
+        assertEquals(12, c.tools().traitAffinity());
+        assertEquals(9, c.tools().traitGlowLight());
+        assertEquals(30, c.tools().traitFierySmelt());
+        assertEquals(15, c.tools().traitMountainMoveSpeed());
         assertEquals(List.of(1, 1, 1, 1, 9), c.armor().defenseByRarity().get("helmet"));
         assertEquals(List.of(0.0, 0.0, 1.0, 2.0, 4.0), c.armor().toughnessByRarity());
         assertEquals(100, c.tools().pickaxeMasteryActions());
@@ -255,6 +264,11 @@ class RuneConfigTest {
                 tools:
                   speed-by-tier: [4, 6, 8]
                   epic-speed: 12
+                  traits:
+                    affinity: 10
+                    glow-light: 12
+                    fiery-smelt: 25
+                    mountain-move-speed: 10
                   durability-by-tier: [131, 250, 1561]
                   epic-durability: 2031
                   slots-by-rarity: [1, 2, 3, 4, 5]
@@ -329,7 +343,7 @@ class RuneConfigTest {
     @Test
     void missingValuesLogAndFallBack() throws Exception {
         RuneConfig c = load("");
-        assertEquals(61, errors.size()); // includes the missing armor.rhythm section
+        assertEquals(65, errors.size()); // includes the missing armor.rhythm section
         assertEquals(RhythmConfig.defaults(), c.rhythm());
         assertTrue(errors.stream().anyMatch(e -> e.contains("vanilla-overrides.book-cache-rarity")));
         assertEquals(TraitConfig.defaults(), c.traits());
@@ -428,6 +442,11 @@ class RuneConfigTest {
                 tools:
                   speed-by-tier: [4, 6, 8]
                   epic-speed: 12
+                  traits:
+                    affinity: 10
+                    glow-light: 12
+                    fiery-smelt: 25
+                    mountain-move-speed: 10
                   durability-by-tier: [131, 250, 1561]
                   epic-durability: 2031
                   slots-by-rarity: [1, 2, 3, 4, 5]

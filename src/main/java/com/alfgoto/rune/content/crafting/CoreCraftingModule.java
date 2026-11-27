@@ -53,6 +53,8 @@ public final class CoreCraftingModule implements RuneModule {
                         'B', Ingredient.vanilla(Material.COBBLESTONE),
                         'S', Ingredient.vanilla(Material.STICK))));
 
+        biomePickaxes(book, mining);
+
         // Ironbound (Mining 5): an Upgrade of the Flint Pickaxe, so its Runes carry over. Layout proposed.
         book.register(new CraftingRecipe("ironbound_pickaxe", mining, 5, "ironbound_pickaxe", 1,
                 List.of("III", "HP "), Map.of(
@@ -160,6 +162,41 @@ public final class CoreCraftingModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COCOA_BEANS),
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"))));
+    }
+
+    /**
+     * Lichen (Mining 6), Fiery (10), Emerald (13) and Prismarine (14). The ingredients and levels are the
+     * documented ones; the grid layouts are in docs/jobs/mining.md.
+     */
+    private static void biomePickaxes(RecipeBook book, Job mining) {
+        Ingredient handle = Ingredient.rune("reinforced_handle");
+        Ingredient setting = Ingredient.rune("gem_setting");
+        Ingredient diamond = Ingredient.vanilla(Material.DIAMOND);
+
+        book.register(new CraftingRecipe("lichen_pickaxe", mining, 6, "lichen_pickaxe", 1,
+                List.of("MLM", "BHB"), Map.of(
+                        'M', Ingredient.vanilla(Material.MOSS_BLOCK),
+                        'L', Ingredient.vanilla(Material.GLOW_LICHEN),
+                        'B', Ingredient.vanilla(Material.GLOW_BERRIES),
+                        'H', handle)));
+        book.register(new CraftingRecipe("fiery_pickaxe", mining, 10, "fiery_pickaxe", 1,
+                List.of("MMM", "RDR", " G "), Map.of(
+                        'M', Ingredient.vanilla(Material.MAGMA_BLOCK),
+                        'R', Ingredient.vanilla(Material.BLAZE_ROD),
+                        'D', diamond,
+                        'G', setting)));
+        book.register(new CraftingRecipe("emerald_pickaxe", mining, 13, "emerald_pickaxe", 1,
+                List.of("EEE", "HDG"), Map.of(
+                        'E', Ingredient.vanilla(Material.EMERALD),
+                        'H', Ingredient.vanilla(Material.GOAT_HORN),
+                        'D', diamond,
+                        'G', setting)));
+        book.register(new CraftingRecipe("prismarine_pickaxe", mining, 14, "prismarine_pickaxe", 1,
+                List.of("PNP", "DGD"), Map.of(
+                        'P', Ingredient.vanilla(Material.PRISMARINE),
+                        'N', Ingredient.vanilla(Material.NAUTILUS_SHELL),
+                        'D', diamond,
+                        'G', setting)));
     }
 
     /**

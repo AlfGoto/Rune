@@ -461,6 +461,16 @@ tools:
     axe-actions: 1000
     # Mastery stops at this share of the tool's base Capacity (0.75 = +75%, rounded down)
     max-bonus: 0.75
+  # Biome pickaxe Traits (docs/jobs/mining.md). Starting values, tuned after playtests.
+  traits:
+    # % mining speed of an Affinity Trait in its Place (same as an Affinity Rune at Rank 1)
+    affinity: 10
+    # Lichen glow: light level (1 to 15) at the player's head, main hand only
+    glow-light: 12
+    # Fiery: Smelt chance in %
+    fiery-smelt: 25
+    # Emerald: % move speed in Mountains while held
+    mountain-move-speed: 10
   # Copper Pickaxe and Copper Axe (docs/jobs/mining.md): the tool oxidizes as blocks are broken.
   # 4 stages (Copper, Exposed, Weathered, Oxidized). Starting values, tuned after playtests.
   copper:

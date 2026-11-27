@@ -47,6 +47,11 @@ public final class PlaceDetector {
         return result;
     }
 
+    /** True when the player is in the Place with this id. */
+    public boolean isIn(Player player, String placeId) {
+        return placesOf(player).stream().anyMatch(place -> place.id().equals(placeId));
+    }
+
     /** The Places at a location (not cached), e.g. where a block was broken. */
     public List<Place> placesAt(Location at) {
         return compute(at);

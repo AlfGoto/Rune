@@ -19,7 +19,11 @@ public record ToolConfig(
         List<Integer> capacityByRarity,
         int pickaxeMasteryActions,
         int axeMasteryActions,
-        double masteryMaxBonus) {
+        double masteryMaxBonus,
+        double traitAffinity,
+        int traitGlowLight,
+        double traitFierySmelt,
+        double traitMountainMoveSpeed) {
 
     public static final String SPEED_BY_TIER = "tools.speed-by-tier";
     public static final String EPIC_SPEED = "tools.epic-speed";
@@ -30,6 +34,10 @@ public record ToolConfig(
     public static final String PICKAXE_MASTERY_ACTIONS = "tools.mastery.pickaxe-actions";
     public static final String AXE_MASTERY_ACTIONS = "tools.mastery.axe-actions";
     public static final String MASTERY_MAX_BONUS = "tools.mastery.max-bonus";
+    public static final String TRAIT_AFFINITY = "tools.traits.affinity";
+    public static final String TRAIT_GLOW_LIGHT = "tools.traits.glow-light";
+    public static final String TRAIT_FIERY_SMELT = "tools.traits.fiery-smelt";
+    public static final String TRAIT_MOUNTAIN_MOVE_SPEED = "tools.traits.mountain-move-speed";
 
     /** One value per Harvest Tier: stone, iron, diamond. */
     static final int TIER_COUNT = 3;
@@ -54,12 +62,22 @@ public record ToolConfig(
                 List.of(3, 6, 10, 14, 18),
                 500,
                 1000,
-                0.75);
+                0.75,
+                10,
+                12,
+                25,
+                10);
     }
 
     /** Reads the {@code tools} section. Bad or missing values are logged and replaced by defaults. */
     public static ToolConfig load(ConfigurationSection section, Logger logger) {
         ToolConfig d = defaults();
+        double light = readNumber(section, logger, TRAIT_GLOW_LIGHT, d.traitGlowLight);
+        if (light != Math.rint(light) || light < 1 || light > 15) {
+            logger.severe("Config '" + TRAIT_GLOW_LIGHT + "' must be a whole number from 1 to 15, got '" + light
+                    + "'. Using default " + d.traitGlowLight + ".");
+            light = d.traitGlowLight;
+        }
         return new ToolConfig(
                 readNumbers(section, logger, SPEED_BY_TIER, TIER_COUNT, d.speedByTier, false),
                 readNumber(section, logger, EPIC_SPEED, d.epicSpeed),
@@ -70,7 +88,11 @@ public record ToolConfig(
                         section, logger, CAPACITY_BY_RARITY, RARITY_COUNT, toDoubles(d.capacityByRarity), true)),
                 (int) readNumber(section, logger, PICKAXE_MASTERY_ACTIONS, d.pickaxeMasteryActions),
                 (int) readNumber(section, logger, AXE_MASTERY_ACTIONS, d.axeMasteryActions),
-                Math.min(1.0, readNumber(section, logger, MASTERY_MAX_BONUS, d.masteryMaxBonus)));
+                Math.min(1.0, readNumber(section, logger, MASTERY_MAX_BONUS, d.masteryMaxBonus)),
+                readNumber(section, logger, TRAIT_AFFINITY, d.traitAffinity),
+                (int) light,
+                readNumber(section, logger, TRAIT_FIERY_SMELT, d.traitFierySmelt),
+                readNumber(section, logger, TRAIT_MOUNTAIN_MOVE_SPEED, d.traitMountainMoveSpeed));
     }
 
     private static double readNumber(ConfigurationSection s, Logger log, String path, double fallback) {
