@@ -115,7 +115,7 @@ _Avoid_: skill tree (Job Levels never give passive stats)
 
 **Starter Recipe** — A cheap Common Rune Tool or Rune Armor recipe that every player knows from the start, made only from early-game materials.
 
-**Blueprint** — An item that unlocks the recipe for a craftable Legendary Rune Tool or Rune Armor piece (not a Relic). Each Blueprint has its own source: a guaranteed Job Level milestone, structure chests, a vault, or a Quest reward.
+**Blueprint** — An item that unlocks the recipe for a craftable Legendary Rune Tool or Rune Armor piece (not a Relic). Each Blueprint has its own source: a guaranteed Job Level milestone, structure chests, a vault, or a Quest reward. The player right-clicks it to use it: the recipe is unlocked for good and the Blueprint is consumed. Its id is its recipe's id.
 
 **Broken** — State of a Rune Tool at 0 durability: unusable but keeps its Runes. Repaired at an anvil.
 

@@ -1,0 +1,14 @@
+{
+  "rune.item.blueprint": "Plan",
+  "rune.item.blueprint_named": "Plan : %s",
+  "rune.item.lore.blueprint": "Débloque la recette : %s",
+  "rune.item.lore.blueprint_use": "Clic droit pour l'apprendre",
+  "rune.blueprint.test_blueprint": "Plan de test",
+  "rune.blueprint.learned": "Recette débloquée : %s.",
+  "rune.blueprint.already_known": "Vous connaissez déjà la recette : %s.",
+  "rune.blueprint.milestone": "Niveau %s atteint : vous gagnez un plan : %s.",
+  "rune.reward.blueprint": "Plan : %s",
+  "rune.command.give_blueprint.usage": "Utilisation : /rune give blueprint <id>",
+  "rune.command.give_blueprint.unknown": "Plan inconnu : %s",
+  "rune.command.give_blueprint.done": "Vous avez reçu le plan : %s."
+}

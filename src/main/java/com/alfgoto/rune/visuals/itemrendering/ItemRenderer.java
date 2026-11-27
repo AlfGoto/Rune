@@ -30,6 +30,7 @@ public final class ItemRenderer implements ItemRedrawer {
     private final Function<RuneItem, Optional<ToolStats>> toolStats;
     private final Function<ItemStack, Optional<MasteryStatus>> mastery;
     private Function<RuneItem, Optional<ArmorStats>> armorStats = item -> Optional.empty();
+    private Function<ItemStack, Optional<String>> blueprintId = stack -> Optional.empty();
 
     /** {@code armorStats} gives the final stats of a Rune Armor piece (empty for other items). */
     public ItemRenderer withArmor(Function<RuneItem, Optional<ArmorStats>> armorStats) {
@@ -52,8 +53,19 @@ public final class ItemRenderer implements ItemRedrawer {
         this.mastery = mastery;
     }
 
+    /** {@code blueprintId} gives the Blueprint id of a Blueprint stack (empty for other items). */
+    public ItemRenderer withBlueprints(Function<ItemStack, Optional<String>> blueprintId) {
+        this.blueprintId = blueprintId;
+        return this;
+    }
+
     @Override
     public void redraw(ItemStack stack, RuneItem item) {
+        String blueprint = blueprintId.apply(stack).orElse(null);
+        if (blueprint != null) {
+            drawBlueprint(stack, item, blueprint);
+            return;
+        }
         stack.editMeta(meta -> {
             meta.itemName(Text.translatable(item.translationKey(), item.fallbackName())
                     .color(item.rarity().color())
@@ -63,6 +75,22 @@ public final class ItemRenderer implements ItemRedrawer {
                     .orElseGet(() -> armorStats.apply(item)
                             .map(armor -> armorLore(item, armor))
                             .orElseGet(() -> lore(item, toolStats.apply(item), mastery.apply(stack)))));
+        });
+    }
+
+    /** "Blueprint: <recipe>" in the Rarity colour, with the Rarity and what using it does. */
+    private static void drawBlueprint(ItemStack stack, RuneItem item, String id) {
+        Component recipe = Text.translatable(Text.key("blueprint", id), capitalise(id.replace('_', ' ')));
+        stack.editMeta(meta -> {
+            meta.itemName(Text.translatable("rune.item.blueprint_named", "Blueprint: %s", recipe)
+                    .color(item.rarity().color())
+                    .decoration(TextDecoration.ITALIC, false));
+            meta.lore(List.of(
+                    Text.rarityLine(item.rarity()).decoration(TextDecoration.ITALIC, false),
+                    line(Text.translatable("rune.item.lore.blueprint", "Unlocks the recipe: %s", recipe)
+                            .color(NamedTextColor.GRAY)),
+                    line(Text.translatable("rune.item.lore.blueprint_use", "Right-click to learn it")
+                            .color(NamedTextColor.DARK_GRAY))));
         });
     }
 

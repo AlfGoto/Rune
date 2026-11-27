@@ -2,6 +2,8 @@ package com.alfgoto.rune.visuals.itemrendering;
 
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.blueprints.Blueprints;
+import com.alfgoto.rune.gameplay.blueprints.BlueprintsModule;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.items.ToolMastery;
@@ -19,12 +21,13 @@ public final class ItemRenderingModule implements RuneModule {
         ItemRegistry items = ctx.get(ItemRegistry.class);
         items.addRedrawer(new ItemRenderer(
                         ctx.get(RuneRegistry.class), items::toolStats, ctx.get(ToolMastery.class)::status)
-                .withArmor(items::armorStats));
+                .withArmor(items::armorStats)
+                .withBlueprints(ctx.get(Blueprints.class)::idOf));
         items.addRedrawer(new RuneModelRenderer(ctx.get(RuneRegistry.class)));
     }
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, RunesModule.class);
+        return Set.of(ItemsModule.class, RunesModule.class, BlueprintsModule.class);
     }
 }

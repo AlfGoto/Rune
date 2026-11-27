@@ -91,6 +91,7 @@ public final class RuneConfig {
     private RhythmConfig rhythm = RhythmConfig.defaults();
     private final SpeedRuneConfig speedRunes;
     private CacheConfig caches = CacheConfig.defaults();
+    private BlueprintConfig blueprints = BlueprintConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private ConfigurationSection traitSection; // the 'traits' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
@@ -246,6 +247,7 @@ public final class RuneConfig {
         loaded.rhythm = RhythmConfig.load(section, logger);
         loaded.traitSection = section.getConfigurationSection("traits");
         loaded.caches = CacheConfig.load(section, logger);
+        loaded.blueprints = BlueprintConfig.load(section, logger);
         loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
@@ -279,6 +281,11 @@ public final class RuneConfig {
     /** Rune Cache drop chance and Milestone Cache table. */
     public CacheConfig caches() {
         return caches;
+    }
+
+    /** The Blueprints given at a Job Level. */
+    public BlueprintConfig blueprints() {
+        return blueprints;
     }
 
     /** Copper and Momentum Trait balancing. */
