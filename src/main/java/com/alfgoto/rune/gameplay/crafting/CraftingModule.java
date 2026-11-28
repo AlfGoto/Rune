@@ -34,6 +34,7 @@ public final class CraftingModule implements RuneModule {
         ctx.plugin().getServer().getScheduler().runTask(ctx.plugin(), recipeBook::flush);
         ctx.listen(new CraftingListener(
                 recipeBook, items, ctx.get(ToolLoadout.class), ctx.get(RuneRegistry.class)));
+        ctx.listen(new RecipeBookClickListener(ctx.plugin().getServer(), recipeBook));
         // Rank-up at the smithing table. The hidden recipe is registered one tick later, once every module
         // has registered its Runes.
         RuneRegistry runeRegistry = ctx.get(RuneRegistry.class);

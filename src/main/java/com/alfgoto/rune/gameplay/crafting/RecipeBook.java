@@ -168,6 +168,96 @@ public final class RecipeBook {
         return stack.getType() == ingredient.material() && items.of(stack).isEmpty();
     }
 
+    /** What a recipe book click puts in the grid ({@code side} by {@code side}, row by row) and what is left of the storage. */
+    public record Fill(ItemStack[] grid, ItemStack[] storage) {}
+
+    /**
+     * Fills a crafting grid for a recipe book click, in the recipe's shape from the top-left corner. Each cell takes
+     * a stack that passes {@link #cellFits}, so a Rune ingredient only takes that Rune item and a vanilla one never
+     * takes a Rune item. {@code makeAll} puts as many crafts as the storage allows (one more per cell, up to the
+     * stack size), otherwise one craft. The given storage is not changed: the new storage comes back in the result.
+     * Empty when the recipe does not fit the grid or the storage misses an ingredient.
+     */
+    public Optional<Fill> fill(CraftingRecipe recipe, ItemStack[] storage, int side, boolean makeAll) {
+        List<String> pattern = trim(recipe.shape());
+        if (pattern.size() > side || pattern.get(0).length() > side) {
+            return Optional.empty();
+        }
+        Fill best = null;
+        for (int crafts = 1; crafts <= 64; crafts++) {
+            Fill attempt = fillCrafts(recipe, pattern, storage, side, crafts);
+            if (attempt == null) {
+                break;
+            }
+            best = attempt;
+            if (!makeAll) {
+                break;
+            }
+        }
+        return Optional.ofNullable(best);
+    }
+
+    private Fill fillCrafts(CraftingRecipe recipe, List<String> pattern, ItemStack[] storage, int side, int crafts) {
+        ItemStack[] left = new ItemStack[storage.length];
+        for (int i = 0; i < storage.length; i++) {
+            left[i] = isEmpty(storage[i]) ? null : storage[i].clone();
+        }
+        ItemStack[] grid = new ItemStack[side * side];
+        for (int row = 0; row < pattern.size(); row++) {
+            for (int col = 0; col < pattern.get(row).length(); col++) {
+                char symbol = pattern.get(row).charAt(col);
+                if (symbol == ' ') {
+                    continue;
+                }
+                ItemStack placed = take(recipe.ingredients().get(symbol), left, crafts);
+                if (placed == null) {
+                    return null;
+                }
+                grid[row * side + col] = placed;
+            }
+        }
+        return new Fill(grid, left);
+    }
+
+    /** {@code amount} identical items for one cell, taken out of {@code left}; null when they are not all there. */
+    private ItemStack take(Ingredient ingredient, ItemStack[] left, int amount) {
+        for (int first = 0; first < left.length; first++) {
+            ItemStack model = left[first];
+            if (model == null || !cellFits(ingredient, model)) {
+                continue;
+            }
+            if (amount > model.getMaxStackSize()) {
+                return null;
+            }
+            int available = 0;
+            for (ItemStack stack : left) {
+                if (stack != null && stack.isSimilar(model)) {
+                    available += stack.getAmount();
+                }
+            }
+            if (available < amount) {
+                continue; // not enough of this kind, maybe another fitting kind has enough
+            }
+            ItemStack placed = model.clone();
+            placed.setAmount(amount);
+            int need = amount;
+            for (int slot = 0; slot < left.length && need > 0; slot++) {
+                ItemStack stack = left[slot];
+                if (stack == null || !stack.isSimilar(placed)) {
+                    continue;
+                }
+                int moved = Math.min(need, stack.getAmount());
+                need -= moved;
+                stack.setAmount(stack.getAmount() - moved);
+                if (stack.getAmount() <= 0) {
+                    left[slot] = null;
+                }
+            }
+            return placed;
+        }
+        return null;
+    }
+
     /** The grid cut down to the smallest rectangle holding every item. Empty grid gives a 0 by 0 list. */
     private static List<List<ItemStack>> trim(ItemStack[] matrix) {
         int side = (int) Math.round(Math.sqrt(matrix.length));
