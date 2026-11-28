@@ -48,7 +48,6 @@ class HurtTeleportListenerTest {
         Location before = player.getLocation().clone();
         player.damage(2);
         server.getScheduler().performTicks(2);
-        System.out.println("BEFORE " + before + " AFTER " + player.getLocation() + " HP " + player.getHealth());
         assertNotEquals(before.getBlockX() + "," + before.getBlockZ(),
                 player.getLocation().getBlockX() + "," + player.getLocation().getBlockZ());
     }

@@ -59,9 +59,11 @@ public final class WoodcuttingModule implements RuneModule {
         ctx.listen(paleGarden);
         long teleportCooldown =
                 Math.round(ctx.config().traitNumber(AxeTraits.HURT_TELEPORT, "cooldown_seconds", 8) * 1000);
-        ctx.listen(new HurtTeleportListener(
+        HurtTeleportListener hurtTeleport = new HurtTeleportListener(
                 ctx.plugin(), heldAxe, teleportCooldown, () -> ThreadLocalRandom.current().nextDouble(),
-                System::currentTimeMillis));
+                System::currentTimeMillis);
+        ctx.listen(hurtTeleport);
+        ctx.debug(new ChorusDebug(hurtTeleport));
 
         RhythmConfig config = ctx.config().rhythm();
         Rhythm rhythm = ctx.provide(

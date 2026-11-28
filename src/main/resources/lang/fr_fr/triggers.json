@@ -1,5 +1,15 @@
 {
   "rune.debug.events.on": "Journal de debug des événements : activé",
   "rune.debug.events.off": "Journal de debug des événements : désactivé",
-  "rune.debug.events.tree_felled": "Arbre abattu (dernière bûche : %s)"
+  "rune.debug.events.tree_felled": "Arbre abattu (dernière bûche : %s)",
+  "rune.debug.chorus.on": "Debug Chorus : activé",
+  "rune.debug.chorus.off": "Debug Chorus : désactivé",
+  "rune.debug.chorus.hit": "Chorus : coup reçu, dégâts %s, portée %s",
+  "rune.debug.chorus.no_damage": "Chorus : pas de téléportation, le coup n'a fait aucun dégât",
+  "rune.debug.chorus.fatal": "Chorus : pas de téléportation, le coup te tue",
+  "rune.debug.chorus.no_trait": "Chorus : pas de téléportation, pas de Hache de chorus en main",
+  "rune.debug.chorus.cooldown": "Chorus : pas de téléportation, temps de recharge",
+  "rune.debug.chorus.no_spot": "Chorus : pas de téléportation, aucun endroit sûr trouvé",
+  "rune.debug.chorus.refused": "Chorus : pas de téléportation, le serveur l'a refusée",
+  "rune.debug.chorus.done": "Chorus : téléporté en %s %s %s"
 }
