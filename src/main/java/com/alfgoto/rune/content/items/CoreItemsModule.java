@@ -4,6 +4,8 @@ import com.alfgoto.rune.foundations.config.RuneConfig;
 import com.alfgoto.rune.foundations.config.ToolConfig;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
+import com.alfgoto.rune.gameplay.drops.BonusGemsListener;
+import com.alfgoto.rune.gameplay.drops.MagnetListener;
 import com.alfgoto.rune.gameplay.items.ArmorKind;
 import com.alfgoto.rune.gameplay.items.ArmorSpec;
 import com.alfgoto.rune.gameplay.items.Codex;
@@ -54,6 +56,7 @@ public final class CoreItemsModule implements RuneModule {
         items.register(new RuneItem(Codex.ID, Rarity.COMMON, Material.BOOK, Codex.ID));
         startPickaxes(items, ctx.config());
         startAxes(items, ctx.config());
+        lootPickaxes(items, ctx.config());
         biomePickaxes(items, ctx.config().tools());
         epicPickaxes(items, ctx.config());
         woodcuttingAxes(items, ctx.config());
@@ -165,6 +168,24 @@ public final class CoreItemsModule implements RuneModule {
         int ironboundDurability = (int) config.traitNumber("ironbound_pickaxe", "durability", 500);
         items.register(RuneItem.tool("ironbound_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "ironbound_pickaxe",
                 withDurability(ToolSpec.DEFAULT.withTrait("ironbound_pickaxe", 2), ironboundDurability)));
+    }
+
+    /**
+     * The Loot line (docs/jobs/mining.md): Magnetite, Geode and Ender. Numbers are in config
+     * ({@code traits.magnetite_pickaxe.radius}, {@code traits.geode_pickaxe.bonus_gem_percent}).
+     */
+    private static void lootPickaxes(ItemRegistry items, RuneConfig config) {
+        // Magnetite: Uncommon, iron tier, Capacity 6. Magnet: drops are pulled to the inventory.
+        double radius = config.traitNumber("magnetite_pickaxe", "radius", 4);
+        items.register(RuneItem.tool("magnetite_pickaxe", Rarity.UNCOMMON, ToolKind.PICKAXE, "magnetite_pickaxe",
+                ToolSpec.DEFAULT.withTrait("magnetite_pickaxe", 0, TraitBinding.always(MagnetListener.ID, radius))));
+        // Geode: Rare, diamond tier, Capacity 10. Chance for bonus gems.
+        double gems = config.traitNumber("geode_pickaxe", "bonus_gem_percent", 15);
+        items.register(RuneItem.tool("geode_pickaxe", Rarity.RARE, ToolKind.PICKAXE, "geode_pickaxe",
+                ToolSpec.DEFAULT.withTrait("geode_pickaxe", 0, TraitBinding.always(BonusGemsListener.ID, gems))));
+        // Ender: Epic, diamond tier, Capacity 14. Drops go to the Ender Chest (on/off flag).
+        items.register(RuneItem.tool("ender_pickaxe", Rarity.EPIC, ToolKind.PICKAXE, "ender_pickaxe",
+                ToolSpec.DEFAULT.withTrait("ender_pickaxe", 0, TraitBinding.always(MagnetListener.ENDER, 1))));
     }
 
     /**

@@ -463,6 +463,12 @@ traits:
   # Ironbound Pickaxe: durability = max durability (iron tier default is 250)
   ironbound_pickaxe:
     durability: 500
+  # Magnetite Pickaxe: radius = Magnet radius in blocks (same as a Magnet Rune: 2 per Rank)
+  magnetite_pickaxe:
+    radius: 4
+  # Geode Pickaxe: bonus_gem_percent = % chance of +1 gem when a block drops a gem (above 100 gives several)
+  geode_pickaxe:
+    bonus_gem_percent: 15
   # Flint Hatchet: fortune = % chance of +1 log, slower_percent = % slower mining
   flint_hatchet:
     fortune: 15
