@@ -57,6 +57,13 @@ class SturdyTest {
     }
 
     @Test
+    void aNegativePercentCostsMoreDurability() {
+        assertEquals(20, Sturdy.damage(10, -50, () -> 0.1)); // 10 < 50: every point costs one more
+        assertEquals(10, Sturdy.damage(10, -50, () -> 0.9)); // 90 >= 50: no extra
+        assertEquals(30, Sturdy.damage(10, -200, () -> 0.9)); // 200%: two more each
+    }
+
+    @Test
     void aHundredPercentSparesEverything() {
         assertEquals(0, Sturdy.damage(50, 100, () -> 0.999));
         assertEquals(0, Sturdy.damage(50, 250, () -> 0.999)); // capped

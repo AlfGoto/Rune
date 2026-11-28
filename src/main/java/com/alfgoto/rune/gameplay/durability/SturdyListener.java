@@ -33,7 +33,7 @@ public final class SturdyListener implements Listener {
             return;
         }
         double percent = Stacking.total(Sturdy.ID, loadout.sources(tool, event.getPlayer()));
-        if (percent <= 0) {
+        if (percent == 0) {
             return;
         }
         int damage = Sturdy.damage(event.getDamage(), percent, random);

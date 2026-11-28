@@ -94,5 +94,7 @@
   "rune.trait.copper_pickaxe": "Faster as it oxidizes · wax locks the stage",
   "rune.trait.copper_axe": "Faster as it oxidizes · wax locks the stage",
   "rune.trait.redstone_pickaxe": "Momentum: faster per block in a row, resets after a short pause",
-  "rune.trait.breeze_axe": "Momentum: faster per log in a row, resets after a short pause"
+  "rune.trait.breeze_axe": "Momentum: faster per log in a row, resets after a short pause",
+  "rune.item.tempest_axe": "Tempest Axe",
+  "rune.trait.tempest_axe": "Built-in Treefeller (16 blocks) · uses more durability"
 }
