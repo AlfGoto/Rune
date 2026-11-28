@@ -112,8 +112,9 @@ class EssenceAxesTest {
         assertEquals(Rarity.UNCOMMON, items.get("orchard_axe").rarity());
         assertEquals(Rarity.RARE, items.get("golden_bough").rarity());
         assertEquals(Rarity.EPIC, items.get("verdant_axe").rarity());
-        assertEquals(20, total("orchard_axe", LeafRules.ORCHARD));
-        assertEquals(0.5, total("golden_bough", LeafRules.GOLDEN_APPLE));
+        assertEquals(1000, total("orchard_axe", LeafRules.ORCHARD));
+        assertEquals(5, total("golden_bough", LeafRules.GOLDEN_APPLE));
+        assertEquals(0.1, total("golden_bough", LeafRules.ENCHANTED_GOLDEN_APPLE));
         assertEquals(0, total("orchard_axe", LeafRules.GOLDEN_APPLE));
         assertEquals(1, total("verdant_axe", ReplantRules.REPLANT));
         assertEquals(8, book.find("orchard_axe").orElseThrow().level());

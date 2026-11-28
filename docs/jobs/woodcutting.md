@@ -92,7 +92,7 @@ FUSED      Timberfall + Evoker's Hatchet ─► Worldfeller
 | 10 | Crimson Axe / Hache écarlate | Rare | diamond | 10 | Affinity: Crimson Forest; short fire resistance after each stem |
 | 10 | Warped Axe / Hache biscornue | Rare | diamond | 10 | Affinity: Warped Forest; endermen stay neutral when looked at |
 | 11 | Breeze Axe / Hache des vents | Rare | diamond | 10 −2 | Momentum: faster per log in a row, resets after 2 s |
-| 12 | Golden Bough / Rameau d'or | Rare | diamond | 10 | Chance of a golden apple from oak leaves |
+| 12 | Golden Bough / Rameau d'or | Rare | diamond | 10 | Golden apples from oak leaves, rarely an enchanted one |
 | 13 | Acacia Axe / Hache d'acacia | Rare | diamond | 10 | Affinity: Savanna; faster in sunlight · slower at night and in rain |
 | 13 | Cherry Axe / Hache de cerisier | Rare | diamond | 10 | Affinity: Cherry Grove; short Regeneration after each Felled Tree |
 | 14 | Mangrove Axe / Hache de palétuvier | Rare | diamond | 10 | Affinity: Swamp; full speed in water and mud |

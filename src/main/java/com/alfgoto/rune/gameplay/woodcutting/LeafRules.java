@@ -15,6 +15,9 @@ public final class LeafRules {
     /** Effect id of the Golden Bough Trait: chance in percent of a golden apple from an oak leaf. */
     public static final String GOLDEN_APPLE = "golden_apple_leaves";
 
+    /** Effect id of the Golden Bough Trait: chance in percent of an enchanted golden apple from an oak leaf. */
+    public static final String ENCHANTED_GOLDEN_APPLE = "enchanted_golden_apple_leaves";
+
     /** Effect id of Canopy Stride: move speed on leaves and logs, in percent. */
     public static final String CANOPY_STRIDE = "canopy_stride";
 

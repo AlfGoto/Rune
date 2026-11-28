@@ -91,6 +91,14 @@ final class LeafListener implements Listener {
                 leaves.getWorld()
                         .dropItemNaturally(leaves.getLocation().add(0.5, 0.5, 0.5), new ItemStack(Material.GOLDEN_APPLE));
             }
+            // Very rarely an enchanted golden apple.
+            int enchanted = Stacking.rolls(Stacking.total(LeafRules.ENCHANTED_GOLDEN_APPLE, sources), random);
+            for (int i = 0; i < enchanted; i++) {
+                leaves.getWorld()
+                        .dropItemNaturally(
+                                leaves.getLocation().add(0.5, 0.5, 0.5),
+                                new ItemStack(Material.ENCHANTED_GOLDEN_APPLE));
+            }
         }
     }
 
