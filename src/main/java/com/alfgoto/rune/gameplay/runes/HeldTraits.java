@@ -26,6 +26,7 @@ import org.bukkit.plugin.Plugin;
  *       number ({@link #glowLevel}); {@code visuals.glow.GlowLight} draws it.</li>
  *   <li>{@value #NO_WATER_PENALTY}: cancels the vanilla underwater mining penalty.</li>
  *   <li>{@value #NO_AIR_PENALTY}: cancels the vanilla "not on the ground" mining penalty.</li>
+ *   <li>{@value #WATER_STRIDE}: water does not slow swimming (water movement efficiency pushed to 1).</li>
  *   <li>Move speed effects: content registers an effect id and the rule that says where it applies; the value
  *       is a % move speed.</li>
  * </ul>
@@ -35,6 +36,7 @@ public final class HeldTraits implements Runnable, Listener {
     public static final String GLOW = "glow";
     public static final String NO_WATER_PENALTY = "no_water_penalty";
     public static final String NO_AIR_PENALTY = "no_air_penalty";
+    public static final String WATER_STRIDE = "water_stride";
 
     /** Vanilla slows mining by 5 in water and in the air; x5 cancels one penalty. */
     private static final double PENALTY_FACTOR = 4;
@@ -48,6 +50,7 @@ public final class HeldTraits implements Runnable, Listener {
     private final NamespacedKey moveKey;
     private final NamespacedKey waterKey;
     private final NamespacedKey airKey;
+    private final NamespacedKey strideKey;
     private final Map<String, Predicate<Player>> moveRules = new LinkedHashMap<>();
     private final Map<UUID, Integer> glowLevels = new HashMap<>();
 
@@ -58,6 +61,7 @@ public final class HeldTraits implements Runnable, Listener {
         this.moveKey = new NamespacedKey(plugin, "held_move_speed");
         this.waterKey = new NamespacedKey(plugin, "held_no_water_penalty");
         this.airKey = new NamespacedKey(plugin, "held_no_air_penalty");
+        this.strideKey = new NamespacedKey(plugin, "held_water_stride");
     }
 
     /** Light level (1 to 15) of the Lichen glow this player should show, or 0. Visuals draws it. */
@@ -96,6 +100,8 @@ public final class HeldTraits implements Runnable, Listener {
             set(player.getAttribute(Attribute.MOVEMENT_SPEED), moveKey, 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
             set(player.getAttribute(Attribute.SUBMERGED_MINING_SPEED), waterKey, 0, AttributeModifier.Operation.ADD_NUMBER);
             set(player.getAttribute(Attribute.BLOCK_BREAK_SPEED), airKey, 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+            set(player.getAttribute(Attribute.WATER_MOVEMENT_EFFICIENCY), strideKey, 0,
+                    AttributeModifier.Operation.ADD_NUMBER);
         }
     }
 
@@ -107,6 +113,9 @@ public final class HeldTraits implements Runnable, Listener {
     private void penalties(Player player, List<Stacking.Source> sources) {
         boolean noWater = Stacking.total(NO_WATER_PENALTY, sources) > 0;
         boolean noAir = Stacking.total(NO_AIR_PENALTY, sources) > 0 && !player.isOnGround();
+        boolean stride = Stacking.total(WATER_STRIDE, sources) > 0;
+        set(player.getAttribute(Attribute.WATER_MOVEMENT_EFFICIENCY), strideKey, stride ? 1 : 0,
+                AttributeModifier.Operation.ADD_NUMBER);
         set(player.getAttribute(Attribute.SUBMERGED_MINING_SPEED), waterKey, noWater ? WATER_PENALTY_FIX : 0,
                 AttributeModifier.Operation.ADD_NUMBER);
         set(player.getAttribute(Attribute.BLOCK_BREAK_SPEED), airKey, noAir ? PENALTY_FACTOR : 0,

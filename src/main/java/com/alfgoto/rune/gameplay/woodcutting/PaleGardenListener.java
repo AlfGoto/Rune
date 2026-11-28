@@ -25,18 +25,18 @@ final class PaleGardenListener implements Listener {
 
     static final String PLACE = "pale_garden";
 
-    /** Night vision lasts 13 s and is renewed every 10 ticks, so it never flickers. */
-    private static final int NIGHT_VISION_TICKS = 260;
-
     /** Creakings this close to the player are told to forget them. */
     private static final double CREAKING_REACH = 32;
 
     private final Plugin plugin;
     private final HeldAxe held;
     private final PlaceDetector places;
+    /** Night vision length (from config). It is renewed every 10 ticks, so it never flickers. */
+    private final int nightVisionTicks;
     private final Set<UUID> withNightVision = new HashSet<>();
 
-    PaleGardenListener(Plugin plugin, HeldAxe held, PlaceDetector places) {
+    PaleGardenListener(Plugin plugin, HeldAxe held, PlaceDetector places, int nightVisionTicks) {
+        this.nightVisionTicks = nightVisionTicks;
         this.plugin = plugin;
         this.held = held;
         this.places = places;
@@ -66,14 +66,14 @@ final class PaleGardenListener implements Listener {
         if (on) {
             PotionEffect current = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
             // Never replace a longer night vision (potion, beacon).
-            if (current == null || current.getDuration() <= NIGHT_VISION_TICKS) {
+            if (current == null || current.getDuration() <= nightVisionTicks) {
                 player.addPotionEffect(
-                        new PotionEffect(PotionEffectType.NIGHT_VISION, NIGHT_VISION_TICKS, 0, true, false, true));
+                        new PotionEffect(PotionEffectType.NIGHT_VISION, nightVisionTicks, 0, true, false, true));
                 withNightVision.add(id);
             }
         } else if (withNightVision.remove(id)) {
             PotionEffect current = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
-            if (current != null && current.getDuration() <= NIGHT_VISION_TICKS) {
+            if (current != null && current.getDuration() <= nightVisionTicks) {
                 player.removePotionEffect(PotionEffectType.NIGHT_VISION);
             }
         }

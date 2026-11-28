@@ -51,8 +51,10 @@ public final class WoodcuttingModule implements RuneModule {
 
         // Trait extras of the Mangrove, Pale Oak and Chorus axes.
         HeldAxe heldAxe = new HeldAxe(items, loadout, isBroken);
-        new WaterStrideListener(ctx.plugin(), heldAxe).start();
-        PaleGardenListener paleGarden = new PaleGardenListener(ctx.plugin(), heldAxe, ctx.get(PlaceDetector.class));
+        int nightVisionTicks =
+                (int) Math.round(ctx.config().traitNumber("pale_oak_axe", "night_vision_seconds", 13) * 20);
+        PaleGardenListener paleGarden = new PaleGardenListener(
+                ctx.plugin(), heldAxe, ctx.get(PlaceDetector.class), nightVisionTicks);
         paleGarden.start();
         ctx.listen(paleGarden);
         long teleportCooldown =

@@ -133,7 +133,7 @@ public final class CoreItemsModule implements RuneModule {
     private static void essenceAxes(ItemRegistry items, RuneConfig config, double affinity) {
         axe(items, "mangrove_axe", Rarity.RARE,
                 TraitBinding.always("affinity_swamp", affinity),
-                TraitBinding.always(AxeTraits.WATER_STRIDE, 1),
+                TraitBinding.always(HeldTraits.WATER_STRIDE, 1),
                 TraitBinding.always(HeldTraits.NO_WATER_PENALTY, 1));
         double daylightSlower = config.traitNumber("pale_oak_axe", "daylight_slower_percent", 20);
         int paleCapacity = (int) config.traitNumber("pale_oak_axe", "capacity-modifier", 2);

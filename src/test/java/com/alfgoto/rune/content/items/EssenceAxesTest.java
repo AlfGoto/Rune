@@ -117,7 +117,7 @@ class EssenceAxesTest {
         assertEquals(10, total("mangrove_axe", "affinity_swamp"));
         assertEquals(10, total("pale_oak_axe", "affinity_pale_garden"));
         assertEquals(10, total("chorus_axe", "affinity_end"));
-        assertEquals(1, total("mangrove_axe", AxeTraits.WATER_STRIDE));
+        assertEquals(1, total("mangrove_axe", HeldTraits.WATER_STRIDE));
         assertEquals(1, total("mangrove_axe", HeldTraits.NO_WATER_PENALTY));
         assertEquals(1, total("pale_oak_axe", AxeTraits.PALE_NIGHT_VISION));
         assertEquals(1, total("pale_oak_axe", AxeTraits.CREAKING_LOSE_TRACK));
@@ -127,7 +127,7 @@ class EssenceAxesTest {
     }
 
     @Test
-    void theEssencePlacesAndTheirRunesExist() {
+    void theEssencePlacesExist() {
         PlaceRegistry places = plugin.context().get(PlaceRegistry.class);
         Map<String, Integer> keys = new HashMap<>();
         places.all().forEach(p -> keys.put(p.id(), p.keys().size()));

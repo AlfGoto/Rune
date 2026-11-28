@@ -24,9 +24,6 @@ public final class AxeTraits {
     /** Jungle Axe: climbing speed on vines, ladders and scaffolding. The binding value is the percent. */
     public static final String CLIMB_SPEED = "climb_speed";
 
-    /** Mangrove Axe: full swimming speed (no water slowdown) while held. The binding value is 1 (on). */
-    public static final String WATER_STRIDE = "water_stride";
-
     /** Pale Oak Axe: night vision in the Pale Garden while held. The binding value is 1 (on). */
     public static final String PALE_NIGHT_VISION = "pale_night_vision";
 
