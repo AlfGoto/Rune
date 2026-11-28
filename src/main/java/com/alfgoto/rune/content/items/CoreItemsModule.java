@@ -58,6 +58,7 @@ public final class CoreItemsModule implements RuneModule {
         startAxes(items, ctx.config());
         lootPickaxes(items, ctx.config());
         biomePickaxes(items, ctx.config().tools());
+        epicPickaxes(items, ctx.config());
         woodcuttingAxes(items, ctx.config());
         // Detection pickaxes. Bone: Uncommon, iron tier, Capacity 6. Echo: Rare, iron tier (-1), Capacity 10 +2.
         // Numbers are in config: runes.ore_sense.base (Bone's chance), runes.speed.affinity.per-rank (Deep Dark).
@@ -103,6 +104,25 @@ public final class CoreItemsModule implements RuneModule {
                         TraitBinding.always(BiomePickaxeTraits.AFFINITY_OCEAN, tools.traitAffinity()),
                         TraitBinding.always(HeldTraits.NO_WATER_PENALTY, 1),
                         TraitBinding.always(HeldTraits.NO_AIR_PENALTY, 1))));
+    }
+
+    /**
+     * The Obsidian and Tunneler Pickaxes (docs/jobs/mining.md): Epic, diamond tier. Obsidian is nearly unbreakable
+     * (a big Sturdy value) and slow, Capacity +3. Tunneler mines 3x3 (done by {@link TunnelerListener}), is slower
+     * and wears faster (every block of the 3x3 costs durability), Capacity -3. Numbers: config
+     * {@code traits.obsidian_pickaxe} and {@code traits.tunneler}.
+     */
+    private static void epicPickaxes(ItemRegistry items, RuneConfig config) {
+        double sturdy = config.traitNumber("obsidian_pickaxe", "sturdy_percent", 95);
+        double obsidianSlower = config.traitNumber("obsidian_pickaxe", "slower_percent", 20);
+        items.register(RuneItem.tool("obsidian_pickaxe", Rarity.EPIC, ToolKind.PICKAXE, "obsidian_pickaxe",
+                ToolSpec.DEFAULT.withTrait("obsidian_pickaxe", 3,
+                        TraitBinding.always("sturdy", sturdy), TraitBinding.always("haste", -obsidianSlower))));
+        double tunnelerSlower = config.traitNumber("tunneler", "slower_percent", 20);
+        items.register(RuneItem.tool("tunneler", Rarity.EPIC, ToolKind.PICKAXE, "tunneler",
+                ToolSpec.DEFAULT.withTrait("tunneler", -3,
+                        TraitBinding.always(TunnelerListener.EFFECT_ID, 1) /* on/off flag */,
+                        TraitBinding.always("haste", -tunnelerSlower))));
     }
 
     /**

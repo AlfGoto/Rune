@@ -270,6 +270,9 @@ caches:
   # Above the table: an Epic Cache every N levels, a Legendary one every M levels (wins over Epic)
   epic-every: 5
   legendary-every: 25
+unlock-tree:
+  # Milestone Caches never end, so the Unlock Tree (advancement screen, L key) shows them up to this Job Level.
+  max-level: 50
 blueprints:
   # Blueprint given on Job Level up: Job id, then Job Level, then Blueprint id (= the id of the recipe it unlocks).
   # A Blueprint that is not registered yet is skipped. Using the Blueprint unlocks the recipe for good.
@@ -280,6 +283,21 @@ blueprints:
     woodcutting:
       22: elder_axe
       30: elders_bark
+structure-loot:
+  # Relics and Blueprints added to structure chests (docs/design-decisions.md, Relics). One entry per item:
+  #   table: loot table key of the chest; item: Rune item id (a Relic) or blueprint: Blueprint id (not both)
+  #   chance: chance per generated chest, 0 to 1 (0.01 = 1%); job + min-level: the Job Level the player needs
+  # Only players who meet the gate get the item. An item that is not registered yet, or a Blueprint the player
+  # already used, is skipped. Test: /rune debug loot-chest <loot table>
+  - {table: "minecraft:chests/ancient_city", item: warden_pickaxe, chance: 0.01, job: mining, min-level: 25}
+  - {table: "minecraft:chests/ancient_city", blueprint: crown_of_the_depths, chance: 0.03, job: mining, min-level: 20}
+  - {table: "minecraft:chests/woodland_mansion", item: timberfall, chance: 0.01, job: woodcutting, min-level: 25}
+  - {table: "minecraft:chests/woodland_mansion", item: evokers_hatchet, chance: 0.01, job: woodcutting, min-level: 25}
+  - {table: "minecraft:chests/woodland_mansion", blueprint: stags_hooves, chance: 0.03, job: woodcutting, min-level: 20}
+  - {table: "minecraft:chests/buried_treasure", item: motherroot, chance: 0.005, job: woodcutting, min-level: 25}
+  # Test entries: no vanilla chest uses this key, so only /rune debug loot-chest rune:test_chest gives them.
+  - {table: "rune:test_chest", item: test_item, chance: 1.0, job: mining, min-level: 25}
+  - {table: "rune:test_chest", blueprint: test_blueprint, chance: 1.0, job: mining, min-level: 25}
 vanilla-overrides:
   # Rarity of the Rune Cache that replaces each enchanted book in chests, fishing and villager trades
   # (common, uncommon, rare, epic, legendary)
@@ -413,6 +431,11 @@ runes:
       per-rank: 10
       max-rank: 3
 traits:
+  # Tempest Axe: built-in Treefeller block cap, % more durability use (a negative Sturdy), Capacity lost
+  tempest_axe:
+    blocks: 16
+    extra_durability_percent: 50
+    capacity_penalty: 3
   # Trait extras of the Woodcutting axes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # The Affinity Trait of every axe uses the Rank 1 value of runes.speed.affinity (per-rank).
   # Birch Axe: Speed I for some seconds after each Felled Tree
@@ -422,6 +445,13 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Obsidian Pickaxe: sturdy_percent = % of durability use spared (95 = nearly unbreakable), slower_percent = % slower mining
+  obsidian_pickaxe:
+    sturdy_percent: 95
+    slower_percent: 20
+  # Tunneler Pickaxe (mines 3x3): slower_percent = % slower mining. Every block of the 3x3 wears the tool.
+  tunneler:
+    slower_percent: 20
   # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
   flint_pickaxe:
     fortune: 15
@@ -525,15 +555,15 @@ armor:
     bottom-y: -64
   # Woodcutting armor ("Rhythm", docs/jobs/woodcutting.md): each Felled Tree adds one charge, up to
   # max-charges. Every charge is lost after reset-seconds without a Felled Tree. A Trait goes from 0% (no
-  # charge) to its value below (in percent) at max-charges. Values by Rarity; Rare and up come with their pieces.
+  # charge) to its value below (in percent) at max-charges. Values by Rarity; Legendary comes with its pieces.
   rhythm:
     max-charges: 10
     reset-seconds: 30
-    chop-speed: {common: 15, uncommon: 25}        # helmet: log breaking speed
-    damage-reduction: {common: 8, uncommon: 12}   # chestplate: damage taken
-    move-speed: {common: 8, uncommon: 12}         # leggings: movement speed
-    jump: {common: 10, uncommon: 15}              # boots: jump strength
-    fall-reduction: {common: 20, uncommon: 35}    # boots: fall damage taken
+    chop-speed: {common: 15, uncommon: 25, rare: 35, epic: 50}        # helmet: log breaking speed
+    damage-reduction: {common: 8, uncommon: 12, rare: 16, epic: 20}   # chestplate: damage taken
+    move-speed: {common: 8, uncommon: 12, rare: 16, epic: 20}         # leggings: movement speed
+    jump: {common: 10, uncommon: 15, rare: 20, epic: 25}              # boots: jump strength
+    fall-reduction: {common: 20, uncommon: 35, rare: 50, epic: 65}    # boots: fall damage taken
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123

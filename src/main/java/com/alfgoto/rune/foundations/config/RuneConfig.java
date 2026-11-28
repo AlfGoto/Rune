@@ -92,6 +92,7 @@ public final class RuneConfig {
     private final SpeedRuneConfig speedRunes;
     private CacheConfig caches = CacheConfig.defaults();
     private BlueprintConfig blueprints = BlueprintConfig.defaults();
+    private StructureLootConfig structureLoot = StructureLootConfig.defaults();
     private ConfigurationSection runes; // the 'runes' section, null when there is none
     private ConfigurationSection traitSection; // the 'traits' section, null when there is none
     private double rankUpCostMultiplier = DEFAULT_RANK_UP_COST_MULTIPLIER;
@@ -248,6 +249,7 @@ public final class RuneConfig {
         loaded.traitSection = section.getConfigurationSection("traits");
         loaded.caches = CacheConfig.load(section, logger);
         loaded.blueprints = BlueprintConfig.load(section, logger);
+        loaded.structureLoot = StructureLootConfig.load(section, logger);
         loaded.traits = TraitConfig.load(section, logger);
         loaded.rankUpCostMultiplier =
                 readPositive(section, logger, RANK_UP_COST_MULTIPLIER, DEFAULT_RANK_UP_COST_MULTIPLIER);
@@ -286,6 +288,11 @@ public final class RuneConfig {
     /** The Blueprints given at a Job Level. */
     public BlueprintConfig blueprints() {
         return blueprints;
+    }
+
+    /** The Relics and Blueprints injected into structure chests. */
+    public StructureLootConfig structureLoot() {
+        return structureLoot;
     }
 
     /** Copper and Momentum Trait balancing. */

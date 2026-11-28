@@ -25,7 +25,7 @@ public record RhythmConfig(int maxCharges, int resetSeconds, Map<String, Map<Str
     public static final String FALL_REDUCTION = "fall-reduction";
 
     static final List<String> KEYS = List.of(CHOP_SPEED, DAMAGE_REDUCTION, MOVE_SPEED, JUMP, FALL_REDUCTION);
-    static final List<String> RARITIES = List.of("common", "uncommon");
+    static final List<String> RARITIES = List.of("common", "uncommon", "rare", "epic");
 
     public RhythmConfig {
         if (maxCharges < 1) {
@@ -45,11 +45,11 @@ public record RhythmConfig(int maxCharges, int resetSeconds, Map<String, Map<Str
                 10,
                 30,
                 Map.of(
-                        CHOP_SPEED, Map.of("common", 15.0, "uncommon", 25.0),
-                        DAMAGE_REDUCTION, Map.of("common", 8.0, "uncommon", 12.0),
-                        MOVE_SPEED, Map.of("common", 8.0, "uncommon", 12.0),
-                        JUMP, Map.of("common", 10.0, "uncommon", 15.0),
-                        FALL_REDUCTION, Map.of("common", 20.0, "uncommon", 35.0)));
+                        CHOP_SPEED, Map.of("common", 15.0, "uncommon", 25.0, "rare", 35.0, "epic", 50.0),
+                        DAMAGE_REDUCTION, Map.of("common", 8.0, "uncommon", 12.0, "rare", 16.0, "epic", 20.0),
+                        MOVE_SPEED, Map.of("common", 8.0, "uncommon", 12.0, "rare", 16.0, "epic", 20.0),
+                        JUMP, Map.of("common", 10.0, "uncommon", 15.0, "rare", 20.0, "epic", 25.0),
+                        FALL_REDUCTION, Map.of("common", 20.0, "uncommon", 35.0, "rare", 50.0, "epic", 65.0)));
     }
 
     /** The value in percent a Trait reaches at the most charges for {@code rarity} (lower case); 0 if none. */

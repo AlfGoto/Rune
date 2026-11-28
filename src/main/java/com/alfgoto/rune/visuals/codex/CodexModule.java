@@ -3,6 +3,7 @@ package com.alfgoto.rune.visuals.codex;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.gameplay.items.Codex;
+import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
 import com.alfgoto.rune.gameplay.jobs.JobProgress;
 import com.alfgoto.rune.gameplay.jobs.JobRegistry;
@@ -13,6 +14,7 @@ import com.alfgoto.rune.gameplay.runes.PlayerCapacity;
 import com.alfgoto.rune.gameplay.runes.PlayerLoadout;
 import com.alfgoto.rune.gameplay.runes.RuneRegistry;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
+import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.visuals.menu.MenuModule;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -32,6 +34,11 @@ public final class CodexModule implements RuneModule {
                 ctx.get(PlayerLoadout.class),
                 ctx.get(RuneRegistry.class));
         ctx.listen(new CodexClickListener(ctx.plugin(), ctx.get(Codex.class), menus));
+        ctx.listen(new GearLoadoutListener(
+                ctx.plugin(),
+                ctx.get(ToolLoadout.class),
+                ctx.get(ItemRegistry.class),
+                ctx.get(RuneRegistry.class)));
         ctx.listen(new QuestsMenuRefresher());
     }
 

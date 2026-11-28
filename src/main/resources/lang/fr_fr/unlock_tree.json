@@ -1,0 +1,9 @@
+{
+  "rune.unlock_tree.title": "Arbre de déblocage",
+  "rune.unlock_tree.description": "Ce que vos niveaux de métier débloquent.",
+  "rune.unlock_tree.job": "Tout ce que débloque %s.",
+  "rune.unlock_tree.node": "%s %s",
+  "rune.unlock_tree.recipe": "Recette : %s",
+  "rune.unlock_tree.cache": "Cache de palier : %s",
+  "rune.unlock_tree.blueprint": "Plan : %s"
+}
