@@ -11,6 +11,7 @@ import com.alfgoto.rune.text.Text;
 import com.alfgoto.rune.visuals.menu.MenuStrings;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -53,7 +54,7 @@ final class GearMenu extends LoadoutMenu {
     }
 
     /** Runs {@code change} on the item in the slot and puts it back, so the change stays on the item. */
-    private <T> T edit(java.util.function.Function<ItemStack, T> change) {
+    private <T> T edit(Function<ItemStack, T> change) {
         ItemStack stack = gear();
         T result = change.apply(stack);
         player.getInventory().setItem(inventorySlot, stack);
