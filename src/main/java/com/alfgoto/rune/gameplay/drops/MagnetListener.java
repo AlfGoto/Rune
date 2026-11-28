@@ -46,13 +46,13 @@ public final class MagnetListener implements Listener {
         }
         var sources = loadout.sources(tool, player);
         if (Stacking.total(ENDER, sources) > 0) {
-            pull(player.getEnderChest(), event.getItems().iterator()); // what does not fit stays on the ground
+            pull(player.getEnderChest(), event.getItems().iterator(), true); // what does not fit stays on the ground
         }
         double radius = Stacking.total(ID, sources);
         if (radius <= 0) {
             return;
         }
-        pull(player.getInventory(), event.getItems().iterator());
+        pull(player.getInventory(), event.getItems().iterator(), true);
         Collection<Item> nearby = event.getBlock()
                 .getWorld()
                 .getNearbyEntities(event.getBlock().getLocation().add(0.5, 0.5, 0.5), radius, radius, radius)
@@ -61,22 +61,22 @@ public final class MagnetListener implements Listener {
                 .map(Item.class::cast)
                 .filter(item -> item.getThrower() == null)
                 .toList();
-        pull(player.getInventory(), nearby.iterator());
+        pull(player.getInventory(), nearby.iterator(), false);
     }
 
-    /** Puts each item in the inventory. Removes it when it all fits, else it keeps the part that did not fit. */
-    private static void pull(Inventory inventory, Iterator<Item> iterator) {
+    /**
+     * Puts each item in the inventory. When it all fits, it is taken away; else it keeps the part that did not fit.
+     * Items of the event are not in the world yet, so they leave the event's list (never dropped, never pulled twice).
+     */
+    private static void pull(Inventory inventory, Iterator<Item> iterator, boolean fromEvent) {
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            if (!item.isValid()) {
-                continue; // already taken (Ender Chest): never add it twice
-            }
             Map<Integer, ItemStack> left = inventory.addItem(item.getItemStack());
             if (left.isEmpty()) {
-                if (item.isValid()) {
-                    item.remove(); // already in the world: take it away
+                if (fromEvent) {
+                    iterator.remove();
                 } else {
-                    iterator.remove(); // still in the event's list: it is never dropped
+                    item.remove();
                 }
             } else {
                 item.setItemStack(left.values().iterator().next());

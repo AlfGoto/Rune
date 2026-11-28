@@ -1,8 +1,8 @@
 package com.alfgoto.rune.gameplay.drops;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.alfgoto.rune.RunePlugin;
 import com.alfgoto.rune.gameplay.crafting.RecipeBook;
@@ -109,7 +109,7 @@ class LootPickaxesTest {
         BlockDropItemEvent event = breakWith(items.create(items.get("ender_pickaxe"), 1), Material.DIAMOND, 1);
         assertEquals(1, count(player.getEnderChest(), Material.DIAMOND));
         assertEquals(0, count(player.getInventory(), Material.DIAMOND));
-        assertFalse(event.getItems().get(0).isValid()); // taken out of the world
+        assertTrue(event.getItems().isEmpty()); // never dropped
     }
 
     @Test
