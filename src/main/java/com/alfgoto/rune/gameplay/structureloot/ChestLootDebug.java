@@ -12,33 +12,34 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * {@code /rune loot chest <loot_table>}: rolls the structure loot of one chest loot table for you, as if you had
- * just opened that chest (your real Job Levels apply), prints each result and gives it to you.
+ * {@code /rune debug loot-chest <loot_table>}: rolls the structure loot of one chest loot table for you, as if you
+ * had just opened that chest (your real Job Levels apply), prints each result and gives it to you. The table is the
+ * full loot table key (for example {@code chests/ancient_city}); {@code minecraft:} is optional.
  */
-final class ChestLootSubcommand implements Subcommand {
+final class ChestLootDebug implements Subcommand {
 
     private final StructureLoot structureLoot;
     private final RandomGenerator random;
 
-    ChestLootSubcommand(StructureLoot structureLoot, RandomGenerator random) {
+    ChestLootDebug(StructureLoot structureLoot, RandomGenerator random) {
         this.structureLoot = structureLoot;
         this.random = random;
     }
 
     @Override
     public String name() {
-        return "chest";
+        return "loot-chest";
     }
 
     @Override
     public void execute(CommandSender sender, List<String> args) {
         if (args.size() != 1) {
-            sender.sendMessage(error(
-                    "rune.command.loot.chest.usage", "Usage: /rune loot chest <loot_table>", new Component[0]));
+            sender.sendMessage(
+                    error("rune.command.debug.loot_chest.usage", "Usage: /rune debug loot-chest <loot_table>"));
             return;
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(error("rune.command.player_only", "Only a player can use this.", new Component[0]));
+            sender.sendMessage(error("rune.command.player_only", "Only a player can use this."));
             return;
         }
         String table = args.get(0).toLowerCase(Locale.ROOT);
@@ -47,14 +48,14 @@ final class ChestLootSubcommand implements Subcommand {
         }
         if (!structureLoot.tables().contains(table)) {
             sender.sendMessage(error(
-                    "rune.command.loot.chest.unknown_table",
+                    "rune.command.debug.loot_chest.unknown_table",
                     "No structure loot for: %s",
-                    new Component[] {Component.text(table)}));
+                    Component.text(table)));
             return;
         }
         List<StructureLoot.Result> results = structureLoot.roll(player.getUniqueId(), table, random);
         sender.sendMessage(Component.translatable(
-                        "rune.command.loot.chest.header",
+                        "rune.command.debug.loot_chest.header",
                         "Opened %s: %s structure item(s)",
                         Component.text(table),
                         Component.text(results.size()))
@@ -79,7 +80,7 @@ final class ChestLootSubcommand implements Subcommand {
         return out;
     }
 
-    private static Component error(String key, String fallback, Component[] args) {
+    private static Component error(String key, String fallback, Component... args) {
         return Component.translatable(key, fallback, args).color(NamedTextColor.RED);
     }
 }

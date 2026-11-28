@@ -5,10 +5,8 @@ import com.alfgoto.rune.foundations.registry.Registry;
 import com.alfgoto.rune.text.Rarity;
 import com.alfgoto.rune.text.Text;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.random.RandomGenerator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,7 +22,6 @@ public final class LootSubcommand implements Subcommand {
     private final Registry<LootTable> tables;
     private final LootRoller roller;
     private final RandomGenerator random;
-    private final Map<String, Subcommand> modes = new LinkedHashMap<>();
 
     public LootSubcommand(Registry<LootTable> tables, LootRoller roller, RandomGenerator random) {
         this.tables = tables;
@@ -37,18 +34,8 @@ public final class LootSubcommand implements Subcommand {
         return "loot";
     }
 
-    /** Adds a mode after {@code /rune loot} (e.g. {@code chest}). Its {@code name()} is the word typed. */
-    public void addMode(Subcommand mode) {
-        modes.put(mode.name(), mode);
-    }
-
     @Override
     public void execute(CommandSender sender, List<String> args) {
-        Subcommand mode = args.isEmpty() ? null : modes.get(args.get(0).toLowerCase(Locale.ROOT));
-        if (mode != null) {
-            mode.execute(sender, args.subList(1, args.size()));
-            return;
-        }
         if (args.size() < 2 || args.size() > 4 || !args.get(0).equalsIgnoreCase("roll")) {
             sender.sendMessage(error("rune.command.loot.usage", "Usage: /rune loot roll <table> [rarity] [job]"));
             return;
@@ -91,13 +78,8 @@ public final class LootSubcommand implements Subcommand {
     public List<String> complete(CommandSender sender, List<String> args) {
         List<String> out = new ArrayList<>();
         String typed = args.isEmpty() ? "" : args.get(args.size() - 1).toLowerCase(Locale.ROOT);
-        Subcommand mode = args.isEmpty() ? null : modes.get(args.get(0).toLowerCase(Locale.ROOT));
-        if (mode != null) {
-            return mode.complete(sender, args.subList(1, args.size()));
-        }
         if (args.size() == 1) {
             out.add("roll");
-            out.addAll(modes.keySet());
         } else if (args.size() == 2) {
             tables.all().forEach(table -> out.add(table.id()));
         } else if (args.size() == 3) {

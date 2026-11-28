@@ -16,7 +16,6 @@ public final class RewardsModule implements RuneModule {
     public void enable(RuneContext ctx) {
         LootTableRegistry tables = ctx.provide(LootTableRegistry.class, new LootTableRegistry());
         LootRoller roller = ctx.provide(LootRoller.class, new LootRoller(ctx.config()));
-        ctx.subcommand(ctx.provide(
-                LootSubcommand.class, new LootSubcommand(tables.registry(), roller, ThreadLocalRandom.current())));
+        ctx.subcommand(new LootSubcommand(tables.registry(), roller, ThreadLocalRandom.current()));
     }
 }
