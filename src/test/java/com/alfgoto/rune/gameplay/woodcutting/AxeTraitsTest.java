@@ -1,6 +1,8 @@
 package com.alfgoto.rune.gameplay.woodcutting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -21,8 +23,8 @@ class AxeTraitsTest {
 
     @Test
     void teleportCooldownLastsUntilTheDelayPasses() {
-        assertEquals(true, AxeTraits.onCooldown(1_000, 5_000, 8_000));
-        assertEquals(false, AxeTraits.onCooldown(1_000, 9_000, 8_000));
+        assertTrue(AxeTraits.onCooldown(1_000, 5_000, 8_000));
+        assertFalse(AxeTraits.onCooldown(1_000, 9_000, 8_000));
     }
 
     @Test
@@ -31,7 +33,7 @@ class AxeTraitsTest {
             for (double d = 0; d < 1; d += 0.1) {
                 double[] offset = AxeTraits.teleportOffset(8, a, d);
                 double distance = Math.hypot(offset[0], offset[1]);
-                assertEquals(true, distance >= 1 - 1e-9 && distance <= 8 + 1e-9);
+                assertTrue(distance >= 1 - 1e-9 && distance <= 8 + 1e-9);
             }
         }
     }
