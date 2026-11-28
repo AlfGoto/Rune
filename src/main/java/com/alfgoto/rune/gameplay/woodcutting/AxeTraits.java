@@ -44,6 +44,16 @@ public final class AxeTraits {
 
     private AxeTraits() {}
 
+    /** Gives a level I potion effect for {@code seconds}, unless the player has a stronger or longer one. */
+    static void giveKeepingStronger(
+            org.bukkit.entity.Player player, org.bukkit.potion.PotionEffectType type, double seconds) {
+        int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
+        org.bukkit.potion.PotionEffect current = player.getPotionEffect(type);
+        if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(type, ticks, 0));
+        }
+    }
+
     /**
      * Acacia mining speed in percent: +{@code percent} in open sunlight, -{@code percent} at night or in rain,
      * 0 otherwise (day but under cover). Night and rain win over sunlight.

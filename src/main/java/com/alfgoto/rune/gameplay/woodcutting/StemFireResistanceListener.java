@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
@@ -45,10 +44,6 @@ final class StemFireResistanceListener implements Listener {
         if (seconds <= 0) {
             return;
         }
-        int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
-        PotionEffect current = player.getPotionEffect(PotionEffectType.FIRE_RESISTANCE);
-        if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, ticks, 0));
-        }
+        AxeTraits.giveKeepingStronger(player, PotionEffectType.FIRE_RESISTANCE, seconds);
     }
 }

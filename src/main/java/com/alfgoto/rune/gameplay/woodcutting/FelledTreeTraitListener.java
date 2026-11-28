@@ -16,7 +16,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -68,21 +67,11 @@ final class FelledTreeTraitListener implements Listener {
         List<Stacking.Source> sources = loadout.sources(tool, player);
         double seconds = Stacking.total(AxeTraits.FELLED_TREE_SPEED, sources);
         if (seconds > 0) {
-            int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
-            PotionEffect current = player.getPotionEffect(PotionEffectType.SPEED);
-            // Never replace a stronger Speed (potion, beacon) or a longer one of the same level.
-            if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticks, 0));
-            }
+            AxeTraits.giveKeepingStronger(player, PotionEffectType.SPEED, seconds);
         }
         double regenSeconds = Stacking.total(AxeTraits.FELLED_TREE_REGENERATION, sources);
         if (regenSeconds > 0) {
-            int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(regenSeconds * 20));
-            PotionEffect current = player.getPotionEffect(PotionEffectType.REGENERATION);
-            // Never replace a stronger Regeneration or a longer one of the same level.
-            if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, ticks, 0));
-            }
+            AxeTraits.giveKeepingStronger(player, PotionEffectType.REGENERATION, regenSeconds);
         }
         if (Stacking.total(AxeTraits.FELLED_TREE_LEAF_FALL, sources) >= 1) {
             leavesFall(event.lastLog(), player, tool.clone(), sources);
