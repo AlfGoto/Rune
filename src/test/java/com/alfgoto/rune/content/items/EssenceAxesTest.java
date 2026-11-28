@@ -106,6 +106,49 @@ class EssenceAxesTest {
     }
 
     @Test
+    void crimsonWarpedAcaciaAndCherryHaveTheirAffinityAndExtra() {
+        for (String id : new String[] {"crimson_axe", "warped_axe", "acacia_axe", "cherry_axe"}) {
+            assertEquals(Rarity.RARE, items.get(id).rarity(), id);
+            assertEquals(10, loadout.capacity(items.create(items.get(id), 1)), id);
+        }
+        assertEquals(10, total("crimson_axe", "affinity_crimson_forest"));
+        assertEquals(10, total("warped_axe", "affinity_warped_forest"));
+        assertEquals(10, total("acacia_axe", "affinity_savanna"));
+        assertEquals(10, total("cherry_axe", "affinity_cherry_grove"));
+        assertEquals(8, total("crimson_axe", AxeTraits.STEM_FIRE_RESISTANCE));
+        assertEquals(1, total("warped_axe", AxeTraits.ENDERMEN_NEUTRAL));
+        assertEquals(20, total("acacia_axe", AxeTraits.SUN_RAIN_SPEED));
+        assertEquals(6, total("cherry_axe", AxeTraits.FELLED_TREE_REGENERATION));
+        assertEquals(0, total("cherry_axe", AxeTraits.STEM_FIRE_RESISTANCE));
+    }
+
+    @Test
+    void theNewForestPlacesAndRecipesExist() {
+        PlaceRegistry places = plugin.context().get(PlaceRegistry.class);
+        for (String id : new String[] {"crimson_forest", "warped_forest", "savanna", "cherry_grove"}) {
+            assertTrue(places.all().stream().anyMatch(p -> p.id().equals(id)), id);
+        }
+        assertEquals(10, book.find("crimson_axe").orElseThrow().level());
+        assertEquals(10, book.find("warped_axe").orElseThrow().level());
+        assertEquals(13, book.find("acacia_axe").orElseThrow().level());
+        assertEquals(13, book.find("cherry_axe").orElseThrow().level());
+        assertEquals(
+                Map.of(Material.CRIMSON_STEM, 4L, Material.SHROOMLIGHT, 2L, Material.DIAMOND, 1L, Material.PAPER, 1L),
+                counts("crimson_axe"));
+        assertEquals(
+                Map.of(Material.CHERRY_LOG, 4L, Material.PINK_PETALS, 3L, Material.DIAMOND, 1L, Material.PAPER, 1L),
+                counts("cherry_axe"));
+    }
+
+    @Test
+    void sunRainSpeedRule() {
+        assertEquals(20, AxeTraits.sunRainSpeed(false, false, true, 20));
+        assertEquals(0, AxeTraits.sunRainSpeed(false, false, false, 20));
+        assertEquals(-20, AxeTraits.sunRainSpeed(true, false, true, 20));
+        assertEquals(-20, AxeTraits.sunRainSpeed(false, true, true, 20));
+    }
+
+    @Test
     void theAxesAreRuneAxes() {
         assertTrue(items.toolStats(items.get("jungle_axe")).isPresent());
     }

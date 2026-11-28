@@ -13,6 +13,10 @@
   "rune.item.affinity_birch_forest": "Affinité : Forêt de bouleaux",
   "rune.item.affinity_dappled_forest": "Affinité : Forêt mouchetée",
   "rune.item.affinity_jungle": "Affinité : Jungle",
+  "rune.item.affinity_crimson_forest": "Affinité : Forêt écarlate",
+  "rune.item.affinity_warped_forest": "Affinité : Forêt biscornue",
+  "rune.item.affinity_savanna": "Affinité : Savane",
+  "rune.item.affinity_cherry_grove": "Affinité : Cerisaie",
   "rune.item.affinity_mineshaft": "Affinité : Mine abandonnée",
   "rune.item.affinity_deep_dark": "Affinité : Abysses"
 }

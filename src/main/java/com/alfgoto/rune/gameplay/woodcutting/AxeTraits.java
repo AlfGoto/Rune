@@ -24,6 +24,18 @@ public final class AxeTraits {
     /** Jungle Axe: climbing speed on vines, ladders and scaffolding. The binding value is the percent. */
     public static final String CLIMB_SPEED = "climb_speed";
 
+    /** Crimson Axe: fire resistance after each Crimson or Warped stem broken. The binding value is the duration in seconds. */
+    public static final String STEM_FIRE_RESISTANCE = "stem_fire_resistance";
+
+    /** Warped Axe: endermen stay neutral when looked at while held. The binding value is 1 (on). */
+    public static final String ENDERMEN_NEUTRAL = "endermen_neutral";
+
+    /** Acacia Axe: mining speed in sunlight (plus) and at night or in rain (minus). The binding value is the percent. */
+    public static final String SUN_RAIN_SPEED = "sun_rain_speed";
+
+    /** Cherry Axe: Regeneration after each Felled Tree. The binding value is the duration in seconds. */
+    public static final String FELLED_TREE_REGENERATION = "felled_tree_regeneration";
+
     /** Vanilla climbing speed, in blocks per tick (a player climbs 0.2 blocks per tick). */
     static final double VANILLA_CLIMB_SPEED = 0.2;
 
@@ -31,6 +43,27 @@ public final class AxeTraits {
     static final double POWDER_SNOW_FACTOR = 0.9;
 
     private AxeTraits() {}
+
+    /** Gives a level I potion effect for {@code seconds}, unless the player has a stronger or longer one. */
+    static void giveKeepingStronger(
+            org.bukkit.entity.Player player, org.bukkit.potion.PotionEffectType type, double seconds) {
+        int ticks = (int) Math.min(Integer.MAX_VALUE, Math.round(seconds * 20));
+        org.bukkit.potion.PotionEffect current = player.getPotionEffect(type);
+        if (current == null || (current.getAmplifier() == 0 && current.getDuration() < ticks)) {
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(type, ticks, 0));
+        }
+    }
+
+    /**
+     * Acacia mining speed in percent: +{@code percent} in open sunlight, -{@code percent} at night or in rain,
+     * 0 otherwise (day but under cover). Night and rain win over sunlight.
+     */
+    public static double sunRainSpeed(boolean night, boolean raining, boolean sunlit, double percent) {
+        if (night || raining) {
+            return -percent;
+        }
+        return sunlit ? percent : 0;
+    }
 
     /** Upward speed while climbing with {@code percent} extra climbing speed. */
     public static double climbSpeed(double percent) {
