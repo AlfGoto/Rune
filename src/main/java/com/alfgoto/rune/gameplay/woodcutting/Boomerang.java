@@ -1,5 +1,7 @@
 package com.alfgoto.rune.gameplay.woodcutting;
 
+import com.alfgoto.rune.foundations.blocktracking.BlockTag;
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
 import java.util.Optional;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -30,15 +32,16 @@ public final class Boomerang {
     private Boomerang() {}
 
     /**
-     * The first log on the player's look line within {@code range} blocks. The axe flies through leaves and open
-     * air and stops on any other solid block: then there is no log to break.
+     * The first natural log (not tagged {@link BlockTag#PLACED}) on the player's look line within {@code range}
+     * blocks. The axe flies through leaves and open air and stops on any other solid block, placed logs included:
+     * then there is no log to break.
      */
-    public static Optional<Block> firstLog(Player player, double range) {
+    public static Optional<Block> firstLog(Player player, double range, BlockTracker tracker) {
         Location eye = player.getEyeLocation();
         Vector direction = eye.getDirection().normalize();
         for (double distance = STEP; distance <= range; distance += STEP) {
             Block block = eye.clone().add(direction.clone().multiply(distance)).getBlock();
-            if (Tag.LOGS.isTagged(block.getType())) {
+            if (Tag.LOGS.isTagged(block.getType()) && !tracker.has(block, BlockTag.PLACED)) {
                 return Optional.of(block);
             }
             if (!block.isPassable() && !Tag.LEAVES.isTagged(block.getType())) {

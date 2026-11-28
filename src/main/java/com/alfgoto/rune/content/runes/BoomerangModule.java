@@ -1,5 +1,7 @@
 package com.alfgoto.rune.content.runes;
 
+import com.alfgoto.rune.foundations.blocktracking.BlockTracker;
+import com.alfgoto.rune.foundations.blocktracking.BlockTrackingModule;
 import com.alfgoto.rune.foundations.module.RuneContext;
 import com.alfgoto.rune.foundations.module.RuneModule;
 import com.alfgoto.rune.foundations.triggers.RuneClickEvent;
@@ -35,7 +37,7 @@ public final class BoomerangModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(RunesModule.class, EffectsModule.class, TriggersModule.class);
+        return Set.of(RunesModule.class, EffectsModule.class, TriggersModule.class, BlockTrackingModule.class);
     }
 
     @Override
@@ -57,12 +59,13 @@ public final class BoomerangModule implements RuneModule {
             return;
         }
         // `when` finds the log (same click), `does` breaks it.
+        BlockTracker tracker = ctx.get(BlockTracker.class);
         Map<UUID, Block> found = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(id, EffectTriggers.CLICK)
                         .when(context -> {
                             found.remove(context.player().getUniqueId());
-                            var log = Boomerang.firstLog(context.player(), context.value());
+                            var log = Boomerang.firstLog(context.player(), context.value(), tracker);
                             log.ifPresent(block -> found.put(context.player().getUniqueId(), block));
                             return log.isPresent();
                         })
