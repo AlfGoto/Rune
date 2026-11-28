@@ -66,7 +66,7 @@ _Avoid_: enchantment
 
 **Mastery** — Extra Capacity a Rune Tool earns through use: +1 each time it performs a set number of valuable Job Actions (e.g. ores mined for a pickaxe, logs for an axe), up to +75% of its base Capacity. Rune Armor has no Mastery.
 
-**Loadout** — The set of Runes currently installed on a player, a tool or an armor piece. Can be changed freely at any time. Players have 8 Player Rune slots.
+**Loadout** — The set of Runes currently installed on a player, a tool or an armor piece. Can be changed freely at any time. Players have 8 Player Rune slots. A Rune Tool's or Rune Armor piece's Loadout opens by right-clicking that item in the inventory.
 
 **Rune Cache** — A sealed item containing a random reward (usually Runes). Dropped by Job Actions, found in loot, fishing and villager trades where vanilla had enchanted books, and given by Quests; the player opens it whenever they choose. Every Cache rolls the same loot table; the Cache's Rarity only shifts the odds and the quantity of what it gives (a Legendary Cache may give several Epic Runes instead of a Legendary one). A Cache dropped by a Job leans towards that Job's Runes.
 
