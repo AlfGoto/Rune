@@ -79,7 +79,9 @@ public final class ActiveMiningRunesModule implements RuneModule {
         var maxSpeed = config.runeNumber(ORE_DASH, "max-speed");
         var lift = config.runeNumber(ORE_DASH, "lift");
         var maxChecks = config.runeNumber(ORE_DASH, "max-checks");
+        var scanTicks = config.runeNumber(ORE_DASH, "scan-ticks");
         if (base.isEmpty()
+                || scanTicks.isEmpty()
                 || perRank.isEmpty()
                 || maxRank.isEmpty()
                 || cooldown.isEmpty()
@@ -88,17 +90,27 @@ public final class ActiveMiningRunesModule implements RuneModule {
                 || lift.isEmpty()
                 || maxChecks.isEmpty()) {
             ctx.logger().severe("Config 'runes.ore_dash' needs base, per-rank, max-rank, cooldown, speed-per-block,"
-                    + " max-speed, lift and max-checks numbers. Rune 'ore_dash' is not registered.");
+                    + " max-speed, lift, max-checks and scan-ticks numbers. Rune 'ore_dash' is not registered.");
             return;
         }
         // `when` finds the ore, `does` (same click) uses it.
         Map<UUID, Block> found = new HashMap<>();
+        // Last scan time (ms) per player: a miss has no cooldown, so scans are throttled instead.
+        Map<UUID, Long> lastScan = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(ORE_DASH, EffectTriggers.CLICK)
                         .when(context -> {
                             Player player = context.player();
                             found.remove(player.getUniqueId());
-                            var ore = VisibleOre.nearest(player, context.value(), (int) maxChecks.getAsDouble());
+                            long now = System.currentTimeMillis();
+                            Long last = lastScan.get(player.getUniqueId());
+                            boolean throttled = last != null && now - last < scanTicks.getAsDouble() * 50;
+                            if (!throttled) {
+                                lastScan.put(player.getUniqueId(), now);
+                            }
+                            var ore = throttled
+                                    ? java.util.Optional.<Block>empty()
+                                    : VisibleOre.nearest(player, context.value(), (int) maxChecks.getAsDouble());
                             if (ore.isEmpty()) {
                                 player.sendActionBar(Component.translatable(
                                                 "rune.feedback.ore_dash_none",

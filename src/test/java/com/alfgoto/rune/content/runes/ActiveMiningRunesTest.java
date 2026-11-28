@@ -169,7 +169,7 @@ class ActiveMiningRunesTest {
         charges.arm(player.getUniqueId(), "blast_mine", 20);
         mine(world.getBlockAt(0, 10, 0), pickaxe("blast_mine", 1), BreakCause.TOOL);
         assertEquals(8, broken.size());
-        assertTrue(broken.stream().allMatch(b -> b.getX() == 0 || b.getY() == 10 || b.getZ() == 0));
+        assertTrue(broken.stream().allMatch(b -> b.getY() == 10));
     }
 
     @Test

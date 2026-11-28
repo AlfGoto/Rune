@@ -410,6 +410,8 @@ runes:
     max-speed: 2.5
     lift: 0.4
     max-checks: 300
+    # A click with no visible ore has no cooldown: the scan runs at most once per this many ticks per player.
+    scan-ticks: 5
   # Blast Mine (Active): the click arms it, the next pickaxe block mined breaks a 3x3 square around it. Cooldown in
   # seconds: 30 / 20 / 10. armed-seconds = how long the charge waits for that block.
   blast_mine:
