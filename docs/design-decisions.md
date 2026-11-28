@@ -173,6 +173,14 @@ Working log of settled decisions. Terms are defined in `CONTEXT.md`.
   - Not chosen: a library such as UltimateAdvancementAPI (extra dependency, not needed).
 - **Reveal of locked nodes:** keep vanilla behaviour. Only the next few nodes after the last unlocked one are shown.
 - Tested in game (prototype, since deleted): parallel lines per Job, toast without chat line, revoke works.
+- **Built (2026-11-28, `visuals.unlocktree`):**
+  - Layout: one root ("Unlock Tree"), one child per Job (its icon), then a chain of level nodes. The client draws the Job children under each other, so the lines are parallel.
+  - A node holds everything its level unlocks. Its frame and icon come from the strongest one: Blueprint (challenge), then Milestone Cache (goal), then recipe (task). The description has one line per unlock.
+  - Recipes at Job Level 1 (Components, Starter Recipes) are known from the start: no node. Blueprint recipes get no node of their own: their Blueprint milestone does (only for registered Blueprints). Milestone Cache nodes are shown up to config `unlock-tree.max-level` (50), since the milestones never end.
+  - The tree is built one server tick after enable (every content module has filled its registry by then). The root and every Job start are always given to the player; a level node is given when the Job Level reaches it, and taken back when it goes below.
+  - Job icons: Mining = flint pickaxe model, Woodcutting = flint hatchet model, any other Job = paper, until Job icon textures exist.
+  - Joining for the first time at a high level gives one pop-up per node already reached (vanilla shows a pop-up for each award). Accepted.
+  - If loading fails (the deprecated API changes), one warning is logged and the tab is simply missing.
 
 ## Scope & delivery
 - Infrastructure comes before any feature: repo scaffold, Gradle build + `runServer`, CI with tests, Claude PR review (same setup as FloconAI), `/preview` servers, Renovate.
