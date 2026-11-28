@@ -93,7 +93,7 @@ final class HurtTeleportListener implements Listener {
             for (int y = top; y >= bottom; y--) {
                 Block feet = world.getBlockAt(x, y, z);
                 Block ground = feet.getRelative(0, -1, 0);
-                if (ground.getType().isSolid() && free(feet) && free(feet.getRelative(0, 1, 0))) {
+                if (ground.getType().isSolid() && ground.getType() != Material.MAGMA_BLOCK && free(feet) && free(feet.getRelative(0, 1, 0))) {
                     return new Location(world, x + 0.5, y, z + 0.5, around.getYaw(), around.getPitch());
                 }
             }
