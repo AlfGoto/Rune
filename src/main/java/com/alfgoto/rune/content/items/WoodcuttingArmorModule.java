@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * The Common and Uncommon Woodcutting armor with the Rhythm Trait (docs/jobs/woodcutting.md). Each piece's
+ * The Common to Epic Woodcutting armor with the Rhythm Trait (docs/jobs/woodcutting.md). Each piece's
  * Trait values come from {@code armor.rhythm} in config.yml and follow the {@code rhythm} Scale. Capacity is
  * the Rarity's, with no Trait modifier.
  */
@@ -46,6 +46,14 @@ public final class WoodcuttingArmorModule implements RuneModule {
         piece(items, config, rhythm, "fellers_jerkin", Rarity.UNCOMMON, ArmorKind.CHESTPLATE);
         piece(items, config, rhythm, "fellers_leggings", Rarity.UNCOMMON, ArmorKind.LEGGINGS);
         piece(items, config, rhythm, "fellers_boots", Rarity.UNCOMMON, ArmorKind.BOOTS);
+        piece(items, config, rhythm, "sylvan_helm", Rarity.RARE, ArmorKind.HELMET);
+        piece(items, config, rhythm, "sylvan_cuirass", Rarity.RARE, ArmorKind.CHESTPLATE);
+        piece(items, config, rhythm, "sylvan_leggings", Rarity.RARE, ArmorKind.LEGGINGS);
+        piece(items, config, rhythm, "sylvan_boots", Rarity.RARE, ArmorKind.BOOTS);
+        piece(items, config, rhythm, "heartwood_helm", Rarity.EPIC, ArmorKind.HELMET);
+        piece(items, config, rhythm, "heartwood_cuirass", Rarity.EPIC, ArmorKind.CHESTPLATE);
+        piece(items, config, rhythm, "heartwood_leggings", Rarity.EPIC, ArmorKind.LEGGINGS);
+        piece(items, config, rhythm, "heartwood_boots", Rarity.EPIC, ArmorKind.BOOTS);
     }
 
     private static void piece(

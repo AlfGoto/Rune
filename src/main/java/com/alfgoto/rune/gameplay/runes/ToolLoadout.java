@@ -113,6 +113,21 @@ public final class ToolLoadout {
         });
     }
 
+    /** Whether {@code stack} is a Rune Tool or a Rune Armor piece (it has a Loadout). */
+    public boolean isGear(ItemStack stack) {
+        return stack != null && limits(stack).isPresent();
+    }
+
+    /** The number of Rune slots of the tool or armor piece, or 0 if it is neither. */
+    public int slots(ItemStack tool) {
+        return limits(tool).map(Limits::slots).orElse(0);
+    }
+
+    /** Whether {@code rune} can go in this tool or armor piece (its kind), ignoring slots and Capacity. */
+    public boolean fits(ItemStack tool, Rune rune) {
+        return limits(tool).map(l -> l.fits().test(rune)).orElse(false);
+    }
+
     /** The installed Runes, in slot order. Empty for anything that is not a Rune Tool or Rune Armor. */
     public List<Installed> installed(ItemStack tool) {
         List<Installed> list = new ArrayList<>();
