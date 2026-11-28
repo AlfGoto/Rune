@@ -422,6 +422,13 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Obsidian Pickaxe: sturdy_percent = % of durability use spared (95 = nearly unbreakable), slower_percent = % slower mining
+  obsidian_pickaxe:
+    sturdy_percent: 95
+    slower_percent: 20
+  # Tunneler Pickaxe (mines 3x3): slower_percent = % slower mining. Every block of the 3x3 wears the tool.
+  tunneler:
+    slower_percent: 20
   # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
   flint_pickaxe:
     fortune: 15
