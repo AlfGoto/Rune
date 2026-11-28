@@ -27,7 +27,7 @@ import org.bukkit.plugin.Plugin;
 final class HurtTeleportListener implements Listener {
 
     /** Spots tried before giving up (then the player simply stays). */
-    private static final int ATTEMPTS = 16;
+    private static final int ATTEMPTS = 24;
 
     private final Plugin plugin;
     private final HeldAxe held;
@@ -83,10 +83,12 @@ final class HurtTeleportListener implements Listener {
     private Location findSpot(Location around, double range) {
         World world = around.getWorld();
         for (int i = 0; i < ATTEMPTS; i++) {
-            double[] offset = AxeTraits.teleportOffset(range, random.getAsDouble(), random.getAsDouble());
+            // The reach shrinks with each try, so a small island (like the End platform) still gets a spot.
+            double reach = Math.max(1, range * (ATTEMPTS - i) / ATTEMPTS);
+            double[] offset = AxeTraits.teleportOffset(reach, random.getAsDouble(), random.getAsDouble());
             int x = around.getBlockX() + (int) Math.round(offset[0]);
             int z = around.getBlockZ() + (int) Math.round(offset[1]);
-            int top = Math.min(world.getMaxHeight() - 2, around.getBlockY() + (int) range);
+            int top = Math.min(world.getMaxHeight() - 2, around.getBlockY() + 3);
             int bottom = Math.max(world.getMinHeight() + 1, around.getBlockY() - (int) range);
             for (int y = top; y >= bottom; y--) {
                 Block feet = world.getBlockAt(x, y, z);
