@@ -9,6 +9,8 @@ import com.alfgoto.rune.gameplay.effects.ScaleRegistry;
 import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
+import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
@@ -27,7 +29,8 @@ public final class WoodcuttingModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, RunesModule.class, EffectsModule.class, TreesModule.class);
+        return Set.of(
+                ItemsModule.class, RunesModule.class, EffectsModule.class, TreesModule.class, PlacesModule.class);
     }
 
     @Override
@@ -45,6 +48,22 @@ public final class WoodcuttingModule implements RuneModule {
         powderSnow.start();
         ctx.listen(new ClimbListener(items, loadout, isBroken));
         ctx.listen(new ReplantListener(ctx.plugin(), items, loadout));
+
+        // Trait extras of the Mangrove, Pale Oak and Chorus axes.
+        HeldAxe heldAxe = new HeldAxe(items, loadout, isBroken);
+        int nightVisionTicks =
+                (int) Math.round(ctx.config().traitNumber("pale_oak_axe", "night_vision_seconds", 13) * 20);
+        PaleGardenListener paleGarden = new PaleGardenListener(
+                ctx.plugin(), heldAxe, ctx.get(PlaceDetector.class), nightVisionTicks);
+        paleGarden.start();
+        ctx.listen(paleGarden);
+        long teleportCooldown =
+                Math.round(ctx.config().traitNumber(AxeTraits.HURT_TELEPORT, "cooldown_seconds", 8) * 1000);
+        HurtTeleportListener hurtTeleport = new HurtTeleportListener(
+                ctx.plugin(), heldAxe, teleportCooldown, () -> ThreadLocalRandom.current().nextDouble(),
+                System::currentTimeMillis);
+        ctx.listen(hurtTeleport);
+        ctx.debug(new ChorusDebug(hurtTeleport));
 
         RhythmConfig config = ctx.config().rhythm();
         Rhythm rhythm = ctx.provide(

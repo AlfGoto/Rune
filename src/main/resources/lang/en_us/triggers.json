@@ -1,5 +1,15 @@
 {
   "rune.debug.events.on": "Event debug log: on",
   "rune.debug.events.off": "Event debug log: off",
-  "rune.debug.events.tree_felled": "Tree felled (last log: %s)"
+  "rune.debug.events.tree_felled": "Tree felled (last log: %s)",
+  "rune.debug.chorus.on": "Chorus debug: on",
+  "rune.debug.chorus.off": "Chorus debug: off",
+  "rune.debug.chorus.hit": "Chorus: hit, damage %s, range %s",
+  "rune.debug.chorus.no_damage": "Chorus: no teleport, the hit did no damage",
+  "rune.debug.chorus.fatal": "Chorus: no teleport, the hit kills you",
+  "rune.debug.chorus.no_trait": "Chorus: no teleport, no Chorus Axe in the main hand",
+  "rune.debug.chorus.cooldown": "Chorus: no teleport, cooldown",
+  "rune.debug.chorus.no_spot": "Chorus: no teleport, no safe spot found",
+  "rune.debug.chorus.refused": "Chorus: no teleport, the server refused it",
+  "rune.debug.chorus.done": "Chorus: teleported to %s %s %s"
 }

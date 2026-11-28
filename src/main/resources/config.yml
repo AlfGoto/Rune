@@ -483,6 +483,17 @@ traits:
   # Jungle Axe: % climbing speed on vines, ladders and scaffolding
   climb_speed:
     percent: 50
+  # Pale Oak Axe: night_vision_seconds = length of the night vision in the Pale Garden (renewed while held),
+  # daylight_slower_percent = % slower mining in daylight (day time, open sky),
+  # capacity-modifier = added to its Capacity (iron tier, Capacity 10 +2)
+  pale_oak_axe:
+    night_vision_seconds: 13
+    daylight_slower_percent: 20
+    capacity-modifier: 2
+  # Chorus Axe: teleport when hurt. range = blocks (flat distance), cooldown_seconds = time before the next one
+  hurt_teleport:
+    range: 8
+    cooldown_seconds: 8
 tools:
   # Mining speed by Harvest Tier: stone, iron, diamond (vanilla values)
   speed-by-tier: [4, 6, 8]

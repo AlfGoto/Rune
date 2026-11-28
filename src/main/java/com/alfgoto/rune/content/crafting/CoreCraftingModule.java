@@ -179,6 +179,34 @@ public final class CoreCraftingModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COCOA_BEANS),
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"))));
+        essenceAxes(book, woodcutting);
+    }
+
+    /**
+     * The Mangrove (Woodcutting 14), Pale Oak (15) and Chorus (18) axes. The ingredients are the documented
+     * ones; the grid layouts are proposed (not in docs).
+     */
+    private static void essenceAxes(RecipeBook book, Job woodcutting) {
+        Ingredient gem = Ingredient.rune("gem_setting");
+        Ingredient diamond = Ingredient.vanilla(Material.DIAMOND);
+        book.register(new CraftingRecipe("mangrove_axe", woodcutting, 14, "mangrove_axe", 1,
+                List.of("LLP", "LGD", "LP "), Map.of(
+                        'L', Ingredient.vanilla(Material.MANGROVE_LOG),
+                        'P', Ingredient.vanilla(Material.MANGROVE_PROPAGULE),
+                        'D', diamond,
+                        'G', gem)));
+        book.register(new CraftingRecipe("pale_oak_axe", woodcutting, 15, "pale_oak_axe", 1,
+                List.of("LLH", "LGD", "L  "), Map.of(
+                        'L', Ingredient.vanilla(Material.PALE_OAK_LOG),
+                        'H', Ingredient.vanilla(Material.CREAKING_HEART),
+                        'D', diamond,
+                        'G', gem)));
+        book.register(new CraftingRecipe("chorus_axe", woodcutting, 18, "chorus_axe", 1,
+                List.of("FSF", "DPD", "FSF"), Map.of(
+                        'F', Ingredient.vanilla(Material.CHORUS_FLOWER),
+                        'S', Ingredient.vanilla(Material.SHULKER_SHELL),
+                        'D', Ingredient.vanilla(Material.DIAMOND_BLOCK),
+                        'P', Ingredient.rune("abyssal_plate"))));
     }
 
     /**
