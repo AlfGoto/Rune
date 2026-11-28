@@ -8,14 +8,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import org.bukkit.Keyed;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -29,6 +32,10 @@ import org.bukkit.plugin.Plugin;
 public final class RecipeBook {
 
     private static final String KEY_PREFIX = "recipe/";
+    private static final List<String> EQUIPMENT_SUFFIXES = List.of(
+            "_PICKAXE", "_AXE", "_SHOVEL", "_HOE", "_SWORD", "_HELMET", "_CHESTPLATE", "_LEGGINGS", "_BOOTS");
+    private static final Set<String> EQUIPMENT_MATERIALS = Set.of(
+            "BOW", "CROSSBOW", "TRIDENT", "MACE", "SHIELD", "FISHING_ROD", "SHEARS", "TURTLE_HELMET");
 
     private final Plugin plugin;
     private final Server server;
@@ -87,9 +94,17 @@ public final class RecipeBook {
 
     private ShapedRecipe shaped(CraftingRecipe recipe) {
         ShapedRecipe shaped = new ShapedRecipe(key(recipe.id()), items.create(items.get(recipe.result()), recipe.amount()));
+        shaped.setCategory(category(items.get(recipe.result()).material()));
         shaped.shape(recipe.shape().toArray(String[]::new));
         recipe.ingredients().forEach((symbol, ingredient) -> shaped.setIngredient(symbol, choice(ingredient)));
         return shaped;
+    }
+
+    /** Vanilla recipe book tab: tools, weapons and armor go to Tools, everything else (Components, Blueprints) to Misc. */
+    static CraftingBookCategory category(Material material) {
+        String name = material.name();
+        boolean gear = EQUIPMENT_SUFFIXES.stream().anyMatch(name::endsWith) || EQUIPMENT_MATERIALS.contains(name);
+        return gear ? CraftingBookCategory.EQUIPMENT : CraftingBookCategory.MISC;
     }
 
     private RecipeChoice choice(Ingredient ingredient) {
