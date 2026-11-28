@@ -68,6 +68,9 @@ public final class MagnetListener implements Listener {
     private static void pull(Inventory inventory, Iterator<Item> iterator) {
         while (iterator.hasNext()) {
             Item item = iterator.next();
+            if (!item.isValid()) {
+                continue; // already taken (Ender Chest): never add it twice
+            }
             Map<Integer, ItemStack> left = inventory.addItem(item.getItemStack());
             if (left.isEmpty()) {
                 if (item.isValid()) {

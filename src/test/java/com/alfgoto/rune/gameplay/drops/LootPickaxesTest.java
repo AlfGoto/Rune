@@ -113,6 +113,20 @@ class LootPickaxesTest {
     }
 
     @Test
+    void enderWithMagnetDoesNotDuplicateTheDrops() {
+        ItemStack both = items.create(
+                items.register(RuneItem.tool(
+                        "ender_magnet", Rarity.EPIC, ToolKind.PICKAXE, "test_rune",
+                        ToolSpec.DEFAULT
+                                .withTrait("test_ender", 0, TraitBinding.always("ender_drops", 1))
+                                .withTrait("test_magnet", 0, TraitBinding.always("magnet", 4)))),
+                1);
+        breakWith(both, Material.DIAMOND, 1);
+        assertEquals(
+                1, count(player.getEnderChest(), Material.DIAMOND) + count(player.getInventory(), Material.DIAMOND));
+    }
+
+    @Test
     void geodeAddsAGemAndLeavesOtherDropsAlone() {
         ItemStack sure = items.create(
                 items.register(RuneItem.tool(
