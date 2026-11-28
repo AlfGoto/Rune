@@ -7,5 +7,6 @@
   "rune.feedback.active_cooldown": "%s is recharging: %ss",
   "rune.feedback.rhythm": "Rhythm: %s/%s",
   "rune.feedback.rhythm_lost": "Rhythm lost",
-  "rune.feedback.tree_dash_out_of_range": "That log is out of range (%s blocks)"
+  "rune.feedback.tree_dash_out_of_range": "That log is out of range (%s blocks)",
+  "rune.feedback.ore_dash_none": "Look at an ore within %s blocks"
 }

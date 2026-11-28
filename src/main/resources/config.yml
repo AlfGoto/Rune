@@ -417,6 +417,29 @@ runes:
     lift: 0.4
     # How far (blocks) the click looks for a log, to tell "out of range" from "not looking at a log".
     look-reach: 64
+  # Ore Dash (Active): range in blocks (8 / 12 / 16), cooldown in seconds. It dashes to the ore the player looks at
+  # (like Tree Dash: one ray trace, no scan), with a stronger push than Tree Dash. No ore in sight: no cooldown.
+  ore_dash:
+    base: 8
+    per-rank: 4
+    max-rank: 3
+    cooldown: 10
+    speed-per-block: 0.3
+    max-speed: 3.0
+    lift: 0.5
+  # Blast Mine (Active): the click opens a window of armed-seconds. Every pickaxe block mined in the window also
+  # breaks a 3x3 square around it. Cooldown in seconds (from the click): 30 / 20 / 10.
+  blast_mine:
+    max-rank: 3
+    cooldown: 30
+    cooldown-per-rank: -10
+    armed-seconds: 3
+  # Great Blast (Active): same window, a 3x3x3 cube. Cooldown 60 / 40 / 20.
+  great_blast:
+    max-rank: 3
+    cooldown: 60
+    cooldown-per-rank: -20
+    armed-seconds: 3
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:
