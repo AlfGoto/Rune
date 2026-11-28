@@ -121,11 +121,11 @@ class RuneConfigTest {
                   rhythm:
                     max-charges: 10
                     reset-seconds: 30
-                    chop-speed: {common: 15, uncommon: 25}
-                    damage-reduction: {common: 8, uncommon: 12}
-                    move-speed: {common: 8, uncommon: 12}
-                    jump: {common: 10, uncommon: 15}
-                    fall-reduction: {common: 20, uncommon: 35}
+                    chop-speed: {common: 15, uncommon: 25, rare: 35, epic: 50}
+                    damage-reduction: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    move-speed: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    jump: {common: 10, uncommon: 15, rare: 20, epic: 25}
+                    fall-reduction: {common: 20, uncommon: 35, rare: 50, epic: 65}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:
@@ -303,11 +303,11 @@ class RuneConfigTest {
                   rhythm:
                     max-charges: 10
                     reset-seconds: 30
-                    chop-speed: {common: 15, uncommon: 25}
-                    damage-reduction: {common: 8, uncommon: 12}
-                    move-speed: {common: 8, uncommon: 12}
-                    jump: {common: 10, uncommon: 15}
-                    fall-reduction: {common: 20, uncommon: 35}
+                    chop-speed: {common: 15, uncommon: 25, rare: 35, epic: 50}
+                    damage-reduction: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    move-speed: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    jump: {common: 10, uncommon: 15, rare: 20, epic: 25}
+                    fall-reduction: {common: 20, uncommon: 35, rare: 50, epic: 65}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:
@@ -481,11 +481,11 @@ class RuneConfigTest {
                   rhythm:
                     max-charges: 10
                     reset-seconds: 30
-                    chop-speed: {common: 15, uncommon: 25}
-                    damage-reduction: {common: 8, uncommon: 12}
-                    move-speed: {common: 8, uncommon: 12}
-                    jump: {common: 10, uncommon: 15}
-                    fall-reduction: {common: 20, uncommon: 35}
+                    chop-speed: {common: 15, uncommon: 25, rare: 35, epic: 50}
+                    damage-reduction: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    move-speed: {common: 8, uncommon: 12, rare: 16, epic: 20}
+                    jump: {common: 10, uncommon: 15, rare: 20, epic: 25}
+                    fall-reduction: {common: 20, uncommon: 35, rare: 50, epic: 65}
                 vanilla-overrides:
                   book-cache-rarity: uncommon
                 runes:

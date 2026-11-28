@@ -18,7 +18,7 @@ import java.util.Set;
 import org.bukkit.Material;
 
 /**
- * Recipes of the Common (Woodcutting 3) and Uncommon (Woodcutting 7) Woodcutting armor. The ingredients are the
+ * Recipes of the Common (Woodcutting 3), Uncommon (7), Rare (12) and Epic (18) Woodcutting armor. The ingredients are the
  * documented ones (docs/jobs/woodcutting.md); the grid layouts are not in docs. Each Uncommon piece consumes its
  * Common piece (an Upgrade) and adds a Reinforced Lining.
  */
@@ -63,6 +63,40 @@ public final class WoodcuttingArmorCraftingModule implements RuneModule {
         recipe(book, woodcutting, 7, "fellers_boots", List.of("IBI", "SR "), Map.of(
                 'I', iron, 'B', Ingredient.rune("lumberjacks_boots"), 'S', Ingredient.vanilla(Material.SLIME_BLOCK),
                 'R', lining));
+
+        Ingredient diamond = Ingredient.vanilla(Material.DIAMOND);
+        Ingredient setting = Ingredient.rune("gem_setting");
+        Ingredient plate = Ingredient.rune("abyssal_plate");
+        Ingredient block = Ingredient.vanilla(Material.DIAMOND_BLOCK);
+
+        // Rare: the Uncommon piece + a Gem Setting + 2 diamonds + spyglass / 3 diamonds + 2 resin blocks /
+        // 2 diamonds + 2 breeze rods / 2 diamonds + rabbit's foot.
+        recipe(book, woodcutting, 12, "sylvan_helm", List.of("DHD", "SG "), Map.of(
+                'D', diamond, 'H', Ingredient.rune("fellers_hood"), 'S', Ingredient.vanilla(Material.SPYGLASS),
+                'G', setting));
+        recipe(book, woodcutting, 12, "sylvan_cuirass", List.of("DJD", "RGR", " D "), Map.of(
+                'D', diamond, 'J', Ingredient.rune("fellers_jerkin"),
+                'R', Ingredient.vanilla(Material.RESIN_BLOCK), 'G', setting));
+        recipe(book, woodcutting, 12, "sylvan_leggings", List.of("DLD", "BGB"), Map.of(
+                'D', diamond, 'L', Ingredient.rune("fellers_leggings"),
+                'B', Ingredient.vanilla(Material.BREEZE_ROD), 'G', setting));
+        recipe(book, woodcutting, 12, "sylvan_boots", List.of("DBD", "FG "), Map.of(
+                'D', diamond, 'B', Ingredient.rune("fellers_boots"),
+                'F', Ingredient.vanilla(Material.RABBIT_FOOT), 'G', setting));
+
+        // Epic: the Rare piece + Abyssal Plate(s) + 2 diamond blocks + the extra ingredient.
+        recipe(book, woodcutting, 18, "heartwood_helm", List.of("XHX", "PC "), Map.of(
+                'X', block, 'H', Ingredient.rune("sylvan_helm"), 'P', plate,
+                'C', Ingredient.vanilla(Material.CREAKING_HEART)));
+        recipe(book, woodcutting, 18, "heartwood_cuirass", List.of("XVX", "PTP"), Map.of(
+                'X', block, 'V', Ingredient.rune("sylvan_cuirass"), 'P', plate,
+                'T', Ingredient.vanilla(Material.TOTEM_OF_UNDYING)));
+        recipe(book, woodcutting, 18, "heartwood_leggings", List.of("XLX", "PK "), Map.of(
+                'X', block, 'L', Ingredient.rune("sylvan_leggings"), 'P', plate,
+                'K', Ingredient.vanilla(Material.OMINOUS_TRIAL_KEY)));
+        recipe(book, woodcutting, 18, "heartwood_boots", List.of("XBX", "PMM"), Map.of(
+                'X', block, 'B', Ingredient.rune("sylvan_boots"), 'P', plate,
+                'M', Ingredient.vanilla(Material.PHANTOM_MEMBRANE)));
     }
 
     private static void recipe(
