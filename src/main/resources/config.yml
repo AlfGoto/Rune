@@ -519,15 +519,15 @@ armor:
     bottom-y: -64
   # Woodcutting armor ("Rhythm", docs/jobs/woodcutting.md): each Felled Tree adds one charge, up to
   # max-charges. Every charge is lost after reset-seconds without a Felled Tree. A Trait goes from 0% (no
-  # charge) to its value below (in percent) at max-charges. Values by Rarity; Rare and up come with their pieces.
+  # charge) to its value below (in percent) at max-charges. Values by Rarity; Legendary comes with its pieces.
   rhythm:
     max-charges: 10
     reset-seconds: 30
-    chop-speed: {common: 15, uncommon: 25}        # helmet: log breaking speed
-    damage-reduction: {common: 8, uncommon: 12}   # chestplate: damage taken
-    move-speed: {common: 8, uncommon: 12}         # leggings: movement speed
-    jump: {common: 10, uncommon: 15}              # boots: jump strength
-    fall-reduction: {common: 20, uncommon: 35}    # boots: fall damage taken
+    chop-speed: {common: 15, uncommon: 25, rare: 35, epic: 50}        # helmet: log breaking speed
+    damage-reduction: {common: 8, uncommon: 12, rare: 16, epic: 20}   # chestplate: damage taken
+    move-speed: {common: 8, uncommon: 12, rare: 16, epic: 20}         # leggings: movement speed
+    jump: {common: 10, uncommon: 15, rare: 20, epic: 25}              # boots: jump strength
+    fall-reduction: {common: 20, uncommon: 35, rare: 50, epic: 65}    # boots: fall damage taken
 resource-pack:
   # Port of the built-in HTTP server that serves the pack. Open it to players (TCP).
   port: 8123
