@@ -270,6 +270,9 @@ caches:
   # Above the table: an Epic Cache every N levels, a Legendary one every M levels (wins over Epic)
   epic-every: 5
   legendary-every: 25
+unlock-tree:
+  # Milestone Caches never end, so the Unlock Tree (advancement screen, L key) shows them up to this Job Level.
+  max-level: 50
 blueprints:
   # Blueprint given on Job Level up: Job id, then Job Level, then Blueprint id (= the id of the recipe it unlocks).
   # A Blueprint that is not registered yet is skipped. Using the Blueprint unlocks the recipe for good.
