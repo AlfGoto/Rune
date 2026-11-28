@@ -11,6 +11,8 @@ import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.places.PlaceRegistry;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.gameplay.woodcutting.AxeTraits;
+import com.alfgoto.rune.gameplay.woodcutting.LeafRules;
+import com.alfgoto.rune.gameplay.woodcutting.ReplantRules;
 import com.alfgoto.rune.text.Rarity;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +105,24 @@ class EssenceAxesTest {
                 Map.of(Material.JUNGLE_LOG, 4L, Material.COCOA_BEANS, 2L, Material.DIAMOND, 1L, Material.PAPER, 1L),
                 counts("jungle_axe"));
         assertNotNull(server.getRecipe(book.key("poplar_axe")));
+    }
+
+    @Test
+    void harvestAxesHaveTheirTraits() {
+        assertEquals(Rarity.UNCOMMON, items.get("orchard_axe").rarity());
+        assertEquals(Rarity.RARE, items.get("golden_bough").rarity());
+        assertEquals(Rarity.EPIC, items.get("verdant_axe").rarity());
+        assertEquals(1000, total("orchard_axe", LeafRules.ORCHARD));
+        assertEquals(5, total("golden_bough", LeafRules.GOLDEN_APPLE));
+        assertEquals(0.1, total("golden_bough", LeafRules.ENCHANTED_GOLDEN_APPLE));
+        assertEquals(0, total("orchard_axe", LeafRules.GOLDEN_APPLE));
+        assertEquals(1, total("verdant_axe", ReplantRules.REPLANT));
+        assertEquals(8, book.find("orchard_axe").orElseThrow().level());
+        assertEquals(12, book.find("golden_bough").orElseThrow().level());
+        assertEquals(22, book.find("verdant_axe").orElseThrow().level());
+        assertEquals(
+                Map.of(Material.APPLE, 4L, Material.OAK_SAPLING, 2L, Material.IRON_INGOT, 1L, Material.PAPER, 1L),
+                counts("orchard_axe"));
     }
 
     @Test

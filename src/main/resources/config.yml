@@ -445,6 +445,13 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Orchard Axe: % extra apple and sapling rolls on leaves (the Orchard Rune gives 10 per Rank)
+  orchard_axe:
+    orchard_percent: 1000
+  # Golden Bough: % chance of a golden apple (and, very rarely, an enchanted one) per oak leaf broken or made to fall
+  golden_bough:
+    golden_apple_percent: 5
+    enchanted_golden_apple_percent: 0.1
   # Obsidian Pickaxe: sturdy_percent = % of durability use spared (95 = nearly unbreakable), slower_percent = % slower mining
   obsidian_pickaxe:
     sturdy_percent: 95
