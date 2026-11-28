@@ -149,7 +149,7 @@ All axe-shaped, so they never clash with pickaxe recipes.
 | Pale Oak | 4 pale oak logs + 1 creaking heart + 1 diamond + Gem Setting |
 | Heartwood | Woodsman's Axe + 2 Abyssal Plates + 2 diamond blocks + 1 totem of undying |
 | Chorus | 4 chorus flowers + 2 shulker shells + Abyssal Plate + 2 diamond blocks |
-| Tempest | Breeze Axe + 2 Abyssal Plates + 8 breeze rods + 2 diamond blocks |
+| Tempest | Breeze Axe + 2 Abyssal Plates + 4 breeze rods + 2 diamond blocks (3×3 grid: 8 rods did not fit) |
 | Verdant | Golden Bough + 2 Abyssal Plates + 1 enchanted golden apple + 2 diamond blocks |
 | Yggdrasil | Spruce + Jungle + Cherry + Crimson + Chorus Axes + Legendary Core + 2 beacons + 1 sapling of every essence (oak, spruce, birch, jungle, acacia, dark oak, mangrove propagule, cherry, pale oak, poplar, crimson fungus, warped fungus) |
 | Elder Axe | Heartwood Axe + Legendary Core + 2 beacons + 2 netherite blocks + 1 creaking heart (Blueprint required) |

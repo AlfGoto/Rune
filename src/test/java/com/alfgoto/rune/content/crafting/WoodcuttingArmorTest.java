@@ -79,6 +79,28 @@ class WoodcuttingArmorTest {
     }
 
     @Test
+    void rareAndEpicPiecesUpgradeFromThePreviousPiece() {
+        List<String> rare = List.of("sylvan_helm", "sylvan_cuirass", "sylvan_leggings", "sylvan_boots");
+        List<String> epic = List.of("heartwood_helm", "heartwood_cuirass", "heartwood_leggings", "heartwood_boots");
+        for (int i = 0; i < 4; i++) {
+            assertEquals(Rarity.RARE, items.get(rare.get(i)).rarity());
+            assertEquals(Rarity.EPIC, items.get(epic.get(i)).rarity());
+            assertEquals(12, book.find(rare.get(i)).orElseThrow().level());
+            assertEquals(18, book.find(epic.get(i)).orElseThrow().level());
+            assertNotNull(server.getRecipe(book.key(rare.get(i))), rare.get(i));
+            assertNotNull(server.getRecipe(book.key(epic.get(i))), epic.get(i));
+            String previousRare = UNCOMMON.get(i);
+            String previousEpic = rare.get(i);
+            assertTrue(book.find(rare.get(i)).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> previousRare.equals(ing.itemId())));
+            assertTrue(book.find(epic.get(i)).orElseThrow().ingredients().values().stream()
+                    .anyMatch(ing -> previousEpic.equals(ing.itemId())));
+        }
+        assertEquals("rune:woodcutting_rare", items.get("sylvan_helm").armorSpec().orElseThrow().equipment());
+        assertEquals("rune:woodcutting_epic", items.get("heartwood_boots").armorSpec().orElseThrow().equipment());
+    }
+
+    @Test
     void piecesWearTheWoodcuttingLayer() {
         assertEquals("rune:woodcutting_common", items.get("lumberjacks_cap").armorSpec().orElseThrow().equipment());
         assertEquals("rune:woodcutting_uncommon", items.get("fellers_boots").armorSpec().orElseThrow().equipment());

@@ -7,6 +7,7 @@ import com.alfgoto.rune.gameplay.crafting.CraftingModule;
 import com.alfgoto.rune.gameplay.crafting.CraftingRecipe;
 import com.alfgoto.rune.gameplay.crafting.Ingredient;
 import com.alfgoto.rune.gameplay.crafting.RecipeBook;
+import com.alfgoto.rune.gameplay.durability.Sturdy;
 import com.alfgoto.rune.gameplay.effects.Scale;
 import com.alfgoto.rune.gameplay.effects.ScaleRegistry;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
@@ -74,6 +75,17 @@ public final class SpeedToolsModule implements RuneModule {
                 ToolSpec.DEFAULT.withTrait("breeze_axe", capacityModifier,
                         new TraitBinding("haste", config.momentumSpeed(), momentum))));
 
+        // Epic, diamond tier, Capacity 14 -3 (docs/jobs/woodcutting.md): a built-in Treefeller and more durability
+        // use (a negative Sturdy). Numbers: config traits.tempest_axe.
+        var cfg = ctx.config();
+        double blocks = cfg.traitNumber("tempest_axe", "blocks", 16);
+        double extraUse = cfg.traitNumber("tempest_axe", "extra_durability_percent", 50);
+        int tempestCapacity = (int) -cfg.traitNumber("tempest_axe", "capacity_penalty", 3);
+        items.register(RuneItem.tool("tempest_axe", Rarity.EPIC, ToolKind.AXE, "tempest_axe",
+                ToolSpec.DEFAULT.withTrait("tempest_axe", tempestCapacity,
+                        TraitBinding.always("treefeller", blocks),
+                        TraitBinding.always(Sturdy.ID, -extraUse))));
+
         recipes(ctx);
     }
 
@@ -110,5 +122,12 @@ public final class SpeedToolsModule implements RuneModule {
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"),
                         'A', Ingredient.rune("copper_axe"))));
+        // Tempest Axe (Woodcutting 20): the grid has 9 cells, so 4 breeze rods (the doc said 8).
+        book.register(new CraftingRecipe("tempest_axe", woodcutting, 20, "tempest_axe", 1,
+                List.of("BDB", "PAP", "BDB"), Map.of(
+                        'B', Ingredient.vanilla(Material.BREEZE_ROD),
+                        'D', Ingredient.vanilla(Material.DIAMOND_BLOCK),
+                        'P', Ingredient.rune("abyssal_plate"),
+                        'A', Ingredient.rune("breeze_axe"))));
     }
 }

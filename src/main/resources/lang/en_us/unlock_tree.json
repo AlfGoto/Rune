@@ -1,0 +1,9 @@
+{
+  "rune.unlock_tree.title": "Unlock Tree",
+  "rune.unlock_tree.description": "What your Job Levels unlock.",
+  "rune.unlock_tree.job": "Everything %s unlocks.",
+  "rune.unlock_tree.node": "%s %s",
+  "rune.unlock_tree.recipe": "Recipe: %s",
+  "rune.unlock_tree.cache": "Milestone Cache: %s",
+  "rune.unlock_tree.blueprint": "Blueprint: %s"
+}
