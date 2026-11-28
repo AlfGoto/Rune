@@ -1,6 +1,7 @@
 package com.alfgoto.rune.gameplay.crafting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -252,7 +253,7 @@ class RecipeMatchTest {
         var click = new com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent(
                 player, org.bukkit.NamespacedKey.minecraft("chest"), false);
         new RecipeBookClickListener(server, book).onClick(click);
-        assertTrue(!click.isCancelled());
+        assertFalse(click.isCancelled());
     }
 
     private CraftingInventory prepare(ItemStack[] matrix, String serverPick) {
