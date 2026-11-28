@@ -1,6 +1,7 @@
 package com.alfgoto.rune.gameplay.crafting;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -167,6 +168,92 @@ class RecipeMatchTest {
     @Test
     void preparedResultIsRemovedWhenTheRuneItemsAreWrong() {
         assertNull(prepare(grid(item("speed"), null, null, usedPick()), "lens_pick").getResult());
+    }
+
+    private ItemStack[] storage(ItemStack... stacks) {
+        ItemStack[] storage = new ItemStack[36];
+        System.arraycopy(stacks, 0, storage, 0, stacks.length);
+        return storage;
+    }
+
+    @Test
+    void fillTakesTheRightRuneItemEvenWhenAnotherComesFirst() {
+        CraftingRecipe recipe = book.find("lens_pick").orElseThrow();
+        ItemStack[] storage = storage(item("core"), usedPick(), item("lens"));
+        RecipeBook.Fill fill = book.fill(recipe, storage, 3, false).orElseThrow();
+        assertEquals("lens", items.of(fill.grid()[0]).orElseThrow().id());
+        assertEquals("stone_pick", items.of(fill.grid()[3]).orElseThrow().id());
+        assertEquals("core", items.of(fill.storage()[0]).orElseThrow().id()); // the other Rune item stays
+        assertNull(fill.storage()[2]);
+        assertEquals("lens_pick", book.match(fill.grid()).orElseThrow().id());
+    }
+
+    @Test
+    void fillRefusesWhenAnIngredientIsMissingOrBroken() {
+        CraftingRecipe recipe = book.find("lens_pick").orElseThrow();
+        assertTrue(book.fill(recipe, storage(item("lens"), item("core")), 3, false).isEmpty());
+        ItemStack broken = usedPick();
+        broken.editMeta(meta -> ((Damageable) meta).setDamage(((Damageable) meta).getMaxDamage()));
+        assertTrue(book.fill(recipe, storage(item("lens"), broken), 3, false).isEmpty());
+    }
+
+    @Test
+    void fillGivesAVanillaIngredientNeverARuneItem() {
+        items.register(new RuneItem("fake_ingot", Rarity.COMMON, Material.IRON_INGOT, "test_rune"));
+        CraftingRecipe recipe = book.find("mirror").orElseThrow();
+        ItemStack[] storage = storage(item("fake_ingot"), new ItemStack(Material.IRON_INGOT, 2), item("lens"));
+        RecipeBook.Fill fill = book.fill(recipe, storage, 3, false).orElseThrow();
+        assertEquals(Material.IRON_INGOT, fill.grid()[0].getType());
+        assertTrue(items.of(fill.grid()[0]).isEmpty());
+        assertEquals(1, fill.storage()[1].getAmount());
+    }
+
+    @Test
+    void fillMakeAllPutsAsManyCraftsAsTheStorageAllows() {
+        CraftingRecipe recipe = book.find("mirror").orElseThrow();
+        ItemStack lenses = item("lens");
+        lenses.setAmount(3);
+        ItemStack[] storage = storage(new ItemStack(Material.IRON_INGOT, 20), lenses);
+        RecipeBook.Fill fill = book.fill(recipe, storage, 3, true).orElseThrow();
+        assertEquals(3, fill.grid()[0].getAmount());
+        assertEquals(3, fill.grid()[4].getAmount());
+        assertEquals(14, fill.storage()[0].getAmount());
+        assertEquals(1, book.fill(recipe, storage, 3, false).orElseThrow().grid()[0].getAmount());
+    }
+
+    @Test
+    void fillRefusesARecipeTooBigForTheGrid() {
+        book.register(new CraftingRecipe("big", mining, 1, "core", 1, List.of("III", "III", "III"),
+                Map.of('I', Ingredient.vanilla(Material.IRON_INGOT))));
+        ItemStack[] storage = storage(new ItemStack(Material.IRON_INGOT, 9));
+        assertTrue(book.fill(book.find("big").orElseThrow(), storage, 2, false).isEmpty());
+        assertTrue(book.fill(book.find("big").orElseThrow(), storage, 3, false).isPresent());
+    }
+
+    @Test
+    void aRecipeBookClickFillsTheGridWithTheRightRuneItem() {
+        InventoryView view = player.openWorkbench(null, true);
+        CraftingInventory grid = (CraftingInventory) view.getTopInventory();
+        // Vanilla filled the grid with the wrong Rune item (same base material).
+        grid.setMatrix(grid(item("core"), null, null, usedPick()));
+        player.getInventory().setItem(0, item("lens"));
+        var click = new com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent(
+                player, book.key("lens_pick"), false);
+        new RecipeBookClickListener(server, book).onClick(click);
+        assertTrue(click.isCancelled());
+        assertEquals("lens", items.of(grid.getMatrix()[0]).orElseThrow().id());
+        assertEquals("stone_pick", items.of(grid.getMatrix()[3]).orElseThrow().id());
+        assertTrue(java.util.Arrays.stream(player.getInventory().getStorageContents())
+                .anyMatch(stack -> stack != null && items.of(stack).map(i -> i.id().equals("core")).orElse(false)));
+    }
+
+    @Test
+    void aVanillaRecipeClickIsLeftToVanilla() {
+        player.openWorkbench(null, true);
+        var click = new com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent(
+                player, org.bukkit.NamespacedKey.minecraft("chest"), false);
+        new RecipeBookClickListener(server, book).onClick(click);
+        assertFalse(click.isCancelled());
     }
 
     private CraftingInventory prepare(ItemStack[] matrix, String serverPick) {
