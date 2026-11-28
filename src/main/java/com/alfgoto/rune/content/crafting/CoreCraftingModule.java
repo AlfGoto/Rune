@@ -55,6 +55,21 @@ public final class CoreCraftingModule implements RuneModule {
 
         biomePickaxes(book, mining);
 
+        // Obsidian (Mining 18) and Tunneler (Mining 20): Upgrades of Ironbound and Redstone. Layouts proposed.
+        Ingredient diamondBlocks = Ingredient.vanilla(Material.DIAMOND_BLOCK);
+        book.register(new CraftingRecipe("obsidian_pickaxe", mining, 18, "obsidian_pickaxe", 1,
+                List.of("DPD", "GIP"), Map.of(
+                        'D', diamondBlocks,
+                        'P', Ingredient.rune("abyssal_plate"),
+                        'G', Ingredient.vanilla(Material.GHAST_TEAR),
+                        'I', Ingredient.rune("ironbound_pickaxe"))));
+        book.register(new CraftingRecipe("tunneler", mining, 20, "tunneler", 1,
+                List.of("DKD", "SRK"), Map.of(
+                        'D', diamondBlocks,
+                        'K', Ingredient.rune("deep_core"),
+                        'S', Ingredient.vanilla(Material.STICKY_PISTON),
+                        'R', Ingredient.rune("redstone_pickaxe"))));
+
         // Ironbound (Mining 5): an Upgrade of the Flint Pickaxe, so its Runes carry over. Layout proposed.
         book.register(new CraftingRecipe("ironbound_pickaxe", mining, 5, "ironbound_pickaxe", 1,
                 List.of("III", "HP "), Map.of(
