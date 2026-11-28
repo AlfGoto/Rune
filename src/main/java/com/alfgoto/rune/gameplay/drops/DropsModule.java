@@ -29,6 +29,11 @@ public final class DropsModule implements RuneModule {
                 new Smelting(),
                 () -> ThreadLocalRandom.current().nextDouble(),
                 ctx.get(BlockTracker.class)));
+        ctx.listen(new BonusGemsListener(
+                ctx.get(ItemRegistry.class),
+                ctx.get(ToolLoadout.class),
+                ctx.get(BlockTracker.class),
+                () -> ThreadLocalRandom.current().nextDouble()));
         ctx.listen(new MagnetListener(ctx.get(ItemRegistry.class), ctx.get(ToolLoadout.class)));
     }
 }

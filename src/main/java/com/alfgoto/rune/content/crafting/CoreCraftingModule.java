@@ -62,6 +62,8 @@ public final class CoreCraftingModule implements RuneModule {
                         'H', Ingredient.rune("reinforced_handle"),
                         'P', Ingredient.rune("flint_pickaxe"))));
 
+        lootPickaxes(book, mining);
+
         // Bone (Mining 7) and Echo (Mining 15). Ingredients are the documented ones; the grid layouts are proposed.
         book.register(new CraftingRecipe("bone_pickaxe", mining, 7, "bone_pickaxe", 1,
                 List.of("BBB", " K ", " H "), Map.of(
@@ -162,6 +164,32 @@ public final class CoreCraftingModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COCOA_BEANS),
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"))));
+    }
+
+    /**
+     * Magnetite (Mining 8), Geode (12) and Ender (22): the Loot line. Geode consumes the Magnetite Pickaxe and
+     * Ender the Geode Pickaxe (Upgrades, so Runes carry over). Ingredients are the documented ones; grids are in
+     * docs/jobs/mining.md.
+     */
+    private static void lootPickaxes(RecipeBook book, Job mining) {
+        book.register(new CraftingRecipe("magnetite_pickaxe", mining, 8, "magnetite_pickaxe", 1,
+                List.of("RCR", " R ", " H "), Map.of(
+                        'R', Ingredient.vanilla(Material.RAW_IRON_BLOCK),
+                        'C', Ingredient.vanilla(Material.COMPASS),
+                        'H', Ingredient.rune("reinforced_handle"))));
+        book.register(new CraftingRecipe("geode_pickaxe", mining, 12, "geode_pickaxe", 1,
+                List.of("AAA", "DPG"), Map.of(
+                        'A', Ingredient.vanilla(Material.AMETHYST_BLOCK),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'P', Ingredient.rune("magnetite_pickaxe"),
+                        'G', Ingredient.rune("gem_setting"))));
+        book.register(new CraftingRecipe("ender_pickaxe", mining, 22, "ender_pickaxe", 1,
+                List.of("ESE", "BPB", " C "), Map.of(
+                        'C', Ingredient.vanilla(Material.ENDER_CHEST),
+                        'E', Ingredient.vanilla(Material.ENDER_EYE),
+                        'S', Ingredient.vanilla(Material.SHULKER_SHELL),
+                        'B', Ingredient.vanilla(Material.DIAMOND_BLOCK),
+                        'P', Ingredient.rune("geode_pickaxe"))));
     }
 
     /**

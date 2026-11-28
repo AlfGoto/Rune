@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -23,6 +24,9 @@ public final class MagnetListener implements Listener {
 
     /** Effect id of Magnet: the pull radius, in blocks. */
     public static final String ID = "magnet";
+
+    /** Effect id of the Ender Trait: on/off. Any value above 0 sends the block's drops to the Ender Chest. */
+    public static final String ENDER = "ender_drops";
 
     private final ItemRegistry items;
     private final ToolLoadout loadout;
@@ -40,11 +44,15 @@ public final class MagnetListener implements Listener {
         if (items.of(tool).isEmpty()) {
             return;
         }
-        double radius = Stacking.total(ID, loadout.sources(tool, player));
+        var sources = loadout.sources(tool, player);
+        if (Stacking.total(ENDER, sources) > 0) {
+            pull(player.getEnderChest(), event.getItems().iterator()); // what does not fit stays on the ground
+        }
+        double radius = Stacking.total(ID, sources);
         if (radius <= 0) {
             return;
         }
-        pull(player, event.getItems().iterator());
+        pull(player.getInventory(), event.getItems().iterator());
         Collection<Item> nearby = event.getBlock()
                 .getWorld()
                 .getNearbyEntities(event.getBlock().getLocation().add(0.5, 0.5, 0.5), radius, radius, radius)
@@ -53,14 +61,14 @@ public final class MagnetListener implements Listener {
                 .map(Item.class::cast)
                 .filter(item -> item.getThrower() == null)
                 .toList();
-        pull(player, nearby.iterator());
+        pull(player.getInventory(), nearby.iterator());
     }
 
     /** Puts each item in the inventory. Removes it when it all fits, else it keeps the part that did not fit. */
-    private static void pull(Player player, Iterator<Item> iterator) {
+    private static void pull(Inventory inventory, Iterator<Item> iterator) {
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            Map<Integer, ItemStack> left = player.getInventory().addItem(item.getItemStack());
+            Map<Integer, ItemStack> left = inventory.addItem(item.getItemStack());
             if (left.isEmpty()) {
                 if (item.isValid()) {
                     item.remove(); // already in the world: take it away
