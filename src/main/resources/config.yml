@@ -399,6 +399,23 @@ runes:
     lift: 0.4
     # How far (blocks) the click looks for a log, to tell "out of range" from "not looking at a log".
     look-reach: 64
+  # Boomerang (Active): range in blocks (12 / 16 / 20), cooldown in seconds (30 / 20 / 10).
+  boomerang:
+    base: 12
+    per-rank: 4
+    max-rank: 3
+    cooldown: 30
+    cooldown-per-rank: -10
+  # Great Fell (Active): radius in blocks (6 / 9 / 12), cooldown in seconds (90 / 60 / 30). tree-cap: most blocks
+  # per tree (logs and canopy); max-blocks: most blocks one use breaks, so a huge forest cannot freeze the server.
+  great_fell:
+    base: 6
+    per-rank: 3
+    max-rank: 3
+    cooldown: 90
+    cooldown-per-rank: -30
+    tree-cap: 200
+    max-blocks: 600
   speed:
     # Mining speed Runes (docs/jobs/mining.md): % speed per Rank and Max Rank
     haste:

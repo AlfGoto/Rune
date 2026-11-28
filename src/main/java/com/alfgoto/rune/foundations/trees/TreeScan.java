@@ -137,6 +137,58 @@ public final class TreeScan {
         return result;
     }
 
+    /**
+     * The Great Fell scan (docs/jobs/woodcutting.md): every tree that has a natural log within {@code radius}
+     * blocks of {@code center}. Each tree is whole: its trunk from the lowest connected log up, plus its canopy
+     * (see {@link #scanTree}), even where it reaches past the radius. Trees closest to the center come first.
+     *
+     * @param treeCap max blocks per tree
+     * @param maxBlocks max blocks returned in total
+     */
+    public List<Block> scanForest(Block center, int radius, int treeCap, int maxBlocks) {
+        List<Block> logs = new ArrayList<>();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx * dx + dy * dy + dz * dz <= radius * radius
+                            && isNaturalLog(center.getRelative(dx, dy, dz))) {
+                        logs.add(center.getRelative(dx, dy, dz));
+                    }
+                }
+            }
+        }
+        logs.sort(java.util.Comparator.comparingDouble(
+                log -> log.getLocation().distanceSquared(center.getLocation())));
+        Set<Block> taken = new HashSet<>();
+        List<Block> result = new ArrayList<>();
+        for (Block log : logs) {
+            if (result.size() >= maxBlocks) {
+                break;
+            }
+            if (taken.contains(log)) {
+                continue;
+            }
+            List<Block> connected = new ArrayList<>(scan(log, treeCap));
+            connected.add(log);
+            Block lowest = log;
+            for (Block other : connected) {
+                if (other.getY() < lowest.getY()) {
+                    lowest = other;
+                }
+            }
+            List<Block> tree = new ArrayList<>();
+            tree.add(lowest);
+            tree.addAll(scanTree(lowest, treeCap - 1));
+            for (Block block : tree) {
+                if (taken.add(block) && result.size() < maxBlocks) {
+                    result.add(block);
+                }
+            }
+            taken.addAll(connected);
+        }
+        return result;
+    }
+
     private boolean isNaturalCanopy(Block block) {
         Material type = block.getType();
         boolean canopy = Tag.LEAVES.isTagged(type)
