@@ -18,8 +18,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Blast Mine and Great Blast (docs/jobs/mining.md): after the click armed the Rune, the next pickaxe block the
- * player mines with that tool also breaks the blocks around it: a 3x3 square flat to the mined face (Blast Mine) or
+ * Blast Mine and Great Blast (docs/jobs/mining.md): after the click opened the Rune's window, every pickaxe block the
+ * player mines with that tool during the window also breaks the blocks around it: a 3x3 square flat to the mined face (Blast Mine) or
  * a 3x3x3 cube (Great Blast). Only pickaxe blocks that can be broken are taken. The extra blocks go through
  * {@link MultiBreak}, so each gives full Job XP and a Cache roll. Great Blast wins when both are armed.
  */
@@ -57,9 +57,9 @@ final class BlastListener implements Listener {
         }
         var id = event.player().getUniqueId();
         List<Block> blocks;
-        if (installed(event, GREAT_BLAST) && charges.consume(id, GREAT_BLAST)) {
+        if (installed(event, GREAT_BLAST) && charges.isArmed(id, GREAT_BLAST)) {
             blocks = BlastArea.cube(event.block(), BlastListener::breakable);
-        } else if (installed(event, BLAST_MINE) && charges.consume(id, BLAST_MINE)) {
+        } else if (installed(event, BLAST_MINE) && charges.isArmed(id, BLAST_MINE)) {
             blocks = BlastArea.square(
                     event.block(), BlastArea.faceAxis(event.player(), event.block()), BlastListener::breakable);
         } else {

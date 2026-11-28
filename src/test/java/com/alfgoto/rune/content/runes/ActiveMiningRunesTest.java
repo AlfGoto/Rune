@@ -107,8 +107,8 @@ class ActiveMiningRunesTest {
         assertEquals(8, dash.effect().valueAt(1));
         assertEquals(12, dash.effect().valueAt(2));
         assertEquals(16, dash.effect().valueAt(3));
-        assertEquals(20, dash.cooldownSeconds(1));
-        assertEquals(20, dash.cooldownSeconds(3));
+        assertEquals(10, dash.cooldownSeconds(1));
+        assertEquals(10, dash.cooldownSeconds(3));
 
         var blast = runes.get("blast_mine");
         assertEquals(Rarity.EPIC, blast.item().rarity());
@@ -123,17 +123,16 @@ class ActiveMiningRunesTest {
     }
 
     @Test
-    void aChargeIsSpentOnceAndEndsByItself() {
+    void aWindowStaysOpenForEveryBlockAndEndsByItself() {
         AtomicLong now = new AtomicLong(0);
         BlastCharges timed = new BlastCharges(now::get);
         var id = player.getUniqueId();
-        assertFalse(timed.consume(id, "blast_mine"));
-        timed.arm(id, "blast_mine", 20);
+        assertFalse(timed.isArmed(id, "blast_mine"));
+        timed.arm(id, "blast_mine", 3);
         assertTrue(timed.isArmed(id, "blast_mine"));
-        assertTrue(timed.consume(id, "blast_mine"));
-        assertFalse(timed.consume(id, "blast_mine"));
-        timed.arm(id, "blast_mine", 20);
-        now.set(20_000);
+        now.set(2_900);
+        assertTrue(timed.isArmed(id, "blast_mine"));
+        now.set(3_000);
         assertFalse(timed.isArmed(id, "blast_mine"));
     }
 
@@ -152,15 +151,16 @@ class ActiveMiningRunesTest {
     }
 
     @Test
-    void greatBlastBreaksTheTwentySixBlocksAroundAndTheChargeIsSpent() {
+    void greatBlastBreaksTheTwentySixBlocksAroundAndWorksAgainInTheWindow() {
         fillStone();
         charges.arm(player.getUniqueId(), "great_blast", 20);
         mine(world.getBlockAt(0, 10, 0), pickaxe("great_blast", 1), BreakCause.TOOL);
         assertEquals(26, broken.size());
-        assertFalse(charges.isArmed(player.getUniqueId(), "great_blast"));
+        assertTrue(charges.isArmed(player.getUniqueId(), "great_blast"));
         broken.clear();
+        fillStone();
         mine(world.getBlockAt(0, 12, 0), pickaxe("great_blast", 1), BreakCause.TOOL);
-        assertEquals(0, broken.size()); // no charge left
+        assertEquals(26, broken.size()); // the window is still open
     }
 
     @Test

@@ -6,8 +6,8 @@ import java.util.UUID;
 import java.util.function.LongSupplier;
 
 /**
- * The armed blasts of Blast Mine and Great Blast: a click arms the Rune for a player, the next block they mine
- * with the tool spends the charge. A charge ends by itself after its time. Kept in memory only.
+ * The armed blasts of Blast Mine and Great Blast: a click opens a window for a player: every block they mine
+ * with the tool during the window blasts. The window ends by itself after its time. Kept in memory only.
  */
 public final class BlastCharges {
 

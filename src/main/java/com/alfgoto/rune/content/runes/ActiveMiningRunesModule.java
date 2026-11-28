@@ -66,8 +66,8 @@ public final class ActiveMiningRunesModule implements RuneModule {
     }
 
     /**
-     * Ore Dash: the value is the range in blocks. The click pushes the player to the nearest ore they can see in
-     * range. No visible ore: a message and no cooldown.
+     * Ore Dash: the value is the range in blocks. The click pushes the player to the ore they look at, if it is
+     * in range. Not looking at an ore in range: a message and no cooldown.
      */
     private static void oreDash(RuneContext ctx) {
         var config = ctx.config();
@@ -78,43 +78,29 @@ public final class ActiveMiningRunesModule implements RuneModule {
         var speedPerBlock = config.runeNumber(ORE_DASH, "speed-per-block");
         var maxSpeed = config.runeNumber(ORE_DASH, "max-speed");
         var lift = config.runeNumber(ORE_DASH, "lift");
-        var maxChecks = config.runeNumber(ORE_DASH, "max-checks");
-        var scanTicks = config.runeNumber(ORE_DASH, "scan-ticks");
         if (base.isEmpty()
-                || scanTicks.isEmpty()
                 || perRank.isEmpty()
                 || maxRank.isEmpty()
                 || cooldown.isEmpty()
                 || speedPerBlock.isEmpty()
                 || maxSpeed.isEmpty()
-                || lift.isEmpty()
-                || maxChecks.isEmpty()) {
+                || lift.isEmpty()) {
             ctx.logger().severe("Config 'runes.ore_dash' needs base, per-rank, max-rank, cooldown, speed-per-block,"
-                    + " max-speed, lift, max-checks and scan-ticks numbers. Rune 'ore_dash' is not registered.");
+                    + " max-speed and lift numbers. Rune 'ore_dash' is not registered.");
             return;
         }
-        // `when` finds the ore, `does` (same click) uses it.
+        // `when` finds the ore the player looks at, `does` (same click) uses it.
         Map<UUID, Block> found = new HashMap<>();
-        // Last scan time (ms) per player: a miss has no cooldown, so scans are throttled instead.
-        Map<UUID, Long> lastScan = new HashMap<>();
         Effect<RuneClickEvent> effect = ctx.get(EffectRegistry.class)
                 .register(Effect.builder(ORE_DASH, EffectTriggers.CLICK)
                         .when(context -> {
                             Player player = context.player();
                             found.remove(player.getUniqueId());
-                            long now = System.currentTimeMillis();
-                            Long last = lastScan.get(player.getUniqueId());
-                            boolean throttled = last != null && now - last < scanTicks.getAsDouble() * 50;
-                            if (!throttled) {
-                                lastScan.put(player.getUniqueId(), now);
-                            }
-                            var ore = throttled
-                                    ? java.util.Optional.<Block>empty()
-                                    : VisibleOre.nearest(player, context.value(), (int) maxChecks.getAsDouble());
+                            var ore = VisibleOre.lookedAt(player, context.value());
                             if (ore.isEmpty()) {
                                 player.sendActionBar(Component.translatable(
                                                 "rune.feedback.ore_dash_none",
-                                                "No visible ore within %s blocks",
+                                                "Look at an ore within %s blocks",
                                                 Component.text((int) context.value()))
                                         .color(NamedTextColor.RED));
                                 return false;
@@ -147,8 +133,8 @@ public final class ActiveMiningRunesModule implements RuneModule {
     }
 
     /**
-     * Blast Mine and Great Blast: the click arms the Rune for {@code armed-seconds}; the next pickaxe block mined
-     * with the tool sets it off ({@link BlastListener}). The value is the Rank. The cooldown starts at the click and
+     * Blast Mine and Great Blast: the click opens a window of {@code armed-seconds}; every pickaxe block mined
+     * with the tool during the window sets it off ({@link BlastListener}). The value is the Rank. The cooldown starts at the click and
      * shrinks each Rank: {@code cooldown} + {@code cooldown-per-rank} per Rank above 1.
      */
     private static void blast(RuneContext ctx, BlastCharges charges, String id, Rarity rarity) {

@@ -8,5 +8,5 @@
   "rune.feedback.rhythm_lost": "Cadence perdue",
   "rune.feedback.active_cooldown": "%s se recharge : %s s",
   "rune.feedback.tree_dash_out_of_range": "Cette bûche est hors de portée (%s blocs)",
-  "rune.feedback.ore_dash_none": "Aucun minerai visible à moins de %s blocs"
+  "rune.feedback.ore_dash_none": "Regardez un minerai à moins de %s blocs"
 }
