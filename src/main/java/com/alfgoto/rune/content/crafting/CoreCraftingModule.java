@@ -162,6 +162,33 @@ public final class CoreCraftingModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COCOA_BEANS),
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"))));
+        harvestAxes(book, woodcutting);
+    }
+
+    /**
+     * Orchard (Woodcutting 8), Golden Bough (12) and Verdant (22). The ingredients and levels are the documented
+     * ones; the grid layouts are proposed. Golden Bough and Verdant consume the previous axe (an Upgrade), so
+     * their Runes carry over.
+     */
+    private static void harvestAxes(RecipeBook book, Job woodcutting) {
+        book.register(new CraftingRecipe("orchard_axe", woodcutting, 8, "orchard_axe", 1,
+                List.of("AAI", "AHA", " SS"), Map.of(
+                        'A', Ingredient.vanilla(Material.APPLE),
+                        'S', Ingredient.vanilla(Material.OAK_SAPLING),
+                        'I', Ingredient.vanilla(Material.IRON_INGOT),
+                        'H', Ingredient.rune("reinforced_handle"))));
+        book.register(new CraftingRecipe("golden_bough", woodcutting, 12, "golden_bough", 1,
+                List.of("BBA", "OG "), Map.of(
+                        'B', Ingredient.vanilla(Material.GOLD_BLOCK),
+                        'A', Ingredient.vanilla(Material.GOLDEN_APPLE),
+                        'O', Ingredient.rune("orchard_axe"),
+                        'G', Ingredient.rune("gem_setting"))));
+        book.register(new CraftingRecipe("verdant_axe", woodcutting, 22, "verdant_axe", 1,
+                List.of("DDE", "PBP"), Map.of(
+                        'D', Ingredient.vanilla(Material.DIAMOND_BLOCK),
+                        'E', Ingredient.vanilla(Material.ENCHANTED_GOLDEN_APPLE),
+                        'P', Ingredient.rune("abyssal_plate"),
+                        'B', Ingredient.rune("golden_bough"))));
     }
 
     /**

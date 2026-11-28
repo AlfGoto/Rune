@@ -422,6 +422,12 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Orchard Axe: % extra apple and sapling rolls on leaves (the Orchard Rune gives 10 per Rank)
+  orchard_axe:
+    orchard_percent: 20
+  # Golden Bough: % chance of a golden apple per oak leaf broken or made to fall
+  golden_bough:
+    golden_apple_percent: 0.5
   # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
   flint_pickaxe:
     fortune: 15

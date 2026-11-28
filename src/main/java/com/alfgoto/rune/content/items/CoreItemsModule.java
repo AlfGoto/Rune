@@ -15,6 +15,8 @@ import com.alfgoto.rune.gameplay.items.ToolSpec;
 import com.alfgoto.rune.gameplay.items.TraitBinding;
 import com.alfgoto.rune.gameplay.runes.HeldTraits;
 import com.alfgoto.rune.gameplay.woodcutting.AxeTraits;
+import com.alfgoto.rune.gameplay.woodcutting.LeafRules;
+import com.alfgoto.rune.gameplay.woodcutting.ReplantRules;
 import com.alfgoto.rune.text.Rarity;
 import com.google.auto.service.AutoService;
 import java.util.Set;
@@ -122,6 +124,20 @@ public final class CoreItemsModule implements RuneModule {
         axe(items, "jungle_axe", Rarity.RARE,
                 TraitBinding.always("affinity_jungle", affinity),
                 TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+        harvestAxes(items, config);
+    }
+
+    /**
+     * The harvest line (docs/jobs/woodcutting.md): Orchard (more apples and saplings), Golden Bough (golden
+     * apples from oak leaves) and Verdant (replants a sapling). Numbers in config
+     * ({@code traits.orchard_axe}, {@code traits.golden_bough}). Tier and Capacity follow the Rarity.
+     */
+    private static void harvestAxes(ItemRegistry items, RuneConfig config) {
+        double orchard = config.traitNumber("orchard_axe", "orchard_percent", 20);
+        double golden = config.traitNumber("golden_bough", "golden_apple_percent", 0.5);
+        axe(items, "orchard_axe", Rarity.UNCOMMON, TraitBinding.always(LeafRules.ORCHARD, orchard));
+        axe(items, "golden_bough", Rarity.RARE, TraitBinding.always(LeafRules.GOLDEN_APPLE, golden));
+        axe(items, "verdant_axe", Rarity.EPIC, TraitBinding.always(ReplantRules.REPLANT, 1));
     }
 
     /**

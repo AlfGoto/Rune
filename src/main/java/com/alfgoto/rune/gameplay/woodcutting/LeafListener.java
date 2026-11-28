@@ -84,6 +84,14 @@ final class LeafListener implements Listener {
                 }
             }
         }
+        // Golden Bough: oak leaves can also give a golden apple.
+        if (leaves.getType() == Material.OAK_LEAVES) {
+            int golden = Stacking.rolls(Stacking.total(LeafRules.GOLDEN_APPLE, sources), random);
+            for (int i = 0; i < golden; i++) {
+                leaves.getWorld()
+                        .dropItemNaturally(leaves.getLocation().add(0.5, 0.5, 0.5), new ItemStack(Material.GOLDEN_APPLE));
+            }
+        }
     }
 
     static boolean isOrchardDrop(Material type) {
