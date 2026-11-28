@@ -254,3 +254,4 @@ The first milestone the issues aim at:
 - Challenge-type Quests (conditions like "without placing torches"; timed).
 - Config option to restrict trading of Runes / Rune gear.
 - PvP: not considered yet.
+- Tempest Axe (2026-11-28, #90; `content.items.SpeedToolsModule`, numbers in `traits.tempest_axe`): Epic, diamond tier, Capacity 14 −3 = 11. Trait = a built-in `treefeller` binding (16 blocks, no Rank, stacks with an installed Treefeller) + a **negative Sturdy** (−50%): each point of durability use costs one more with a 50% chance (`Sturdy.damage` with a negative percent; Sturdy Runes stack with it). Recipe at Woodcutting 20: Breeze Axe + 2 Abyssal Plates + 4 breeze rods + 2 diamond blocks (3×3 grid, so 4 rods instead of 8). Breeze Axe already existed (#72).

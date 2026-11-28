@@ -413,6 +413,11 @@ runes:
       per-rank: 10
       max-rank: 3
 traits:
+  # Tempest Axe: built-in Treefeller block cap, % more durability use (a negative Sturdy), Capacity lost
+  tempest_axe:
+    blocks: 16
+    extra_durability_percent: 50
+    capacity_penalty: 3
   # Trait extras of the Woodcutting axes (docs/jobs/woodcutting.md). Starting values, tuned after playtests.
   # The Affinity Trait of every axe uses the Rank 1 value of runes.speed.affinity (per-rank).
   # Birch Axe: Speed I for some seconds after each Felled Tree
