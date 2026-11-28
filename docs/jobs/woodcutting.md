@@ -144,7 +144,7 @@ All axe-shaped, so they never clash with pickaxe recipes.
 | Breeze | Copper Axe + 3 breeze rods + 1 diamond + Gem Setting |
 | Golden Bough | Orchard Axe + 2 gold blocks + 1 golden apple + Gem Setting |
 | Acacia | 4 acacia logs + 1 sunflower + 1 diamond + Gem Setting |
-| Cherry | 4 cherry logs + 4 pink petals + 1 diamond + Gem Setting |
+| Cherry | 4 cherry logs + 3 pink petals + 1 diamond + Gem Setting |
 | Mangrove | 4 mangrove logs + 2 mangrove propagules + 1 diamond + Gem Setting |
 | Pale Oak | 4 pale oak logs + 1 creaking heart + 1 diamond + Gem Setting |
 | Heartwood | Woodsman's Axe + 2 Abyssal Plates + 2 diamond blocks + 1 totem of undying |

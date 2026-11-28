@@ -422,6 +422,15 @@ traits:
   felled_tree_leaf_fall:
     reach: 7
     max_leaves: 600
+  # Crimson Axe: Fire Resistance for some seconds after each Crimson or Warped stem broken
+  stem_fire_resistance:
+    seconds: 8
+  # Acacia Axe: % mining speed in open sunlight; the same % slower at night and in rain
+  sun_rain_speed:
+    percent: 20
+  # Cherry Axe: Regeneration I for some seconds after each Felled Tree
+  felled_tree_regeneration:
+    seconds: 6
   # Flint Pickaxe: fortune = % chance of +1 drop, slower_percent = % slower mining
   flint_pickaxe:
     fortune: 15

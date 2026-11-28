@@ -20,6 +20,11 @@ public final class CorePlaces {
         registry.register(Place.biome("dappled_forest", "minecraft:dappled_forest"));
         registry.register(Place.biome(
                 "jungle", "minecraft:jungle", "minecraft:sparse_jungle", "minecraft:bamboo_jungle"));
+        registry.register(Place.biome("crimson_forest", "minecraft:crimson_forest"));
+        registry.register(Place.biome("warped_forest", "minecraft:warped_forest"));
+        registry.register(Place.biome(
+                "savanna", "minecraft:savanna", "minecraft:savanna_plateau", "minecraft:windswept_savanna"));
+        registry.register(Place.biome("cherry_grove", "minecraft:cherry_grove"));
         registry.register(Place.biome(
                 "mountains",
                 "minecraft:meadow",

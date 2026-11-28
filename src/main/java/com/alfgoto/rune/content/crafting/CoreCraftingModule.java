@@ -162,6 +162,40 @@ public final class CoreCraftingModule implements RuneModule {
                         'C', Ingredient.vanilla(Material.COCOA_BEANS),
                         'D', Ingredient.vanilla(Material.DIAMOND),
                         'G', Ingredient.rune("gem_setting"))));
+        essenceAxes(book, woodcutting);
+    }
+
+    /**
+     * The Crimson (Woodcutting 10), Warped (10), Acacia (13) and Cherry (13) axes. The ingredients are the
+     * documented ones, except the Cherry Axe: 3 pink petals instead of 4, so it fits the 3x3 grid. The grid
+     * layouts are proposed.
+     */
+    private static void essenceAxes(RecipeBook book, Job woodcutting) {
+        Ingredient gem = Ingredient.rune("gem_setting");
+        book.register(new CraftingRecipe("crimson_axe", woodcutting, 10, "crimson_axe", 1,
+                List.of("LLS", "LGD", "LS "), Map.of(
+                        'L', Ingredient.vanilla(Material.CRIMSON_STEM),
+                        'S', Ingredient.vanilla(Material.SHROOMLIGHT),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'G', gem)));
+        book.register(new CraftingRecipe("warped_axe", woodcutting, 10, "warped_axe", 1,
+                List.of("LLE", "LGD", "LE "), Map.of(
+                        'L', Ingredient.vanilla(Material.WARPED_STEM),
+                        'E', Ingredient.vanilla(Material.ENDER_PEARL),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'G', gem)));
+        book.register(new CraftingRecipe("acacia_axe", woodcutting, 13, "acacia_axe", 1,
+                List.of("LLS", "LGD", "L  "), Map.of(
+                        'L', Ingredient.vanilla(Material.ACACIA_LOG),
+                        'S', Ingredient.vanilla(Material.SUNFLOWER),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'G', gem)));
+        book.register(new CraftingRecipe("cherry_axe", woodcutting, 13, "cherry_axe", 1,
+                List.of("LLP", "LGD", "LPP"), Map.of(
+                        'L', Ingredient.vanilla(Material.CHERRY_LOG),
+                        'P', Ingredient.vanilla(Material.PINK_PETALS),
+                        'D', Ingredient.vanilla(Material.DIAMOND),
+                        'G', gem)));
     }
 
     /**

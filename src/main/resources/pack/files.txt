@@ -844,3 +844,15 @@ assets/rune/models/item/rune/sanctuary_lush_caves_1.json
 assets/rune/models/item/rune/sanctuary_lush_caves_2.json
 assets/rune/models/item/rune/sanctuary_lush_caves_3.json
 assets/rune/items/sanctuary_lush_caves.json
+assets/rune/models/item/rune/affinity_warped_forest_1.json
+assets/rune/models/item/rune/affinity_warped_forest_2.json
+assets/rune/models/item/rune/affinity_warped_forest_3.json
+assets/rune/items/affinity_warped_forest.json
+assets/rune/models/item/rune/affinity_savanna_1.json
+assets/rune/models/item/rune/affinity_savanna_2.json
+assets/rune/models/item/rune/affinity_savanna_3.json
+assets/rune/items/affinity_savanna.json
+assets/rune/models/item/rune/affinity_cherry_grove_1.json
+assets/rune/models/item/rune/affinity_cherry_grove_2.json
+assets/rune/models/item/rune/affinity_cherry_grove_3.json
+assets/rune/items/affinity_cherry_grove.json

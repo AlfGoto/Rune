@@ -45,10 +45,13 @@ public final class SpeedRunesModule implements RuneModule {
 
     /** Affinity places: the Places that exist today (see CorePlaces). More come with their Places. */
     static final List<String> PLACES = List.of(
-            "lush_caves", "taiga", "birch_forest", "dappled_forest", "jungle", "mineshaft", "deep_dark");
+            "lush_caves", "taiga", "birch_forest", "dappled_forest", "jungle", "crimson_forest", "warped_forest",
+            "savanna", "cherry_grove", "mineshaft", "deep_dark");
 
     /** Forest Places: their Affinity fits axes only. Other Places fit pickaxes only (docs/jobs/mining.md). */
-    static final Set<String> FOREST_PLACES = Set.of("taiga", "birch_forest", "dappled_forest", "jungle");
+    static final Set<String> FOREST_PLACES = Set.of(
+            "taiga", "birch_forest", "dappled_forest", "jungle", "crimson_forest", "warped_forest", "savanna",
+            "cherry_grove");
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {

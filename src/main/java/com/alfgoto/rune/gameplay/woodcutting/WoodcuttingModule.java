@@ -44,6 +44,8 @@ public final class WoodcuttingModule implements RuneModule {
         PowderSnowListener powderSnow = new PowderSnowListener(ctx.plugin(), items, loadout, isBroken);
         powderSnow.start();
         ctx.listen(new ClimbListener(items, loadout, isBroken));
+        ctx.listen(new StemFireResistanceListener(items, loadout, isBroken));
+        ctx.listen(new EndermanListener(items, loadout, isBroken));
         ctx.listen(new ReplantListener(ctx.plugin(), items, loadout));
 
         RhythmConfig config = ctx.config().rhythm();

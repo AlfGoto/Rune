@@ -122,6 +122,31 @@ public final class CoreItemsModule implements RuneModule {
         axe(items, "jungle_axe", Rarity.RARE,
                 TraitBinding.always("affinity_jungle", affinity),
                 TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+        essenceAxes(items, config, affinity);
+    }
+
+    /**
+     * The Crimson, Warped, Acacia and Cherry axes (docs/jobs/woodcutting.md), all Rare. Numbers are in config
+     * under {@code traits}.
+     */
+    private static void essenceAxes(ItemRegistry items, RuneConfig config, double affinity) {
+        axe(items, "crimson_axe", Rarity.RARE,
+                TraitBinding.always("affinity_crimson_forest", affinity),
+                TraitBinding.always(
+                        AxeTraits.STEM_FIRE_RESISTANCE,
+                        config.traitNumber(AxeTraits.STEM_FIRE_RESISTANCE, "seconds", 8)));
+        axe(items, "warped_axe", Rarity.RARE,
+                TraitBinding.always("affinity_warped_forest", affinity),
+                TraitBinding.always(AxeTraits.ENDERMEN_NEUTRAL, 1));
+        axe(items, "acacia_axe", Rarity.RARE,
+                TraitBinding.always("affinity_savanna", affinity),
+                TraitBinding.always(
+                        AxeTraits.SUN_RAIN_SPEED, config.traitNumber(AxeTraits.SUN_RAIN_SPEED, "percent", 20)));
+        axe(items, "cherry_axe", Rarity.RARE,
+                TraitBinding.always("affinity_cherry_grove", affinity),
+                TraitBinding.always(
+                        AxeTraits.FELLED_TREE_REGENERATION,
+                        config.traitNumber(AxeTraits.FELLED_TREE_REGENERATION, "seconds", 6)));
     }
 
     /**
