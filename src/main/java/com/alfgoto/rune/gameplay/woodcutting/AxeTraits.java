@@ -24,6 +24,21 @@ public final class AxeTraits {
     /** Jungle Axe: climbing speed on vines, ladders and scaffolding. The binding value is the percent. */
     public static final String CLIMB_SPEED = "climb_speed";
 
+    /** Mangrove Axe: full swimming speed (no water slowdown) while held. The binding value is 1 (on). */
+    public static final String WATER_STRIDE = "water_stride";
+
+    /** Pale Oak Axe: night vision in the Pale Garden while held. The binding value is 1 (on). */
+    public static final String PALE_NIGHT_VISION = "pale_night_vision";
+
+    /** Pale Oak Axe: Creakings lose track of the player in the Pale Garden. The binding value is 1 (on). */
+    public static final String CREAKING_LOSE_TRACK = "creaking_lose_track";
+
+    /** Pale Oak Axe: slower mining in daylight. The binding value is minus the percent. */
+    public static final String DAYLIGHT_SLOWER = "daylight_slower";
+
+    /** Chorus Axe: a short teleport when hurt. The binding value is the range in blocks. */
+    public static final String HURT_TELEPORT = "hurt_teleport";
+
     /** Vanilla climbing speed, in blocks per tick (a player climbs 0.2 blocks per tick). */
     static final double VANILLA_CLIMB_SPEED = 0.2;
 
@@ -40,6 +55,21 @@ public final class AxeTraits {
     /** Move speed bonus (as a fraction) that cancels the powder snow slowdown. */
     public static double powderSnowCompensation() {
         return 1 / POWDER_SNOW_FACTOR - 1;
+    }
+
+    /** True while the Chorus Axe teleport is still recharging (times in milliseconds). */
+    public static boolean onCooldown(long lastMillis, long nowMillis, long cooldownMillis) {
+        return nowMillis - lastMillis < cooldownMillis;
+    }
+
+    /**
+     * Where to look for a safe spot after a hurt teleport: offsets inside a disc of {@code range} blocks.
+     * {@code unit1} and {@code unit2} are random numbers in [0, 1).
+     */
+    public static double[] teleportOffset(double range, double unit1, double unit2) {
+        double angle = unit1 * 2 * Math.PI;
+        double distance = Math.max(1, Math.sqrt(unit2) * range);
+        return new double[] {Math.cos(angle) * distance, Math.sin(angle) * distance};
     }
 
     /**

@@ -9,6 +9,8 @@ import com.alfgoto.rune.gameplay.effects.ScaleRegistry;
 import com.alfgoto.rune.gameplay.items.BrokenToolListener;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.items.ItemsModule;
+import com.alfgoto.rune.gameplay.places.PlaceDetector;
+import com.alfgoto.rune.gameplay.places.PlacesModule;
 import com.alfgoto.rune.gameplay.runes.RunesModule;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.google.auto.service.AutoService;
@@ -27,7 +29,8 @@ public final class WoodcuttingModule implements RuneModule {
 
     @Override
     public Set<Class<? extends RuneModule>> dependsOn() {
-        return Set.of(ItemsModule.class, RunesModule.class, EffectsModule.class, TreesModule.class);
+        return Set.of(
+                ItemsModule.class, RunesModule.class, EffectsModule.class, TreesModule.class, PlacesModule.class);
     }
 
     @Override
@@ -45,6 +48,18 @@ public final class WoodcuttingModule implements RuneModule {
         powderSnow.start();
         ctx.listen(new ClimbListener(items, loadout, isBroken));
         ctx.listen(new ReplantListener(ctx.plugin(), items, loadout));
+
+        // Trait extras of the Mangrove, Pale Oak and Chorus axes.
+        HeldAxe heldAxe = new HeldAxe(items, loadout, isBroken);
+        new WaterStrideListener(ctx.plugin(), heldAxe).start();
+        PaleGardenListener paleGarden = new PaleGardenListener(ctx.plugin(), heldAxe, ctx.get(PlaceDetector.class));
+        paleGarden.start();
+        ctx.listen(paleGarden);
+        long teleportCooldown =
+                Math.round(ctx.config().traitNumber(AxeTraits.HURT_TELEPORT, "cooldown_seconds", 8) * 1000);
+        ctx.listen(new HurtTeleportListener(
+                ctx.plugin(), heldAxe, teleportCooldown, () -> ThreadLocalRandom.current().nextDouble(),
+                System::currentTimeMillis));
 
         RhythmConfig config = ctx.config().rhythm();
         Rhythm rhythm = ctx.provide(

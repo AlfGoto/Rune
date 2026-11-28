@@ -122,6 +122,31 @@ public final class CoreItemsModule implements RuneModule {
         axe(items, "jungle_axe", Rarity.RARE,
                 TraitBinding.always("affinity_jungle", affinity),
                 TraitBinding.always(AxeTraits.CLIMB_SPEED, climbPercent));
+        essenceAxes(items, config, affinity);
+    }
+
+    /**
+     * The Mangrove, Pale Oak and Chorus axes (docs/jobs/woodcutting.md). Mangrove: Rare, diamond tier, Capacity
+     * 10. Pale Oak: Rare, iron tier (-1), Capacity 10 +2. Chorus: Epic, diamond tier, Capacity 14. Numbers are in
+     * config ({@code traits.pale_oak_axe}, {@code traits.hurt_teleport}).
+     */
+    private static void essenceAxes(ItemRegistry items, RuneConfig config, double affinity) {
+        axe(items, "mangrove_axe", Rarity.RARE,
+                TraitBinding.always("affinity_swamp", affinity),
+                TraitBinding.always(AxeTraits.WATER_STRIDE, 1),
+                TraitBinding.always(HeldTraits.NO_WATER_PENALTY, 1));
+        double daylightSlower = config.traitNumber("pale_oak_axe", "daylight_slower_percent", 20);
+        int paleCapacity = (int) config.traitNumber("pale_oak_axe", "capacity-modifier", 2);
+        items.register(RuneItem.tool("pale_oak_axe", Rarity.RARE, ToolKind.AXE, "pale_oak_axe",
+                ToolSpec.DEFAULT.withTierOffset(-1).withTrait("pale_oak_axe", paleCapacity,
+                        TraitBinding.always("affinity_pale_garden", affinity),
+                        TraitBinding.always(AxeTraits.PALE_NIGHT_VISION, 1),
+                        TraitBinding.always(AxeTraits.CREAKING_LOSE_TRACK, 1),
+                        TraitBinding.always(AxeTraits.DAYLIGHT_SLOWER, -daylightSlower))));
+        double teleportRange = config.traitNumber(AxeTraits.HURT_TELEPORT, "range", 8);
+        axe(items, "chorus_axe", Rarity.EPIC,
+                TraitBinding.always("affinity_end", affinity),
+                TraitBinding.always(AxeTraits.HURT_TELEPORT, teleportRange));
     }
 
     /**

@@ -13,6 +13,9 @@
   "rune.item.affinity_birch_forest": "Affinity: Birch Forest",
   "rune.item.affinity_dappled_forest": "Affinity: Dappled Forest",
   "rune.item.affinity_jungle": "Affinity: Jungle",
+  "rune.item.affinity_swamp": "Affinity: Swamp",
+  "rune.item.affinity_pale_garden": "Affinity: Pale Garden",
+  "rune.item.affinity_end": "Affinity: End",
   "rune.item.affinity_mineshaft": "Affinity: Mineshaft",
   "rune.item.affinity_deep_dark": "Affinity: Deep Dark"
 }

@@ -19,6 +19,23 @@ class AxeTraitsTest {
         assertEquals(1.0, 0.9 * (1 + AxeTraits.powderSnowCompensation()), 1e-9);
     }
 
+    @Test
+    void teleportCooldownLastsUntilTheDelayPasses() {
+        assertEquals(true, AxeTraits.onCooldown(1_000, 5_000, 8_000));
+        assertEquals(false, AxeTraits.onCooldown(1_000, 9_000, 8_000));
+    }
+
+    @Test
+    void teleportOffsetStaysInsideTheRangeAndAwayFromTheStart() {
+        for (double a = 0; a < 1; a += 0.1) {
+            for (double d = 0; d < 1; d += 0.1) {
+                double[] offset = AxeTraits.teleportOffset(8, a, d);
+                double distance = Math.hypot(offset[0], offset[1]);
+                assertEquals(true, distance >= 1 - 1e-9 && distance <= 8 + 1e-9);
+            }
+        }
+    }
+
     /** A line of blocks: block 0 is the log, the others are leaves unless the test says otherwise. */
     private static List<Integer> neighbors(int block) {
         return List.of(block - 1, block + 1);

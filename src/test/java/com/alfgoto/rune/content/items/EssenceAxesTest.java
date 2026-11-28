@@ -9,6 +9,7 @@ import com.alfgoto.rune.gameplay.crafting.RecipeBook;
 import com.alfgoto.rune.gameplay.effects.Stacking;
 import com.alfgoto.rune.gameplay.items.ItemRegistry;
 import com.alfgoto.rune.gameplay.places.PlaceRegistry;
+import com.alfgoto.rune.gameplay.runes.HeldTraits;
 import com.alfgoto.rune.gameplay.runes.ToolLoadout;
 import com.alfgoto.rune.gameplay.woodcutting.AxeTraits;
 import com.alfgoto.rune.text.Rarity;
@@ -103,6 +104,55 @@ class EssenceAxesTest {
                 Map.of(Material.JUNGLE_LOG, 4L, Material.COCOA_BEANS, 2L, Material.DIAMOND, 1L, Material.PAPER, 1L),
                 counts("jungle_axe"));
         assertNotNull(server.getRecipe(book.key("poplar_axe")));
+    }
+
+    @Test
+    void mangrovePaleOakAndChorusAxesFollowTheDocs() {
+        assertEquals(Rarity.RARE, items.get("mangrove_axe").rarity());
+        assertEquals(10, loadout.capacity(items.create(items.get("mangrove_axe"), 1)));
+        assertEquals(Rarity.RARE, items.get("pale_oak_axe").rarity());
+        assertEquals(12, loadout.capacity(items.create(items.get("pale_oak_axe"), 1)));
+        assertEquals(Rarity.EPIC, items.get("chorus_axe").rarity());
+        assertEquals(14, loadout.capacity(items.create(items.get("chorus_axe"), 1)));
+        assertEquals(10, total("mangrove_axe", "affinity_swamp"));
+        assertEquals(10, total("pale_oak_axe", "affinity_pale_garden"));
+        assertEquals(10, total("chorus_axe", "affinity_end"));
+        assertEquals(1, total("mangrove_axe", AxeTraits.WATER_STRIDE));
+        assertEquals(1, total("mangrove_axe", HeldTraits.NO_WATER_PENALTY));
+        assertEquals(1, total("pale_oak_axe", AxeTraits.PALE_NIGHT_VISION));
+        assertEquals(1, total("pale_oak_axe", AxeTraits.CREAKING_LOSE_TRACK));
+        assertEquals(-20, total("pale_oak_axe", AxeTraits.DAYLIGHT_SLOWER));
+        assertEquals(8, total("chorus_axe", AxeTraits.HURT_TELEPORT));
+        assertEquals(0, total("birch_axe", AxeTraits.HURT_TELEPORT));
+    }
+
+    @Test
+    void theEssencePlacesAndTheirRunesExist() {
+        PlaceRegistry places = plugin.context().get(PlaceRegistry.class);
+        Map<String, Integer> keys = new HashMap<>();
+        places.all().forEach(p -> keys.put(p.id(), p.keys().size()));
+        assertEquals(2, keys.get("swamp"));
+        assertEquals(1, keys.get("pale_garden"));
+        assertEquals(5, keys.get("end"));
+    }
+
+    @Test
+    void newAxeRecipesUseTheDocumentedIngredients() {
+        assertEquals(14, book.find("mangrove_axe").orElseThrow().level());
+        assertEquals(15, book.find("pale_oak_axe").orElseThrow().level());
+        assertEquals(18, book.find("chorus_axe").orElseThrow().level());
+        assertEquals(
+                Map.of(Material.MANGROVE_LOG, 4L, Material.MANGROVE_PROPAGULE, 2L, Material.DIAMOND, 1L,
+                        Material.PAPER, 1L),
+                counts("mangrove_axe"));
+        assertEquals(
+                Map.of(Material.PALE_OAK_LOG, 4L, Material.CREAKING_HEART, 1L, Material.DIAMOND, 1L,
+                        Material.PAPER, 1L),
+                counts("pale_oak_axe"));
+        assertEquals(
+                Map.of(Material.CHORUS_FLOWER, 4L, Material.SHULKER_SHELL, 2L, Material.DIAMOND_BLOCK, 2L,
+                        Material.PAPER, 1L),
+                counts("chorus_axe"));
     }
 
     @Test
