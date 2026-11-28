@@ -29,6 +29,8 @@
   "rune.menu.gear.cannot": "Cette Rune ne va pas sur cet objet.",
   "rune.menu.gear.active_right": "Emplacement actif : clic droit en l'air",
   "rune.menu.gear.active_left": "Emplacement actif : clic gauche en l'air",
+  "rune.menu.gear.mark_right": "D",
+  "rune.menu.gear.mark_left": "G",
   "rune.menu.jobs.title": "Métiers",
   "rune.menu.jobs.account": "Niveau de compte %s",
   "rune.menu.jobs.capacity": "Capacité du joueur : %s",

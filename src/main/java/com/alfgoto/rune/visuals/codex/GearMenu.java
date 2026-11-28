@@ -20,8 +20,8 @@ import org.bukkit.inventory.ItemStack;
  * The Loadout of a Rune Tool or Rune Armor piece, opened by right-clicking it in the inventory: the same altar as
  * the Runes page, with that item's slots and Capacity, and only the Runes that fit it. It edits the item that is
  * in the clicked inventory slot, so the change stays on the item (also when it is worn). When that item leaves
- * the slot, the menu closes. The Active Slots of a tool are marked "R" (right-click in air) and "L" (left-click
- * in air) and say so in their tooltip.
+ * the slot, the menu closes on the next click. The Active Slots of a tool are marked with a letter (EN "R" / "L",
+ * FR "D" / "G") for right-click / left-click in air and say so in their tooltip.
  */
 final class GearMenu extends LoadoutMenu {
 
@@ -120,7 +120,10 @@ final class GearMenu extends LoadoutMenu {
 
     @Override
     protected String marker(int index) {
-        return activeClick(index).map(click -> click == ClickType.RIGHT ? "R" : "L").orElse(null);
+        MenuStrings text = MenuStrings.of(player);
+        return activeClick(index).map(click -> click == ClickType.RIGHT
+                ? text.get("rune.menu.gear.mark_right", "R")
+                : text.get("rune.menu.gear.mark_left", "L")).orElse(null);
     }
 
     @Override

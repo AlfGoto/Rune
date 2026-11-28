@@ -156,7 +156,7 @@ class GearLoadoutTest {
     @Test
     void theMenuClosesWhenTheItemLeavesTheSlot() {
         giveRune();
-        GearMenu menu = openGear();
+        openGear();
         player.getInventory().setItem(SLOT, null);
 
         server.getPluginManager()
@@ -166,6 +166,5 @@ class GearLoadoutTest {
 
         assertFalse(player.getOpenInventory().getTopInventory().getHolder() instanceof Menu);
         assertEquals(1, runeItems()); // nothing was consumed
-        assertInstanceOf(Menu.class, menu);
     }
 }
