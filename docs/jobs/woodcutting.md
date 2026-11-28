@@ -160,7 +160,7 @@ Generic Mining Runes already fit axes: Haste, Sturdy, Fortune (+1 log / leaf dro
 | Rune (EN / FR) | Rarity | Max Rank | Per Rank | Fits |
 |---|---|---|---|---|
 | Specialist: <wood> / Spécialiste : <essence> | Common | 3 | +20% speed on one wood type | axe |
-| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Taiga, Jungle, Dappled Forest, Crimson Forest, Woodland Mansion…). The forest Places (Taiga, Birch Forest, Dappled Forest, Jungle) are axe only | pickaxe, axe (forest Places: axe only) |
+| Affinity: <place> | Uncommon | 3 | +10% speed in one place (Taiga, Jungle, Dappled Forest, Crimson Forest, Woodland Mansion…). The forest Places (Taiga, Birch Forest, Dappled Forest, Jungle, Crimson Forest, Warped Forest, Savanna, Cherry Grove) are axe only | pickaxe, axe (forest Places: axe only) |
 | Leaf Fall / Défoliation | Uncommon | 3 | Breaking a log makes leaves fall in radius 2 / 4 / 6 (0 XP) | axe |
 | Orchard / Verger | Uncommon | 3 | +10% apples and saplings from leaves | axe |
 | Canopy Stride / Canopée | Uncommon | none | Faster on leaves and logs, +10% per Rank | axe |
