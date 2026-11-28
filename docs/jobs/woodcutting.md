@@ -167,7 +167,7 @@ Generic Mining Runes already fit axes: Haste, Sturdy, Fortune (+1 log / leaf dro
 | Replant / Replantation | Rare | 1 | Replants a sapling where a Felled Tree stood | axe |
 | Tree Dash / Bond forestier *(Active)* | Rare | 3 | Dash to the log you look at, range 8/12/16, cooldown 10 s | axe |
 | Treefeller / Abattage | Epic | 3 | Fells a tree: 16 / 32 / 64 blocks | axe |
-| Boomerang *(Active)* | Epic | 3 | Throws the axe up to 12/16/20 blocks; it breaks the first natural log hit, logs placed by players are skipped (Treefeller included) and comes back; cooldown 30 → 10 s | axe |
+| Boomerang / Boomerang *(Active)* | Epic | 3 | Throws the axe up to 12/16/20 blocks; it breaks the first natural log hit, logs placed by players are skipped (Treefeller included) and comes back; cooldown 30 → 10 s | axe |
 | Great Fell / Grand Abattage *(Active)* | Legendary | 3 | Fells every tree within radius 6 / 9 / 12; cooldown 90 → 30 s | axe |
 | Sanctuary: <biome> / Sanctuaire : <biome> | Rare | 3 | In that biome: Regeneration I → + Resistance I → Regeneration II | player, armor |
 
