@@ -69,7 +69,6 @@ class UnlockTreeTest {
         server = MockBukkit.mock();
         player = server.addPlayer();
         backend = new FakeBackend();
-        RuneItem item = new RuneItem("tool", Rarity.COMMON, Material.WOODEN_PICKAXE, "tool");
         Map<Job, List<UnlockNode>> lines = new LinkedHashMap<>();
         lines.put(mining, List.of(node(mining, 2), node(mining, 12)));
         lines.put(woodcutting, List.of(node(woodcutting, 5)));

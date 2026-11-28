@@ -38,11 +38,6 @@ public final class UnlockTree {
         this.jobLevel = jobLevel;
     }
 
-    /** The lines as loaded, in Job registration order. Empty before {@link #load()}. */
-    public Map<Job, List<UnlockNode>> lines() {
-        return lines;
-    }
-
     /**
      * Builds the tree from the registries as they are now and loads it. Call after every module is enabled.
      * A failure is logged once and the tree stays off: it is only a display.
