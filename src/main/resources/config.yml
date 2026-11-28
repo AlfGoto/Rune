@@ -280,6 +280,21 @@ blueprints:
     woodcutting:
       22: elder_axe
       30: elders_bark
+structure-loot:
+  # Relics and Blueprints added to structure chests (docs/design-decisions.md, Relics). One entry per item:
+  #   table: loot table key of the chest; item: Rune item id (a Relic) or blueprint: Blueprint id (not both)
+  #   chance: chance per generated chest, 0 to 1 (0.01 = 1%); job + min-level: the Job Level the player needs
+  # Only players who meet the gate get the item. An item that is not registered yet, or a Blueprint the player
+  # already used, is skipped. Test: /rune loot chest <loot table>
+  - {table: "minecraft:chests/ancient_city", item: warden_pickaxe, chance: 0.01, job: mining, min-level: 25}
+  - {table: "minecraft:chests/ancient_city", blueprint: crown_of_the_depths, chance: 0.03, job: mining, min-level: 20}
+  - {table: "minecraft:chests/woodland_mansion", item: timberfall, chance: 0.01, job: woodcutting, min-level: 25}
+  - {table: "minecraft:chests/woodland_mansion", item: evokers_hatchet, chance: 0.01, job: woodcutting, min-level: 25}
+  - {table: "minecraft:chests/woodland_mansion", blueprint: stags_hooves, chance: 0.03, job: woodcutting, min-level: 20}
+  - {table: "minecraft:chests/buried_treasure", item: motherroot, chance: 0.005, job: woodcutting, min-level: 25}
+  # Test entries: no vanilla chest uses this key, so only /rune loot chest rune:test_chest gives them.
+  - {table: "rune:test_chest", item: test_item, chance: 1.0, job: mining, min-level: 25}
+  - {table: "rune:test_chest", blueprint: test_blueprint, chance: 1.0, job: mining, min-level: 25}
 vanilla-overrides:
   # Rarity of the Rune Cache that replaces each enchanted book in chests, fishing and villager trades
   # (common, uncommon, rare, epic, legendary)
